@@ -1,5 +1,7 @@
 function c = idx_dcline
-%IDX_DCLINE   Defines constants for named column indices to dcline matrix.
+% idx_dcline - Defines constants for named column indices to dcline matrix.
+% ::
+%
 %   Example:
 %
 %   c = idx_dcline;
@@ -42,10 +44,10 @@ function c = idx_dcline
 %   22  MU_QMINT  Kuhn-Tucker multiplier on lower VAr lim at  "to"  bus (u/MVAr)
 %   23  MU_QMAXT  Kuhn-Tucker multiplier on upper VAr lim at  "to"  bus (u/MVAr)
 %
-%   See also TOGGLE_DCLINE.
+% See also toggle_dcline.
 
 %   MATPOWER
-%   Copyright (c) 2011-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2011-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

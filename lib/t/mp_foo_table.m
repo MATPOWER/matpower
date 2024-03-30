@@ -1,7 +1,8 @@
 classdef mp_foo_table < mp_table_subclass
+% mp_foo_table - Subclass of mp_table_subclass for testing.
 
 %   MATPOWER
-%   Copyright (c) 2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2023-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

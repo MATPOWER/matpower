@@ -1,5 +1,7 @@
 function mpc1 = load2disp(mpc0, fname, idx, voll)
-%LOAD2DISP Converts fixed loads to dispatchable.
+% load2disp - Converts fixed loads to dispatchable.
+% ::
+%
 %   MPC = LOAD2DISP(MPC0);
 %   MPC = LOAD2DISP(MPC0, FNAME);
 %   MPC = LOAD2DISP(MPC0, FNAME, IDX);
@@ -24,7 +26,7 @@ function mpc1 = load2disp(mpc0, fname, idx, voll)
 %       must match that of IDX. Default is $5000 per MWh.
 
 %   MATPOWER
-%   Copyright (c) 2010-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
 %   by Alberto Lamadrid, PSERC Cornell
 %   modified by Ray Zimmerman, PSERC Cornell
 %

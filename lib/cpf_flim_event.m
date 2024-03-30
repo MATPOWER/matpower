@@ -1,5 +1,7 @@
 function ef = cpf_flim_event(cb_data, cx)
-%CPF_FLIM_EVENT  Event function to detect branch flow limit (MVA) violations
+% cpf_flim_event - Event function to detect branch flow limit (MVA) violations
+% ::
+%
 %   EF = CPF_FLIM_EVENT(CB_DATA, CX)
 %
 %   CPF event function to detect branch flow limit (MVA) violations,
@@ -13,7 +15,7 @@ function ef = cpf_flim_event(cb_data, cx)
 %       EF : event function value
 
 %   MATPOWER
-%   Copyright (c) 2016-2017, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2016-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Ahmad Abubakar Sadiq, Federal University of Technology Minna, Nigeria
 %   and Shrirang Abhyankar, Argonne National Laboratory

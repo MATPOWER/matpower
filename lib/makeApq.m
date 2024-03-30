@@ -1,5 +1,7 @@
 function [Apqh, ubpqh, Apql, ubpql, data] = makeApq(baseMVA, gen)
-%MAKEAPQ Construct linear constraints for generator capability curves.
+% makeApq - Construct linear constraints for generator capability curves.
+% ::
+%
 %   [APQH, UBPQH, APQL, UBPQL, DATA] = MAKEAPQ(BASEMVA, GEN)
 %
 %   Constructs the parameters for the following linear constraints
@@ -20,7 +22,7 @@ function [Apqh, ubpqh, Apql, ubpql, data] = makeApq(baseMVA, gen)
 %       data.ipql   indices of gens with general PQ cap curves (lower)
 
 %   MATPOWER
-%   Copyright (c) 1996-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %

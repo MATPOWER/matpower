@@ -1,8 +1,8 @@
 function obj = t_mp_data_model(quiet)
-%T_MP_DATA_MODEL  Tests for MP.DATA_MODEL.
+% t_mp_data_model - Tests for mp.data_model.
 
 %   MATPOWER
-%   Copyright (c) 2020-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2020-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

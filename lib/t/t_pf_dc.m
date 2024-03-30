@@ -1,8 +1,8 @@
 function t_pf_dc(quiet)
-%T_PF_DC  Tests for DC power flow solver.
+% t_pf_dc - Tests for legacy DC power flow solver.
 
 %   MATPOWER
-%   Copyright (c) 2004-2019, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

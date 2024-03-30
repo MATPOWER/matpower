@@ -1,8 +1,8 @@
 function t_opf_model(quiet)
-%T_OPF_MODEL Tests for OPF_MODEL.
+% t_opf_model - Tests for opf_model.
 
 %   MATPOWER
-%   Copyright (c) 2012-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2012-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

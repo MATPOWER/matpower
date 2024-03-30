@@ -1,6 +1,8 @@
 function [busout, genout, branchout, f, success, info, et, g, jac, xr, pimul] = ...
     opf(varargin)
-%OPF  Solves an optimal power flow.
+% opf - Solves an optimal power flow.
+% ::
+%
 %   [RESULTS, SUCCESS] = OPF(MPC, MPOPT)
 %
 %   Returns either a RESULTS struct and an optional SUCCESS flag, or individual
@@ -152,10 +154,10 @@ function [busout, genout, branchout, f, success, info, et, g, jac, xr, pimul] = 
 %                   .Pmis, Pf, Pt, PQh, PQl, vl, ycon, (other)
 %       .cost       user defined cost values, by named block
 %
-%   See also RUNOPF, DCOPF, UOPF, CASEFORMAT.
+% See also runopf, dcopf, uopf, caseformat.
 
 %   MATPOWER
-%   Copyright (c) 1996-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %

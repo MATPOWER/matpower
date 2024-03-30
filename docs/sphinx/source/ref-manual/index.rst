@@ -16,3 +16,4 @@
    introduction
    functions/index
    classes/index
+   legacy/index

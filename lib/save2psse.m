@@ -1,5 +1,7 @@
 function fname_out = save2psse(fname, mpc, rawver)
-%SAVE2PSSE  Saves a MATPOWER case to PSS/E RAW format.
+% save2psse - Saves a MATPOWER case to PSS/E RAW format.
+% ::
+%
 %   SAVE2PSSE(FNAME, MPC)
 %
 %   FNAME = SAVE2PSSE(FNAME, ...)
@@ -14,7 +16,7 @@ function fname_out = save2psse(fname, mpc, rawver)
 %   SAVE2PSSE(FNAME, CASESTRUCT, VERSION) (not yet implmented)
 
 %   MATPOWER
-%   Copyright (c) 2017 Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2017-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

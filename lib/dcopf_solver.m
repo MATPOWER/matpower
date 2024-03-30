@@ -1,5 +1,6 @@
 function [results, success, raw] = dcopf_solver(om, mpopt)
-%DCOPF_SOLVER  Solves a DC optimal power flow.
+% dcopf_solver - Solves a DC optimal power flow.
+% ::
 %
 %   [RESULTS, SUCCESS, RAW] = DCOPF_SOLVER(OM, MPOPT)
 %
@@ -29,10 +30,10 @@ function [results, success, raw] = dcopf_solver(om, mpopt)
 %       .info   solver specific termination code
 %       .output solver specific output information
 %
-%   See also OPF, OPT_MODEL/SOLVE.
+% See also opf, opt_model.solve.
 
 %   MATPOWER
-%   Copyright (c) 2000-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2000-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %

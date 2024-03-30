@@ -1,5 +1,7 @@
 function [g, dg] = opf_power_balance_fcn(x, mpc, Ybus, mpopt)
-%OPF_POWER_BALANCE_FCN  Evaluates AC power balance constraints and their gradients.
+% opf_power_balance_fcn - Evaluates AC power balance constraints and their gradients.
+% ::
+%
 %   [G, DG] = OPF_POWER_BALANCE_FCN(X, OM, YBUS, MPOPT)
 %
 %   Computes the active or reactive power balance equality constraints for
@@ -19,10 +21,10 @@ function [g, dg] = opf_power_balance_fcn(x, mpc, Ybus, mpopt)
 %       g = opf_power_balance_fcn(x, mpc, Ybus, mpopt);
 %       [g, dg] = opf_power_balance_fcn(x, mpc, Ybus, mpopt);
 %
-%   See also OPF_POWER_BALANCE_HESS
+% See also opf_power_balance_hess.
 
 %   MATPOWER
-%   Copyright (c) 1996-2017, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %   and Ray Zimmerman, PSERC Cornell
 %   and Baljinnyam Sereeter, Delft University of Technology

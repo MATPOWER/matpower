@@ -1,8 +1,8 @@
 function t_scale_load(quiet)
-%T_SCALE_LOAD  Tests for code in SCALE_LOAD.
+% t_scale_load - Tests for scale_load.
 
 %   MATPOWER
-%   Copyright (c) 2008-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

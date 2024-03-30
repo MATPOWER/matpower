@@ -1,8 +1,8 @@
 function t_psse(quiet)
-%T_PSSE  Tests for PSSE2MPC and related functions.
+% t_psse - Tests for psse2mpc and related functions.
 
 %   MATPOWER
-%   Copyright (c) 2014-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2014-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

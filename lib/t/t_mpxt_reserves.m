@@ -1,8 +1,8 @@
 function t_mpxt_reserves(quiet)
-%T_MPXT_RESERVES  Tests MP.XT_RESERVES extension.
+% t_mpxt_reserves - Tests mp.xt_reserves extension.
 
 %   MATPOWER
-%   Copyright (c) 2009-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2009-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

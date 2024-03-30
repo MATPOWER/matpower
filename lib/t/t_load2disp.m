@@ -1,8 +1,8 @@
 function t_load2disp(quiet)
-%T_LOAD2DISP  Tests for LOAD2DISP.
+% t_load2disp - Tests for load2disp.
 
 %   MATPOWER
-%   Copyright (c) 2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2016-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

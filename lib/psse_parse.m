@@ -1,5 +1,7 @@
 function [data, warns] = psse_parse(records, sections, verbose, rev)
-%PSSE_PARSE  Parses the data from a PSS/E RAW data file.
+% psse_parse - Parses the data from a PSS/E RAW data file.
+% ::
+%
 %   DATA = PSSE_PARSE(RECORDS, SECTIONS)
 %   DATA = PSSE_PARSE(RECORDS, SECTIONS, VERBOSE)
 %   DATA = PSSE_PARSE(RECORDS, SECTIONS, VERBOSE, REV)
@@ -41,10 +43,10 @@ function [data, warns] = psse_parse(records, sections, verbose, rev)
 %       WARNINGS :  cell array of strings containing accumulated
 %                   warning messages
 %
-%   See also PSSE2MPC, PSSE_READ, PSSE_PARSE_SECTION, PSSE_PARSE_LINE
+% See also psse2mpc, psse_read, psse_parse_section, psse_parse_line.
 
 %   MATPOWER
-%   Copyright (c) 2014-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2014-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   Based on mpreadraw.m, written by: Yujia Zhu, Jan 2014, yzhu54@asu.edu.
 %

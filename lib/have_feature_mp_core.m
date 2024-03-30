@@ -1,13 +1,13 @@
 function [TorF, vstr, rdate] = have_feature_mp_core()
-%HAVE_FEATURE_MP_CORE  Detect availability of MP-Core
+% have_feature_mp_core - Detect availability of MP-Core.
 %
-%   Feature detection function implementing 'mp_core' tag for HAVE_FEATURE
-%   to detect availability/version of MP-Core.
+% Private feature detection function implementing ``'mp_core'`` tag for
+% have_feature to detect availability/version of MP-Core.
 %
-%   See also HAVE_FEATURE.
+% See also have_feature.
 
 %   MATPOWER
-%   Copyright (c) 2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2022-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

@@ -1,10 +1,12 @@
 function [bus, gen, branch] = pfsoln(baseMVA, bus0, gen0, branch0, Ybus, Yf, Yt, V, ref, pv, pq, mpopt)
-%PFSOLN  Updates bus, gen, branch data structures to match power flow soln.
+% pfsoln - Updates bus, gen, branch data structures to match power flow soln.
+% ::
+%
 %   [BUS, GEN, BRANCH] = PFSOLN(BASEMVA, BUS0, GEN0, BRANCH0, ...
 %                                   YBUS, YF, YT, V, REF, PV, PQ, MPOPT)
 
 %   MATPOWER
-%   Copyright (c) 1996-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

@@ -1,8 +1,8 @@
 function t_feval_w_path(quiet)
-%T_FEVAL_W_PATH  Tests for FEVAL_W_PATH.
+% t_feval_w_path - Tests for feval_w_path.
 
 %   MATPOWER
-%   Copyright (c) 2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2016-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

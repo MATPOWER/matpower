@@ -1,5 +1,6 @@
 function [dImis_dV1, dImis_dV2] = dImis_dV(Sbus, Ybus, V, vcart)
-%DIMIS_DV   Computes partial derivatives of current balance w.r.t. voltage.
+% dImis_dV - Computes partial derivatives of current balance w.r.t. voltage.
+% ::
 %
 %   The derivatives can be take with respect to polar or cartesian coordinates
 %   of voltage, depending on the 3rd argument.
@@ -58,8 +59,8 @@ function [dImis_dV1, dImis_dV2] = dImis_dV(Sbus, Ybus, V, vcart)
 %       [dImis_dVm, dImis_dVa] = dImis_dV(Sbus, Ybus, V);
 %       [dImis_dVr, dImis_dVi] = dImis_dV(Sbus, Ybus, V, 1);
 %
-%   For more details on the derivations behind the derivative code used
-%   in MATPOWER information, see:
+% For more details on the derivations behind the derivative code used
+% in |MATPOWER| information, see::
 %
 %   [TN2]  R. D. Zimmerman, "AC Power Flows, Generalized OPF Costs and
 %          their Derivatives using Complex Matrix Notation", MATPOWER
@@ -78,7 +79,7 @@ function [dImis_dV1, dImis_dV2] = dImis_dV(Sbus, Ybus, V, vcart)
 %          doi: 10.5281/zenodo.3237909
 
 %   MATPOWER
-%   Copyright (c) 2019, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2019-2024, Power Systems Engineering Research Center (PSERC)
 %   by Baljinnyam Sereeter, Delft University of Technology
 %   and Ray Zimmerman, PSERC Cornell
 %

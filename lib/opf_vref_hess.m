@@ -1,5 +1,7 @@
 function d2Vref = opf_vref_hess(x, lam, mpc, refs, mpopt)
-%OPF_VREF_HESS  Evaluates Hessian of voltage angle reference.
+% opf_vref_hess - Evaluates Hessian of voltage angle reference.
+% ::
+%
 %   D2VREF = OPF_VREF_HESS(X, LAMBDA, MPC, REFS, MPOPT)
 %
 %   Hessian evaluation function for voltage angle reference.
@@ -18,10 +20,10 @@ function d2Vref = opf_vref_hess(x, lam, mpc, refs, mpopt)
 %   Example:
 %       d2Vref = opf_vref_hess(x, lambda, mpc, refs, mpopt);
 %
-%   See also OPF_VREF_FCN.
+% See also opf_vref_fcn.
 
 %   MATPOWER
-%   Copyright (c) 2018, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2018-2024, Power Systems Engineering Research Center (PSERC)
 %   by Baljinnyam Sereeter, Delft University of Technology
 %   and Ray Zimmerman, PSERC Cornell
 %

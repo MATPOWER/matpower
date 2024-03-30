@@ -1,5 +1,6 @@
 function gf = genfuels()
-%GENFUELS   Return list of standard values for generator fuel types
+% genfuels - Return list of standard values for generator fuel types.
+% ::
 %
 %   GF = GENFUELS()
 %
@@ -37,10 +38,10 @@ function gf = genfuels()
 %           error('unknown fuel type');
 %       end
 %
-%   See also GENTYPES, SAVECASE.
+% See also gentypes, savecase.
 
 %   MATPOWER
-%   Copyright (c) 2017, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2017-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

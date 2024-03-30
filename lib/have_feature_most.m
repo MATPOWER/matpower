@@ -1,13 +1,13 @@
 function [TorF, vstr, rdate] = have_feature_most()
-%HAVE_FEATURE_MOST  Detect availability/version info for MOST
+% have_feature_most - Detect availability/version info for MOST.
 %
-%   Feature detection function implementing 'most' tag for HAVE_FEATURE
-%   to detect availability/version of MOST (MATPOWER Optimal Scheduling Tool).
+% Private feature detection function implementing ``'most'`` tag for
+% have_feature to detect availability/version of MOST (MATPOWER Optimal Scheduling Tool).
 %
-%   See also HAVE_FEATURE, MOST.
+% See also have_feature, most.
 
 %   MATPOWER
-%   Copyright (c) 2004-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

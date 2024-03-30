@@ -1,5 +1,7 @@
 function [f, df, d2f] = opf_gen_cost_fcn(x, baseMVA, gencost, ig)
-%OPF_GEN_COST_FCN  Evaluates polynomial generator costs and derivatives.
+% opf_gen_cost_fcn - Evaluates polynomial generator costs and derivatives.
+% ::
+%
 %   [F, DF, D2F] = OPF_GEN_COST_FCN(X, BASEMVA, COST)
 %
 %   Evaluates the polynomial generator costs and derivatives.
@@ -24,7 +26,7 @@ function [f, df, d2f] = opf_gen_cost_fcn(x, baseMVA, gencost, ig)
 %       [f, df, d2f] = opf_gen_cost_fcn(x, baseMVA, gencost, ig);
 
 %   MATPOWER
-%   Copyright (c) 1996-2017, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %   and Ray Zimmerman, PSERC Cornell
 %

@@ -1,5 +1,5 @@
 function mpc = t_case_ext
-%T_CASE_EXT  Case data in external format used to test EXT2INT and INT2EXT.
+% t_case_ext - Case data in external format used to test ext2int and int2ext.
 
 %   MATPOWER
 

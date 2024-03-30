@@ -1,5 +1,7 @@
 function [bus, gen, gencost] = scale_load(dmd, bus, gen, load_zone, opt, gencost)
-%SCALE_LOAD Scales fixed and/or dispatchable loads.
+% scale_load - Scales fixed and/or dispatchable loads.
+% ::
+%
 %   MPC = SCALE_LOAD(LOAD, MPC);
 %   MPC = SCALE_LOAD(LOAD, MPC, LOAD_ZONE)
 %   MPC = SCALE_LOAD(LOAD, MPC, LOAD_ZONE, OPT)
@@ -88,10 +90,10 @@ function [bus, gen, gencost] = scale_load(dmd, bus, gen, load_zone, opt, gencost
 %       dmd = [100; 50];
 %       [bus, gen] = scale_load(dmd, bus, gen, load_zone, opt);
 %
-%   See also TOTAL_LOAD.
+% See also total_load.
 
 %   MATPOWER
-%   Copyright (c) 2004-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

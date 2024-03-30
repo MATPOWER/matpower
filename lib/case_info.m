@@ -1,5 +1,7 @@
 function [groupss, isolated] = case_info(mpc, fd)
-%CASE_INFO Prints information about islands in a network.
+% case_info - Prints information about islands in a network.
+% ::
+%
 %   CASE_INFO(MPC)
 %   CASE_INFO(MPC, FD)
 %   [GROUPS, ISOLATED] = CASE_INFO(...)
@@ -18,7 +20,7 @@ function [groupss, isolated] = case_info(mpc, fd)
 %          Report islands that are connected by DC lines.
 
 %   MATPOWER
-%   Copyright (c) 2012-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2012-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

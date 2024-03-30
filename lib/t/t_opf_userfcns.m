@@ -1,9 +1,10 @@
 function t_opf_userfcns(quiet)
-%T_OPF_USERFCNS  Tests for userfcn callbacks (reserves/iflims) w/OPF.
-%   Includes high-level tests of reserves and iflims implementations.
+% t_opf_userfcns - Tests for userfcn callbacks (reserves/iflims) w/OPF.
+%
+% Includes high-level tests of reserves and iflims implementations.
 
 %   MATPOWER
-%   Copyright (c) 2009-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2009-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

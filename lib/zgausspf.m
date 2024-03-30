@@ -1,5 +1,7 @@
 function [V, converged, i] = zgausspf(Ybus, Sbus, V0, ref, pv, pq, Bpp, mpopt)
-%ZGAUSSPF  Solves the power flow using an Implicit Z-bus Gauss method.
+% zgausspf - Solves the power flow using an Implicit Z-bus Gauss method.
+% ::
+%
 %   [V, CONVERGED, I] = ZGAUSSPF(YBUS, SBUS, V0, REF, PV, PQ, BPP, MPOPT)
 %   solves for bus voltages given the full system admittance matrix (for
 %   all buses), the complex bus power injection vector (all buses),
@@ -20,10 +22,10 @@ function [V, converged, i] = zgausspf(Ybus, Sbus, V0, ref, pv, pq, Bpp, mpopt)
 %       and seems to have serious problems with some systems with many
 %       PV buses.
 %
-%   See also RUNPF.
+% See also runpf.
 
 %   MATPOWER
-%   Copyright (c) 1996-2019 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

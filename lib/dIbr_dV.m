@@ -1,5 +1,6 @@
 function [dIf_dV1, dIf_dV2, dIt_dV1, dIt_dV2, If, It] = dIbr_dV(branch, Yf, Yt, V, vcart)
-%DIBR_DV   Computes partial derivatives of branch currents w.r.t. voltage.
+% dIbr_dV - Computes partial derivatives of branch currents w.r.t. voltage.
+% ::
 %
 %   The derivatives can be take with respect to polar or cartesian coordinates
 %   of voltage, depending on the 5th argument.
@@ -55,8 +56,8 @@ function [dIf_dV1, dIf_dV2, dIt_dV1, dIt_dV2, If, It] = dIbr_dV(branch, Yf, Yt, 
 %       [dIf_dVr, dIf_dVi, dIt_dVr, dIt_dVi, If, It] = ...
 %           dIbr_dV(branch, Yf, Yt, V, 1);
 %
-%   For more details on the derivations behind the derivative code used
-%   in MATPOWER information, see:
+% For more details on the derivations behind the derivative code used
+% in |MATPOWER| information, see::
 %
 %   [TN2]  R. D. Zimmerman, "AC Power Flows, Generalized OPF Costs and
 %          their Derivatives using Complex Matrix Notation", MATPOWER
@@ -70,7 +71,7 @@ function [dIf_dV1, dIf_dV2, dIt_dV1, dIt_dV2, If, It] = dIbr_dV(branch, Yf, Yt, 
 %          doi: 10.5281/zenodo.3237909
 
 %   MATPOWER
-%   Copyright (c) 1996-2019, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

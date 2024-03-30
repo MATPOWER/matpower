@@ -1,5 +1,6 @@
 function [V, Qpv, Sf, St, Sslack, iter, success] = calc_v_i_sum(Vslack,nb,nl,f,Zb,Ybf,Ybt,Yd,Sd,pv,Pg,Vg,mpopt)
-%CALC_V_I_SUM  Solves the power flow using the current summation method.
+% calc_v_i_sum - Solves the power flow using the current summation method.
+% ::
 %
 %   [V, Qpv, Sf, St, Sslack, iter, success] = calc_v_i_sum(Vslack,nb,nl,f,Zb,Ybf,Ybt,Yd,Sd,pv,Pg,Vg,tol,iter_max)
 %
@@ -23,7 +24,15 @@ function [V, Qpv, Sf, St, Sslack, iter, success] = calc_v_i_sum(Vslack,nb,nl,f,Z
 %   networks," IEEE Transactions on Power Systems, vol. 5, no. 4,
 %   pp. 1309-1316, Nov 1990. https://doi.org/10.1109/59.99382
 %
-%   See also RADIAL_PF.
+% See also radial_pf.
+
+%   MATPOWER
+%   Copyright (c) 2019-2024, Power Systems Engineering Research Center (PSERC)
+%   by Mirko Todorovski
+%
+%   This file is part of MATPOWER.
+%   Covered by the 3-clause BSD License (see LICENSE file for details).
+%   See https://matpower.org for more info.
 
 %% initialize
 tol      = mpopt.pf.tol;

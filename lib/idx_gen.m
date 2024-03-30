@@ -1,7 +1,9 @@
 function [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
     MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
     QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen
-%IDX_GEN   Defines constants for named column indices to gen matrix.
+% idx_gen - Defines constants for named column indices to gen matrix.
+% ::
+%
 %   Example:
 %
 %   [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
@@ -48,10 +50,10 @@ function [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
 %    24 MU_QMAX     Kuhn-Tucker multiplier on upper Qg limit (u/MVAr)
 %    25 MU_QMIN     Kuhn-Tucker multiplier on lower Qg limit (u/MVAr)
 %
-%   See also DEFINE_CONSTANTS.
+% See also define_constants.
 
 %   MATPOWER
-%   Copyright (c) 1996-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

@@ -1,12 +1,14 @@
 function compare_case(mpc1, mpc2)
-%COMPARE_CASE  Compares the bus, gen, branch matrices of 2 MATPOWER cases.
+% compare_case - Compares the bus, gen, branch matrices of 2 MATPOWER cases.
+% ::
+%
 %   COMPARE_CASE(MPC1, MPC2)
 %   Compares the bus, branch and gen matrices of two MATPOWER cases and
 %   prints a summary of the differences. For each column of the matrix it
 %   prints the maximum of any non-zero differences.
 
 %   MATPOWER
-%   Copyright (c) 1996-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

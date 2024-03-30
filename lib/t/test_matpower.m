@@ -1,19 +1,21 @@
 function success = test_matpower(verbose, exit_on_fail)
-%TEST_MATPOWER  Run all MATPOWER tests.
-%   TEST_MATPOWER
-%   TEST_MATPOWER(VERBOSE)
-%   TEST_MATPOWER(VERBOSE, EXIT_ON_FAIL)
-%   SUCCESS = TEST_MATPOWER(...)
+% test_matpower - Run all |MATPOWER| tests.
+% ::
 %
-%   Runs all of the MATPOWER tests. If VERBOSE is true (false by default),
-%   it prints the details of the individual tests. If EXIT_ON_FAIL is true
-%   (false by default), it will exit MATLAB or Octave with a status of 1
-%   unless T_RUN_TESTS returns ALL_OK.
+%   test_matpower
+%   test_matpower(verbose)
+%   test_matpower(verbose, exit_on_fail)
+%   success = test_matpower(...)
 %
-%   See also T_RUN_TESTS.
+% Runs all of the |MATPOWER| tests. If ``verbose`` is true *(false by
+% default)*, it prints the details of the individual tests. If
+% ``exit_on_fail`` is true *(false by default)*, it will exit MATLAB or
+% Octave with a status of 1 unless t_run_tests returns ``all_ok`` true.
+%
+% See also t_run_tests.
 
 %   MATPOWER
-%   Copyright (c) 2004-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

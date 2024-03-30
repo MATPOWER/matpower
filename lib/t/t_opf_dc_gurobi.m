@@ -1,8 +1,8 @@
 function t_opf_dc_gurobi(quiet)
-%T_OPF_DC_GUROBI  Tests for DC optimal power flow using Gurobi solver.
+% t_opf_dc_gurobi - Tests for legacy DC optimal power flow using Gurobi solver.
 
 %   MATPOWER
-%   Copyright (c) 2004-2021, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

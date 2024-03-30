@@ -1,7 +1,9 @@
 function [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, ...
     RATE_C, TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch
-%IDX_BRCH   Defines constants for named column indices to branch matrix.
+% idx_brch - Defines constants for named column indices to branch matrix.
+% ::
+%
 %   Example:
 %
 %   [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
@@ -50,10 +52,10 @@ function [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, ...
 %    20 MU_ANGMIN   Kuhn-Tucker multiplier lower angle difference limit (u/degree)
 %    21 MU_ANGMAX   Kuhn-Tucker multiplier upper angle difference limit (u/degree)
 %
-%   See also DEFINE_CONSTANTS.
+% See also define_constants.
 
 %   MATPOWER
-%   Copyright (c) 1996-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

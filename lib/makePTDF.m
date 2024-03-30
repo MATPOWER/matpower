@@ -1,5 +1,7 @@
 function H = makePTDF(baseMVA, bus, branch, slack, bus_idx)
-%MAKEPTDF   Builds the DC PTDF matrix for a given choice of slack.
+% makeLODF - Builds the DC PTDF matrix for a given choice of slack.
+% ::
+%
 %   H = MAKEPTDF(MPC)
 %   H = MAKEPTDF(MPC, SLACK)
 %   H = MAKEPTDF(MPC, SLACK, TXFR)
@@ -45,10 +47,10 @@ function H = makePTDF(baseMVA, bus, branch, slack, bus_idx)
 %       % for buses i and j only
 %       H = makePTDF(mpc, slack, [i;j]);
 %
-%   See also MAKELODF.
+% See also makeLODF.
 
 %   MATPOWER
-%   Copyright (c) 2006-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2006-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

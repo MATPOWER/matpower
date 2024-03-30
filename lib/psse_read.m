@@ -1,5 +1,7 @@
 function [records, sections] = psse_read(rawfile_name, verbose)
-%PSSE_READ  Reads the data from a PSS/E RAW data file.
+% psse_read - Reads the data from a PSS/E RAW data file.
+% ::
+%
 %   [RECORDS, SECTIONS] = PSSE_READ(RAWFILE_NAME)
 %   [RECORDS, SECTIONS] = PSSE_READ(RAWFILE_NAME, VERBOSE)
 %
@@ -23,10 +25,10 @@ function [records, sections] = psse_read(rawfile_name, verbose)
 %                   from the 'END OF <NAME> DATA, BEGIN ... DATA'
 %                   comment typically found in the terminator line
 %
-%   See also PSSE2MPC.
+% See also psse2mpc.
 
 %   MATPOWER
-%   Copyright (c) 2014-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2014-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

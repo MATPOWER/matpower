@@ -1,5 +1,5 @@
 function obj = t_mp_table(quiet)
-%T_MP_TABLE  Tests for MP_TABLE (and TABLE).
+% t_mp_table - Tests for mp_table (and :class:`table`).
 
 %   MATPOWER
 %   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)

@@ -1,5 +1,7 @@
 function cpf_events = cpf_register_event(cpf_events, name, fcn, tol, locate)
-%CPF_REGISTER_EVENT  Register event functions=
+% cpf_register_event - Register event functions=
+% ::
+%
 %   CPF_EVENTS = CPF_REGISTER_EVENT(CPF_EVENTS, NAME, FCN, TOL, LOCATE)
 %
 %   Registers a CPF event function to be called by RUNCPF.
@@ -18,7 +20,7 @@ function cpf_events = cpf_register_event(cpf_events, name, fcn, tol, locate)
 %       CPF_EVENTS : updated struct containing info about registered CPF event fcns
 
 %   MATPOWER
-%   Copyright (c) 2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2016-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Shrirang Abhyankar, Argonne National Laboratory
 %

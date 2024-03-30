@@ -1,5 +1,7 @@
 function d2G = opf_power_balance_hess(x, lambda, mpc, Ybus, mpopt)
-%OPF_POWER_BALANCE_HESS  Evaluates Hessian of power balance constraints.
+% opf_power_balance_hess - Evaluates Hessian of power balance constraints.
+% ::
+%
 %   D2G = OPF_POWER_BALANCE_HESS(X, LAMBDA, OM, YBUS, MPOPT)
 %
 %   Hessian evaluation function for AC active and reactive power balance
@@ -19,10 +21,10 @@ function d2G = opf_power_balance_hess(x, lambda, mpc, Ybus, mpopt)
 %   Example:
 %       d2G = opf_power_balance_hess(x, lambda, mpc, Ybus, mpopt);
 %
-%   See also OPF_POWER_BALANCE_FCN.
+% See also opf_power_balance_fcn.
 
 %   MATPOWER
-%   Copyright (c) 1996-2017, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %   and Baljinnyam Sereeter, Delft University of Technology

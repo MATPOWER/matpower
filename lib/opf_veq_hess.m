@@ -1,5 +1,7 @@
 function d2Veq = opf_veq_hess(x, lambda, mpc, idx, mpopt)
-%OPF_VEQ_HESS  Evaluates Hessian of voltage magnitude equality constraint.
+% opf_veq_hess - Evaluates Hessian of voltage magnitude equality constraint.
+% ::
+%
 %   D2VEQ = OPF_VEQ_HESS(X, LAMBDA, MPC, IDX, MPOPT)
 %
 %   Hessian evaluation function for voltage magnitudes.
@@ -18,10 +20,10 @@ function d2Veq = opf_veq_hess(x, lambda, mpc, idx, mpopt)
 %   Example:
 %       d2Veq = opf_veq_hess(x, lambda, mpc, idx, mpopt);
 %
-%   See also OPF_VEQ_FCN.
+% See also opf_veq_fcn.
 
 %   MATPOWER
-%   Copyright (c) 2018, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2018-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Baljinnyam Sereeter, Delft University of Technology
 %

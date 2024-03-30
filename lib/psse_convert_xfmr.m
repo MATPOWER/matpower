@@ -1,5 +1,7 @@
 function [xfmr, bus, warns, bus_name] = psse_convert_xfmr(warns, trans2, trans3, verbose, baseMVA, bus, bus_name)
-%PSSE_CONVERT_XFMR Convert transformer data from PSS/E RAW to MATPOWER
+% psse_convert_xfmr - Convert transformer data from PSS/E RAW to |MATPOWER|.
+% ::
+%
 %   [XFMR, BUS, WARNINGS] = PSSE_CONVERT_XFMR(WARNINGS, TRANS2, TRANS3, ...
 %                                   VERBOSE, BASEMVA, BUS)
 %   [XFMR, BUS, WARNINGS, BUS_NAME] = PSSE_CONVERT_XFMR(WARNINGS, TRANS2, ...
@@ -30,10 +32,10 @@ function [xfmr, bus, warns, bus_name] = psse_convert_xfmr(warns, trans2, trans3,
 %                   warning messages
 %       BUS_NAME: (optional) updated cell array of bus names
 %
-%   See also PSSE_CONVERT.
+% See also psse_convert.
 
 %   MATPOWER
-%   Copyright (c) 2014-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2014-2024, Power Systems Engineering Research Center (PSERC)
 %   by Yujia Zhu, PSERC ASU
 %   and Ray Zimmerman, PSERC Cornell
 %   Based on mptransin.m and mptransficbus.m, written by:

@@ -1,5 +1,7 @@
 function pwlcost = poly2pwl(polycost, Pmin, Pmax, npts)
-%POLY2PWL  Converts polynomial cost variable to piecewise linear.
+% poly2pwl - Converts polynomial cost variable to piecewise linear.
+% ::
+%
 %   PWLCOST = POLY2PWL(POLYCOST, PMIN, PMAX, NPTS) converts the polynomial
 %   cost variable POLYCOST into a piece-wise linear cost by evaluating at
 %   NPTS evenly spaced points between PMIN and PMAX. If the range does not
@@ -7,7 +9,7 @@ function pwlcost = poly2pwl(polycost, Pmin, Pmax, npts)
 %   between PMIN and PMAX.
 
 %   MATPOWER
-%   Copyright (c) 1996-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

@@ -1,5 +1,7 @@
 function [Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch)
-%MAKEYBUS   Builds the bus admittance matrix and branch admittance matrices.
+% makeYbus - Builds the bus admittance matrix and branch admittance matrices.
+% ::
+%
 %   [YBUS, YF, YT] = MAKEYBUS(MPC)
 %   [YBUS, YF, YT] = MAKEYBUS(BASEMVA, BUS, BRANCH)
 %   
@@ -11,10 +13,10 @@ function [Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch)
 %   BRANCH values. Bus numbers must be consecutive beginning at 1
 %   (i.e. internal ordering).
 %
-%   See also MAKEJAC, MAKESBUS, EXT2INT.
+% See also makeJac, makeSbus, ext2int.
 
 %   MATPOWER
-%   Copyright (c) 1996-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

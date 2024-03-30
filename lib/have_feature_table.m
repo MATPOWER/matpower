@@ -1,12 +1,12 @@
 function [TorF, vstr, rdate] = have_feature_table()
-%HAVE_FEATURE_TABLE  Detect availability/version info for TABLE
+% have_feature_table - Detect availability/version info for TABLE.
 %
-%   Feature detection function implementing 'table' tag for HAVE_FEATURE
-%   to detect availability/version of TABLE, included in MATLAB R2013b
-%   and as of this writing in Feb 2024, available for Octave as Tablicious:
-%       https://github.com/apjanke/octave-tablicious
+% Private feature detection function implementing ``'table'`` tag for
+% have_feature to detect availability/version of TABLE, included in
+% MATLAB R2013b and as of this writing in Mar 2024, available for Octave
+% as Tablicious: https://github.com/apjanke/octave-tablicious
 %
-%   See also HAVE_FEATURE, TABLE.
+% See also have_feature, table.
 
 %   MATPOWER
 %   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)

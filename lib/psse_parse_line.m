@@ -1,5 +1,7 @@
 function [data, comment] = psse_parse_line(str, t)
-%PSSE_PARSE_LINE  Reads and parses a single line from a PSS/E RAW data file
+% psse_parse_line - Reads and parses a single line from a PSS/E RAW data file.
+% ::
+%
 %   [DATA, COMMENT] = PSSE_PARSE_LINE(FID)
 %   [DATA, COMMENT] = PSSE_PARSE_LINE(FID, TEMPLATE)
 %   [DATA, COMMENT] = PSSE_PARSE_LINE(STR)
@@ -34,7 +36,7 @@ function [data, comment] = psse_parse_line(str, t)
 %       COMMENT :   (optional) possible comment at the end of the line
 
 %   MATPOWER
-%   Copyright (c) 2014-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2014-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

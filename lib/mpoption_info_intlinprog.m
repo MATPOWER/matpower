@@ -1,5 +1,6 @@
 function opt = mpoption_info_intlinprog(selector)
-%MPOPTION_INFO_INTLINPROG  Returns MATPOWER option info for INTLINPROG.
+% mpoption_info_intlinprog - Returns |MATPOWER| option info for INTLINPROG.
+% ::
 %
 %   DEFAULT_OPTS = MPOPTION_INFO_INTLINPROG('D')
 %   VALID_OPTS   = MPOPTION_INFO_INTLINPROG('V')
@@ -15,10 +16,10 @@ function opt = mpoption_info_intlinprog(selector)
 %   of option names or modify option setting/copying behavior for this
 %   subset of optional MATPOWER options.
 %
-%   See also MPOPTION.
+% See also mpoption.
 
 %   MATPOWER
-%   Copyright (c) 2015-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2015-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

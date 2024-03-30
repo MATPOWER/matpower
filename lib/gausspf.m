@@ -1,5 +1,7 @@
 function [V, converged, i] = gausspf(Ybus, Sbus, V0, ref, pv, pq, mpopt)
-%GAUSSPF  Solves the power flow using a Gauss-Seidel method.
+% gausspf - Solves the power flow using a Gauss-Seidel method.
+% ::
+%
 %   [V, CONVERGED, I] = GAUSSPF(YBUS, SBUS, V0, REF, PV, PQ, MPOPT)
 %   solves for bus voltages given the full system admittance matrix (for
 %   all buses), the complex bus power injection vector (for all buses),
@@ -15,10 +17,10 @@ function [V, converged, i] = gausspf(Ybus, Sbus, V0, ref, pv, pq, mpopt)
 %   a flag which indicates whether it converged or not, and the number
 %   of iterations performed.
 %
-%   See also RUNPF.
+% See also runpf.
 
 %   MATPOWER
-%   Copyright (c) 1996-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Alberto Borghetti, University of Bologna, Italy
 %

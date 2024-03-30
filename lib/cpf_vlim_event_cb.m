@@ -1,6 +1,8 @@
 function [nx, cx, done, rollback, evnts, cb_data, results] = cpf_vlim_event_cb(...
         k, nx, cx, px, done, rollback, evnts, cb_data, cb_args, results)
-%CPF_VLIM_EVENT_CB  Callback to handle VLIM events
+% cpf_vlim_event_cb - Callback to handle VLIM events
+% ::
+%
 %   [NX, CX, DONE, ROLLBACK, EVNTS, CB_DATA, RESULTS] =
 %       CPF_VLIM_EVENT_CB(K, NX, CX, PX, DONE, ROLLBACK, EVNTS, ...
 %                               CB_DATA, CB_ARGS, RESULTS)
@@ -16,10 +18,11 @@ function [nx, cx, done, rollback, evnts, cb_data, results] = cpf_vlim_event_cb(.
 %   at any bus reaches its upper or lower limit, raises the DONE.flag and sets
 %   the DONE.msg.
 %
-%   See CPF_DEFAULT_CALLBACK for details of the input and output arguments.
+% For details of the input and output arguments
+% see also cpf_default_callback.
 
 %   MATPOWER
-%   Copyright (c) 2016-2017, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2016-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Ahmad Abubakar Sadiq, Federal University of Technology Minna, Nigeria
 %   and Shrirang Abhyankar, Argonne National Laboratory

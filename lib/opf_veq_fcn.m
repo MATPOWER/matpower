@@ -1,5 +1,7 @@
 function [Veq, dVeq] = opf_veq_fcn(x, mpc, idx, mpopt)
-%OPF_VEQ_FCN  Evaluates voltage magnitude equality constraint and gradients.
+% opf_veq_fcn - Evaluates voltage magnitude equality constraint and gradients.
+% ::
+%
 %   [Veq, dVeq] = OPF_VEQ_FCN(X, MPC, IDX, MPOPT)
 %
 %   Computes the voltage magnitudes using real and imaginary part of complex voltage for
@@ -19,10 +21,10 @@ function [Veq, dVeq] = opf_veq_fcn(x, mpc, idx, mpopt)
 %       Veq = opf_veq_fcn(x, mpc, mpopt);
 %       [Veq, dVeq] = opf_veq_fcn(x, mpc, idx, mpopt);
 %
-%   See also OPF_VEQ_HESS
+% See also opf_veq_hess.
 
 %   MATPOWER
-%   Copyright (c) 2018, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2018-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Baljinnyam Sereeter, Delft University of Technology
 %

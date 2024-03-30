@@ -1,5 +1,7 @@
 function ef = cpf_nose_event(cb_data, cx)
-%CPF_NOSE_EVENT  Event function to detect the nose point
+% cpf_nose_event - Event function to detect the nose point
+% ::
+%
 %   EF = CPF_NOSE_EVENT(CB_DATA, CX)
 %
 %   CPF event function to detect the nose point of the continuation curve,
@@ -13,7 +15,7 @@ function ef = cpf_nose_event(cb_data, cx)
 %       EF : event function value
 
 %   MATPOWER
-%   Copyright (c) 2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2016-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Shrirang Abhyankar, Argonne National Laboratory
 %

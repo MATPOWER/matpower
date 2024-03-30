@@ -1,8 +1,8 @@
 function t_makePTDF(quiet)
-%T_MAKEPTDF  Tests for MAKEPTDF.
+% t_makePTDF - Tests for makePTDF.
 
 %   MATPOWER
-%   Copyright (c) 2006-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2006-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

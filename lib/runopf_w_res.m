@@ -1,5 +1,7 @@
 function [varargout] = runopf_w_res(varargin)
-%RUNOPF_W_RES  Runs an optimal power flow with fixed zonal reserves.
+% runopf_w_res - Runs an optimal power flow with fixed zonal reserves.
+% ::
+%
 %   RESULTS = RUNOPF_W_RES(CASEDATA, MPOPT, FNAME, SOLVEDCASE)
 %   [RESULTS, SUCCESS] = RUNOPF_W_RES(CASEDATA, MPOPT, FNAME, SOLVEDCASE)
 %
@@ -43,10 +45,10 @@ function [varargout] = runopf_w_res(varargin)
 %   Example:
 %       results = runopf_w_res('t_case30_userfcns');
 %
-%   See also RUNOPF, TOGGLE_RESERVES, T_CASE30_USERFCNS.
+% See also runopf, toggle_reserves, t_case30_userfcns.
 
 %   MATPOWER
-%   Copyright (c) 2008-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

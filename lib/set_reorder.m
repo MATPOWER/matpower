@@ -1,5 +1,6 @@
 function A = set_reorder(A, B, idx, dim)
-%SET_REORDER Assigns B to A with one of the dimensions of A indexed.
+% set_reorder - Assigns B to A with one of the dimensions of A indexed.
+% ::
 %
 %   A = SET_REORDER(A, B, IDX, DIM)
 %
@@ -12,10 +13,10 @@ function A = set_reorder(A, B, idx, dim)
 %   with zeros (if numeric) or empty matrices (if cell array) before
 %   performing the assignment.
 %
-%   See also GET_REORDER.
+% See also get_reorder.
 
 %   MATPOWER
-%   Copyright (c) 2009-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2009-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

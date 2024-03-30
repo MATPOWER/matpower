@@ -1,5 +1,6 @@
 function Zpv = make_zpv(pv,nb,nl,f,Zb,Yd)
-%MAKE_ZPV  Calculates loop impedances for all PV buses.
+% make_zpv - Calculates loop impedances for all PV buses.
+% ::
 %
 %   Zpv = make_zpv(pv,nb,nl,f,Zb,Yd)
 %
@@ -12,7 +13,15 @@ function Zpv = make_zpv(pv,nb,nl,f,Zb,Yd)
 %   input variables are the vector of indicies with "from" buses for each
 %   branch, the vector of branch impedances and indicies of PV buses.
 %
-%   See also CALC_V_PQ_SUM.
+% See also calc_v_pq_sum.
+
+%   MATPOWER
+%   Copyright (c) 2019-2024, Power Systems Engineering Research Center (PSERC)
+%   by Mirko Todorovski
+%
+%   This file is part of MATPOWER.
+%   Covered by the 3-clause BSD License (see LICENSE file for details).
+%   See https://matpower.org for more info.
 
 npv = length(pv);
 Zpv = zeros(npv);

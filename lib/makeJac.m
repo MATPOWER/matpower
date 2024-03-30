@@ -1,5 +1,7 @@
 function [J, Ybus, Yf, Yt] = makeJac(baseMVA, bus, branch, gen, fullJac)
-%MAKEJAC  Forms the power flow Jacobian.
+% makeJac - Forms the power flow Jacobian.
+% ::
+%
 %   J = MAKEJAC(MPC)
 %   J = MAKEJAC(MPC, FULLJAC)
 %   J = MAKEJAC(BASEMVA, BUS, BRANCH, GEN)
@@ -19,10 +21,10 @@ function [J, Ybus, Yf, Yt] = makeJac(baseMVA, bus, branch, gen, fullJac)
 %         YBUS matrix in the process. You probably don't want to use this
 %         in performance critical code.
 %
-%   See also MAKEYBUS, EXT2INT
+% See also makeYbus, ext2int.
 
 %   MATPOWER
-%   Copyright (c) 1996-2017, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

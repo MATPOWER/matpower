@@ -1,5 +1,5 @@
 function t_mpxt_legacy_dcline(quiet)
-%T_MPXT_LEGACY_DCLINE  Tests for legacy DC line extension in MP.XT_LEGACY_DCLINE.
+% t_mpxt_legacy_dcline - Tests for legacy DC line extension in mp.xt_legacy_dcline.
 
 %   MATPOWER
 %   Copyright (c) 2011-2024, Power Systems Engineering Research Center (PSERC)

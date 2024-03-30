@@ -1,5 +1,7 @@
 function fname_out = savecase(fname, varargin)
-%SAVECASE  Saves a MATPOWER case file, given a filename and the data.
+% savecase - Saves a MATPOWER case file, given a filename and the data.
+% ::
+%
 %   SAVECASE(FNAME, CASESTRUCT)
 %   SAVECASE(FNAME, CASESTRUCT, VERSION)
 %   SAVECASE(FNAME, BASEMVA, BUS, GEN, BRANCH)
@@ -24,7 +26,7 @@ function fname_out = savecase(fname, varargin)
 %   version 1 format before saving.
 
 %   MATPOWER
-%   Copyright (c) 1996-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %   and Ray Zimmerman, PSERC Cornell
 %

@@ -1,8 +1,8 @@
 function t_jacobian(quiet)
-%T_JACOBIAN  Numerical tests of partial derivative code.
+% t_jacobian - Numerical tests of partial derivative code.
 
 %   MATPOWER
-%   Copyright (c) 2004-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Baljinnyam Sereeter, Delft University of Technology
 %

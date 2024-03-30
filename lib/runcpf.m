@@ -1,6 +1,8 @@
 function [res, suc] = ...
     runcpf(basecasedata, targetcasedata, mpopt, fname, solvedcase)
-%RUNCPF  Runs a full AC continuation power flow
+% runcpf - Runs a full AC continuation power flow
+% ::
+%
 %   [RESULTS, SUCCESS] = RUNCPF(BASECASEDATA, TARGETCASEDATA, ...
 %                                   MPOPT, FNAME, SOLVEDCASE)
 %
@@ -13,13 +15,13 @@ function [res, suc] = ...
 %       BASECASEDATA : either a MATPOWER case struct or a string containing
 %           the name of the file with the case data defining the base loading
 %           and generation (default is 'case9')
-%           (see also CASEFORMAT and LOADCASE)
+%           (see CASEFORMAT and LOADCASE)
 %       TARGETCASEDATA : either a MATPOWER case struct or a string
 %           containing the name of the file with the case data defining the
 %           target loading and generation (default is 'case9target')
 %       MPOPT : MATPOWER options struct to override default options
 %           can be used to specify the parameterization, output options,
-%           termination criteria, and more (see also MPOPTION).
+%           termination criteria, and more (see MPOPTION).
 %       FNAME : name of a file to which the pretty-printed output will
 %           be appended
 %       SOLVEDCASE : name of file to which the solved case will be saved
@@ -130,10 +132,10 @@ function [res, suc] = ...
 %       results = runcpf('case9', 'case9target', ...
 %                           mpoption('cpf.stop_at', 'FULL'));
 %
-%   See also MPOPTION, RUNPF.
+% See also mpoption, runpf.
 
 %   MATPOWER
-%   Copyright (c) 1996-2017, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell,
 %   Shrirang Abhyankar, Argonne National Laboratory,
 %   and Alexander Flueck, IIT

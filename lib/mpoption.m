@@ -1,5 +1,6 @@
 function opt = mpoption(varargin)
-%MPOPTION  Used to set and retrieve a MATPOWER options struct.
+% mpoption - Used to set and retrieve a |MATPOWER| options struct.
+% ::
 %
 %   OPT = MPOPTION
 %       Returns the default options struct.
@@ -44,452 +45,452 @@ function opt = mpoption(varargin)
 %       mpopt = mpoption('pf.alg', 'FDXB', 'pf.tol', 1e-4);
 %       mpopt = mpoption(mpopt, 'opf.dc.solver', 'CPLEX', 'verbose', 2);
 %
-%The currently defined options are as follows:
-%
-%   name                    default     description [options]
-%----------------------    ---------   ----------------------------------
-%Model options:
-%   model                   'AC'        AC vs. DC power flow model
-%       [ 'AC' - use nonlinear AC model & corresponding algorithms/options  ]
-%       [ 'DC' - use linear DC model & corresponding algorithms/options     ]
-%
-%Power Flow options:
-%   pf.alg                  'NR'        AC power flow algorithm
-%       [ 'NR'    - Newton's method (formulation depends on values of       ]
-%       [           pf.current_balance and pf.v_cartesian options)          ]
-%       [ 'NR-SP' - Newton's method (power mismatch, polar)                 ]
-%       [ 'NR-SC' - Newton's method (power mismatch, cartesian)             ]
-%       [ 'NR-SH' - Newton's method (power mismatch, hybrid)                ]
-%       [ 'NR-IP' - Newton's method (current mismatch, polar)               ]
-%       [ 'NR-IC' - Newton's method (current mismatch, cartesian)           ]
-%       [ 'NR-IH' - Newton's method (current mismatch, hybrid)              ]
-%       [ 'FDXB'  - Fast-Decoupled (XB version)                             ]
-%       [ 'FDBX'  - Fast-Decoupled (BX version)                             ]
-%       [ 'GS'    - Gauss-Seidel                                            ]
-%       [ 'ZG'    - Implicit Z-bus Gauss                                     ]
-%       [ 'PQSUM' - Power Summation method (radial networks only)           ]
-%       [ 'ISUM'  - Current Summation method (radial networks only)         ]
-%       [ 'YSUM'  - Admittance Summation method (radial networks only)      ]
-%   pf.current_balance     0           type of nodal balance equation
-%       [ 0 - use complex power balance equations                           ]
-%       [ 1 - use complex current balance equations                         ]
-%   pf.v_cartesian         0           voltage representation
-%       [ 0 - bus voltage variables represented in polar coordinates        ]
-%       [ 1 - bus voltage variables represented in cartesian coordinates    ]
-%       [ 2 - hybrid, polar updates computed via modified cartesian Jacobian]
-%   pf.tol                  1e-8        termination tolerance on per unit
-%                                       P & Q mismatch
-%   pf.nr.max_it            10          maximum number of iterations for
-%                                       Newton's method
-%   pf.nr.lin_solver        ''          linear solver passed to MPLINSOLVE to
-%                                       solve Newton update step
-%       [ ''      - default to '\' for small systems, 'LU3' for larger ones ]
-%       [ '\'     - built-in backslash operator                             ]
-%       [ 'LU'    - explicit default LU decomposition and back substitution ]
-%       [ 'LU3'   - 3 output arg form of LU, Gilbert-Peierls algorithm with ]
-%       [           approximate minimum degree (AMD) reordering             ]
-%       [ 'LU4'   - 4 output arg form of LU, UMFPACK solver (same as 'LU')  ]
-%       [ 'LU5'   - 5 output arg form of LU, UMFPACK solver, w/row scaling  ]
-%       [       (see MPLINSOLVE for complete list of all options)           ]
-%   pf.fd.max_it            30          maximum number of iterations for
-%                                       fast decoupled method
-%   pf.gs.max_it            1000        maximum number of iterations for
-%                                       Gauss-Seidel method
-%   pf.zg.max_it            1000        maximum number of iterations for
-%                                       Implicit Z-bus Gauss method
-%   pf.radial.max_it        20          maximum number of iterations for
-%                                       radial power flow methods
-%   pf.radial.vcorr         0           perform voltage correction procedure
-%                                       in distribution power flow
-%       [  0 - do NOT perform voltage correction                            ]
-%       [  1 - perform voltage correction                                   ]
-%   pf.enforce_q_lims       0           enforce gen reactive power limits at
-%                                       expense of |V|
-%       [  0 - do NOT enforce limits                                        ]
-%       [  1 - enforce limits, simultaneous bus type conversion             ]
-%       [  2 - enforce limits, one-at-a-time bus type conversion            ]
-%
-%Continuation Power Flow options:
-%   cpf.parameterization    3           choice of parameterization
-%       [  1 - natural                                                      ]
-%       [  2 - arc length                                                   ]
-%       [  3 - pseudo arc length                                            ]
-%   cpf.stop_at             'NOSE'      determines stopping criterion
-%       [ 'NOSE'     - stop when nose point is reached                      ]
-%       [ 'FULL'     - trace full nose curve                                ]
-%       [ <lam_stop> - stop upon reaching specified target lambda value     ]
-%   cpf.enforce_p_lims      0           enforce gen active power limits
-%       [  0 - do NOT enforce limits                                        ]
-%       [  1 - enforce limits, simultaneous bus type conversion             ]
-%   cpf.enforce_q_lims      0           enforce gen reactive power limits at
-%                                       expense of |V|
-%       [  0 - do NOT enforce limits                                        ]
-%       [  1 - enforce limits, simultaneous bus type conversion             ]
-%   cpf.enforce_v_lims      0           enforce bus voltage magnitude limits
-%       [  0 - do NOT enforce limits                                        ]
-%       [  1 - enforce limits, termination on detection                     ]
-%   cpf.enforce_flow_lims   0           enforce branch flow MVA limits
-%       [  0 - do NOT enforce limits                                        ]
-%       [  1 - enforce limits, termination on detection                     ]
-%   cpf.step                0.05        continuation power flow step size
-%   cpf.adapt_step          0           toggle adaptive step size feature
-%       [  0 - adaptive step size disabled                                  ]
-%       [  1 - adaptive step size enabled                                   ]
-%   cpf.step_min            1e-4        minimum allowed step size
-%   cpf.step_max            0.2         maximum allowed step size
-%   cpf.adapt_step_damping  0.7         damping factor for adaptive step
-%                                       sizing
-%   cpf.adapt_step_tol      1e-3        tolerance for adaptive step sizing
-%   cpf.target_lam_tol      1e-5        tolerance for target lambda detection
-%   cpf.nose_tol            1e-5        tolerance for nose point detection (pu)
-%   cpf.p_lims_tol          0.01        tolerance for generator active
-%                                       power limit enforcement (MW)
-%   cpf.q_lims_tol          0.01        tolerance for generator reactive
-%                                       power limit enforcement (MVAR)
-%   cpf.v_lims_tol          1e-4        tolerance for bus voltage
-%                                       magnitude enforcement (p.u)
-%   cpf.flow_lims_tol       0.01        tolerance for line MVA flow
-%                                       enforcement (MVA)
-%   cpf.plot.level          0           control plotting of nose curve
-%       [  0 - do not plot nose curve                                       ]
-%       [  1 - plot when completed                                          ]
-%       [  2 - plot incrementally at each iteration                         ]
-%       [  3 - same as 2, with 'pause' at each iteration                    ]
-%   cpf.plot.bus            <empty>     index of bus whose voltage is to be
-%                                       plotted
-%   cpf.user_callback       <empty>     string containing the name of a user
-%                                       callback function, or struct with
-%                                       function name, and optional priority
-%                                       and/or args, or cell array of such
-%                                       strings and/or structs, see
-%                                       'help cpf_default_callback' for details
-%
-%Optimal Power Flow options:
-%   name                    default     description [options]
-%----------------------    ---------   ----------------------------------
-%   opf.ac.solver           'DEFAULT'   AC optimal power flow solver
-%       [ 'DEFAULT' - choose default solver, i.e. 'MIPS'                    ]
-%       [ 'MIPS'    - MIPS, MATPOWER Interior Point Solver, primal/dual     ]
-%       [             interior point method (pure MATLAB/Octave)            ]
-%       [ 'FMINCON' - MATLAB Optimization Toolbox, FMINCON                  ]
-%       [ 'IPOPT'   - IPOPT, requires MEX interface to IPOPT solver         ]
-%       [             available from:                                       ]
-%       [                   https://github.com/coin-or/Ipopt                ]
-%       [ 'KNITRO'  - Artelys Knitro, requires Artelys Knitro solver,       ]
-%       [             available from:https://www.artelys.com/solvers/knitro/]
-%       [ 'MINOPF'  - MINOPF, MINOS-based solver, requires optional         ]
-%       [             MEX-based MINOPF package, available from:             ]
-%       [                   http://www.pserc.cornell.edu/minopf/            ]
-%       [ 'PDIPM'   - PDIPM, primal/dual interior point method, requires    ]
-%       [             optional MEX-based TSPOPF package, available from:    ]
-%       [                   http://www.pserc.cornell.edu/tspopf/            ]
-%       [ 'SDPOPF'  - SDPOPF, solver based on semidefinite relaxation of    ]
-%       [             OPF problem, requires optional packages:              ]
-%       [               SDP_PF, available in extras/sdp_pf                  ]
-%       [               YALMIP, available from:                             ]
-%       [                   https://yalmip.github.io                        ]
-%       [               SDP solver such as SeDuMi, available from:          ]
-%       [                   http://sedumi.ie.lehigh.edu/                    ]
-%       [ 'TRALM'   - TRALM, trust region based augmented Langrangian       ]
-%       [             method, requires TSPOPF (see 'PDIPM')                 ]
-%   opf.dc.solver           'DEFAULT'   DC optimal power flow solver
-%       [ 'DEFAULT' - choose solver based on availability in the following  ]
-%       [             order: 'GUROBI', 'CPLEX', 'MOSEK', 'OT',              ]
-%       [             'GLPK' (linear costs only), 'BPMPD', 'MIPS'           ]
-%       [ 'MIPS'    - MIPS, MATPOWER Interior Point Solver, primal/dual     ]
-%       [             interior point method (pure MATLAB/Octave)            ]
-%       [ 'BPMPD'   - BPMPD, requires optional MEX-based BPMPD_MEX package  ]
-%       [             available from: http://www.pserc.cornell.edu/bpmpd/   ]
-%       [ 'CLP'     - CLP, requires interface to COIN-OP LP solver          ]
-%       [             available from:https://github.com/coin-or/Clp         ]
-%       [ 'CPLEX'   - CPLEX, requires CPLEX solver available from:          ]
-%       [             https://www.ibm.com/analytics/cplex-optimizer         ]
-%       [ 'GLPK'    - GLPK, requires interface to GLPK solver               ]
-%       [             available from: https://www.gnu.org/software/glpk/    ]
-%       [             (GLPK does not work with quadratic cost functions)    ]
-%       [ 'GUROBI'  - GUROBI, requires Gurobi optimizer (v. 5+)             ]
-%       [             available from: https://www.gurobi.com/               ]
-%       [ 'IPOPT'   - IPOPT, requires MEX interface to IPOPT solver         ]
-%       [             available from:                                       ]
-%       [                 https://github.com/coin-or/Ipopt                  ]
-%       [ 'MOSEK'   - MOSEK, requires MATLAB interface to MOSEK solver      ]
-%       [             available from: https://www.mosek.com/                ]
-%       [ 'OSQP'    - OSQP, requires MATLAB interface to OSQP solver        ]
-%       [             available from: https://osqp.org/                     ]
-%       [ 'OT'      - MATLAB Optimization Toolbox, QUADPROG, LINPROG        ]
-%   opf.current_balance     0           type of nodal balance equation
-%       [ 0 - use complex power balance equations                           ]
-%       [ 1 - use complex current balance equations                         ]
-%   opf.v_cartesian         0           voltage representation
-%       [ 0 - bus voltage variables represented in polar coordinates        ]
-%       [ 1 - bus voltage variables represented in cartesian coordinates    ]
-%   opf.violation           5e-6        constraint violation tolerance
-%   opf.use_vg              0           respect gen voltage setpt     [ 0-1 ]
-%       [ 0 - use specified bus Vmin & Vmax, and ignore gen Vg              ]
-%       [ 1 - replace specified bus Vmin & Vmax by corresponding gen Vg     ]
-%       [ between 0 and 1 - use a weighted average of the 2 options         ]
-%   opf.flow_lim            'S'         quantity limited by branch flow
-%                                       constraints
-%       [ 'S' - apparent power flow (limit in MVA)                          ]
-%       [ 'P' - active power flow, implemented using P   (limit in MW)      ]
-%       [ '2' - active power flow, implemented using P^2 (limit in MW)      ]
-%       [ 'I' - current magnitude (limit in MVA at 1 p.u. voltage)          ]
-%   opf.ignore_angle_lim    0           angle diff limits for branches
-%       [ 0 - include angle difference limits, if specified                 ]
-%       [ 1 - ignore angle difference limits even if specified              ]
-%   opf.softlims.default    1           behavior of OPF soft limits for
-%                                       which parameters are not explicitly
-%                                       provided
-%       [ 0 - do not include softlims if not explicitly specified           ]
-%       [ 1 - include softlims w/default values if not explicitly specified ]
-%   opf.start               0           strategy for initializing OPF start pt
-%       [   0 - default, MATPOWER decides based on solver                   ]
-%       [       (currently identical to 1)                                  ]
-%       [   1 - ignore current state in MATPOWER case (only applies to      ]
-%       [       fmincon, Ipopt, Knitro and MIPS, which use an interior pt   ]
-%       [       estimate; others use current state as with opf.start = 2)   ]
-%       [   2 - use current state in MATPOWER case                          ]
-%       [   3 - solve power flow and use resulting state                    ]
-%   opf.return_raw_der      0           for AC OPF, return constraint and
-%                                       derivative info in results.raw
-%                                       (in fields g, dg, df, d2f) [ 0 or 1 ]
-%
-%Output options:
-%   name                    default     description [options]
-%----------------------    ---------   ----------------------------------
-%   verbose                 1           amount of progress info printed
-%       [   0 - print no progress info                                      ]
-%       [   1 - print a little progress info                                ]
-%       [   2 - print a lot of progress info                                ]
-%       [   3 - print all progress info                                     ]
-%   out.all                 -1          controls pretty-printing of results
-%       [  -1 - individual flags control what prints                        ]
-%       [   0 - do not print anything (overrides individual flags, ignored  ]
-%       [       for files specified as FNAME arg to runpf(), runopf(), etc.)]
-%       [   1 - print everything (overrides individual flags)               ]
-%   out.sys_sum             1           print system summary       [ 0 or 1 ]
-%   out.area_sum            0           print area summaries       [ 0 or 1 ]
-%   out.bus                 1           print bus detail           [ 0 or 1 ]
-%   out.branch              1           print branch detail        [ 0 or 1 ]
-%   out.gen                 0           print generator detail     [ 0 or 1 ]
-%   out.lim.all             -1          controls constraint info output
-%       [  -1 - individual flags control what constraint info prints        ]
-%       [   0 - no constraint info (overrides individual flags)             ]
-%       [   1 - binding constraint info (overrides individual flags)        ]
-%       [   2 - all constraint info (overrides individual flags)            ]
-%   out.lim.v               1           control voltage limit info
-%       [   0 - do not print                                                ]
-%       [   1 - print binding constraints only                              ]
-%       [   2 - print all constraints                                       ]
-%       [   (same options for OUT_LINE_LIM, OUT_PG_LIM, OUT_QG_LIM)         ]
-%   out.lim.line            1           control line flow limit info
-%   out.lim.pg              1           control gen active power limit info
-%   out.lim.qg              1           control gen reactive pwr limit info
-%   out.force               0           print results even if success
-%                                       flag = 0                   [ 0 or 1 ]
-%   out.suppress_detail     -1          suppress all output but system summary
-%       [  -1 - suppress details for large systems (> 500 buses)            ]
-%       [   0 - do not suppress any output specified by other flags         ]
-%       [   1 - suppress all output except system summary section           ]
-%       [       (overrides individual flags, but not out.all = 1)           ]
-%
-%Solver specific options:
-%       name                    default     description [options]
-%   -----------------------    ---------   ----------------------------------
-%   MIPS:
-%       mips.linsolver          ''          linear system solver
-%           [   '' or '\'   build-in backslash \ operator (e.g. x = A \ b)  ]
-%           [   'PARDISO'   PARDISO solver (if available)                   ]
-%       mips.feastol            0           feasibility (equality) tolerance
-%                                           (set to opf.violation by default)
-%       mips.gradtol            1e-6        gradient tolerance
-%       mips.comptol            1e-6        complementary condition
-%                                           (inequality) tolerance
-%       mips.costtol            1e-6        optimality tolerance
-%       mips.max_it             150         maximum number of iterations
-%       mips.step_control       0           enable step-size cntrl [ 0 or 1 ]
-%       mips.sc.red_it          20          maximum number of reductions per
-%                                           iteration with step control
-%       mips.xi                 0.99995     constant used in alpha updates*
-%       mips.sigma              0.1         centering parameter*
-%       mips.z0                 1           used to initialize slack variables*
-%       mips.alpha_min          1e-8        returns "Numerically Failed" if
-%                                           either alpha parameter becomes
-%                                           smaller than this value*
-%       mips.rho_min            0.95        lower bound on rho_t*
-%       mips.rho_max            1.05        upper bound on rho_t*
-%       mips.mu_threshold       1e-5        KT multipliers smaller than this
-%                                           value for non-binding constraints
-%                                           are forced to zero
-%       mips.max_stepsize       1e10        returns "Numerically Failed" if the
-%                                           2-norm of the reduced Newton step
-%                                           exceeds this value*
-%           * See the corresponding Appendix in the manual for details.
-%
-%   CPLEX:
-%       cplex.lpmethod          0           solution algorithm for LP problems
-%           [   0 - automatic: let CPLEX choose                             ]
-%           [   1 - primal simplex                                          ]
-%           [   2 - dual simplex                                            ]
-%           [   3 - network simplex                                         ]
-%           [   4 - barrier                                                 ]
-%           [   5 - sifting                                                 ]
-%           [   6 - concurrent (dual, barrier, and primal)                  ]
-%       cplex.qpmethod          0           solution algorithm for QP problems
-%           [   0 - automatic: let CPLEX choose                             ]
-%           [   1 - primal simplex optimizer                                ]
-%           [   2 - dual simplex optimizer                                  ]
-%           [   3 - network optimizer                                       ]
-%           [   4 - barrier optimizer                                       ]
-%       cplex.opts              <empty>     see CPLEX_OPTIONS for details
-%       cplex.opt_fname         <empty>     see CPLEX_OPTIONS for details
-%       cplex.opt               0           see CPLEX_OPTIONS for details
-%
-%   FMINCON:
-%       fmincon.alg             4           algorithm used by fmincon() for OPF
-%                                           for Opt Toolbox 4 and later
-%            [  1 - active-set (not suitable for large problems)            ]
-%            [  2 - interior-point, w/default 'bfgs' Hessian approx         ]
-%            [  3 - interior-point, w/ 'lbfgs' Hessian approx               ]
-%            [  4 - interior-point, w/exact user-supplied Hessian           ]
-%            [  5 - interior-point, w/Hessian via finite differences        ]
-%            [  6 - sqp (not suitable for large problems)                   ]
-%       fmincon.tol_x           1e-4        termination tol on x
-%       fmincon.tol_f           1e-4        termination tol on f
-%       fmincon.max_it          0           maximum number of iterations
-%                                                           [  0 => default ]
-%
-%   GUROBI:
-%       gurobi.method           0           solution algorithm (Method)
-%           [  -1 - automatic, let Gurobi decide                            ]
-%           [   0 - primal simplex                                          ]
-%           [   1 - dual simplex                                            ]
-%           [   2 - barrier                                                 ]
-%           [   3 - concurrent (LP only)                                    ]
-%           [   4 - deterministic concurrent (LP only)                      ]
-%           [   5 - deterministic concurrent simplex (LP only)              ]
-%       gurobi.timelimit        Inf         maximum time allowed (TimeLimit)
-%       gurobi.threads          0           max number of threads (Threads)
-%       gurobi.opts             <empty>     see GUROBI_OPTIONS for details
-%       gurobi.opt_fname        <empty>     see GUROBI_OPTIONS for details
-%       gurobi.opt              0           see GUROBI_OPTIONS for details
-%
-%   IPOPT:
-%       ipopt.opts              <empty>     see IPOPT_OPTIONS for details
-%       ipopt.opt_fname         <empty>     see IPOPT_OPTIONS for details
-%       ipopt.opt               0           see IPOPT_OPTIONS for details
-%
-%   KNITRO:
-%       knitro.tol_x            1e-4        termination tol on x
-%       knitro.tol_f            1e-4        termination tol on f
-%       knitro.maxit            0           maximum number of iterations
-%                                                           [  0 => default ]
-%       knitro.opt_fname        <empty>     name of user-supplied native
-%                                           Knitro options file that overrides
-%                                           all other options
-%       knitro.opt              0           if knitro.opt_fname is empty and
-%                                           knitro.opt is a non-zero integer N
-%                                           then knitro.opt_fname is auto-
-%                                           generated as:
-%                                           'knitro_user_options_N.txt'
-%
-%   LINPROG:
-%       linprog                 <empty>     LINPROG options passed to
-%                                           OPTIMOPTIONS or OPTIMSET.
-%                                           see LINPROG in the Optimization
-%                                           Toolbox for details
-%
-%   MINOPF:
-%       minopf.feastol          0 (1e-3)    primal feasibility tolerance
-%                                           (set to opf.violation by default)
-%       minopf.rowtol           0 (1e-3)    row tolerance
-%       minopf.xtol             0 (1e-4)    x tolerance
-%       minopf.majdamp          0 (0.5)     major damping parameter
-%       minopf.mindamp          0 (2.0)     minor damping parameter
-%       minopf.penalty          0 (1.0)     penalty parameter
-%       minopf.major_it         0 (200)     major iterations
-%       minopf.minor_it         0 (2500)    minor iterations
-%       minopf.max_it           0 (2500)    iterations limit
-%       minopf.verbosity        -1          amount of progress info printed
-%           [  -1 - controlled by 'verbose' option                          ]
-%           [   0 - print nothing                                           ]
-%           [   1 - print only termination status message                   ]
-%           [   2 - print termination status and screen progress            ]
-%           [   3 - print screen progress, report file (usually fort.9)     ]
-%       minopf.core             0 (1200*nb + 2*(nb+ng)^2) memory allocation
-%       minopf.supbasic_lim     0 (2*nb + 2*ng) superbasics limit
-%       minopf.mult_price       0 (30)      multiple price
-%
-%   MOSEK:
-%       mosek.lp_alg            0           solution algorithm
-%                                               (MSK_IPAR_OPTIMIZER)
-%           for MOSEK 8.x ...        (see MOSEK_SYMBCON for a "better way")
-%           [   0 - automatic: let MOSEK choose                             ]
-%           [   1 - dual simplex                                            ]
-%           [   2 - automatic: let MOSEK choose                             ]
-%           [   3 - automatic simplex (MOSEK chooses which simplex method)  ]
-%           [   4 - interior point                                          ]
-%           [   6 - primal simplex                                          ]
-%       mosek.max_it            0 (400)     interior point max iterations
-%                                               (MSK_IPAR_INTPNT_MAX_ITERATIONS)
-%       mosek.gap_tol           0 (1e-8)    interior point relative gap tol
-%                                               (MSK_DPAR_INTPNT_TOL_REL_GAP)
-%       mosek.max_time          0 (-1)      maximum time allowed
-%                                               (MSK_DPAR_OPTIMIZER_MAX_TIME)
-%       mosek.num_threads       0 (1)       max number of threads
-%                                               (MSK_IPAR_INTPNT_NUM_THREADS)
-%       mosek.opts              <empty>     see MOSEK_OPTIONS for details
-%       mosek.opt_fname         <empty>     see MOSEK_OPTIONS for details
-%       mosek.opt               0           see MOSEK_OPTIONS for details
-%
-%   OSQP:
-%       osqp.opts               <empty>     see OSQP_OPTIONS for details
-%
-%   QUADPROG:
-%       quadprog                <empty>     QUADPROG options passed to
-%                                           OPTIMOPTIONS or OPTIMSET.
-%                                           see QUADPROG in the Optimization
-%                                           Toolbox for details
-%
-%   TSPOPF:
-%       pdipm.feastol           0           feasibility (equality) tolerance
-%                                           (set to opf.violation by default)
-%       pdipm.gradtol           1e-6        gradient tolerance
-%       pdipm.comptol           1e-6        complementary condition
-%                                           (inequality) tolerance
-%       pdipm.costtol           1e-6        optimality tolerance
-%       pdipm.max_it            150         maximum number of iterations
-%       pdipm.step_control      0           enable step-size cntrl [ 0 or 1 ]
-%       pdipm.sc.red_it         20          maximum number of reductions per
-%                                           iteration with step control
-%       pdipm.sc.smooth_ratio   0.04        piecewise linear curve smoothing
-%                                           ratio
-%
-%       tralm.feastol           0           feasibility tolerance
-%                                           (set to opf.violation by default)
-%       tralm.primaltol         5e-4        primal variable tolerance
-%       tralm.dualtol           5e-4        dual variable tolerance
-%       tralm.costtol           1e-5        optimality tolerance
-%       tralm.major_it          40          maximum number of major iterations
-%       tralm.minor_it          40          maximum number of minor iterations
-%       tralm.smooth_ratio      0.04        piecewise linear curve smoothing
-%                                           ratio
-%
-%Experimental Options:
-%   exp.use_legacy_core         0           set to 1 to bypass MP-Core and
-%                                           force use of legacy core code for
-%                                           runpf(), runcpf(), runopf().
-%   exp.sys_wide_zip_loads.pw   <empty>     1 x 3 vector of active load fraction
-%                                           to be modeled as constant power,
-%                                           constant current and constant
-%                                           impedance, respectively, where
-%                                           <empty> means use [1 0 0]
-%   exp.sys_wide_zip_loads.qw   <empty>     same for reactive power, where
-%                                           <empty> means use same value as
-%                                           for 'pw'
+%   The currently defined options are as follows:
+%   
+%      name                    default     description [options]
+%   ----------------------    ---------   ----------------------------------
+%   Model options:
+%      model                   'AC'        AC vs. DC power flow model
+%          [ 'AC' - use nonlinear AC model & corresponding algorithms/options  ]
+%          [ 'DC' - use linear DC model & corresponding algorithms/options     ]
+%   
+%   Power Flow options:
+%      pf.alg                  'NR'        AC power flow algorithm
+%          [ 'NR'    - Newton's method (formulation depends on values of       ]
+%          [           pf.current_balance and pf.v_cartesian options)          ]
+%          [ 'NR-SP' - Newton's method (power mismatch, polar)                 ]
+%          [ 'NR-SC' - Newton's method (power mismatch, cartesian)             ]
+%          [ 'NR-SH' - Newton's method (power mismatch, hybrid)                ]
+%          [ 'NR-IP' - Newton's method (current mismatch, polar)               ]
+%          [ 'NR-IC' - Newton's method (current mismatch, cartesian)           ]
+%          [ 'NR-IH' - Newton's method (current mismatch, hybrid)              ]
+%          [ 'FDXB'  - Fast-Decoupled (XB version)                             ]
+%          [ 'FDBX'  - Fast-Decoupled (BX version)                             ]
+%          [ 'GS'    - Gauss-Seidel                                            ]
+%          [ 'ZG'    - Implicit Z-bus Gauss                                     ]
+%          [ 'PQSUM' - Power Summation method (radial networks only)           ]
+%          [ 'ISUM'  - Current Summation method (radial networks only)         ]
+%          [ 'YSUM'  - Admittance Summation method (radial networks only)      ]
+%      pf.current_balance     0           type of nodal balance equation
+%          [ 0 - use complex power balance equations                           ]
+%          [ 1 - use complex current balance equations                         ]
+%      pf.v_cartesian         0           voltage representation
+%          [ 0 - bus voltage variables represented in polar coordinates        ]
+%          [ 1 - bus voltage variables represented in cartesian coordinates    ]
+%          [ 2 - hybrid, polar updates computed via modified cartesian Jacobian]
+%      pf.tol                  1e-8        termination tolerance on per unit
+%                                          P & Q mismatch
+%      pf.nr.max_it            10          maximum number of iterations for
+%                                          Newton's method
+%      pf.nr.lin_solver        ''          linear solver passed to MPLINSOLVE to
+%                                          solve Newton update step
+%          [ ''      - default to '\' for small systems, 'LU3' for larger ones ]
+%          [ '\'     - built-in backslash operator                             ]
+%          [ 'LU'    - explicit default LU decomposition and back substitution ]
+%          [ 'LU3'   - 3 output arg form of LU, Gilbert-Peierls algorithm with ]
+%          [           approximate minimum degree (AMD) reordering             ]
+%          [ 'LU4'   - 4 output arg form of LU, UMFPACK solver (same as 'LU')  ]
+%          [ 'LU5'   - 5 output arg form of LU, UMFPACK solver, w/row scaling  ]
+%          [       (see MPLINSOLVE for complete list of all options)           ]
+%      pf.fd.max_it            30          maximum number of iterations for
+%                                          fast decoupled method
+%      pf.gs.max_it            1000        maximum number of iterations for
+%                                          Gauss-Seidel method
+%      pf.zg.max_it            1000        maximum number of iterations for
+%                                          Implicit Z-bus Gauss method
+%      pf.radial.max_it        20          maximum number of iterations for
+%                                          radial power flow methods
+%      pf.radial.vcorr         0           perform voltage correction procedure
+%                                          in distribution power flow
+%          [  0 - do NOT perform voltage correction                            ]
+%          [  1 - perform voltage correction                                   ]
+%      pf.enforce_q_lims       0           enforce gen reactive power limits at
+%                                          expense of |V|
+%          [  0 - do NOT enforce limits                                        ]
+%          [  1 - enforce limits, simultaneous bus type conversion             ]
+%          [  2 - enforce limits, one-at-a-time bus type conversion            ]
+%   
+%   Continuation Power Flow options:
+%      cpf.parameterization    3           choice of parameterization
+%          [  1 - natural                                                      ]
+%          [  2 - arc length                                                   ]
+%          [  3 - pseudo arc length                                            ]
+%      cpf.stop_at             'NOSE'      determines stopping criterion
+%          [ 'NOSE'     - stop when nose point is reached                      ]
+%          [ 'FULL'     - trace full nose curve                                ]
+%          [ <lam_stop> - stop upon reaching specified target lambda value     ]
+%      cpf.enforce_p_lims      0           enforce gen active power limits
+%          [  0 - do NOT enforce limits                                        ]
+%          [  1 - enforce limits, simultaneous bus type conversion             ]
+%      cpf.enforce_q_lims      0           enforce gen reactive power limits at
+%                                          expense of |V|
+%          [  0 - do NOT enforce limits                                        ]
+%          [  1 - enforce limits, simultaneous bus type conversion             ]
+%      cpf.enforce_v_lims      0           enforce bus voltage magnitude limits
+%          [  0 - do NOT enforce limits                                        ]
+%          [  1 - enforce limits, termination on detection                     ]
+%      cpf.enforce_flow_lims   0           enforce branch flow MVA limits
+%          [  0 - do NOT enforce limits                                        ]
+%          [  1 - enforce limits, termination on detection                     ]
+%      cpf.step                0.05        continuation power flow step size
+%      cpf.adapt_step          0           toggle adaptive step size feature
+%          [  0 - adaptive step size disabled                                  ]
+%          [  1 - adaptive step size enabled                                   ]
+%      cpf.step_min            1e-4        minimum allowed step size
+%      cpf.step_max            0.2         maximum allowed step size
+%      cpf.adapt_step_damping  0.7         damping factor for adaptive step
+%                                          sizing
+%      cpf.adapt_step_tol      1e-3        tolerance for adaptive step sizing
+%      cpf.target_lam_tol      1e-5        tolerance for target lambda detection
+%      cpf.nose_tol            1e-5        tolerance for nose point detection (pu)
+%      cpf.p_lims_tol          0.01        tolerance for generator active
+%                                          power limit enforcement (MW)
+%      cpf.q_lims_tol          0.01        tolerance for generator reactive
+%                                          power limit enforcement (MVAR)
+%      cpf.v_lims_tol          1e-4        tolerance for bus voltage
+%                                          magnitude enforcement (p.u)
+%      cpf.flow_lims_tol       0.01        tolerance for line MVA flow
+%                                          enforcement (MVA)
+%      cpf.plot.level          0           control plotting of nose curve
+%          [  0 - do not plot nose curve                                       ]
+%          [  1 - plot when completed                                          ]
+%          [  2 - plot incrementally at each iteration                         ]
+%          [  3 - same as 2, with 'pause' at each iteration                    ]
+%      cpf.plot.bus            <empty>     index of bus whose voltage is to be
+%                                          plotted
+%      cpf.user_callback       <empty>     string containing the name of a user
+%                                          callback function, or struct with
+%                                          function name, and optional priority
+%                                          and/or args, or cell array of such
+%                                          strings and/or structs, see
+%                                          'help cpf_default_callback' for details
+%   
+%   Optimal Power Flow options:
+%      name                    default     description [options]
+%   ----------------------    ---------   ----------------------------------
+%      opf.ac.solver           'DEFAULT'   AC optimal power flow solver
+%          [ 'DEFAULT' - choose default solver, i.e. 'MIPS'                    ]
+%          [ 'MIPS'    - MIPS, MATPOWER Interior Point Solver, primal/dual     ]
+%          [             interior point method (pure MATLAB/Octave)            ]
+%          [ 'FMINCON' - MATLAB Optimization Toolbox, FMINCON                  ]
+%          [ 'IPOPT'   - IPOPT, requires MEX interface to IPOPT solver         ]
+%          [             available from:                                       ]
+%          [                   https://github.com/coin-or/Ipopt                ]
+%          [ 'KNITRO'  - Artelys Knitro, requires Artelys Knitro solver,       ]
+%          [             available from:https://www.artelys.com/solvers/knitro/]
+%          [ 'MINOPF'  - MINOPF, MINOS-based solver, requires optional         ]
+%          [             MEX-based MINOPF package, available from:             ]
+%          [                   http://www.pserc.cornell.edu/minopf/            ]
+%          [ 'PDIPM'   - PDIPM, primal/dual interior point method, requires    ]
+%          [             optional MEX-based TSPOPF package, available from:    ]
+%          [                   http://www.pserc.cornell.edu/tspopf/            ]
+%          [ 'SDPOPF'  - SDPOPF, solver based on semidefinite relaxation of    ]
+%          [             OPF problem, requires optional packages:              ]
+%          [               SDP_PF, available in extras/sdp_pf                  ]
+%          [               YALMIP, available from:                             ]
+%          [                   https://yalmip.github.io                        ]
+%          [               SDP solver such as SeDuMi, available from:          ]
+%          [                   http://sedumi.ie.lehigh.edu/                    ]
+%          [ 'TRALM'   - TRALM, trust region based augmented Langrangian       ]
+%          [             method, requires TSPOPF (see 'PDIPM')                 ]
+%      opf.dc.solver           'DEFAULT'   DC optimal power flow solver
+%          [ 'DEFAULT' - choose solver based on availability in the following  ]
+%          [             order: 'GUROBI', 'CPLEX', 'MOSEK', 'OT',              ]
+%          [             'GLPK' (linear costs only), 'BPMPD', 'MIPS'           ]
+%          [ 'MIPS'    - MIPS, MATPOWER Interior Point Solver, primal/dual     ]
+%          [             interior point method (pure MATLAB/Octave)            ]
+%          [ 'BPMPD'   - BPMPD, requires optional MEX-based BPMPD_MEX package  ]
+%          [             available from: http://www.pserc.cornell.edu/bpmpd/   ]
+%          [ 'CLP'     - CLP, requires interface to COIN-OP LP solver          ]
+%          [             available from:https://github.com/coin-or/Clp         ]
+%          [ 'CPLEX'   - CPLEX, requires CPLEX solver available from:          ]
+%          [             https://www.ibm.com/analytics/cplex-optimizer         ]
+%          [ 'GLPK'    - GLPK, requires interface to GLPK solver               ]
+%          [             available from: https://www.gnu.org/software/glpk/    ]
+%          [             (GLPK does not work with quadratic cost functions)    ]
+%          [ 'GUROBI'  - GUROBI, requires Gurobi optimizer (v. 5+)             ]
+%          [             available from: https://www.gurobi.com/               ]
+%          [ 'IPOPT'   - IPOPT, requires MEX interface to IPOPT solver         ]
+%          [             available from:                                       ]
+%          [                 https://github.com/coin-or/Ipopt                  ]
+%          [ 'MOSEK'   - MOSEK, requires MATLAB interface to MOSEK solver      ]
+%          [             available from: https://www.mosek.com/                ]
+%          [ 'OSQP'    - OSQP, requires MATLAB interface to OSQP solver        ]
+%          [             available from: https://osqp.org/                     ]
+%          [ 'OT'      - MATLAB Optimization Toolbox, QUADPROG, LINPROG        ]
+%      opf.current_balance     0           type of nodal balance equation
+%          [ 0 - use complex power balance equations                           ]
+%          [ 1 - use complex current balance equations                         ]
+%      opf.v_cartesian         0           voltage representation
+%          [ 0 - bus voltage variables represented in polar coordinates        ]
+%          [ 1 - bus voltage variables represented in cartesian coordinates    ]
+%      opf.violation           5e-6        constraint violation tolerance
+%      opf.use_vg              0           respect gen voltage setpt     [ 0-1 ]
+%          [ 0 - use specified bus Vmin & Vmax, and ignore gen Vg              ]
+%          [ 1 - replace specified bus Vmin & Vmax by corresponding gen Vg     ]
+%          [ between 0 and 1 - use a weighted average of the 2 options         ]
+%      opf.flow_lim            'S'         quantity limited by branch flow
+%                                          constraints
+%          [ 'S' - apparent power flow (limit in MVA)                          ]
+%          [ 'P' - active power flow, implemented using P   (limit in MW)      ]
+%          [ '2' - active power flow, implemented using P^2 (limit in MW)      ]
+%          [ 'I' - current magnitude (limit in MVA at 1 p.u. voltage)          ]
+%      opf.ignore_angle_lim    0           angle diff limits for branches
+%          [ 0 - include angle difference limits, if specified                 ]
+%          [ 1 - ignore angle difference limits even if specified              ]
+%      opf.softlims.default    1           behavior of OPF soft limits for
+%                                          which parameters are not explicitly
+%                                          provided
+%          [ 0 - do not include softlims if not explicitly specified           ]
+%          [ 1 - include softlims w/default values if not explicitly specified ]
+%      opf.start               0           strategy for initializing OPF start pt
+%          [   0 - default, MATPOWER decides based on solver                   ]
+%          [       (currently identical to 1)                                  ]
+%          [   1 - ignore current state in MATPOWER case (only applies to      ]
+%          [       fmincon, Ipopt, Knitro and MIPS, which use an interior pt   ]
+%          [       estimate; others use current state as with opf.start = 2)   ]
+%          [   2 - use current state in MATPOWER case                          ]
+%          [   3 - solve power flow and use resulting state                    ]
+%      opf.return_raw_der      0           for AC OPF, return constraint and
+%                                          derivative info in results.raw
+%                                          (in fields g, dg, df, d2f) [ 0 or 1 ]
+%   
+%   Output options:
+%      name                    default     description [options]
+%   ----------------------    ---------   ----------------------------------
+%      verbose                 1           amount of progress info printed
+%          [   0 - print no progress info                                      ]
+%          [   1 - print a little progress info                                ]
+%          [   2 - print a lot of progress info                                ]
+%          [   3 - print all progress info                                     ]
+%      out.all                 -1          controls pretty-printing of results
+%          [  -1 - individual flags control what prints                        ]
+%          [   0 - do not print anything (overrides individual flags, ignored  ]
+%          [       for files specified as FNAME arg to runpf(), runopf(), etc.)]
+%          [   1 - print everything (overrides individual flags)               ]
+%      out.sys_sum             1           print system summary       [ 0 or 1 ]
+%      out.area_sum            0           print area summaries       [ 0 or 1 ]
+%      out.bus                 1           print bus detail           [ 0 or 1 ]
+%      out.branch              1           print branch detail        [ 0 or 1 ]
+%      out.gen                 0           print generator detail     [ 0 or 1 ]
+%      out.lim.all             -1          controls constraint info output
+%          [  -1 - individual flags control what constraint info prints        ]
+%          [   0 - no constraint info (overrides individual flags)             ]
+%          [   1 - binding constraint info (overrides individual flags)        ]
+%          [   2 - all constraint info (overrides individual flags)            ]
+%      out.lim.v               1           control voltage limit info
+%          [   0 - do not print                                                ]
+%          [   1 - print binding constraints only                              ]
+%          [   2 - print all constraints                                       ]
+%          [   (same options for OUT_LINE_LIM, OUT_PG_LIM, OUT_QG_LIM)         ]
+%      out.lim.line            1           control line flow limit info
+%      out.lim.pg              1           control gen active power limit info
+%      out.lim.qg              1           control gen reactive pwr limit info
+%      out.force               0           print results even if success
+%                                          flag = 0                   [ 0 or 1 ]
+%      out.suppress_detail     -1          suppress all output but system summary
+%          [  -1 - suppress details for large systems (> 500 buses)            ]
+%          [   0 - do not suppress any output specified by other flags         ]
+%          [   1 - suppress all output except system summary section           ]
+%          [       (overrides individual flags, but not out.all = 1)           ]
+%   
+%   Solver specific options:
+%          name                    default     description [options]
+%      -----------------------    ---------   ----------------------------------
+%      MIPS:
+%          mips.linsolver          ''          linear system solver
+%              [   '' or '\'   build-in backslash \ operator (e.g. x = A \ b)  ]
+%              [   'PARDISO'   PARDISO solver (if available)                   ]
+%          mips.feastol            0           feasibility (equality) tolerance
+%                                              (set to opf.violation by default)
+%          mips.gradtol            1e-6        gradient tolerance
+%          mips.comptol            1e-6        complementary condition
+%                                              (inequality) tolerance
+%          mips.costtol            1e-6        optimality tolerance
+%          mips.max_it             150         maximum number of iterations
+%          mips.step_control       0           enable step-size cntrl [ 0 or 1 ]
+%          mips.sc.red_it          20          maximum number of reductions per
+%                                              iteration with step control
+%          mips.xi                 0.99995     constant used in alpha updates*
+%          mips.sigma              0.1         centering parameter*
+%          mips.z0                 1           used to initialize slack variables*
+%          mips.alpha_min          1e-8        returns "Numerically Failed" if
+%                                              either alpha parameter becomes
+%                                              smaller than this value*
+%          mips.rho_min            0.95        lower bound on rho_t*
+%          mips.rho_max            1.05        upper bound on rho_t*
+%          mips.mu_threshold       1e-5        KT multipliers smaller than this
+%                                              value for non-binding constraints
+%                                              are forced to zero
+%          mips.max_stepsize       1e10        returns "Numerically Failed" if the
+%                                              2-norm of the reduced Newton step
+%                                              exceeds this value*
+%              * See the corresponding Appendix in the manual for details.
+%   
+%      CPLEX:
+%          cplex.lpmethod          0           solution algorithm for LP problems
+%              [   0 - automatic: let CPLEX choose                             ]
+%              [   1 - primal simplex                                          ]
+%              [   2 - dual simplex                                            ]
+%              [   3 - network simplex                                         ]
+%              [   4 - barrier                                                 ]
+%              [   5 - sifting                                                 ]
+%              [   6 - concurrent (dual, barrier, and primal)                  ]
+%          cplex.qpmethod          0           solution algorithm for QP problems
+%              [   0 - automatic: let CPLEX choose                             ]
+%              [   1 - primal simplex optimizer                                ]
+%              [   2 - dual simplex optimizer                                  ]
+%              [   3 - network optimizer                                       ]
+%              [   4 - barrier optimizer                                       ]
+%          cplex.opts              <empty>     see CPLEX_OPTIONS for details
+%          cplex.opt_fname         <empty>     see CPLEX_OPTIONS for details
+%          cplex.opt               0           see CPLEX_OPTIONS for details
+%   
+%      FMINCON:
+%          fmincon.alg             4           algorithm used by fmincon() for OPF
+%                                              for Opt Toolbox 4 and later
+%               [  1 - active-set (not suitable for large problems)            ]
+%               [  2 - interior-point, w/default 'bfgs' Hessian approx         ]
+%               [  3 - interior-point, w/ 'lbfgs' Hessian approx               ]
+%               [  4 - interior-point, w/exact user-supplied Hessian           ]
+%               [  5 - interior-point, w/Hessian via finite differences        ]
+%               [  6 - sqp (not suitable for large problems)                   ]
+%          fmincon.tol_x           1e-4        termination tol on x
+%          fmincon.tol_f           1e-4        termination tol on f
+%          fmincon.max_it          0           maximum number of iterations
+%                                                              [  0 => default ]
+%   
+%      GUROBI:
+%          gurobi.method           0           solution algorithm (Method)
+%              [  -1 - automatic, let Gurobi decide                            ]
+%              [   0 - primal simplex                                          ]
+%              [   1 - dual simplex                                            ]
+%              [   2 - barrier                                                 ]
+%              [   3 - concurrent (LP only)                                    ]
+%              [   4 - deterministic concurrent (LP only)                      ]
+%              [   5 - deterministic concurrent simplex (LP only)              ]
+%          gurobi.timelimit        Inf         maximum time allowed (TimeLimit)
+%          gurobi.threads          0           max number of threads (Threads)
+%          gurobi.opts             <empty>     see GUROBI_OPTIONS for details
+%          gurobi.opt_fname        <empty>     see GUROBI_OPTIONS for details
+%          gurobi.opt              0           see GUROBI_OPTIONS for details
+%   
+%      IPOPT:
+%          ipopt.opts              <empty>     see IPOPT_OPTIONS for details
+%          ipopt.opt_fname         <empty>     see IPOPT_OPTIONS for details
+%          ipopt.opt               0           see IPOPT_OPTIONS for details
+%   
+%      KNITRO:
+%          knitro.tol_x            1e-4        termination tol on x
+%          knitro.tol_f            1e-4        termination tol on f
+%          knitro.maxit            0           maximum number of iterations
+%                                                              [  0 => default ]
+%          knitro.opt_fname        <empty>     name of user-supplied native
+%                                              Knitro options file that overrides
+%                                              all other options
+%          knitro.opt              0           if knitro.opt_fname is empty and
+%                                              knitro.opt is a non-zero integer N
+%                                              then knitro.opt_fname is auto-
+%                                              generated as:
+%                                              'knitro_user_options_N.txt'
+%   
+%      LINPROG:
+%          linprog                 <empty>     LINPROG options passed to
+%                                              OPTIMOPTIONS or OPTIMSET.
+%                                              see LINPROG in the Optimization
+%                                              Toolbox for details
+%   
+%      MINOPF:
+%          minopf.feastol          0 (1e-3)    primal feasibility tolerance
+%                                              (set to opf.violation by default)
+%          minopf.rowtol           0 (1e-3)    row tolerance
+%          minopf.xtol             0 (1e-4)    x tolerance
+%          minopf.majdamp          0 (0.5)     major damping parameter
+%          minopf.mindamp          0 (2.0)     minor damping parameter
+%          minopf.penalty          0 (1.0)     penalty parameter
+%          minopf.major_it         0 (200)     major iterations
+%          minopf.minor_it         0 (2500)    minor iterations
+%          minopf.max_it           0 (2500)    iterations limit
+%          minopf.verbosity        -1          amount of progress info printed
+%              [  -1 - controlled by 'verbose' option                          ]
+%              [   0 - print nothing                                           ]
+%              [   1 - print only termination status message                   ]
+%              [   2 - print termination status and screen progress            ]
+%              [   3 - print screen progress, report file (usually fort.9)     ]
+%          minopf.core             0 (1200*nb + 2*(nb+ng)^2) memory allocation
+%          minopf.supbasic_lim     0 (2*nb + 2*ng) superbasics limit
+%          minopf.mult_price       0 (30)      multiple price
+%   
+%      MOSEK:
+%          mosek.lp_alg            0           solution algorithm
+%                                                  (MSK_IPAR_OPTIMIZER)
+%              for MOSEK 8.x ...        (see MOSEK_SYMBCON for a "better way")
+%              [   0 - automatic: let MOSEK choose                             ]
+%              [   1 - dual simplex                                            ]
+%              [   2 - automatic: let MOSEK choose                             ]
+%              [   3 - automatic simplex (MOSEK chooses which simplex method)  ]
+%              [   4 - interior point                                          ]
+%              [   6 - primal simplex                                          ]
+%          mosek.max_it            0 (400)     interior point max iterations
+%                                                  (MSK_IPAR_INTPNT_MAX_ITERATIONS)
+%          mosek.gap_tol           0 (1e-8)    interior point relative gap tol
+%                                                  (MSK_DPAR_INTPNT_TOL_REL_GAP)
+%          mosek.max_time          0 (-1)      maximum time allowed
+%                                                  (MSK_DPAR_OPTIMIZER_MAX_TIME)
+%          mosek.num_threads       0 (1)       max number of threads
+%                                                  (MSK_IPAR_INTPNT_NUM_THREADS)
+%          mosek.opts              <empty>     see MOSEK_OPTIONS for details
+%          mosek.opt_fname         <empty>     see MOSEK_OPTIONS for details
+%          mosek.opt               0           see MOSEK_OPTIONS for details
+%   
+%      OSQP:
+%          osqp.opts               <empty>     see OSQP_OPTIONS for details
+%   
+%      QUADPROG:
+%          quadprog                <empty>     QUADPROG options passed to
+%                                              OPTIMOPTIONS or OPTIMSET.
+%                                              see QUADPROG in the Optimization
+%                                              Toolbox for details
+%   
+%      TSPOPF:
+%          pdipm.feastol           0           feasibility (equality) tolerance
+%                                              (set to opf.violation by default)
+%          pdipm.gradtol           1e-6        gradient tolerance
+%          pdipm.comptol           1e-6        complementary condition
+%                                              (inequality) tolerance
+%          pdipm.costtol           1e-6        optimality tolerance
+%          pdipm.max_it            150         maximum number of iterations
+%          pdipm.step_control      0           enable step-size cntrl [ 0 or 1 ]
+%          pdipm.sc.red_it         20          maximum number of reductions per
+%                                              iteration with step control
+%          pdipm.sc.smooth_ratio   0.04        piecewise linear curve smoothing
+%                                              ratio
+%   
+%          tralm.feastol           0           feasibility tolerance
+%                                              (set to opf.violation by default)
+%          tralm.primaltol         5e-4        primal variable tolerance
+%          tralm.dualtol           5e-4        dual variable tolerance
+%          tralm.costtol           1e-5        optimality tolerance
+%          tralm.major_it          40          maximum number of major iterations
+%          tralm.minor_it          40          maximum number of minor iterations
+%          tralm.smooth_ratio      0.04        piecewise linear curve smoothing
+%                                              ratio
+%   
+%   Experimental Options:
+%      exp.use_legacy_core         0           set to 1 to bypass MP-Core and
+%                                              force use of legacy core code for
+%                                              runpf(), runcpf(), runopf().
+%      exp.sys_wide_zip_loads.pw   <empty>     1 x 3 vector of active load fraction
+%                                              to be modeled as constant power,
+%                                              constant current and constant
+%                                              impedance, respectively, where
+%                                              <empty> means use [1 0 0]
+%      exp.sys_wide_zip_loads.qw   <empty>     same for reactive power, where
+%                                              <empty> means use same value as
+%                                              for 'pw'
 
 %   MATPOWER
-%   Copyright (c) 2013-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2013-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Shrirang Abhyankar, Argonne National Laboratory
 %

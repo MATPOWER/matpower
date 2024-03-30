@@ -1,5 +1,7 @@
 function [mpc, warns] = psse_convert(warns, data, verbose)
-%PSSE_CONVERT  Converts data read from PSS/E RAW file to MATPOWER case.
+% psse_convert - Converts data read from PSS/E RAW file to |MATPOWER| case.
+% ::
+%
 %   [MPC, WARNINGS] = PSSE_CONVERT(WARNINGS, DATA)
 %   [MPC, WARNINGS] = PSSE_CONVERT(WARNINGS, DATA, VERBOSE)
 %
@@ -17,10 +19,10 @@ function [mpc, warns] = psse_convert(warns, data, verbose)
 %       WARNINGS :  cell array of strings containing updated accumulated
 %                   warning messages
 %
-%   See also PSSE_READ.
+% See also psse_read.
 
 %   MATPOWER
-%   Copyright (c) 2014-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2014-2024, Power Systems Engineering Research Center (PSERC)
 %   by Yujia Zhu, PSERC ASU
 %   and Ray Zimmerman, PSERC Cornell
 %   Based on mpraw2mp.m, written by: Yujia Zhu, Jan 2014, yzhu54@asu.edu.

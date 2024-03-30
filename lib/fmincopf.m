@@ -1,11 +1,11 @@
 function [varargout] = fmincopf(varargin)
-%FMINCOPF  Solves an AC optimal power flow using FMINCON (Opt Tbx 2.x & later).
+% fmincopf - Solves an AC optimal power flow using FMINCON (Opt Tbx 2.x & later).
 %
-%   Uses algorithm 520. Please see OPF for the details of input and
-%   output arguments.
+% Uses algorithm 520. Please see opf for the details of input and
+% output arguments.
 
 %   MATPOWER
-%   Copyright (c) 2000-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2000-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

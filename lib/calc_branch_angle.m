@@ -1,5 +1,7 @@
 function delta = calc_branch_angle(mpc)
-%CALC_BRANCH_ANGLE  Calculate branch angle differences across active branches
+% calc_branch_angle - Calculate branch angle differences across active branches
+% ::
+%
 %   DELTA = CALC_BRANCH_ANGLE(MPC)
 %
 %   Calculates the angle difference (in degrees) across all active branches
@@ -15,10 +17,10 @@ function delta = calc_branch_angle(mpc)
 %               ends of each line respectively. DELTA is 0 for out-of-service
 %               branches.
 %
-%   See also TOGGLE_SOFTLIMS.
+% See also toggle_softlims.
 
 %   MATPOWER
-%   Copyright (c) 2018, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2018-2024, Power Systems Engineering Research Center (PSERC)
 %   by Eran Schweitzer, Arizona State University
 %   and Ray Zimmerman, PSERC Cornell
 %

@@ -1,5 +1,7 @@
 function [groups, isolated] = find_islands(mpc)
-%FIND_ISLANDS  Finds islands in a network
+% find_islands - Finds islands in a network.
+% ::
+%
 %   GROUPS = FIND_ISLANDS(MPC)
 %   [GROUPS, ISOLATED] = FIND_ISLANDS(MPC)
 %
@@ -8,12 +10,12 @@ function [groups, isolated] = find_islands(mpc)
 %   The second and optional return value ISOLATED is a vector of
 %   indices of isolated buses that have no connecting branches.
 %
-%   See also EXTRACT_ISLANDS, CONNECTED_COMPONENTS.
+% See also extract_islands, connected_components.
 
 %   TODO: add handling of DC lines
 
 %   MATPOWER
-%   Copyright (c) 2012-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2012-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

@@ -1,5 +1,5 @@
 function t_run_opf_default(quiet)
-%T_RUN_OPF_DEFAULT  Tests for AC optimal power flow using run_opf w/default solver.
+% t_run_opf_default - Tests for AC optimal power flow using run_opf w/default solver.
 
 %   MATPOWER
 %   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)

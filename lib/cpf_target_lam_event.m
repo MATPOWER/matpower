@@ -1,5 +1,7 @@
 function ef = cpf_target_lam_event(cb_data, cx)
-%CPF_TARGET_LAM_EVENT  Event function to detect a target lambda value
+% cpf_target_lam_event - Event function to detect a target lambda value
+% ::
+%
 %   EF = CPF_TARGET_LAM_EVENT(CB_DATA, CX)
 %
 %   CPF event function to detect the completion of the continuation curve
@@ -13,7 +15,7 @@ function ef = cpf_target_lam_event(cb_data, cx)
 %       EF : event function value
 
 %   MATPOWER
-%   Copyright (c) 2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2016-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Shrirang Abhyankar, Argonne National Laboratory
 %

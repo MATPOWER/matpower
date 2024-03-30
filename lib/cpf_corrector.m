@@ -1,6 +1,8 @@
 function [V, converged, i, lam] = cpf_corrector(Ybus, Sbusb, V_hat, ref, pv, pq, ...
                 lam_hat, Sbust, Vprv, lamprv, z, step, parameterization, mpopt)
-%CPF_CORRECTOR  Solves the corrector step of a continuation power flow
+% cpf_corrector - Solves the corrector step of a continuation power flow
+% ::
+%
 %   [V, CONVERGED, I, LAM] = CPF_CORRECTOR(YBUS, SBUSB, V_HAT, REF, PV, PQ, ...
 %                                       LAM_HAT, SBUST, VPRV, LPRV, Z, ...
 %                                       STEP, PARAMETERIZATION, MPOPT)
@@ -33,10 +35,10 @@ function [V, converged, i, lam] = cpf_corrector(Ybus, Sbusb, V_hat, ref, pv, pq,
 %       I : Newton iteration count
 %       LAM : lambda continuation parameter
 %
-%   See also RUNCPF.
+% See also runcpf.
 
 %   MATPOWER
-%   Copyright (c) 1996-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell,
 %   Shrirang Abhyankar, Argonne National Laboratory,
 %   and Alexander Flueck, IIT

@@ -1,12 +1,14 @@
 function [ref, pv, pq] = bustypes(bus, gen)
-%BUSTYPES   Builds index lists for each type of bus (REF, PV, PQ).
+% bustypes - Builds index lists for each type of bus (REF, PV, PQ).
+% ::
+%
 %   [REF, PV, PQ] = BUSTYPES(BUS, GEN)
 %   Generators with "out-of-service" status are treated as PQ buses with
 %   zero generation (regardless of Pg/Qg values in gen). Expects BUS and
 %   GEN have been converted to use internal consecutive bus numbering.
 
 %   MATPOWER
-%   Copyright (c) 1996-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

@@ -1,14 +1,16 @@
 function [islands, bridges, nonbridges] = find_bridges(mpc)
-%FIND_BRIDGES   Finds bridges in a network
+% find_bridges - Finds bridges in a network.
+% ::
+%
 %   [ISLANDS, BRIDGES, NONBRIDGES] = FIND_BRIDGES(MPC)
 %
 %   Returns the islands, bridges and non-bridges in a network.
 %   Bridges are filtered out using Tarjan's algorithm. A BRIDGE is a branch
 %   whose removal breaks the island to multiple parts. The return value BRIDGES
 %   is a cell array of vectors of the bus indices for each island.
-%
+
 %   MATPOWER
-%   Copyright (c) 2008-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Liangyu Zhang, Zhejiang University
 %

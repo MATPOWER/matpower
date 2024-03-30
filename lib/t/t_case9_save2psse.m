@@ -1,6 +1,7 @@
 function mpc = t_case9_save2psse
-%T_CASE9_SAVE2PSSE   Power flow data to test SAVE2PSSE.
-%   Please see CASEFORMAT for details on the case file format.
+% t_case9_save2psse - Power flow data to test save2psse.
+%
+% Please see caseformat for details on the case file format.
 
 %   MATPOWER
 

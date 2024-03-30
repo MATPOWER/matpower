@@ -1,5 +1,7 @@
 function [f, df, d2f] = opf_legacy_user_cost_fcn(x, cp)
-%OPF_LEGACY_USER_COST_FCN  Evaluates legacy user costs and derivatives.
+% opf_legacy_user_cost_fcn - Evaluates legacy user costs and derivatives.
+% ::
+%
 %   [F, DF, D2F] = OPF_LEGACY_USER_COST_FCN(X, CP)
 %
 %   Evaluates the legacy user-defined costs and derivatives.
@@ -20,7 +22,7 @@ function [f, df, d2f] = opf_legacy_user_cost_fcn(x, cp)
 %       [f, df, d2f] = opf_legacy_user_cost_fcn(x, cp);
 
 %   MATPOWER
-%   Copyright (c) 1996-2017, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %   and Ray Zimmerman, PSERC Cornell
 %

@@ -1,5 +1,7 @@
 function [V, converged, i] = newtonpf_I_hybrid(Ybus, Sbus, V0, ref, pv, pq, mpopt)
-%NEWTONPF_I_HYBRID  Solves power flow using full Newton's method (current/hybrid)
+% newtonpf_I_hybrid - Solves power flow using full Newton's method (current/hybrid).
+% ::
+%
 %   [V, CONVERGED, I] = NEWTONPF_I_HYBRID(YBUS, SBUS, V0, REF, PV, PQ, MPOPT)
 %
 %   Solves for bus voltages using a full Newton-Raphson method, using nodal
@@ -26,10 +28,10 @@ function [V, converged, i] = newtonpf_I_hybrid(Ybus, Sbus, V0, ref, pv, pq, mpop
 %   Returns the final complex voltages, a flag which indicates whether it
 %   converged or not, and the number of iterations performed.
 %
-%   See also RUNPF, NEWTONPF, NEWTONPF_S_CART, NEWTONPF_I_POLAR.
+% See also runpf, newtonpf, newtonpf_S_cart, newtonpf_I_polar.
 
 %   MATPOWER
-%   Copyright (c) 1996-2019, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Baljinnyam Sereeter, Delft University of Technology
 %

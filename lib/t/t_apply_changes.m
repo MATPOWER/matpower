@@ -1,8 +1,8 @@
 function t_apply_changes(quiet)
-%T_APPLY_CHANGES  Tests for code in apply_changes.m.
+% t_apply_changes - Tests for apply_changes.
 
 %   MATPOWER
-%   Copyright (c) 2008-2017, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

@@ -1,5 +1,6 @@
 function [options, names] = mpoption_old(varargin)
-%MPOPTION_OLD  Used to set and retrieve old-style MATPOWER options vector.
+% mpoption_old - Used to set and retrieve old-style |MATPOWER| options vector.
+% ::
 %
 %   OPT = MPOPTION_OLD
 %       returns the default options vector
@@ -243,7 +244,7 @@ function [options, names] = mpoption_old(varargin)
 %       124 - GRB_OPT, 0            See GUROBI_OPTIONS for details
 
 %   MATPOWER
-%   Copyright (c) 1996-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

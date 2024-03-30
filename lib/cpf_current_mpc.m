@@ -1,12 +1,14 @@
 function mpc = cpf_current_mpc(mpc, mpct, Ybus, Yf, Yt, ref, pv, pq, V, lam, mpopt)
-%CPF_CURRENT_MPC  Construct MPC for current continuation step.
+% cpf_current_mpc - Construct MPC for current continuation step.
+% ::
+%
 %   MPC = CPF_CURRENT_MPC(MPC_BASE, MPC_TARGET, YBUS, YF, YT, REF, PV, PQ, V, LAM, MPOPT)
 %
 %   Constructs the MATPOWER case struct for the current continuation step
 %   based on the MPC_BASE and MPC_TARGET cases and the value of LAM.
 
 %   MATPOWER
-%   Copyright (c) 2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2016-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Shrirang Abhyankar, Argonne National Laboratory
 %

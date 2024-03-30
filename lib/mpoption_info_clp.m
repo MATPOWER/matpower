@@ -1,5 +1,6 @@
 function opt = mpoption_info_clp(selector)
-%MPOPTION_INFO_CLP  Returns MATPOWER option info for CLP.
+% mpoption_info_clp - Returns |MATPOWER| option info for CLP.
+% ::
 %
 %   DEFAULT_OPTS = MPOPTION_INFO_CLP('D')
 %   VALID_OPTS   = MPOPTION_INFO_CLP('V')
@@ -15,10 +16,10 @@ function opt = mpoption_info_clp(selector)
 %   of option names or modify option setting/copying behavior for this
 %   subset of optional MATPOWER options.
 %
-%   See also MPOPTION.
+% See also mpoption.
 
 %   MATPOWER
-%   Copyright (c) 2014-2015, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2014-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

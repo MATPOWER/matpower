@@ -1,5 +1,6 @@
 function Gsv = d2Imis_dVdSg(Cg, V, lam, vcart)
-%D2IMIS_DVDSG   Computes 2nd derivatives of current balance w.r.t. V and Sg.
+% d2Imis_dVdSg - Computes 2nd derivatives of current balance w.r.t. V and Sg.
+% ::
 %
 %   The derivatives can be take with respect to polar or cartesian coordinates
 %   of voltage, depending on the 4th argument.
@@ -42,8 +43,8 @@ function Gsv = d2Imis_dVdSg(Cg, V, lam, vcart)
 %           Gqr = d/dVr (dImis_dQg.' * lam)
 %           Gqi = d/dVi (dImis_dQg.' * lam)
 %
-%   For more details on the derivations behind the derivative code used
-%   in MATPOWER, see:
+% For more details on the derivations behind the derivative code used
+% in |MATPOWER|, see::
 %
 %   [TN2]  R. D. Zimmerman, "AC Power Flows, Generalized OPF Costs and
 %          their Derivatives using Complex Matrix Notation", MATPOWER
@@ -62,7 +63,7 @@ function Gsv = d2Imis_dVdSg(Cg, V, lam, vcart)
 %          doi: 10.5281/zenodo.3237909
 
 %   MATPOWER
-%   Copyright (c) 2019, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2019-2024, Power Systems Engineering Research Center (PSERC)
 %   by Baljinnyam Sereeter, Delft University of Technology
 %   and Ray Zimmerman, PSERC Cornell
 %

@@ -1,5 +1,7 @@
 function [Bbus, Bf, Pbusinj, Pfinj] = makeBdc(baseMVA, bus, branch)
-%MAKEBDC   Builds the B matrices and phase shift injections for DC power flow.
+% makeBdc - Builds the B matrices and phase shift injections for DC power flow.
+% ::
+%
 %   [BBUS, BF, PBUSINJ, PFINJ] = MAKEBDC(MPC)
 %   [BBUS, BF, PBUSINJ, PFINJ] = MAKEBDC(BASEMVA, BUS, BRANCH)
 %
@@ -16,10 +18,10 @@ function [Bbus, Bf, Pbusinj, Pfinj] = makeBdc(baseMVA, bus, branch)
 %   Example:
 %       [Bbus, Bf, Pbusinj, Pfinj] = makeBdc(baseMVA, bus, branch);
 %
-%   See also DCPF.
+% See also dcpf.
 
 %   MATPOWER
-%   Copyright (c) 1996-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %   and Ray Zimmerman, PSERC Cornell
 %

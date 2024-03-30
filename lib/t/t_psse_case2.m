@@ -1,5 +1,7 @@
 function mpc = t_psse_case2
-%T_PSSE_CASE2
+% t_psse_case2 - Case 2 for testing PSS/E conversion.
+% ::
+%
 %   PSS/E-29.0
 %   Nine Bus System-Documentation
 %   PowerFactory 14.1.7  Date: 12/2/2013, Time: 11:54:12 AM

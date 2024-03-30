@@ -1,8 +1,9 @@
 function mpc = t_case9_dcline
-%T_CASE9_DCLINE   Same as T_CASE9_OPFV2 with addition of DC line data.
-%   Please see CASEFORMAT for details on the case file format.
+% t_case9_dcline - Same as t_case9_opfv2 with addition of DC line data.
 %
-%   See also: TOGGLE_DCLINE, IDX_DCLINE.
+% Please see caseformat for details on the case file format.
+%
+% See also toggle_dcline, idx_dcline.
 
 %   MATPOWER
 

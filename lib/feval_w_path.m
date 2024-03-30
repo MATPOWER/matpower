@@ -1,5 +1,7 @@
 function varargout = feval_w_path(fpath, fname, varargin)
-%FEVAL_W_PATH  Calls a function located by the specified path.
+% feval_w_path - Calls a function located by the specified path.
+% ::
+%
 %   FEVAL_W_PATH(FPATH, F, x1, ..., xn)
 %   [y1, ..., yn] = FEVAL_W_PATH(FPATH, F, x1, ..., xn)
 %
@@ -28,7 +30,7 @@ function varargout = feval_w_path(fpath, fname, varargin)
 %       y = feval_w_path('/opt/testfunctions', 'mytestfcn', x1, x2);
 
 %   MATPOWER
-%   Copyright (c) 2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2016-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

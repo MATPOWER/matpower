@@ -1,8 +1,8 @@
 function [pf_, opf_] = t_node_test(quiet)
-%T_NODE_TEST  Tests for network model with multipe node-creating elements.
+% t_node_test - Tests for network model with multipe node-creating elements.
 
 %   MATPOWER
-%   Copyright (c) 2021-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

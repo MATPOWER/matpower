@@ -1,8 +1,8 @@
 function t_pf_ac(quiet)
-%T_PF_AC  Tests for AC power flow solvers.
+% t_pf_ac - Tests for legacy AC power flow solvers.
 
 %   MATPOWER
-%   Copyright (c) 2004-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

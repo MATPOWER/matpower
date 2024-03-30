@@ -1,14 +1,14 @@
 function [TorF, vstr, rdate] = have_feature_syngrid()
-%HAVE_FEATURE_SYNGRID  Detect availability/version info for SynGrid
+% have_feature_syngrid - Detect availability/version info for SynGrid.
 %
-%   Feature detection function implementing 'syngrid' tag for HAVE_FEATURE
-%   to detect availability/version of SynGrid, Synthetic Grid Creation for
-%   MATPOWER (https://github.com/MATPOWER/mx-syngrid).
+% Private feature detection function implementing ``'syngrid'`` tag for
+% have_feature to detect availability/version of SynGrid, Synthetic Grid
+% Creation for |MATPOWER| (https://github.com/MATPOWER/mx-syngrid).
 %
-%   See also HAVE_FEATURE, SYNGRID.
+% See also have_feature, syngrid.
 
 %   MATPOWER
-%   Copyright (c) 2004-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

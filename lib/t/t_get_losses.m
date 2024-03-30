@@ -1,8 +1,8 @@
 function t_get_losses(quiet)
-%T_GET_LOSSES  Tests for code in GET_LOSSES.
+% t_get_losses - Tests for get_losses.
 
 %   MATPOWER
-%   Copyright (c) 2014-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2014-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

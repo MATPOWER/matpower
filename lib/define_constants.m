@@ -1,4 +1,5 @@
-%DEFINE_CONSTANTS  Defines useful constants for indexing data, etc.
+% define_constants - Defines useful constants for indexing data, etc.
+% ::
 %
 %   This is simply a convenience script that defines the constants
 %   listed below, consisting primarily of named indices for the
@@ -44,7 +45,7 @@
 %   for high-level code where maximum performance is not a concern.
 
 %   MATPOWER
-%   Copyright (c) 2009-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2009-2024, Power Systems Engineering Research Center (PSERC)
 %   by Doug Mitarotonda & Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

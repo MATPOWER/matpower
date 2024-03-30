@@ -1,5 +1,7 @@
 function [Pd, Qd] = total_load(bus, gen, load_zone, opt, mpopt)
-%TOTAL_LOAD Returns vector of total load in each load zone.
+% total_load - Returns vector of total load in each load zone.
+% ::
+%
 %   PD = TOTAL_LOAD(MPC)
 %   PD = TOTAL_LOAD(MPC, LOAD_ZONE)
 %   PD = TOTAL_LOAD(MPC, LOAD_ZONE, OPT)
@@ -73,10 +75,10 @@ function [Pd, Qd] = total_load(bus, gen, load_zone, opt, mpopt)
 %       opt = struct('type', 'DISPATCHABLE', 'nominal', 1);
 %       Pd = total_load(mpc, load_zone, opt)
 %
-%   See also SCALE_LOAD.
+% See also scale_load.
 
 %   MATPOWER
-%   Copyright (c) 2004-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

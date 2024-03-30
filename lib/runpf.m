@@ -1,6 +1,8 @@
 function [MVAbase, bus, gen, branch, success, et] = ...
                 runpf(casedata, mpopt, fname, solvedcase)
-%RUNPF  Runs a power flow.
+% runpf - Runs a power flow.
+% ::
+%
 %   [RESULTS, SUCCESS] = RUNPF(CASEDATA, MPOPT, FNAME, SOLVEDCASE)
 %
 %   Runs a power flow (full AC Newton's method by default), optionally
@@ -9,10 +11,10 @@ function [MVAbase, bus, gen, branch, success, et] = ...
 %   Inputs (all are optional):
 %       CASEDATA : either a MATPOWER case struct or a string containing
 %           the name of the file with the case data (default is 'case9')
-%           (see also CASEFORMAT and LOADCASE)
+%           (see CASEFORMAT and LOADCASE)
 %       MPOPT : MATPOWER options struct to override default options
 %           can be used to specify the solution algorithm, output options
-%           termination tolerances, and more (see also MPOPTION).
+%           termination tolerances, and more (see MPOPTION).
 %       FNAME : name of a file to which the pretty-printed output will
 %           be appended
 %       SOLVEDCASE : name of file to which the solved case will be saved
@@ -56,10 +58,10 @@ function [MVAbase, bus, gen, branch, success, et] = ...
 %       results = runpf('case30');
 %       results = runpf('case30', mpoption('pf.enforce_q_lims', 1));
 %
-%   See also RUNDCPF.
+% See also rundcpf.
 
 %   MATPOWER
-%   Copyright (c) 1996-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   Enforcing of generator Q limits inspired by contributions
 %   from Mu Lin, Lincoln University, New Zealand (1/14/05).

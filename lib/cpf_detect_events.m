@@ -1,5 +1,7 @@
 function [rollback, evnts, cef] = cpf_detect_events(cpf_events, cef, pef, step, verbose)
-%CPF_DETECT_EVENTS  Detect events from event function values
+% cpf_detect_events - Detect events from event function values
+% ::
+%
 %   [ROLLBACK, CRITICAL_EVENTS, CEF] = CPF_DETECT_EVENTS(CPF_EVENTS, CEF, PEF, STEP, VERBOSE)
 %   
 %   Inputs:
@@ -32,7 +34,7 @@ function [rollback, evnts, cef] = cpf_detect_events(cpf_events, cef, pef, step, 
 %       CEF : cell array of Current Event Function values
 
 %   MATPOWER
-%   Copyright (c) 2016-2017, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2016-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Shrirang Abhyankar, Argonne National Laboratory
 %

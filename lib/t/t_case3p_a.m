@@ -1,8 +1,8 @@
 function mpc = t_case3p_a
-%T_CASE3P_A   Four bus, unbalanced 3-phase test case.
+% t_case3p_a - Four bus, unbalanced 3-phase test case.
 %
-% This data comes from 4Bus-YY-UnB.DSS, a modified version (with unbalanced
-% load) of 4Bus-YY-Bal.DSS [1], the OpenDSS 4 bus IEEE test case with
+% This data comes from ``4Bus-YY-UnB.DSS``, a modified version (with unbalanced
+% load) of ``4Bus-YY-Bal.DSS`` [1], the OpenDSS 4 bus IEEE test case with
 % grounded-wye to grounded-wye transformer.
 %
 % [1] https://sourceforge.net/p/electricdss/code/HEAD/tree/trunk/Distrib/IEEETestCases/4Bus-YY-Bal/4Bus-YY-Bal.DSS

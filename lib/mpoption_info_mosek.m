@@ -1,5 +1,6 @@
 function opt = mpoption_info_mosek(selector)
-%MPOPTION_INFO_MOSEK  Returns MATPOWER option info for MOSEK.
+% mpoption_info_mosek - Returns |MATPOWER| option info for MOSEK.
+% ::
 %
 %   DEFAULT_OPTS = MPOPTION_INFO_MOSEK('D')
 %   VALID_OPTS   = MPOPTION_INFO_MOSEK('V')
@@ -15,10 +16,10 @@ function opt = mpoption_info_mosek(selector)
 %   of option names or modify option setting/copying behavior for this
 %   subset of optional MATPOWER options.
 %
-%   See also MPOPTION.
+% See also mpoption.
 
 %   MATPOWER
-%   Copyright (c) 2014-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2014-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

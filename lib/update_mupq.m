@@ -1,5 +1,7 @@
 function gen = update_mupq(baseMVA, gen, mu_PQh, mu_PQl, data)
-%UPDATE_MUPQ  Updates values of generator limit shadow prices.
+% update_mupq - Updates values of generator limit shadow prices.
+% ::
+%
 %   GEN = UPDATE_MUPQ(BASEMVA, GEN, MU_PQH, MU_PQL, DATA)
 %
 %   Updates the values of MU_PMIN, MU_PMAX, MU_QMIN, MU_QMAX based
@@ -10,10 +12,10 @@ function gen = update_mupq(baseMVA, gen, mu_PQh, mu_PQl, data)
 %   MU_PQL - shadow prices on lower sloped portion of capability curves
 %   DATA   - "data" struct returned by MAKEAPQ
 %
-%   See also MAKEAPQ.
+% See also makeApq.
 
 %   MATPOWER
-%   Copyright (c) 1996-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %

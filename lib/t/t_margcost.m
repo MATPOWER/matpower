@@ -1,8 +1,8 @@
 function t_margcost(quiet)
-%T_MARGCOST  Tests for code in MARGCOST.
+% t_margcost - Tests for margcost.
 
 %   MATPOWER
-%   Copyright (c) 2010-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

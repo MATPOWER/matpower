@@ -1,5 +1,7 @@
 function mpc = apply_changes(label, mpc, chgtab)
-%APPLY_CHANGES  Applies a set of changes to a MATPOWER case
+% apply_changes - Applies a set of changes to a MATPOWER case
+% ::
+%
 %   mpc_modified = apply_changes(label, mpc_original, chgtab)
 %
 %   Applies the set of changes identified by LABEL to the case in MPC, where
@@ -46,13 +48,13 @@ function mpc = apply_changes(label, mpc, chgtab)
 %   4. Scale all loads in area 2 (real & reactive, fixed and dispatchable)
 %      by a factor of 1.1, 10% probability.
 %
-%   See IDX_CT.
+% See also idx_ct.
 
 %   To do:
 %       - check for valid row number
 
 %   MATPOWER
-%   Copyright (c) 2000-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2000-2024, Power Systems Engineering Research Center (PSERC)
 %   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %   and Ray Zimmerman, PSERC Cornell
 %

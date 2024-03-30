@@ -1,5 +1,7 @@
 function [g, dg] = opf_current_balance_fcn(x, mpc, Ybus, mpopt)
-%OPF_CURRENT_BALANCE_FCN  Evaluates AC current balance constraints and their gradients.
+% opf_current_balance_fcn - Evaluates AC current balance constraints and their gradients.
+% ::
+%
 %   [G, DG] = OPF_CURRENT_BALANCE_FCN(X, OM, YBUS, MPOPT)
 %
 %   Computes the real or imaginary current balance equality constraints for
@@ -19,10 +21,10 @@ function [g, dg] = opf_current_balance_fcn(x, mpc, Ybus, mpopt)
 %       g = opf_current_balance_fcn(x, mpc, Ybus, mpopt);
 %       [g, dg] = opf_current_balance_fcn(x, mpc, Ybus, mpopt);
 %
-%   See also OPF_POWER_BALANCE_HESS
+% See also opf_power_balance_hess.
 
 %   MATPOWER
-%   Copyright (c) 1996-2018, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Baljinnyam Sereeter, Delft University of Technology
 %   and Ray Zimmerman, PSERC Cornell
 %

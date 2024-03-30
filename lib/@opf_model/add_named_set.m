@@ -1,5 +1,6 @@
 function om = add_named_set(om, set_type, name, idx, N, varargin)
-%ADD_NAMED_SET  Adds a named set of variables/constraints/costs to the model.
+% add_named_set - Adds a named set of variables/constraints/costs to the model.
+% ::
 %
 %   -----  PRIVATE METHOD  -----
 %
@@ -28,11 +29,11 @@ function om = add_named_set(om, set_type, name, idx, N, varargin)
 %   Legacy Cost Set
 %       OM.ADD_NAMED_SET('cost', NAME, IDX_LIST, N, CP, VARSETS);
 %
-%   See also OPT_MODEL, ADD_VAR, ADD_LIN_CONSTRAINT, ADD_NLN_CONSTRAINT
-%            ADD_QUAD_COST, ADD_NLN_COST and ADD_LEGACY_COST.
+% See also opt_model, add_var, add_lin_constraint, add_nln_constraint
+% add_quad_cost, add_nln_cost, add_legacy_cost.
 
 %   MATPOWER
-%   Copyright (c) 2008-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

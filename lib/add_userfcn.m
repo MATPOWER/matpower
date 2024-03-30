@@ -1,5 +1,6 @@
 function mpc = add_userfcn(mpc, stage, fcn, args, allow_multiple)
-%ADD_USERFCN   Appends a userfcn to the list to be called for a case.
+% add_userfcn - Appends a userfcn to the list to be called for a case.
+% ::
 %
 %   MPC = ADD_USERFCN(MPC, STAGE, FCN)
 %   MPC = ADD_USERFCN(MPC, STAGE, FCN, ARGS)
@@ -76,11 +77,11 @@ function mpc = add_userfcn(mpc, stage, fcn, args, allow_multiple)
 %
 %   E.g. mpc = userfcn_reserves_printpf(mpc, fd, prefix, args)
 %
-%   See also RUN_USERFCN, REMOVE_USERFCN, TOGGLE_RESERVES, TOGGLE_IFLIMS,
-%   TOGGLE_DCLINE, TOGGLE_SOFTLIMS, and RUNOPF_W_RES.
+% See also run_userfcn, remove_userfcn, toggle_reserves, toggle_iflims,
+% toggle_dcline, toggle_softlims, runopf_w_res.
 
 %   MATPOWER
-%   Copyright (c) 2009-2018, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2009-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

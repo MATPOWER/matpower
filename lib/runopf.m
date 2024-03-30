@@ -1,6 +1,8 @@
 function [MVAbase, bus, gen, gencost, branch, f, success, et] = ...
                 runopf(casedata, mpopt, fname, solvedcase)
-%RUNOPF  Runs an optimal power flow.
+% runopf - Runs an optimal power flow.
+% ::
+%
 %   [RESULTS, SUCCESS] = RUNOPF(CASEDATA, MPOPT, FNAME, SOLVEDCASE)
 %
 %   Runs an optimal power flow (AC OPF by default), optionally returning
@@ -9,10 +11,10 @@ function [MVAbase, bus, gen, gencost, branch, f, success, et] = ...
 %   Inputs (all are optional):
 %       CASEDATA : either a MATPOWER case struct or a string containing
 %           the name of the file with the case data (default is 'case9')
-%           (see also CASEFORMAT and LOADCASE)
+%           (see CASEFORMAT and LOADCASE)
 %       MPOPT : MATPOWER options struct to override default options
 %           can be used to specify the solution algorithm, output options
-%           termination tolerances, and more (see also MPOPTION).
+%           termination tolerances, and more (see MPOPTION).
 %       FNAME : name of a file to which the pretty-printed output will
 %           be appended
 %       SOLVEDCASE : name of file to which the solved case will be saved
@@ -46,10 +48,10 @@ function [MVAbase, bus, gen, gencost, branch, f, success, et] = ...
 %   Example:
 %       results = runopf('case30');
 %
-%   See also RUNDCOPF, RUNUOPF.
+% See also rundcopf, runuopf.
 
 %   MATPOWER
-%   Copyright (c) 1996-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

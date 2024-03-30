@@ -1,5 +1,6 @@
 function om = init_indexed_name(om, set_type, name, dim_list)
-%INIT_INDEXED_NAME  Initializes the dimensions for an indexed named set.
+% init_indexed_name - Initializes the dimensions for an indexed named set.
+% ::
 %
 %   OM.INIT_INDEXED_NAME(SET_TYPE, NAME, DIM_LIST)
 %
@@ -35,11 +36,11 @@ function om = init_indexed_name(om, set_type, name, dim_list)
 %         end
 %       end
 %
-%   See also OPT_MODEL, ADD_VAR, ADD_LIN_CONSTRAINT, ADD_NLN_CONSTRAINT,
-%            ADD_QUAD_COST, ADD_NLN_COST and ADD_LEGACY_COST.
+% See also opt_model, add_var, add_lin_constraint, add_nln_constraint,
+% add_quad_cost, add_nln_cost, add_legacy_cost.
 
 %   MATPOWER
-%   Copyright (c) 2008-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

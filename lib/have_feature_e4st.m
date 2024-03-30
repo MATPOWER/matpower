@@ -1,14 +1,14 @@
 function [TorF, vstr, rdate] = have_feature_e4st()
-%HAVE_FEATURE_E4ST  Detect availability/version info for E4ST
+% have_feature_e4st - Detect availability/version info for E4ST.
 %
-%   Feature detection function implementing 'e4st' tag for HAVE_FEATURE
-%   to detect availability/version of E4ST, the Engineering, Economic, and
-%   Environmental Electricity Simulation Tool (https://e4st.com).
+% Private feature detection function implementing ``'e4st'`` tag for
+% have_feature to detect availability/version of E4ST, the Engineering,
+% Economic, and Environmental Electricity Simulation Tool (https://e4st.com).
 %
-%   See also HAVE_FEATURE.
+% See also have_feature.
 
 %   MATPOWER
-%   Copyright (c) 2004-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

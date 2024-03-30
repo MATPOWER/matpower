@@ -1,5 +1,7 @@
 function [h, dh] = opf_branch_flow_fcn(x, mpc, Yf, Yt, il, mpopt)
-%OPF_BRANCH_FLOW_FCN  Evaluates AC branch flow constraints and Jacobian.
+% opf_branch_flow_fcn - Evaluates AC branch flow constraints and Jacobian.
+% ::
+%
 %   [H, DH] = OPF_BRANCH_FLOW_FCN(X, OM, YF, YT, IL, MPOPT)
 %
 %   Branch flow constraints for AC optimal power flow.
@@ -29,10 +31,10 @@ function [h, dh] = opf_branch_flow_fcn(x, mpc, Yf, Yt, il, mpopt)
 %       h = opf_branch_flow_fcn(x, mpc, Yf, Yt, il, mpopt);
 %       [h, dh] = opf_branch_flow_fcn(x, mpc, Yf, Yt, il, mpopt);
 %
-%   See also OPF_BRANCH_FLOW_HESS.
+% See also opf_branch_flow_hess.
 
 %   MATPOWER
-%   Copyright (c) 1996-2021, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %   and Ray Zimmerman, PSERC Cornell
 %

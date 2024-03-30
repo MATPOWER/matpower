@@ -1,5 +1,5 @@
 function chgtab = t_chgtab
-%T_CHGTAB  Returns a change table suitable for use with APPLY_CHANGES
+% t_chgtab - Returns a change table for testing apply_changes.
 
 define_constants;
 

@@ -1,8 +1,8 @@
 function obj = t_port_inj_current_acp(quiet)
-%T_PORT_INJ_CURRENT_ACP  Tests of port_inj_current() derivatives wrt polar V.
+% t_port_inj_current_acp - Tests of port_inj_current() derivatives wrt polar V.
 
 %   MATPOWER
-%   Copyright (c) 2019-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2019-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

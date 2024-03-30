@@ -1,5 +1,7 @@
 function LODF = makeLODF(branch, PTDF, mask_bridge)
-%MAKELODF   Builds the line outage distribution factor matrix.
+% makeLODF - Builds the line outage distribution factor matrix.
+% ::
+%
 %   LODF = MAKELODF(BRANCH, PTDF)
 %   LODF = MAKELODF(MPC, PTDF)
 %   LODF = MAKELODF(MPC, PTDF, MASK_BRIDGE)
@@ -18,10 +20,10 @@ function LODF = makeLODF(branch, PTDF, mask_bridge)
 %       % mask bridge branches in LODF
 %       makeLODF(mpc, H, 1);
 %
-%   See also MAKEPTDF, FIND_BRIDGES.
+% See also makePTDF, find_bridges.
 
 %   MATPOWER
-%   Copyright (c) 2008-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell,
 %   and Liangyu Zhang, Zhejiang University
 %

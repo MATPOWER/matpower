@@ -1,5 +1,7 @@
 function printpf(baseMVA, bus, gen, branch, f, success, et, fd, mpopt)
-%PRINTPF   Prints power flow results.
+% printpf -  Prints power flow results.
+% ::
+%
 %   PRINTPF(RESULTS, FD, MPOPT)
 %   PRINTPF(BASEMVA, BUS, GEN, BRANCH, F, SUCCESS, ET, FD, MPOPT)
 %
@@ -29,7 +31,7 @@ function printpf(baseMVA, bus, gen, branch, f, success, et, fd, mpopt)
 %       fclose(fd);
 
 %   MATPOWER
-%   Copyright (c) 1996-2017, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

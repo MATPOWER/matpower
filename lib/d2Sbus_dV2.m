@@ -1,5 +1,6 @@
 function [G11, G12, G21, G22] = d2Sbus_dV2(Ybus, V, lam, vcart)
-%D2SBUS_DV2   Computes 2nd derivatives of power injection w.r.t. voltage.
+% d2Sbus_dV2 - Computes 2nd derivatives of power injection w.r.t. voltage.
+% ::
 %
 %   The derivatives can be take with respect to polar or cartesian coordinates
 %   of voltage, depending on the 4th argument.
@@ -38,8 +39,8 @@ function [G11, G12, G21, G22] = d2Sbus_dV2(Ybus, V, lam, vcart)
 %           Gir = d/dVr (dSbus_dVi.' * lam)
 %           Gii = d/dVi (dSbus_dVi.' * lam)
 %
-%   For more details on the derivations behind the derivative code used
-%   in MATPOWER, see:
+% For more details on the derivations behind the derivative code used
+% in |MATPOWER|, see::
 %
 %   [TN2]  R. D. Zimmerman, "AC Power Flows, Generalized OPF Costs and
 %          their Derivatives using Complex Matrix Notation", MATPOWER
@@ -53,7 +54,7 @@ function [G11, G12, G21, G22] = d2Sbus_dV2(Ybus, V, lam, vcart)
 %          doi: 10.5281/zenodo.3237909
 
 %   MATPOWER
-%   Copyright (c) 2008-2019, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Baljinnyam Sereeter, Delft University of Technology
 %

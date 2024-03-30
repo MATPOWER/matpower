@@ -1,5 +1,7 @@
 function [V_hat, lam_hat] = cpf_predictor(V, lam, z, step, pv, pq)
-%CPF_PREDICTOR  Performs the predictor step for the continuation power flow
+% cpf_predictor - Performs the predictor step for the continuation power flow
+% ::
+%
 %   [V_HAT, LAM_HAT] = CPF_PREDICTOR(V, LAM, Z, STEP, PV, PQ)
 %
 %   Computes a prediction (approximation) to the next solution of the
@@ -18,7 +20,7 @@ function [V_hat, lam_hat] = cpf_predictor(V, lam, z, step, pv, pq)
 %       LAM_HAT : predicted lambda continuation parameter
 
 %   MATPOWER
-%   Copyright (c) 1996-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Shrirang Abhyankar, Argonne National Laboratory
 %   and Ray Zimmerman, PSERC Cornell
 %

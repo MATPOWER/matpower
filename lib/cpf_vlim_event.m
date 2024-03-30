@@ -1,5 +1,7 @@
 function ef = cpf_vlim_event(cb_data, cx)
-%CPF_VLIM_EVENT  Event function to detect bus voltage limit violations
+% cpf_vlim_event - Event function to detect bus voltage limit violations
+% ::
+%
 %   EF = CPF_VLIM_EVENT(CB_DATA, CX)
 %
 %   CPF event function to detect bus voltage limits violations,
@@ -13,7 +15,7 @@ function ef = cpf_vlim_event(cb_data, cx)
 %       EF : event function value
 
 %   MATPOWER
-%   Copyright (c) 2016-2017, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2016-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Ahmad Abubakar Sadiq, Federal University of Technology Minna, Nigeria
 %   and Shrirang Abhyankar, Argonne National Laboratory

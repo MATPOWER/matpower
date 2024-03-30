@@ -1,8 +1,8 @@
 function t_opf_dc_osqp(quiet)
-%T_OPF_DC_OSQP  Tests for DC optimal power flow using OSQP solver.
+% t_opf_dc_osqp - Tests for legacy DC optimal power flow using OSQP solver.
 
 %   MATPOWER
-%   Copyright (c) 2004-2021, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

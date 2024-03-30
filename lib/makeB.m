@@ -1,5 +1,7 @@
 function [Bp, Bpp] = makeB(baseMVA, bus, branch, alg)
-%MAKEB   Builds the FDPF matrices, B prime and B double prime.
+% makeB - Builds the FDPF matrices, B prime and B double prime.
+% ::
+%
 %   [BP, BPP] = MAKEB(MPC, ALG)
 %   [BP, BPP] = MAKEB(BASEMVA, BUS, BRANCH, ALG)
 %
@@ -16,10 +18,10 @@ function [Bp, Bpp] = makeB(baseMVA, bus, branch, alg)
 %   Example:
 %       [Bp, Bpp] = makeB(baseMVA, bus, branch, 'FDXB');
 %
-%   See also FDPF.
+% See also fdpf.
 
 %   MATPOWER
-%   Copyright (c) 1996-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

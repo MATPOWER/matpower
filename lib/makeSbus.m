@@ -1,5 +1,7 @@
 function [Sbus, dSbus_dVm] = makeSbus(baseMVA, bus, gen, mpopt, Vm, Sg)
-%MAKESBUS   Builds the vector of complex bus power injections.
+% makeSbus - Builds the vector of complex bus power injections.
+% ::
+%
 %   SBUS = MAKESBUS(BASEMVA, BUS, GEN)
 %   SBUS = MAKESBUS(BASEMVA, BUS, GEN, MPOPT, VM)
 %   SBUS = MAKESBUS(BASEMVA, BUS, GEN, MPOPT, VM, SG)
@@ -17,10 +19,10 @@ function [Sbus, dSbus_dVm] = makeSbus(baseMVA, bus, gen, mpopt, Vm, Sg)
 %   return value SBUS empty. If VM is empty, it assumes no voltage dependence
 %   and returns a sparse zero matrix.
 %
-%   See also MAKEYBUS.
+% See also makeYbus.
 
 %   MATPOWER
-%   Copyright (c) 1996-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

@@ -1,5 +1,7 @@
 function shed = loadshed(gen, ild)
-%LOADSHED  Returns a vector of curtailments of dispatchable loads.
+% loadshed - Returns a vector of curtailments of dispatchable loads.
+% ::
+%
 %   SHED = LOADSHED(GEN)
 %   SHED = LOADSHED(GEN, ILD)
 %
@@ -19,7 +21,7 @@ function shed = loadshed(gen, ild)
 %       total_load_shed = max(loadshed(mpc.gen));
 
 %   MATPOWER
-%   Copyright (c) 2018, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2018-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

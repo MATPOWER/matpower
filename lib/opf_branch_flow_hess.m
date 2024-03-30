@@ -1,5 +1,7 @@
 function d2H = opf_branch_flow_hess(x, lambda, mpc, Yf, Yt, il, mpopt)
-%OPF_BRANCH_FLOW_HESS  Evaluates Hessian of branch flow constraints.
+% opf_branch_flow_hess - Evaluates Hessian of branch flow constraints.
+% ::
+%
 %   D2H = OPF_BRANCH_FLOW_HESS(X, LAMBDA, OM, YF, YT, IL, MPOPT)
 %
 %   Hessian evaluation function for AC branch flow constraints.
@@ -22,10 +24,10 @@ function d2H = opf_branch_flow_hess(x, lambda, mpc, Yf, Yt, il, mpopt)
 %   Example:
 %       d2H = opf_branch_flow_hess(x, lambda, mpc, Yf, Yt, il, mpopt);
 %
-%   See also OPF_BRANCH_FLOW_FCN.
+% See also opf_branch_flow_fcn.
 
 %   MATPOWER
-%   Copyright (c) 1996-2018, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %

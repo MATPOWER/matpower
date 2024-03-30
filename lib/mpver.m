@@ -1,11 +1,19 @@
 function rv = mpver(varargin)
-%MPVER  Prints or returns MATPOWER version info for current installation.
-%   V = MPVER returns the current MATPOWER version number.
-%   V = MPVER('all') returns a struct with the fields Name, Version,
-%   Release and Date (all strings). Calling MPVER without assigning the
-%   return value prints the version and release date of the current
-%   installation of MATPOWER, MATLAB (or Octave), the Optimization Toolbox,
-%   MIPS and any optional MATPOWER packages.
+% mpver - Prints or returns installed |MATPOWER| version info.
+% ::
+%
+%   mpver
+%   v = mpver
+%   v = mpver('all')
+%
+% When called with an output argument and no input argument, mpver
+% returns the current |MATPOWER| version numbers. With an input argument
+% (e.g. ``'all'``) it returns  a struct with the fields ``Name``,
+% ``Version``, ``Release``, and ``Date`` *(all char arrays)*. Calling
+% mpver without assigning the return value prints the version and
+% release date of the current installation of |MATPOWER|, |MATLAB| (or
+% |OCTAVE|), the Optimization Toolbox, MP-Test, MIPS, MP-Opt-Model, MOST,
+% and any optional |MATPOWER| packages.
 
 %   MATPOWER
 %   Copyright (c) 2005-2024, Power Systems Engineering Research Center (PSERC)
@@ -28,7 +36,7 @@ function rv = mpver(varargin)
 v{1} = struct(  'Name',     'MATPOWER', ... 
                 'Version',  '8.0b1+', ...
                 'Release',  '', ...
-                'Date',     '26-Mar-2024' );
+                'Date',     '29-Mar-2024' );
 if nargout > 0
     if nargin > 0
         rv = v{1};

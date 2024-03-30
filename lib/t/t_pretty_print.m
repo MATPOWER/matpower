@@ -1,8 +1,8 @@
 function t_pretty_print(quiet)
-%T_PRETTY_PRINT  Tests for pretty printed output.
+% t_pretty_print - Tests for pretty printed output.
 
 %   MATPOWER
-%   Copyright (c) 2014-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2014-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

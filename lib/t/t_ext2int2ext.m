@@ -1,10 +1,11 @@
 function t_ext2int2ext(quiet)
-%T_EXT2INT2EXT  Tests EXT2INT, INT2EXT, and related functions.
-%   Includes tests for GET_REORDER, SET_REORDER, E2I_DATA, I2E_DATA
-%   E2I_FIELD, I2E_FIELD, EXT2INT and INT2EXT.
+% t_ext2int2ext - Tests ext2int, int2ext, and related functions.
+%
+% Includes tests for get_reorder, set_reorder, e2i_data, i2e_data,
+% e2i_field, i2e_field, ext2int, and int2ext.
 
 %   MATPOWER
-%   Copyright (c) 2009-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2009-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

@@ -1,5 +1,7 @@
 function mpc = toggle_dcline(mpc, on_off)
-%TOGGLE_DCLINE Enable, disable or check status of DC line modeling.
+% toggle_dcline - Enable, disable or check status of DC line modeling.
+% ::
+%
 %   MPC = TOGGLE_DCLINE(MPC, 'on')
 %   MPC = TOGGLE_DCLINE(MPC, 'off')
 %   T_F = TOGGLE_DCLINE(MPC, 'status')
@@ -26,10 +28,10 @@ function mpc = toggle_dcline(mpc, on_off)
 %       results1 = runpf(mpc);
 %       results2 = runopf(mpc);
 %
-%   See also IDX_DCLINE, ADD_USERFCN, REMOVE_USERFCN, RUN_USERFCN.
+% See also idx_dcline, add_userfcn, remove_userfcn, run_userfcn.
 
 %   MATPOWER
-%   Copyright (c) 2011-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2011-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

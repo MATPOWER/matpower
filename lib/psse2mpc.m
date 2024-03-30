@@ -1,5 +1,7 @@
 function [mpc, warnings] = psse2mpc(rawfile_name, mpc_name, verbose, rev)
-%PSSE2MPC  Converts a PSS/E RAW data file into a MATPOWER case struct.
+% psse2mpc - Converts a PSS/E RAW data file into a |MATPOWER| case struct.
+% ::
+%
 %   MPC = PSSE2MPC(RAWFILE_NAME)
 %   MPC = PSSE2MPC(RAWFILE_NAME, VERBOSE)
 %   MPC = PSSE2MPC(RAWFILE_NAME, VERBOSE, REV)
@@ -25,13 +27,13 @@ function [mpc, warnings] = psse2mpc(rawfile_name, mpc_name, verbose, rev)
 %       WARNINGS : (optional) cell array of strings containing warning
 %                  messages (included by default in comments of MPC_NAME).
 %
-% NOTE: The data sections to be read in the PSS/E raw file includes:
-%       identification data; bus data; branch data; fixed shunt data;
-%       generator data; transformer data; switched shunt data; area data
-%       and hvdc line data. Other data sections are currently ignored.
+%   NOTE: The data sections to be read in the PSS/E raw file includes:
+%         identification data; bus data; branch data; fixed shunt data;
+%         generator data; transformer data; switched shunt data; area data
+%         and hvdc line data. Other data sections are currently ignored.
 
 %   MATPOWER
-%   Copyright (c) 2014-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2014-2024, Power Systems Engineering Research Center (PSERC)
 %   by Yujia Zhu, PSERC ASU
 %   and Ray Zimmerman, PSERC Cornell
 %   Based on mpraw2mp.m, written by: Yujia Zhu, Jan 2014, yzhu54@asu.edu.

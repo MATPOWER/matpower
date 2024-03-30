@@ -1,5 +1,6 @@
 function gt = gentypes()
-%GENTYPES   Return list of standard values for generator unit types
+% gentypes - Return list of standard values for generator unit types.
+% ::
 %
 %   GT = GENTYPES()
 %
@@ -65,10 +66,10 @@ function gt = gentypes()
 %           error('unknown generator unit type');
 %       end
 %
-%   See also GENFUELS, SAVECASE.
+% See also genfuels, savecase.
 
 %   MATPOWER
-%   Copyright (c) 2017, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2017-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

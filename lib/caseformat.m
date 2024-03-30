@@ -1,4 +1,6 @@
-%CASEFORMAT    Defines the MATPOWER case file format.
+% caseformat - Defines the MATPOWER case file format.
+% ::
+%
 %   A MATPOWER case file is an M-file or MAT-file that defines or returns
 %   a struct named mpc, referred to as a "MATPOWER case struct". The fields
 %   of this struct are baseMVA, bus, gen, branch, and (optional) gencost. With
@@ -24,7 +26,7 @@
 %   LOADCASE and SAVECASE which are able to load and save case files in both
 %   version 1 and version 2 formats.
 %
-%   See also IDX_BUS, IDX_BRCH, IDX_GEN, IDX_AREA and IDX_COST regarding
+%   See IDX_BUS, IDX_BRCH, IDX_GEN, IDX_AREA and IDX_COST regarding
 %   constants which can be used as named column indices for the data matrices.
 %   Also described in the first three are additional results columns that
 %   are added to the bus, branch and gen matrices by the power flow and OPF
@@ -117,7 +119,7 @@
 %            if ANGMIN < -360 and unbounded above if ANGMAX > 360.
 %            If both parameters are zero, it is unconstrained.)
 %
-% (+) Generator Cost Data Format
+%   (+) Generator Cost Data Format
 %       NOTE: If gen has ng rows, then the first ng rows of gencost contain
 %       the cost for active power produced by the corresponding generators.
 %       If gencost has 2*ng rows then rows ng+1 to 2*ng contain the reactive
@@ -139,17 +141,17 @@
 %               starting with highest order, where cost is
 %               f(p) = cn*p^n + ... + c1*p + c0
 % 
-% (+) Area Data Format (deprecated)
+%   (+) Area Data Format (deprecated)
 %     (this data is not used by MATPOWER and is no longer necessary for
 %      version 2 case files with OPF data).
 %       1   i, area number
 %       2   price_ref_bus, reference bus for that area
 %
-%   See also LOADCASE, SAVECASE, IDX_BUS, IDX_BRCH, IDX_GEN, IDX_AREA
-%   and IDX_COST.
+% See also loadcase, savecase, idx_bus, idx_brch, idx_gen, idx_area
+% idx_cost.
 
 %   MATPOWER
-%   Copyright (c) 1996-2019, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

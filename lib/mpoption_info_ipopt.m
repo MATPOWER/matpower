@@ -1,5 +1,6 @@
 function opt = mpoption_info_ipopt(selector)
-%MPOPTION_INFO_IPOPT  Returns MATPOWER option info for IPOPT.
+% mpoption_info_ipopt - Returns |MATPOWER| option info for IPOPT.
+% ::
 %
 %   DEFAULT_OPTS = MPOPTION_INFO_IPOPT('D')
 %   VALID_OPTS   = MPOPTION_INFO_IPOPT('V')
@@ -15,10 +16,10 @@ function opt = mpoption_info_ipopt(selector)
 %   of option names or modify option setting/copying behavior for this
 %   subset of optional MATPOWER options.
 %
-%   See also MPOPTION.
+% See also mpoption.
 
 %   MATPOWER
-%   Copyright (c) 2014-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2014-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

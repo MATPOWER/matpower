@@ -1,5 +1,7 @@
 function [Va, success] = dcpf(B, Pbus, Va0, ref, pv, pq)
-%DCPF  Solves a DC power flow.
+% dcpf - Solves a DC power flow.
+% ::
+%
 %   [VA, SUCCESS] = DCPF(B, PBUS, VA0, REF, PV, PQ) solves for the bus
 %   voltage angles at all but the reference bus, given the full system
 %   B matrix and the vector of bus real power injections, the initial
@@ -7,10 +9,10 @@ function [Va, success] = dcpf(B, Pbus, Va0, ref, pv, pq)
 %   the lists of bus indices for the swing bus, PV buses, and PQ buses,
 %   respectively. Returns a vector of bus voltage angles in radians.
 %
-%   See also RUNDCPF, RUNPF.
+% See also rundcpf, runpf.
 
 %   MATPOWER
-%   Copyright (c) 1996-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %   and Ray Zimmerman, PSERC Cornell
 %

@@ -1,8 +1,8 @@
 function task_rv = t_run_mp(quiet)
-%T_RUN_MP  Tests for RUN_MP and simple creation and solve of models.
+% t_run_mp - Tests for run_mp and simple creation and solve of models.
 
 %   MATPOWER
-%   Copyright (c) 2021-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

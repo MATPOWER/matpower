@@ -1,5 +1,6 @@
 function [dSbus_dV1, dSbus_dV2] = dSbus_dV(Ybus, V, vcart)
-%DSBUS_DV   Computes partial derivatives of power injection w.r.t. voltage.
+% dSbus_dV - Computes partial derivatives of power injection w.r.t. voltage.
+% ::
 %
 %   The derivatives can be taken with respect to polar or cartesian coordinates
 %   of voltage, depending on the 3rd argument.
@@ -66,8 +67,8 @@ function [dSbus_dV1, dSbus_dV2] = dSbus_dV(Ybus, V, vcart)
 %       [dSbus_dVa, dSbus_dVm] = dSbus_dV(Ybus, V);
 %       [dSbus_dVr, dSbus_dVi] = dSbus_dV(Ybus, V, 1);
 %
-%   For more details on the derivations behind the derivative code used
-%   in MATPOWER information, see:
+% For more details on the derivations behind the derivative code used
+% in |MATPOWER| information, see::
 %
 %   [TN2]  R. D. Zimmerman, "AC Power Flows, Generalized OPF Costs and
 %          their Derivatives using Complex Matrix Notation", MATPOWER
@@ -81,7 +82,7 @@ function [dSbus_dV1, dSbus_dV2] = dSbus_dV(Ybus, V, vcart)
 %          doi: 10.5281/zenodo.3237909
 
 %   MATPOWER
-%   Copyright (c) 1996-2019, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Baljinnyam Sereeter, Delft University of Technology
 %

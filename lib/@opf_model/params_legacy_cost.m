@@ -1,5 +1,7 @@
 function [cp, vs, i1, iN] = params_legacy_cost(om, name, idx)
-%PARAMS_LEGACY_COST  Returns cost parameters for legacy user-defined costs.
+% params_legacy_cost - Returns cost parameters for legacy user-defined costs.
+% ::
+%
 %   CP = OM.PARAMS_LEGACY_COST()
 %   CP = OM.PARAMS_LEGACY_COST(NAME)
 %   CP = OM.PARAMS_LEGACY_COST(NAME, IDX_LIST)
@@ -58,10 +60,10 @@ function [cp, vs, i1, iN] = params_legacy_cost(om, name, idx)
 %
 %       F_U(X, CP) = 1/2 * w'*H*w + Cw'*w
 %
-%   See also OPT_MODEL, ADD_LEGACY_COST, EVAL_LEGACY_COST.
+% See also opt_model, add_legacy_cost, eval_legacy_cost.
 
 %   MATPOWER
-%   Copyright (c) 2017, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2017-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

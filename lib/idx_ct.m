@@ -4,7 +4,8 @@ function [CT_LABEL, CT_PROB, CT_TABLE, CT_TBUS, CT_TGEN, CT_TBRCH, ...
     CT_LOAD_ALL_PQ, CT_LOAD_FIX_PQ, CT_LOAD_DIS_PQ, CT_LOAD_ALL_P, ...
     CT_LOAD_FIX_P, CT_LOAD_DIS_P, CT_TGENCOST, CT_TAREAGENCOST, ...
     CT_MODCOST_F, CT_MODCOST_X] = idx_ct
-%IDX_CT  Defines constants for named column indices to changes table
+% idx_ct - Defines constants for named column indices to changes table
+% ::
 %
 %   [CT_LABEL, CT_PROB, CT_TABLE, CT_TBUS, CT_TGEN, CT_TBRCH, CT_TAREABUS, ...
 %   CT_TAREAGEN, CT_TAREABRCH, CT_ROW, CT_COL, CT_CHGTYPE, CT_REP, ...
@@ -13,12 +14,12 @@ function [CT_LABEL, CT_PROB, CT_TABLE, CT_TBUS, CT_TGEN, CT_TBRCH, ...
 %   CT_LOAD_DIS_P, CT_TGENCOST, CT_TAREAGENCOST, CT_MODCOST_F, ...
 %   CT_MODCOST_X] = idx_ct;
 %
-% CT_LABEL: column of changes table where the change set label is stored
+%   CT_LABEL: column of changes table where the change set label is stored
 %
-% CT_PROB:  column of changes table where the probability of the
-%           change set is stored
+%   CT_PROB:  column of changes table where the probability of the
+%             change set is stored
 %
-% CT_TABLE: column of the changes table where the type of system data 
+%   CT_TABLE: column of the changes table where the type of system data 
 %           table to be modified is stored;
 %           type CT_TBUS indicates bus table
 %           type CT_TGEN indicates gen table
@@ -30,12 +31,12 @@ function [CT_LABEL, CT_PROB, CT_TABLE, CT_TBUS, CT_TGEN, CT_TBRCH, ...
 %           type CT_TAREALOAD indicates area-wide change in load
 %                             (bus and/or gen tables)
 %
-% CT_ROW:   column of changes table where the row number in the data
+%   CT_ROW: column of changes table where the row number in the data
 %           table to be modified is stored. A value of "0" in this column
 %           has the special meaning "apply to all rows".  For an area-wide
 %           type of change, the area number is stored here instead.
 %
-% CT_COL:   column of changes table where the number of the column in
+%   CT_COL: column of changes table where the number of the column in
 %           the data table to be modified is stored
 %           For CT_TLOAD and CT_TAREALOAD, the value entered in this column
 %           is one of the following codes (or its negative), rather than
@@ -54,16 +55,18 @@ function [CT_LABEL, CT_PROB, CT_TABLE, CT_TBUS, CT_TGEN, CT_TBRCH, ...
 %           (CT_ADD change type) of the specified cost functions:
 %           type CT_MODCOST_F scales or shifts the cost function vertically
 %           type CT_MODCOST_X scales or shifts the cost function horizontally
-%           See also MODCOST.
+%           See MODCOST.
 %
-% CT_CHGTYPE: column of changes table where the type of change to
+%   CT_CHGTYPE: column of changes table where the type of change to
 %           be made is stored:
 %           type CT_REP replaces old value by value in CT_NEWVAL column
 %           type CT_REL multiplies old value by factor in CT_NEWVAL column
 %           type CT_ADD adds value in CT_NEWVAL column to old value
+%
+% See also apply_changes, modcost.
 
 %   MATPOWER
-%   Copyright (c) 2000-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2000-2024, Power Systems Engineering Research Center (PSERC)
 %   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %   and Ray Zimmerman, PSERC Cornell
 %

@@ -1,5 +1,6 @@
 function opt = mpoption_info_linprog(selector)
-%MPOPTION_INFO_LINPROG  Returns MATPOWER option info for LINPROG.
+% mpoption_info_linprog - Returns |MATPOWER| option info for LINPROG.
+% ::
 %
 %   DEFAULT_OPTS = MPOPTION_INFO_LINPROG('D')
 %   VALID_OPTS   = MPOPTION_INFO_LINPROG('V')
@@ -15,10 +16,10 @@ function opt = mpoption_info_linprog(selector)
 %   of option names or modify option setting/copying behavior for this
 %   subset of optional MATPOWER options.
 %
-%   See also MPOPTION.
+% See also mpoption.
 
 %   MATPOWER
-%   Copyright (c) 2014-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2014-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

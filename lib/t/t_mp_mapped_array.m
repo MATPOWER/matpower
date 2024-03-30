@@ -1,8 +1,8 @@
 function obj = t_mp_mapped_array(quiet)
-%T_MP_MAPPED_ARRAY  Tests for MP.MAPPED_ARRAY.
+% t_mp_mapped_array - Tests for mp.mapped_array.
 
 %   MATPOWER
-%   Copyright (c) 2021, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

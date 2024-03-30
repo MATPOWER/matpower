@@ -1,5 +1,7 @@
 function [pcost, qcost] = pqcost(gencost, ng, on)
-%PQCOST  Splits the gencost variable into two pieces if costs are given for Qg.
+% pqcost - Splits the gencost variable into two pieces if costs are given for Qg.
+% ::
+%
 %   [PCOST, QCOST] = PQCOST(GENCOST, NG, ON) checks whether GENCOST has
 %   cost information for reactive power generation (rows ng+1 to 2*ng).
 %   If so, it returns the first NG rows in PCOST and the last NG rows in
@@ -8,7 +10,7 @@ function [pcost, qcost] = pqcost(gencost, ng, on)
 %   it only returns the rows corresponding to these generators.
 
 %   MATPOWER
-%   Copyright (c) 1996-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

@@ -1,5 +1,7 @@
 function d2Vlims = opf_vlim_hess(x, lambda, mpc, idx, mpopt)
-%OPF_VLIM_HESS  Evaluates Hessian of voltage magnitudes.
+% opf_vlim_hess - Evaluates Hessian of voltage magnitudes.
+% ::
+%
 %   D2VLIMS = OPF_VLIM_HESS(X, LAMBDA, MPC, IDX, MPOPT)
 %
 %   Hessian evaluation function for voltage magnitudes.
@@ -18,10 +20,10 @@ function d2Vlims = opf_vlim_hess(x, lambda, mpc, idx, mpopt)
 %   Example:
 %       d2Vlims = opf_vlim_hess(x, lambda, mpc, idx, mpopt);
 %
-%   See also OPF_VLIM_FCN.
+% See also opf_vlim_fcn.
 
 %   MATPOWER
-%   Copyright (c) 2018, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2018-2024, Power Systems Engineering Research Center (PSERC)
 %   by Baljinnyam Sereeter, Delft University of Technology
 %   and Ray Zimmerman, PSERC Cornell
 %

@@ -1,5 +1,6 @@
 function mpc = e2i_field(mpc, field, ordering, dim)
-%E2I_FIELD   Converts fields of MPC from external to internal indexing.
+% e2i_field - Converts fields of MPC from external to internal indexing.
+% ::
 %
 %   This function performs several different tasks, depending on the
 %   arguments passed.
@@ -34,10 +35,10 @@ function mpc = e2i_field(mpc, field, ordering, dim)
 %       Reorders columns of mpc.reserves.zones to match internal
 %       generator ordering.
 %
-%   See also I2E_FIELD, E2I_DATA, EXT2INT.
+% See also i2e_field, e2i_data, ext2int.
 
 %   MATPOWER
-%   Copyright (c) 2009-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2009-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

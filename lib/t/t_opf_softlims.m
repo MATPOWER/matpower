@@ -1,9 +1,10 @@
 function t_opf_softlims(quiet)
-%T_OPF_SOFTLIMS  Tests for userfcn callbacks (softlims) w/OPF.
-%   Includes high-level tests of soft limits implementations.
+% t_opf_softlims - Tests for userfcn callbacks (softlims) w/OPF.
+%
+% Includes high-level tests of soft limits implementations.
 
 %   MATPOWER
-%   Copyright (c) 2009-2018, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2009-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Eran Schweitzer, Arizona State University
 %

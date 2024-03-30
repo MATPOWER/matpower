@@ -1,5 +1,6 @@
 function [baseMVA, bus, gen, branch, areas, gencost, info] = loadcase(casefile)
-%LOADCASE   Load .m or .mat case files or data struct in MATPOWER format.
+% loadcase - Load .m or .mat case files or data struct in MATPOWER format.
+% ::
 %
 %   [BASEMVA, BUS, GEN, BRANCH, AREAS, GENCOST] = LOADCASE(CASEFILE)
 %   [BASEMVA, BUS, GEN, BRANCH, GENCOST] = LOADCASE(CASEFILE)
@@ -23,7 +24,7 @@ function [baseMVA, bus, gen, branch, areas, gencost, info] = loadcase(casefile)
 %   version 2 format.
 
 %   MATPOWER
-%   Copyright (c) 1996-2017, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %   and Ray Zimmerman, PSERC Cornell
 %

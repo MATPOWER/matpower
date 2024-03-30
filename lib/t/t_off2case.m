@@ -1,8 +1,8 @@
 function t_off2case(quiet)
-%T_OFF2CASE  Tests for code in OFF2CASE.
+% t_off2case - Tests for off2case.
 
 %   MATPOWER
-%   Copyright (c) 2005-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2005-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

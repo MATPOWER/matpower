@@ -1,5 +1,6 @@
 function V_corr = make_vcorr(DD,pv,nb,nl,f,Zb)
-%MAKE_VCORR  Voltage Correction used in distribution power flow
+% make_vcorr - Voltage Correction used in distribution power flow.
+% ::
 %
 %   V_corr = make_vcorr(DD,pv,nb,nl,f,Zb)
 %
@@ -11,7 +12,15 @@ function V_corr = make_vcorr(DD,pv,nb,nl,f,Zb)
 %   IEEE Transactions on Power Delivery, vol. 9, no. 2, pp. 1056-1062, Apr 1994.
 %   https://doi.org/10.1109/61.296308
 %
-%   See also RADIAL_PF.
+% See also radial_pf.
+
+%   MATPOWER
+%   Copyright (c) 2019-2024, Power Systems Engineering Research Center (PSERC)
+%   by Mirko Todorovski
+%
+%   This file is part of MATPOWER.
+%   Covered by the 3-clause BSD License (see LICENSE file for details).
+%   See https://matpower.org for more info.
 
 V_corr = zeros(nb,1);
 I = zeros(nb,1);

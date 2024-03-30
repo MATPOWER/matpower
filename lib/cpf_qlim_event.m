@@ -1,5 +1,7 @@
 function ef = cpf_qlim_event(cb_data, cx)
-%CPF_QLIM_EVENT  Event function to detect gen reactive power limit violations
+% cpf_qlim_event - Event function to detect gen reactive power limit violations
+% ::
+%
 %   EF = CPF_QLIM_EVENT(CB_DATA, CX)
 %
 %   CPF event function to detect generator reactive power limit violations,
@@ -13,7 +15,7 @@ function ef = cpf_qlim_event(cb_data, cx)
 %       EF : event function value
 
 %   MATPOWER
-%   Copyright (c) 2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2016-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Shrirang Abhyankar, Argonne National Laboratory
 %

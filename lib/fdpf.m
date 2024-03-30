@@ -1,5 +1,7 @@
 function [V, converged, i] = fdpf(Ybus, Sbus, V0, Bp, Bpp, ref, pv, pq, mpopt)
-%FDPF  Solves the power flow using a fast decoupled method.
+% fdpf - Solves the power flow using a fast decoupled method.
+% ::
+%
 %   [V, CONVERGED, I] = FDPF(YBUS, SBUS, V0, BP, BPP, REF, PV, PQ, MPOPT)
 %   solves for bus voltages given the full system admittance matrix (for
 %   all buses), the complex bus power injection vector (for all buses),
@@ -15,10 +17,10 @@ function [V, converged, i] = fdpf(Ybus, Sbus, V0, Bp, Bpp, ref, pv, pq, mpopt)
 %   final complex voltages, a flag which indicates whether it converged
 %   or not, and the number of iterations performed.
 %
-%   See also RUNPF.
+% See also runpf.
 
 %   MATPOWER
-%   Copyright (c) 1996-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

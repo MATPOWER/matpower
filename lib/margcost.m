@@ -1,5 +1,7 @@
 function marginalcost = margcost(gencost, Pg)
-%MARGCOST    Computes marginal cost for generators at given output level.
+% margcost - Computes marginal cost for generators at given output level.
+% ::
+%
 %   MARGINALCOST = MARGCOST(GENCOST, PG) computes marginal cost for generators
 %   given a matrix in gencost format and a column vector of generation levels.
 %   The return value has the same dimensions as PG. Each row of GENCOST is
@@ -7,7 +9,7 @@ function marginalcost = margcost(gencost, Pg)
 %   of PG.
 
 %   MATPOWER
-%   Copyright (c) 1996-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   & Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %

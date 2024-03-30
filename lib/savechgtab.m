@@ -1,5 +1,7 @@
 function fname_out = savechgtab(fname, chgtab, warnings)
-%SAVECHGTAB  Save a change table to a file.
+% savechgtab - Save a change table to a file.
+% ::
+%
 %   SAVECHGTAB(FNAME, CHGTAB)
 %   SAVECHGTAB(FNAME, CHGTAB, WARNINGS)
 %   FNAME = SAVECHGTAB(FNAME, ...)
@@ -23,7 +25,7 @@ function fname_out = savechgtab(fname, chgtab, warnings)
 %       FNAME :  name of the file, with extention added if necessary
 
 %   MATPOWER
-%   Copyright (c) 2017, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2017-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

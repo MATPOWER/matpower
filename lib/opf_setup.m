@@ -1,14 +1,16 @@
 function om = opf_setup(mpc, mpopt)
-%OPF  Constructs an OPF model object from a MATPOWER case struct.
+% opf_setup - Constructs an OPF model object from a |MATPOWER| case struct.
+% ::
+%
 %   OM = OPF_SETUP(MPC, MPOPT)
 %
 %   Assumes that MPC is a MATPOWER case struct with internal indexing,
 %   all equipment in-service, etc.
 %
-%   See also OPF, EXT2INT, OPF_EXECUTE.
+% See also opf, ext2int, opf_execute.
 
 %   MATPOWER
-%   Copyright (c) 1996-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %

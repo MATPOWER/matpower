@@ -1,5 +1,7 @@
 function [groups, unvisited] = connected_components(C, groups, unvisited)
-%CONNECTED_COMPONENTS Returns the connected components of a graph
+% connected_components - Returns the connected components of a graph
+% ::
+%
 %   [GROUPS, ISOLATED] = CONNECTED_COMPONENTS(C)
 %
 %   Returns the connected components of a directed graph, specified by
@@ -16,7 +18,7 @@ function [groups, unvisited] = connected_components(C, groups, unvisited)
 %   Internally, this is used recursively.
 
 %   MATPOWER
-%   Copyright (c) 2012-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2012-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

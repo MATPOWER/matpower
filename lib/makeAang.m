@@ -1,5 +1,7 @@
 function [Aang, lang, uang, iang]  = makeAang(baseMVA, branch, nb, mpopt)
-%MAKEAANG  Construct constraints for branch angle difference limits.
+% makeAang - Construct constraints for branch angle difference limits.
+% ::
+%
 %   [AANG, LANG, UANG, IANG]  = MAKEAANG(BASEMVA, BRANCH, NB, MPOPT)
 %
 %   Constructs the parameters for the following linear constraint limiting
@@ -18,7 +20,7 @@ function [Aang, lang, uang, iang]  = makeAang(baseMVA, branch, nb, mpopt)
 %       [Aang, lang, uang, iang]  = makeAang(baseMVA, branch, nb, mpopt);
 
 %   MATPOWER
-%   Copyright (c) 1996-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %

@@ -1,5 +1,7 @@
 function d2G = opf_current_balance_hess(x, lambda, mpc, Ybus, mpopt)
-%OPF_CURRENT_BALANCE_HESS  Evaluates Hessian of current balance constraints.
+% opf_current_balance_hess - Evaluates Hessian of current balance constraints.
+% ::
+%
 %   D2G = OPF_CURRENT_BALANCE_HESS(X, LAMBDA, OM, YBUS, MPOPT)
 %
 %   Hessian evaluation function for AC real and imaginary current balance
@@ -19,10 +21,10 @@ function d2G = opf_current_balance_hess(x, lambda, mpc, Ybus, mpopt)
 %   Example:
 %       d2G = opf_current_balance_hess(x, lambda, mpc, Ybus, mpopt);
 %
-%   See also OPF_CURRENT_BALANCE_FCN.
+% See also opf_current_balance_fcn.
 
 %   MATPOWER
-%   Copyright (c) 1996-2018, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Baljinnyam Sereeter, Delft University of Technology
 %   and Ray Zimmerman, PSERC Cornell
 %

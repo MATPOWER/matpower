@@ -1,5 +1,6 @@
 function [i2e, bus, gen, branch, areas] = ext2int(bus, gen, branch, areas)
-%EXT2INT   Converts external to internal indexing.
+% ext2int - Converts external to internal indexing.
+% ::
 %
 %   This function has two forms, (1) the old form that operates on
 %   and returns individual matrices and (2) the new form that operates
@@ -69,7 +70,7 @@ function [i2e, bus, gen, branch, areas] = ext2int(bus, gen, branch, areas)
 %                   on
 %                   off
 %
-%   See also INT2EXT, E2I_FIELD, E2I_DATA.
+% See also int2ext, e2i_field, e2i_data.
 
 %   UNDOCUMENTED OPTION:
 %       MPC = EXT2INT(MPC, MPOPT, 1)
@@ -78,7 +79,7 @@ function [i2e, bus, gen, branch, areas] = ext2int(bus, gen, branch, areas)
 %       MATPOWER v4 through v7.0b1.
 
 %   MATPOWER
-%   Copyright (c) 1996-2019, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

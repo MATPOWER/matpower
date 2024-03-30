@@ -1,5 +1,13 @@
 function t_pf_radial(quiet)
-%T_PF_RADIAL  Tests for distribution power flow solvers.
+% t_pf_radial - Tests for legacy distribution power flow solvers.
+
+%   MATPOWER
+%   Copyright (c) 2019-2024, Power Systems Engineering Research Center (PSERC)
+%   by Mirko Todorovski
+%
+%   This file is part of MATPOWER.
+%   Covered by the 3-clause BSD License (see LICENSE file for details).
+%   See https://matpower.org for more info.
 
 if nargin < 1
     quiet = 0;

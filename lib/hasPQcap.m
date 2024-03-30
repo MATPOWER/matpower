@@ -1,5 +1,7 @@
 function TorF = hasPQcap(gen, hilo)
-%HASPQCAP  Checks for P-Q capability curve constraints.
+% hasPQcap - Checks for P-Q capability curve constraints.
+% ::
+%
 %   TORF = HASPQCAP(GEN, HILO) returns a column vector of 1's and 0's. The 1's
 %   correspond to rows of the GEN matrix which correspond to generators which
 %   have defined a capability curve (with sloped upper and/or lower bound on
@@ -22,7 +24,7 @@ function TorF = hasPQcap(gen, hilo)
 %   constraint is not redundant w.r.t the box constraints.
 
 %   MATPOWER
-%   Copyright (c) 2005-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2005-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

@@ -1,5 +1,7 @@
 function mpc = toggle_softlims(mpc, on_off)
-%TOGGLE_SOFTLIMS Relax DC optimal power flow branch limits.
+% toggle_softlims - Relax DC optimal power flow branch limits.
+% ::
+%
 %   MPC = TOGGLE_SOFTLIMS(MPC, 'on')
 %   MPC = TOGGLE_SOFTLIMS(MPC, 'off')
 %   T_F = TOGGLE_SOFTLIMS(MPC, 'status')
@@ -85,7 +87,7 @@ function mpc = toggle_softlims(mpc, on_off)
 %       user-specified soft limit violation cost + the shadow price on any
 %       binding remaining hard limit.
 %
-%   See also ADD_USERFCN, REMOVE_USERFCN, RUN_USERFCN, T_OPF_SOFTLIMS.
+% See also add_userfcn, remove_userfcn, run_userfcn, t_opf_softlims.
 
 %   To do for future versions:
 %       Inputs:
@@ -96,7 +98,7 @@ function mpc = toggle_softlims(mpc, on_off)
 %       base_flow   n x 1, arbitrary baseline (other than RATE_A)
 
 %   MATPOWER
-%   Copyright (c) 2009-2018, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2009-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Eran Schweitzer, Arizona State University
 %

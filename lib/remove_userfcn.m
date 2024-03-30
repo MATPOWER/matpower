@@ -1,5 +1,7 @@
 function mpc = remove_userfcn(mpc, stage, fcn)
-%REMOVE_USERFCN Removes a userfcn from the list to be called for a case.
+% remove_userfcn - Removes a userfcn from the list to be called for a case.
+% ::
+%
 %   MPC = REMOVE_USERFCN(MPC, STAGE, FCN)
 %
 %   A userfcn is a callback function that can be called automatically by
@@ -7,11 +9,11 @@ function mpc = remove_userfcn(mpc, stage, fcn)
 %   the last instance of the userfcn for the given STAGE with the function
 %   handle specified by FCN.
 %
-%   See also ADD_USERFCN, RUN_USERFCN, TOGGLE_RESERVES, TOGGLE_IFLIMS,
-%   RUNOPF_W_RES.
+% See also add_userfcn, run_userfcn, toggle_reserves, toggle_iflims,
+% runopf_w_res.
 
 %   MATPOWER
-%   Copyright (c) 2009-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2009-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

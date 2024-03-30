@@ -1,8 +1,8 @@
 function task = t_run_mp_3p(quiet)
-%T_RUN_MP_3P  Tests for RUN_PF and RUN_OPF for 3-phase and hybrid test cases.
+% t_run_mp_3p - Tests for run_pf, run_cpf, run_opf for 3-phase and hybrid test cases.
 
 %   MATPOWER
-%   Copyright (c) 2021, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

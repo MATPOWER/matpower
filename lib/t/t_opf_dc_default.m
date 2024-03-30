@@ -1,8 +1,8 @@
 function t_opf_dc_default(quiet)
-%T_OPF_DC_DEFAULT  Tests for DC optimal power flow using DEFAULT solver.
+% t_opf_dc_default - Tests for legacy DC optimal power flow using DEFAULT solver.
 
 %   MATPOWER
-%   Copyright (c) 2004-2021, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

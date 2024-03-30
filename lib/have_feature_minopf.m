@@ -1,14 +1,14 @@
 function [TorF, vstr, rdate] = have_feature_minopf()
-%HAVE_FEATURE_MINOPF  Detect availability/version info for MINOPF
+% have_feature_minopf - Detect availability/version info for MINOPF.
 %
-%   Feature detection function implementing 'minopf' tag for HAVE_FEATURE
-%   to detect availability/version of MINOPF, a MINOS-based optimal power
-%   flow (OPF) solver.
+% Private feature detection function implementing ``'minopf'`` tag for
+% have_feature to detect availability/version of MINOPF, a MINOS-based
+% optimal power flow (OPF) solver.
 %
-%   See also HAVE_FEATURE, MINOPF.
+% See also have_feature, minopf.
 
 %   MATPOWER
-%   Copyright (c) 2004-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

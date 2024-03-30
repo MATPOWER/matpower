@@ -1,5 +1,7 @@
 function [Avl, lvl, uvl, ivl]  = makeAvl(baseMVA, gen)
-%MAKEAVL Construct linear constraints for constant power factor var loads.
+% makeAvl - Construct linear constraints for constant power factor var loads.
+% ::
+%
 %   [AVL, LVL, UVL, IVL]  = MAKEAVL(MPC)
 %   [AVL, LVL, UVL, IVL]  = MAKEAVL(BASEMVA, GEN) (deprecated)
 %
@@ -15,7 +17,7 @@ function [Avl, lvl, uvl, ivl]  = makeAvl(baseMVA, gen)
 %       [Avl, lvl, uvl, ivl]  = makeAvl(baseMVA, gen);  %% deprecated
 
 %   MATPOWER
-%   Copyright (c) 1996-2018, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %

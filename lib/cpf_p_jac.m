@@ -1,5 +1,7 @@
 function [dP_dV, dP_dlam] = cpf_p_jac(parameterization, z, V, lam, Vprv, lamprv, pv, pq)
-%CPF_P_JAC Computes partial derivatives of CPF parameterization function.
+% cpf_p_jac - Computes partial derivatives of CPF parameterization function.
+% ::
+%
 %   [DP_DV, DP_DLAM ] = CPF_P_JAC(PARAMETERIZATION, Z, V, LAM, ...
 %                                                   VPRV, LAMPRV, PV, PQ)
 %
@@ -21,10 +23,10 @@ function [dP_dV, dP_dlam] = cpf_p_jac(parameterization, z, V, lam, Vprv, lamprv,
 %       DP_DV : partial of parameterization function w.r.t. voltages
 %       DP_DLAM : partial of parameterization function w.r.t. lambda
 %
-%   See also CPF_PREDICTOR, CPF_CORRECTOR.
+% See also cpf_predictor, cpf_corrector.
 
 %   MATPOWER
-%   Copyright (c) 1996-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Shrirang Abhyankar, Argonne National Laboratory
 %   and Ray Zimmerman, PSERC Cornell
 %

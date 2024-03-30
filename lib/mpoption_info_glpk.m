@@ -1,5 +1,6 @@
 function opt = mpoption_info_glpk(selector)
-%MPOPTION_INFO_GLPK  Returns MATPOWER option info for GLPK.
+% mpoption_info_glpk - Returns |MATPOWER| option info for GLPK.
+% ::
 %
 %   DEFAULT_OPTS = MPOPTION_INFO_GLPK('D')
 %   VALID_OPTS   = MPOPTION_INFO_GLPK('V')
@@ -15,10 +16,10 @@ function opt = mpoption_info_glpk(selector)
 %   of option names or modify option setting/copying behavior for this
 %   subset of optional MATPOWER options.
 %
-%   See also MPOPTION.
+% See also mpoption.
 
 %   MATPOWER
-%   Copyright (c) 2014-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2014-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

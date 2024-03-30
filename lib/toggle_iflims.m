@@ -1,5 +1,7 @@
 function mpc = toggle_iflims(mpc, on_off)
-%TOGGLE_IFLIMS Enable, disable or check status of set of interface flow limits.
+% toggle_iflims - Enable, disable or check status of set of interface flow limits.
+% ::
+%
 %   MPC = TOGGLE_IFLIMS(MPC, 'on')
 %   MPC = TOGGLE_IFLIMS(MPC, 'off')
 %   T_F = TOGGLE_IFLIMS(MPC, 'status')
@@ -29,10 +31,10 @@ function mpc = toggle_iflims(mpc, on_off)
 %       mu.l    - nif x 1, shadow price on lower flow limit, ($/MW)
 %       mu.u    - nif x 1, shadow price on upper flow limit, ($/MW)
 %
-%   See also ADD_USERFCN, REMOVE_USERFCN, RUN_USERFCN, T_CASE30_USERFCNS.
+% See also add_userfcn, remove_userfcn, run_userfcn, t_case30_userfcns.
 
 %   MATPOWER
-%   Copyright (c) 2009-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2009-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

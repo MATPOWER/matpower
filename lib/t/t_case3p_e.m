@@ -1,8 +1,8 @@
 function mpc = t_case3p_e
-%T_CASE3P_E   Five bus hybrid test case, 1 single-phase bus, 4 3-phase buses.
+% t_case3p_e - Five bus hybrid test case, 1 single-phase bus, 4 3-phase buses.
 %
-%   One bus is a hybrid REF bus (REF on single-phase side). Three phase bus
-%   solution should match T_CASE3P_A
+% One bus is a hybrid REF bus (REF on single-phase side). Three phase bus
+% solution should match t_case3p_a.
 
 %% MATPOWER Case Format : Version 2
 mpc.version = '2';

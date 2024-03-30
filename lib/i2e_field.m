@@ -1,5 +1,6 @@
 function mpc = i2e_field(mpc, field, ordering, dim)
-%I2E_FIELD   Converts fields of MPC from internal to external bus numbering.
+% i2e_field - Converts fields of MPC from internal to external bus numbering.
+% ::
 %
 %   MPC = I2E_FIELD(MPC, FIELD, ORDERING)
 %   MPC = I2E_FIELD(MPC, FIELD, ORDERING, DIM)
@@ -30,10 +31,10 @@ function mpc = i2e_field(mpc, field, ordering, dim)
 %       Reorders columns of mpc.reserves.zones to match external
 %       generator ordering.
 %
-%   See also E2I_FIELD, I2E_DATA, INT2EXT.
+% See also e2i_field, i2e_data, int2ext.
 
 %   MATPOWER
-%   Copyright (c) 2009-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2009-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

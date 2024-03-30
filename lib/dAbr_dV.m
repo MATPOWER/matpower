@@ -1,6 +1,8 @@
 function [dAf_dV1, dAf_dV2, dAt_dV1, dAt_dV2] = ...
                         dAbr_dV(dFf_dV1, dFf_dV2, dFt_dV1, dFt_dV2, Ff, Ft)
-%DABR_DV   Partial derivatives of squared flow magnitudes w.r.t voltage.
+% dAbr_dV - Partial derivatives of squared flow magnitudes w.r.t voltage.
+% ::
+%
 %   [DAF_DV1, DAF_DV2, DAT_DV1, DAT_DV2] = ...
 %               DABR_DV(DFF_DV1, DFF_DV2, DFT_DV1, DFT_DV2, FF, FT)
 %   returns four matrices containing partial derivatives of the square of
@@ -55,10 +57,10 @@ function [dAf_dV1, dAf_dV2, dAt_dV1, dAt_dV2] = ...
 %       [dAf_dV1, dAf_dV2, dAt_dV1, dAt_dV2] = ...
 %               dAbr_dV(dFf_dV1, dFf_dV2, dFt_dV1, dFt_dV2, Ff, Ft);
 %
-%   See also DIBR_DV, DSBR_DV.
+% See also dIbr_dV, dSbr_dV.
 %
-%   For more details on the derivations behind the derivative code used
-%   in MATPOWER information, see:
+% For more details on the derivations behind the derivative code used
+% in |MATPOWER| information, see::
 %
 %   [TN2]  R. D. Zimmerman, "AC Power Flows, Generalized OPF Costs and
 %          their Derivatives using Complex Matrix Notation", MATPOWER
@@ -67,7 +69,7 @@ function [dAf_dV1, dAf_dV2, dAt_dV1, dAt_dV2] = ...
 %          doi: 10.5281/zenodo.3237866
 
 %   MATPOWER
-%   Copyright (c) 1996-2019, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

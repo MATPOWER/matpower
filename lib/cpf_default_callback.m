@@ -1,7 +1,9 @@
 function [nx, cx, done, rollback, evnts, cb_data, results] = ...
     cpf_default_callback(k, nx, cx, px, done, rollback, evnts, ...
                             cb_data, cb_args, results)
-%CPF_DEFAULT_CALLBACK   Default callback function for CPF
+% cpf_default_callback - Default callback function for CPF
+% ::
+%
 %   [NX, CX, DONE, ROLLBACK, EVNTS, CB_DATA, RESULTS] = 
 %       CPF_DEFAULT_CALLBACK(K, NX, CX, PX, DONE, ROLLBACK, EVNTS, ...
 %                               CB_DATA, CB_ARGS, RESULTS)
@@ -107,10 +109,10 @@ function [nx, cx, done, rollback, evnts, cb_data, results] = ...
 %       Multiple user callbacks can be registered by assigning a cell array
 %       of such strings and/or structs to the 'cpf.user_callback' option.
 %
-%   See also RUNCPF, CPF_REGISTER_CALLBACK.
+% See also runcpf, cpf_register_callback.
 
 %   MATPOWER
-%   Copyright (c) 2013-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2013-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

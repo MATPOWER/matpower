@@ -1,5 +1,6 @@
 function [bus, gen, branch, areas] = int2ext(i2e, bus, gen, branch, areas)
-%INT2EXT   Converts internal to external bus numbering.
+% int2ext - Converts internal to external bus numbering.
+% ::
 %
 %   This function has two forms, (1) the old form that operates on
 %   and returns individual matrices and (2) the new form that operates
@@ -32,10 +33,10 @@ function [bus, gen, branch, areas] = int2ext(i2e, bus, gen, branch, areas)
 %       mpc = int2ext(mpc);
 %       mpc = int2ext(mpc, mpopt);
 %
-%   See also EXT2INT, I2E_FIELD, I2E_DATA.
+% See also ext2int, i2e_field, i2e_data.
 
 %   MATPOWER
-%   Copyright (c) 1996-2018, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

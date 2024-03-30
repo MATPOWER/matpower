@@ -1,5 +1,5 @@
 function t_dcline(quiet)
-%T_DCLINE  Tests for DC line extension in TOGGLE_DCLINE.
+% t_dcline - Tests for DC line extension in toggle_dcline.
 
 %   MATPOWER
 %   Copyright (c) 2011-2024, Power Systems Engineering Research Center (PSERC)

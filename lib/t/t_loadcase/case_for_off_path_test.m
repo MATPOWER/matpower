@@ -1,6 +1,7 @@
 function mpc = case_for_off_path_test
-%CASE_NO_NET  Two bus, single gen example to mimic the case with no network.
-%   Please see CASEFORMAT for details on the case file format.
+% case_for_off_path_test - Two bus, single gen example to mimic the case with no network.
+%
+% Please see caseformat for details on the case file format.
 
 %   MATPOWER
 

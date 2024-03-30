@@ -1,6 +1,8 @@
 function [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
     VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus
-%IDX_BUS   Defines constants for named column indices to bus matrix.
+% idx_bus - Defines constants for named column indices to bus matrix.
+% ::
+%
 %   Example:
 %
 %   [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
@@ -44,10 +46,10 @@ function [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
 %    3  REF   reference bus
 %    4  NONE  isolated bus
 %
-%   See also DEFINE_CONSTANTS.
+% See also define_constants.
 
 %   MATPOWER
-%   Copyright (c) 1996-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

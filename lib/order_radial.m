@@ -1,5 +1,6 @@
 function mpc = order_radial(mpc)
-%ORDER_RADIAL  Performs oriented ordering to buses and branches.
+% order_radial - Performs oriented ordering to buses and branches.
+% ::
 %
 %   mpc = order_radial(mpc)
 %
@@ -10,7 +11,15 @@ function mpc = order_radial(mpc)
 %   D. Rajicic, R. Ackovski and R. Taleski, "Voltage correction power flow,"
 %   IEEE Transactions on Power Delivery, vol. 9, no. 2, pp. 1056-1062, Apr 1994.
 %
-%   See also RADIAL_PF.
+% See also radial_pf.
+
+%   MATPOWER
+%   Copyright (c) 2019-2024, Power Systems Engineering Research Center (PSERC)
+%   by Mirko Todorovski
+%
+%   This file is part of MATPOWER.
+%   Covered by the 3-clause BSD License (see LICENSE file for details).
+%   See https://matpower.org for more info.
 
 %% define named indices into bus, gen, branch matrices
 define_constants;

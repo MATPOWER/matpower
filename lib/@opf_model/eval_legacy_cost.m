@@ -1,5 +1,7 @@
 function [f, df, d2f] = eval_legacy_cost(om, x, name, idx)
-%EVAL_LEGACY_COST  Evaluates individual or full set of legacy user costs.
+% eval_legacy_cost - Evaluates individual or full set of legacy user costs.
+% ::
+%
 %   F = OM.EVAL_LEGACY_COST(X ...)
 %   [F, DF] = OM.EVAL_LEGACY_COST(X ...)
 %   [F, DF, D2F] = OM.EVAL_LEGACY_COST(X ...)
@@ -14,10 +16,10 @@ function [f, df, d2f] = eval_legacy_cost(om, x, name, idx)
 %       [f, df, d2f] = om.eval_legacy_cost(x, name)
 %       [f, df, d2f] = om.eval_legacy_cost(x, name, idx)
 %
-%   See also OPT_MODEL, ADD_LEGACY_COST, PARAMS_LEGACY_COST.
+% See also opt_model, add_legacy_cost, params_legacy_cost.
 
 %   MATPOWER
-%   Copyright (c) 2008-2017, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

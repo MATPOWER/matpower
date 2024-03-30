@@ -1,13 +1,13 @@
 function [TorF, vstr, rdate] = have_feature_regexp_split()
-%HAVE_FEATURE_REGEXP_SPLIT  Detect availability/version info for REGEXP 'split'
+% have_feature_regexp_split - Detect availability/version info for REGEXP ``'split'``.
 %
-%   Feature detection function implementing 'regexp_split' tag for HAVE_FEATURE
-%   to detect support for the 'split' argument to REGEXP.
+% Private feature detection function implementing ``'regexp_split'`` tag for
+% have_feature to detect support for the ``'split'`` argument to REGEXP.
 %
-%   See also HAVE_FEATURE, REGEXP.
+% See also have_feature, regexp.
 
 %   MATPOWER
-%   Copyright (c) 2004-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

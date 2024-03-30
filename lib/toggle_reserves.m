@@ -1,5 +1,7 @@
 function mpc = toggle_reserves(mpc, on_off)
-%TOGGLE_RESERVES Enable, disable or check status of fixed reserve requirements.
+% toggle_reserves - Enable, disable or check status of fixed reserve requirements.
+% ::
+%
 %   MPC = TOGGLE_RESERVES(MPC, 'on')
 %   MPC = TOGGLE_RESERVES(MPC, 'off')
 %   T_F = TOGGLE_RESERVES(MPC, 'status')
@@ -31,11 +33,11 @@ function mpc = toggle_reserves(mpc, on_off)
 %                         shadow prices on the zonal requirement constraint
 %                         for each zone the generator belongs to
 %
-%   See also RUNOPF_W_RES, ADD_USERFCN, REMOVE_USERFCN, RUN_USERFCN,
-%   T_CASE30_USERFCNS.
+% See also runopf_w_res, add_userfcn, remove_userfcn, run_userfcn,
+% t_case30_userfcns.
 
 %   MATPOWER
-%   Copyright (c) 2009-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2009-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

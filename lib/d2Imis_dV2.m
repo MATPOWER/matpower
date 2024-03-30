@@ -1,5 +1,6 @@
 function [G11, G12, G21, G22] = d2Imis_dV2(Sbus, Ybus, V, lam, vcart)
-%D2IMIS_DV2   Computes 2nd derivatives of current balance w.r.t. voltage.
+% d2Imis_dV2 - Computes 2nd derivatives of current balance w.r.t. voltage.
+% ::
 %
 %   The derivatives can be take with respect to polar or cartesian coordinates
 %   of voltage, depending on the 5th argument.
@@ -40,8 +41,8 @@ function [G11, G12, G21, G22] = d2Imis_dV2(Sbus, Ybus, V, lam, vcart)
 %           Gir = d/dVr (dImis_dVi.' * lam)
 %           Gii = d/dVi (dImis_dVi.' * lam)
 %
-%   For more details on the derivations behind the derivative code used
-%   in MATPOWER, see:
+% For more details on the derivations behind the derivative code used
+% in |MATPOWER|, see::
 %
 %   [TN2]  R. D. Zimmerman, "AC Power Flows, Generalized OPF Costs and
 %          their Derivatives using Complex Matrix Notation", MATPOWER
@@ -60,7 +61,7 @@ function [G11, G12, G21, G22] = d2Imis_dV2(Sbus, Ybus, V, lam, vcart)
 %          doi: 10.5281/zenodo.3237909
 
 %   MATPOWER
-%   Copyright (c) 2019, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2019-2024, Power Systems Engineering Research Center (PSERC)
 %   by Baljinnyam Sereeter, Delft University of Technology
 %   and Ray Zimmerman, PSERC Cornell
 %

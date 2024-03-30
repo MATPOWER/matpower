@@ -1,5 +1,7 @@
 function dcline = psse_convert_hvdc(dc, bus)
-%PSSE_CONVERT_HVDC Convert HVDC data from PSS/E RAW to MATPOWER
+% psse_convert_hvdc - Convert HVDC data from PSS/E RAW to |MATPOWER|.
+% ::
+%
 %   DCLINE = PSSE_CONVERT_HVDC(DC, BUS)
 %
 %   Convert all two terminal HVDC line data read from a PSS/E
@@ -15,10 +17,10 @@ function dcline = psse_convert_hvdc(dc, bus)
 %       DCLINE : a MATPOWER dcline matrix suitable for inclusion in
 %                a MATPOWER case struct.
 %
-%   See also PSSE_CONVERT.
+% See also psse_convert.
 
 %   MATPOWER
-%   Copyright (c) 2014-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2014-2024, Power Systems Engineering Research Center (PSERC)
 %   by Yujia Zhu, PSERC ASU
 %   and Ray Zimmerman, PSERC Cornell
 %   Based on mpdcin.m and mpqhvdccal.m, written by:

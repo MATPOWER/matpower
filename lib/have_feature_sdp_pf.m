@@ -1,15 +1,15 @@
 function [TorF, vstr, rdate] = have_feature_sdp_pf()
-%HAVE_FEATURE_SDP_PF  Detect availability/version info for SDP_PF
+% have_feature_sdp_pf - Detect availability/version info for SDP_PF.
 %
-%   Feature detection function implementing 'sdp_pf' tag for HAVE_FEATURE
-%   to detect availability/version of SDP_PF, a MATPOWER extension for
-%   applications of semi-definite programming relaxations of power flow
-%   equations (https://github.com/MATPOWER/mx-sdp_pf/).
+% Private feature detection function implementing ``'sdp_pf'`` tag for
+% have_feature to detect availability/version of SDP_PF, a |MATPOWER|
+% extension for applications of semi-definite programming relaxations of
+% power flow equations (https://github.com/MATPOWER/mx-sdp_pf/).
 %
-%   See also HAVE_FEATURE.
+% See also have_feature.
 
 %   MATPOWER
-%   Copyright (c) 2004-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

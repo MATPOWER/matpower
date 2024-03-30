@@ -1,5 +1,7 @@
 function [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost
-%IDX_COST   Defines constants for named column indices to gencost matrix.
+% idx_cost - Defines constants for named column indices to gencost matrix.
+% ::
+%
 %   Example:
 %
 %   [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
@@ -36,10 +38,10 @@ function [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_co
 %    1  PW_LINEAR   piecewise linear generator cost model
 %    2  POLYNOMIAL  polynomial generator cost model
 %
-%   See also DEFINE_CONSTANTS.
+% See also define_constants.
 
 %   MATPOWER
-%   Copyright (c) 1996-2019, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

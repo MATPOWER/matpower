@@ -1,6 +1,8 @@
 function [bus, gen, branch, f, success, info, et, g, jac, xr, pimul] = ...
     uopf(varargin)
-%UOPF  Solves combined unit decommitment / optimal power flow.
+% uopf - Solves combined unit decommitment / optimal power flow.
+% ::
+%
 %   [RESULTS, SUCCESS] = UOPF(MPC, MPOPT)
 %
 %   Returns either a RESULTS struct and an optional SUCCESS flag, or individual
@@ -49,10 +51,10 @@ function [bus, gen, branch, f, success, info, et, g, jac, xr, pimul] = ...
 %   If MPOPT.verbose (see MPOPTION) is true, it prints progress
 %   info, if it is > 1 it prints the output of each individual opf.
 %
-%   See also OPF, RUNUOPF.
+% See also opf, runuopf.
 
 %   MATPOWER
-%   Copyright (c) 1996-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

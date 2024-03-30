@@ -1,5 +1,6 @@
 function [H11, H12, H21, H22] = d2Sbr_dV2(Cbr, Ybr, V, mu, vcart)
-%D2SBR_DV2   Computes 2nd derivatives of complex brch power flow w.r.t. voltage.
+% d2Sbr_dV2 - Computes 2nd derivatives of complex brch power flow w.r.t. voltage.
+% ::
 %
 %   The derivatives can be take with respect to polar or cartesian coordinates
 %   of voltage, depending on the 5th argument.
@@ -43,8 +44,8 @@ function [H11, H12, H21, H22] = d2Sbr_dV2(Cbr, Ybr, V, mu, vcart)
 %           Hir = d/dVr (dSbr_dVi.' * mu)
 %           Hii = d/dVi (dSbr_dVi.' * mu)
 %
-%   For more details on the derivations behind the derivative code used
-%   in MATPOWER information, see:
+% For more details on the derivations behind the derivative code used
+% in |MATPOWER| information, see::
 %
 %   [TN2]  R. D. Zimmerman, "AC Power Flows, Generalized OPF Costs and
 %          their Derivatives using Complex Matrix Notation", MATPOWER
@@ -58,7 +59,7 @@ function [H11, H12, H21, H22] = d2Sbr_dV2(Cbr, Ybr, V, mu, vcart)
 %          doi: 10.5281/zenodo.3237909
 
 %   MATPOWER
-%   Copyright (c) 2008-2019, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Baljinnyam Sereeter, Delft University of Technology
 %

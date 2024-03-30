@@ -1,15 +1,15 @@
 function [TorF, vstr, rdate] = have_feature_smartmarket()
-%HAVE_FEATURE_SMARTMARKET  Detect availability/version info for SMARTMARKET
+% have_feature_smartmarket - Detect availability/version info for SMARTMARKET.
 %
-%   Feature detection function implementing 'smartmarket' tag for HAVE_FEATURE
-%   to detect availability/version of RUNMARKET and related files for running
-%   an energy auction, found under smartmarket in MATPOWER Extras.
-%   (https://github.com/MATPOWER/matpower-extras/).
+% Private feature detection function implementing ``'smartmarket'`` tag for
+% have_feature to detect availability/version of RUNMARKET and related
+% files for running an energy auction, found under smartmarket in |MATPOWER|
+% Extras. (https://github.com/MATPOWER/matpower-extras/).
 %
-%   See also HAVE_FEATURE, RUNMARKET.
+% See also have_feature, runmarket.
 
 %   MATPOWER
-%   Copyright (c) 2004-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

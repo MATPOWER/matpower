@@ -1,5 +1,6 @@
 function [V, Qpv, Sf, St, Sslack, iter, success] = calc_v_y_sum(Vslack,nb,nl,f,Zb,Ybf,Ybt,Yd,Sd,pv,Pg,Vg,mpopt)
-%CALC_V_Y_SUM  Solves the power flow using the admittance summation method.
+% calc_v_y_sum - Solves the power flow using the admittance summation method.
+% ::
 %
 %   [V, Qpv, Sf, St, Sslack, iter, success] = calc_v_y_sum(Vslack,nb,nl,f,Zb,Ybf,Ybt,Yd,Sd,pv,Pg,Vg,tol,iter_max)
 %
@@ -19,7 +20,15 @@ function [V, Qpv, Sf, St, Sslack, iter, success] = calc_v_y_sum(Vslack,nb,nl,f,Z
 %   Volume 48, Issue 2, 15 December 1998, Pages 79-87
 %   https://doi.org/10.1016/S0378-7796(98)00067-4
 %
-%   See also RADIAL_PF.
+% See also radial_pf.
+
+%   MATPOWER
+%   Copyright (c) 2019-2024, Power Systems Engineering Research Center (PSERC)
+%   by Mirko Todorovski
+%
+%   This file is part of MATPOWER.
+%   Covered by the 3-clause BSD License (see LICENSE file for details).
+%   See https://matpower.org for more info.
 
 %% initialize
 tol      = mpopt.pf.tol;

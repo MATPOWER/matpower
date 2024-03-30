@@ -1,5 +1,6 @@
 function newval = i2e_data(mpc, val, oldval, ordering, dim)
-%I2E_DATA   Converts data from internal to external indexing.
+% i2e_data - Converts data from internal to external indexing.
+% ::
 %
 %   VAL = I2E_DATA(MPC, VAL, OLDVAL, ORDERING)
 %   VAL = I2E_DATA(MPC, VAL, OLDVAL, ORDERING, DIM)
@@ -42,10 +43,10 @@ function newval = i2e_data(mpc, val, oldval, ordering, dim)
 %       Converts a GENCOST matrix that has both real and reactive power
 %       costs (in rows 1--ng and ng+1--2*ng, respectively).
 %
-%   See also E2I_DATA, I2E_FIELD, INT2EXT.
+% See also e2i_data, i2e_field, int2ext.
 
 %   MATPOWER
-%   Copyright (c) 2009-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2009-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

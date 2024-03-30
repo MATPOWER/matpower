@@ -1,8 +1,8 @@
 function obj = t_port_inj_power_acc(quiet)
-%T_PORT_SNJ_POWER_ACC  Tests of port_inj_power() derivatives wrt cartesian V.
+%nt_port_inj_power_acc - Tests of port_inj_power() derivatives wrt cartesian V.
 
 %   MATPOWER
-%   Copyright (c) 2019-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2019-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

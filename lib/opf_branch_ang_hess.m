@@ -1,5 +1,7 @@
 function d2VaDif = opf_branch_ang_hess(x, lambda, Aang, lang, uang)
-%OPF_BRANCH_ANG_HESS  Evaluates Hessian of branch angle difference constraints.
+% opf_branch_ang_hess - Evaluates Hessian of branch angle difference constraints.
+% ::
+%
 %   D2VADIF = OPF_BRANCH_ANG_HESS(X, LAMBDA, AANG, LANG, UANG)
 %
 %   Hessian evaluation function for branch angle difference constraints
@@ -19,10 +21,10 @@ function d2VaDif = opf_branch_ang_hess(x, lambda, Aang, lang, uang)
 %   Example:
 %       d2VaDif = opf_branch_ang_hess(x, lambda, Aang, lang, uang);
 %
-%   See also OPF_BRANCH_ANG_FCN.
+% See also opf_branch_ang_fcn.
 
 %   MATPOWER
-%   Copyright (c) 2018-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2018-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Baljinnyam Sereeter, Delft University of Technology
 %

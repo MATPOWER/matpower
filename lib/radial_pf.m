@@ -1,5 +1,6 @@
 function [mpc, success, iterations] = radial_pf(mpc,mpopt)
-%RADIAL_PF  Solves the power flow using a backward-forward sweep method.
+% radial_pf - Solves the power flow using a backward-forward sweep method.
+% ::
 %
 %   [mpc, success, iterations] = radial_pf(mpc,mpopt)
 %
@@ -16,7 +17,15 @@ function [mpc, success, iterations] = radial_pf(mpc,mpopt)
 %       success : success flag, 1 = succeeded, 0 = failed
 %       iterations : number of iterations
 %
-%  See also CASEFORMAT, LOADCASE, MPOPTION.
+% See also caseformat, loadcase, mpoption.
+
+%   MATPOWER
+%   Copyright (c) 2019-2024, Power Systems Engineering Research Center (PSERC)
+%   by Mirko Todorovski
+%
+%   This file is part of MATPOWER.
+%   Covered by the 3-clause BSD License (see LICENSE file for details).
+%   See https://matpower.org for more info.
 
 %% define named indices into bus, gen, branch matrices
 define_constants;

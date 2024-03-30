@@ -1,8 +1,8 @@
 function tssk = t_mp_dm_converter_mpc2(quiet)
-%T_MP_DM_CONVERTER_MPC2  Tests for MP.DM_CONVERTER_MPC2.
+% t_mp_dm_converter_mpc2 - Tests for mp.dm_converter_mpc2.
 
 %   MATPOWER
-%   Copyright (c) 2021-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

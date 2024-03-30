@@ -1,6 +1,7 @@
 function mpck = extract_islands(mpc, varargin)
-%function mpck = extract_islands(mpc, groups, k, custom)
-%EXTRACT_ISLANDS Extracts each island in a network with islands
+% extract_islands - Extracts each island in a network with islands.
+% ::
+%
 %   MPC_ARRAY = EXTRACT_ISLANDS(MPC)
 %   MPC_ARRAY = EXTRACT_ISLANDS(MPC, GROUPS)
 %   MPC_K = EXTRACT_ISLANDS(MPC, K)
@@ -62,10 +63,10 @@ function mpck = extract_islands(mpc, varargin)
 %       Note: Fields bus_name, gentype and genfuel are handled automatically
 %             and do not need to be included in custom.
 %
-%   See also FIND_ISLANDS, CASE_INFO, CONNECTED_COMPONENTS.
+% See also find_islands, case_info, connected_components.
 
 %   MATPOWER
-%   Copyright (c) 2012-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2012-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

@@ -1,5 +1,7 @@
 function cpf_callbacks = cpf_register_callback(cpf_callbacks, fcn, priority, args)
-%CPF_REGISTER_CALLBACK  Register CPF callback functions
+% cpf_register_callback - Register CPF callback functions
+% ::
+%
 %   CPF_CALLBACKS = CPF_REGISTER_CALLBACK(CPF_CALLBACKS, FCN, PRIORITY)
 %
 %   Registers a CPF callback function to be called by RUNCPF.
@@ -19,7 +21,7 @@ function cpf_callbacks = cpf_register_callback(cpf_callbacks, fcn, priority, arg
 %                       cpf_qlim_event_cb       41
 %                       cpf_plim_event_cb       40
 %                       cpf_default_callback    0
-%^      ARGS : arguments to be passed to the callback each time it is invoked
+%       ARGS : arguments to be passed to the callback each time it is invoked
 %
 %   Outputs:
 %       CPF_CALLBACKS : updated struct containing info about registered
@@ -40,10 +42,10 @@ function cpf_callbacks = cpf_register_callback(cpf_callbacks, fcn, priority, arg
 %       Multiple user callbacks can be registered by assigning a cell array
 %       of such strings and/or structs to the 'cpf.user_callback' option.
 %
-%   See also RUNCPF, CPF_DEFAULT_CALLBACK.
+% See also runcpf, cpf_default_callback.
 
 %   MATPOWER
-%   Copyright (c) 2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2016-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Shrirang Abhyankar, Argonne National Laboratory
 %

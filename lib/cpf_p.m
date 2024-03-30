@@ -1,5 +1,7 @@
 function P = cpf_p(parameterization, step, z, V, lam, Vprv, lamprv, pv, pq)
-%CPF_P Computes the value of the CPF parameterization function.
+% cpf_p m - Computes the value of the CPF parameterization function.
+% ::
+%
 %   P = CPF_P(PARAMETERIZATION, STEP, Z, V, LAM, VPRV, LAMPRV, PV, PQ)
 %
 %   Computes the value of the parameterization function at the current
@@ -19,10 +21,10 @@ function P = cpf_p(parameterization, step, z, V, lam, Vprv, lamprv, pv, pq)
 %   Outputs:
 %       P : value of the parameterization function at the current point
 %
-%   See also CPF_PREDICTOR, CPF_CORRECTOR.
+% See also cpf_predictor, cpf_corrector.
 
 %   MATPOWER
-%   Copyright (c) 1996-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Shrirang Abhyankar, Argonne National Laboratory
 %   and Ray Zimmerman, PSERC Cornell
 %

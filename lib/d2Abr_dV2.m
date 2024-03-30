@@ -1,5 +1,6 @@
 function [H11, H12, H21, H22] = d2Abr_dV2(d2F_dV2, dF_dV1, dF_dV2, F, V, mu)
-%D2ABR_DV2   Computes 2nd derivatives of |branch flow|^2 w.r.t. V.
+% d2Abr_dV2 - Computes 2nd derivatives of ``|branch flow|^2`` w.r.t. V.
+% ::
 %
 %   The derivatives can be take with respect to polar or cartesian coordinates
 %   of voltage, depending on the first 3 arguments. Flows could be complex
@@ -36,10 +37,10 @@ function [H11, H12, H21, H22] = d2Abr_dV2(d2F_dV2, dF_dV1, dF_dV2, F, V, mu)
 %     H21 = d/dV1 (dAF_dV2.' * mu)
 %     H22 = d/dV2 (dAF_dV2.' * mu)
 %
-%   See also DABR_DV, DIBR_DV, DSBR_DV.
+% See also dAbr_dV, dIbr_dV, dSbr_dV.
 %
-%   For more details on the derivations behind the derivative code used
-%   in MATPOWER information, see:
+% For more details on the derivations behind the derivative code used
+% in |MATPOWER| information, see::
 %
 %   [TN2]  R. D. Zimmerman, "AC Power Flows, Generalized OPF Costs and
 %          their Derivatives using Complex Matrix Notation", MATPOWER
@@ -48,7 +49,7 @@ function [H11, H12, H21, H22] = d2Abr_dV2(d2F_dV2, dF_dV1, dF_dV2, F, V, mu)
 %          doi: 10.5281/zenodo.3237866
 
 %   MATPOWER
-%   Copyright (c) 2008-2019, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

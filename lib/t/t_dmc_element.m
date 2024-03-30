@@ -1,8 +1,8 @@
 function t_dmc_element(quiet)
-%T_DMC_ELEMENT  Tests for MP.DMC_ELEMENT.
+% t_dmc_element - Tests for mp.dmc_element.
 
 %   MATPOWER
-%   Copyright (c) 2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2022-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

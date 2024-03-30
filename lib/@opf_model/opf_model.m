@@ -1,5 +1,7 @@
 classdef opf_model < opt_model
-%OPF_MODEL  Constructor for OPF model class.
+% opf_model - Legacy |MATPOWER| OPF model class.
+% ::
+%
 %   OM = OPF_MODEL(MPC)
 %
 %   This class implements the OPF model object used to encapsulate
@@ -57,10 +59,10 @@ classdef opf_model < opt_model
 %           .H
 %           .Cw
 %
-%   See also OPT_MODEL.
+% See also opt_model.
 
 %   MATPOWER
-%   Copyright (c) 2008-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -68,13 +70,18 @@ classdef opf_model < opt_model
 %   See https://matpower.org for more info.
 
     properties
-        cost = [];
-        mpc = struct();
+        cost = [];          % data for legacy user-defined costs
+        mpc = struct();     % |MATPOWER| case struct from which ``om`` was built
     end     %% properties
 
     methods
-        %% constructor
         function om = opf_model(mpc)
+            % Constructor.
+            % ::
+            %
+            %   om = opf_model()
+            %   om = opf_model(mpc)
+
             args = {};
             have_mpc = 0;
             if nargin > 0
@@ -104,6 +111,8 @@ classdef opf_model < opt_model
         end
 
         function om = def_set_types(om)
+            % Define set types ``var``, ``lin``, ``nle``, ``nli``, ``qdc``, ``nlc``, ``cost``.
+
             om.set_types = struct(...
                     'var',  'VARIABLES', ...
                     'lin',  'LINEAR CONSTRAINTS', ...
@@ -116,6 +125,8 @@ classdef opf_model < opt_model
         end
 
         function om = init_set_types(om)
+            % Initialize data structures for each set type.
+
             %% call parent to create base data structures for each type
             init_set_types@opt_model(om);
 

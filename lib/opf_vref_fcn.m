@@ -1,5 +1,7 @@
 function [Vref, dVref] = opf_vref_fcn(x, mpc, refs, mpopt)
-%OPF_VREF_FCN  Evaluates voltage angle reference and their gradients.
+% opf_vref_fcn - Evaluates voltage angle reference and their gradients.
+% ::
+%
 %   [Vref, dVref] = OPF_VREF_FCN(X, mpc, ref, MPOPT)
 %
 %   Computes the voltage angle reference using real and imaginary part of complex voltage for
@@ -19,10 +21,10 @@ function [Vref, dVref] = opf_vref_fcn(x, mpc, refs, mpopt)
 %       Vref = opf_vref_fcn(x, mpc, refs, mpopt);
 %       [Vref, dVref] = opf_vref_fcn(x, mpc, refs, mpopt);
 %
-%   See also OPF_VREF_HESS
+% See also opf_vref_hess.
 
 %   MATPOWER
-%   Copyright (c) 2018, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2018-2024, Power Systems Engineering Research Center (PSERC)
 %   by Baljinnyam Sereeter, Delft University of Technology
 %   and Ray Zimmerman, PSERC Cornell
 %
