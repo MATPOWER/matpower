@@ -6068,6 +6068,7 @@ name & description \\
 \code{psse2mpc}	& converts power flow data from PSS/E RAW format to \matpower{} format	\\
 \code{save2psse}	& exports \matpower{} case to PSS/E RAW format	\\
 \code{savecase}	& saves case data to a \matpower{} case file	\\
+\code{savechgtab}	& saves a change table, such as used by \code{apply\_changes}, to a file	\\
 \bottomrule
 \end{tabular}
 \end{threeparttable}
@@ -6127,6 +6128,7 @@ name & description \\
 \code{order\_radial}	& performs oriented ordering of buses and branches for radial power flow\tnote{\dag}	\\
 \code{pfsoln}	& computes branch flows, generator reactive power (and real power for slack bus), updates \bus{}, \gen{}, \branch{} matrices with solved values	\\
 \code{radial\_pf}	& wrapper for backward/forward sweep power flow solvers\tnote{\dag}	\\
+\code{zgausspf}	& implementation of implicit Z-bus Gauss power flow solver	\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -6427,7 +6429,7 @@ name & description\tnote{\dag} \\
 %\renewcommand{\arraystretch}{1.2}
 \centering
 \begin{threeparttable}
-\caption{NLP, LP \& QP Solver Functions\tnote{\P}}
+\caption{LP, QP, MILP \& MIQP Solver Functions\tnote{\P}}
 \label{tab:solvers}
 \footnotesize
 \begin{tabular}{p{0.15\textwidth}p{0.78\textwidth}}
@@ -6494,6 +6496,7 @@ name & description \\
 \code{define\_constants}	& convenience script defines constants for named column indices to data matrices (calls \code{idx\_bus}, \code{idx\_brch}, \code{idx\_gen} and \code{idx\_cost})	\\
 \code{extract\_islands}	& extracts islands in a network into their own \matpower{} case struct	\\
 \code{feval\_w\_path}	& same as \matlab{}'s \code{feval} function, except the function being evaluated need not be in the \matlab{}/Octave path	\\
+\code{find\_bridges}	& finds islands, bridges, and non-bridges in a network	\\
 \code{find\_islands}	& finds islands and isolated buses in a network	\\
 \code{genfuels}	& list of standard values for generator fuel types, for \code{mpc.genfuel}	\\
 \code{gentypes}	& list of standard values for generator unit types, for \code{mpc.gentype}	\\
@@ -6515,7 +6518,6 @@ name & description \\
 \code{poly2pwl}	& creates piecewise linear approximation to polynomial cost function	\\
 \code{polycost}	& evaluates polynomial generator cost and its derivatives	\\
 \code{pqcost}	& splits \gencost{} into real and reactive power costs	\\
-\code{savechgtab}	& saves a change table, such as used by \code{apply\_changes}, to a file	\\
 \code{scale\_load}	& scales fixed and/or dispatchable loads by load zone	\\
 \code{total\_load}	& returns vector of total load in each load zone	\\
 \bottomrule
