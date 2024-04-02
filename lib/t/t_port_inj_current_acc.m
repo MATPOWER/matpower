@@ -1,5 +1,5 @@
 function obj = t_port_inj_current_acc(quiet)
-%m t_port_inj_current_acc - Tests of port_inj_current() derivatives wrt cartesian V.
+% t_port_inj_current_acc - Tests of mp.form_ac.port_inj_current derivatives wrt cartesian V.
 
 %   MATPOWER
 %   Copyright (c) 2019-2024, Power Systems Engineering Research Center (PSERC)

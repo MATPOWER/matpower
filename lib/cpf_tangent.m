@@ -1,6 +1,6 @@
 function z = cpf_tangent(V, lam, Ybus, Sbusb, Sbust, pv, pq, ...
                             zprv, Vprv, lamprv, parameterization, direction)
-% cpf_tangent - Computes normalized tangent predictor for continuation power flow
+% cpf_tangent - Computes normalized tangent predictor for continuation power flow.
 % ::
 %
 %   Z = CPF_TANGENT(V, LAM, YBUS, SBUSB, SBUST, PV, PQ, ...

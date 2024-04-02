@@ -1,5 +1,5 @@
 function mpc = e2i_field(mpc, field, ordering, dim)
-% e2i_field - Converts fields of MPC from external to internal indexing.
+% e2i_field - Converts fields of ``mpc`` from external to internal indexing.
 % ::
 %
 %   This function performs several different tasks, depending on the

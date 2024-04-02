@@ -1,5 +1,5 @@
 function ef = cpf_flim_event(cb_data, cx)
-% cpf_flim_event - Event function to detect branch flow limit (MVA) violations
+% cpf_flim_event - Event function to detect branch flow limit (MVA) violations.
 % ::
 %
 %   EF = CPF_FLIM_EVENT(CB_DATA, CX)

@@ -1,5 +1,5 @@
 function [TorF, vstr, rdate] = have_feature_table()
-% have_feature_table - Detect availability/version info for TABLE.
+% have_feature_table - Detect availability/version info for :class:`table`.
 %
 % Private feature detection function implementing ``'table'`` tag for
 % have_feature to detect availability/version of TABLE, included in

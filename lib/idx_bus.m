@@ -1,6 +1,6 @@
 function [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
     VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus
-% idx_bus - Defines constants for named column indices to bus matrix.
+% idx_bus - Defines constants for named column indices to ``bus`` matrix.
 % ::
 %
 %   Example:

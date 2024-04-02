@@ -1,4 +1,4 @@
-% caseformat - Defines the MATPOWER case file format.
+% caseformat - Defines the |MATPOWER| case file format.
 % ::
 %
 %   A MATPOWER case file is an M-file or MAT-file that defines or returns

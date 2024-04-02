@@ -1,5 +1,5 @@
 function ef = cpf_nose_event(cb_data, cx)
-% cpf_nose_event - Event function to detect the nose point
+% cpf_nose_event - Event function to detect the nose point.
 % ::
 %
 %   EF = CPF_NOSE_EVENT(CB_DATA, CX)

@@ -1,5 +1,5 @@
 function mpc = cpf_current_mpc(mpc, mpct, Ybus, Yf, Yt, ref, pv, pq, V, lam, mpopt)
-% cpf_current_mpc - Construct MPC for current continuation step.
+% cpf_current_mpc - Construct ``mpc`` for current continuation step.
 % ::
 %
 %   MPC = CPF_CURRENT_MPC(MPC_BASE, MPC_TARGET, YBUS, YF, YT, REF, PV, PQ, V, LAM, MPOPT)

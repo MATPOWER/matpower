@@ -1,5 +1,5 @@
 function c = idx_dcline
-% idx_dcline - Defines constants for named column indices to dcline matrix.
+% idx_dcline - Defines constants for named column indices to ``dcline`` matrix.
 % ::
 %
 %   Example:

@@ -1,5 +1,5 @@
 function [rollback, evnts, cef] = cpf_detect_events(cpf_events, cef, pef, step, verbose)
-% cpf_detect_events - Detect events from event function values
+% cpf_detect_events - Detect events from event function values.
 % ::
 %
 %   [ROLLBACK, CRITICAL_EVENTS, CEF] = CPF_DETECT_EVENTS(CPF_EVENTS, CEF, PEF, STEP, VERBOSE)

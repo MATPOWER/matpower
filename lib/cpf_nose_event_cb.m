@@ -1,6 +1,6 @@
 function [nx, cx, done, rollback, evnts, cb_data, results] = cpf_nose_event_cb(...
         k, nx, cx, px, done, rollback, evnts, cb_data, cb_args, results)
-% cpf_nose_event_cb - Callback to handle NOSE events
+% cpf_nose_event_cb - Callback to handle NOSE events.
 % ::
 %
 %   [NX, CX, DONE, ROLLBACK, EVNTS, CB_DATA, RESULTS] = 

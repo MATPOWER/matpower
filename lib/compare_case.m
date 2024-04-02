@@ -1,5 +1,5 @@
 function compare_case(mpc1, mpc2)
-% compare_case - Compares the bus, gen, branch matrices of 2 MATPOWER cases.
+% compare_case - Compares the bus, gen, branch matrices of 2 |MATPOWER| cases.
 % ::
 %
 %   COMPARE_CASE(MPC1, MPC2)

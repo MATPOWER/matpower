@@ -1,5 +1,5 @@
 function ef = cpf_vlim_event(cb_data, cx)
-% cpf_vlim_event - Event function to detect bus voltage limit violations
+% cpf_vlim_event - Event function to detect bus voltage limit violations.
 % ::
 %
 %   EF = CPF_VLIM_EVENT(CB_DATA, CX)

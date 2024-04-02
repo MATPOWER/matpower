@@ -1,5 +1,5 @@
 function mpc = apply_changes(label, mpc, chgtab)
-% apply_changes - Applies a set of changes to a MATPOWER case
+% apply_changes - Applies a set of changes to a |MATPOWER| case
 % ::
 %
 %   mpc_modified = apply_changes(label, mpc_original, chgtab)

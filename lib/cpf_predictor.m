@@ -1,5 +1,5 @@
 function [V_hat, lam_hat] = cpf_predictor(V, lam, z, step, pv, pq)
-% cpf_predictor - Performs the predictor step for the continuation power flow
+% cpf_predictor - Performs the predictor step for the continuation power flow.
 % ::
 %
 %   [V_HAT, LAM_HAT] = CPF_PREDICTOR(V, LAM, Z, STEP, PV, PQ)

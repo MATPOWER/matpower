@@ -1,5 +1,5 @@
 function [bus, gen, branch] = pfsoln(baseMVA, bus0, gen0, branch0, Ybus, Yf, Yt, V, ref, pv, pq, mpopt)
-% pfsoln - Updates bus, gen, branch data structures to match power flow soln.
+% pfsoln - Updates ``bus``, ``gen``, ``branch`` data structures to match power flow soln.
 % ::
 %
 %   [BUS, GEN, BRANCH] = PFSOLN(BASEMVA, BUS0, GEN0, BRANCH0, ...

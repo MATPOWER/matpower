@@ -1,5 +1,5 @@
 function [groups, unvisited] = connected_components(C, groups, unvisited)
-% connected_components - Returns the connected components of a graph
+% connected_components - Returns the connected components of a graph.
 % ::
 %
 %   [GROUPS, ISOLATED] = CONNECTED_COMPONENTS(C)

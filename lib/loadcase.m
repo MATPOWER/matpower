@@ -1,5 +1,5 @@
 function [baseMVA, bus, gen, branch, areas, gencost, info] = loadcase(casefile)
-% loadcase - Load .m or .mat case files or data struct in MATPOWER format.
+% loadcase - Load ``.m`` or ``.mat`` case files or data struct in |MATPOWER| format.
 % ::
 %
 %   [BASEMVA, BUS, GEN, BRANCH, AREAS, GENCOST] = LOADCASE(CASEFILE)

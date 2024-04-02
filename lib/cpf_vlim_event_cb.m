@@ -1,6 +1,6 @@
 function [nx, cx, done, rollback, evnts, cb_data, results] = cpf_vlim_event_cb(...
         k, nx, cx, px, done, rollback, evnts, cb_data, cb_args, results)
-% cpf_vlim_event_cb - Callback to handle VLIM events
+% cpf_vlim_event_cb - Callback to handle VLIM events.
 % ::
 %
 %   [NX, CX, DONE, ROLLBACK, EVNTS, CB_DATA, RESULTS] =

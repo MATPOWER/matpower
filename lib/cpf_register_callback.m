@@ -1,5 +1,5 @@
 function cpf_callbacks = cpf_register_callback(cpf_callbacks, fcn, priority, args)
-% cpf_register_callback - Register CPF callback functions
+% cpf_register_callback - Register CPF callback functions.
 % ::
 %
 %   CPF_CALLBACKS = CPF_REGISTER_CALLBACK(CPF_CALLBACKS, FCN, PRIORITY)

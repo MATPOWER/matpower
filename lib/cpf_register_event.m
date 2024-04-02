@@ -1,5 +1,5 @@
 function cpf_events = cpf_register_event(cpf_events, name, fcn, tol, locate)
-% cpf_register_event - Register event functions=
+% cpf_register_event - Register event functions.
 % ::
 %
 %   CPF_EVENTS = CPF_REGISTER_EVENT(CPF_EVENTS, NAME, FCN, TOL, LOCATE)

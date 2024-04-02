@@ -1,5 +1,5 @@
 function ef = cpf_target_lam_event(cb_data, cx)
-% cpf_target_lam_event - Event function to detect a target lambda value
+% cpf_target_lam_event - Event function to detect a target lambda value.
 % ::
 %
 %   EF = CPF_TARGET_LAM_EVENT(CB_DATA, CX)

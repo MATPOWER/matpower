@@ -1,5 +1,5 @@
 function mpc = i2e_field(mpc, field, ordering, dim)
-% i2e_field - Converts fields of MPC from internal to external bus numbering.
+% i2e_field - Converts fields of ``mpc`` from internal to external bus numbering.
 % ::
 %
 %   MPC = I2E_FIELD(MPC, FIELD, ORDERING)

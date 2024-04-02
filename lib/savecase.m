@@ -1,5 +1,5 @@
 function fname_out = savecase(fname, varargin)
-% savecase - Saves a MATPOWER case file, given a filename and the data.
+% savecase - Saves a |MATPOWER| case file, given a filename and the data.
 % ::
 %
 %   SAVECASE(FNAME, CASESTRUCT)

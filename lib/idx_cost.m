@@ -1,5 +1,5 @@
 function [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost
-% idx_cost - Defines constants for named column indices to gencost matrix.
+% idx_cost - Defines constants for named column indices to ``gencost`` matrix.
 % ::
 %
 %   Example:

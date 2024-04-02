@@ -1,5 +1,5 @@
 function ef = cpf_qlim_event(cb_data, cx)
-% cpf_qlim_event - Event function to detect gen reactive power limit violations
+% cpf_qlim_event - Event function to detect gen reactive power limit violations.
 % ::
 %
 %   EF = CPF_QLIM_EVENT(CB_DATA, CX)

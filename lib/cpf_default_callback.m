@@ -1,7 +1,7 @@
 function [nx, cx, done, rollback, evnts, cb_data, results] = ...
     cpf_default_callback(k, nx, cx, px, done, rollback, evnts, ...
                             cb_data, cb_args, results)
-% cpf_default_callback - Default callback function for CPF
+% cpf_default_callback - Default callback function for CPF.
 % ::
 %
 %   [NX, CX, DONE, ROLLBACK, EVNTS, CB_DATA, RESULTS] = 

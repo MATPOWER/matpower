@@ -1,5 +1,5 @@
 function fname_out = save2psse(fname, mpc, rawver)
-% save2psse - Saves a MATPOWER case to PSS/E RAW format.
+% save2psse - Saves a |MATPOWER| case to PSS/E RAW format.
 % ::
 %
 %   SAVE2PSSE(FNAME, MPC)

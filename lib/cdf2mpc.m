@@ -1,5 +1,5 @@
 function [mpc, warnings] = cdf2mpc(cdf_file_name, mpc_name, verbose)
-% cdf2mpc - Converts an IEEE CDF data file into a MATPOWER case struct.
+% cdf2mpc - Converts an IEEE CDF data file into a |MATPOWER| case struct.
 % ::
 %
 %   MPC = CDF2MPC(CDF_FILE_NAME)

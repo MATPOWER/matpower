@@ -1,5 +1,5 @@
 function ef = cpf_plim_event(cb_data, cx)
-% cpf_plim_event - Event function to detect gen active power limit violations
+% cpf_plim_event - Event function to detect gen active power limit violations.
 % ::
 %
 %   EF = CPF_PLIM_EVENT(CB_DATA, CX)

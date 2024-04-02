@@ -1,6 +1,6 @@
 function [V, converged, i, lam] = cpf_corrector(Ybus, Sbusb, V_hat, ref, pv, pq, ...
                 lam_hat, Sbust, Vprv, lamprv, z, step, parameterization, mpopt)
-% cpf_corrector - Solves the corrector step of a continuation power flow
+% cpf_corrector - Solves the corrector step of a continuation power flow.
 % ::
 %
 %   [V, CONVERGED, I, LAM] = CPF_CORRECTOR(YBUS, SBUSB, V_HAT, REF, PV, PQ, ...
