@@ -16,4 +16,5 @@
    introduction
    functions/index
    classes/index
+   tests/index
    legacy/index
