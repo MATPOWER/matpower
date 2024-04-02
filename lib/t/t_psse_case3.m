@@ -1,7 +1,5 @@
 function mpc = t_psse_case3
-% t_psse_case3 - Case 3 for testing PSS/E conversion.
-% ::
-%
+%T_PSSE_CASE3
 %   PSS(tm)E-30 RAW created by rawd30  FRI, FEB 26 2010  15:35
 %   PSS(TM)E SAMPLE CASE
 %   ALL DATA CATEGORIES WITH SEQUENCE DATA

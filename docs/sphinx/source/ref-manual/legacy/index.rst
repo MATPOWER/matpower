@@ -302,8 +302,6 @@ All Test Functions
    functions/t_pretty_print
    functions/t_printpf
    functions/t_psse
-   functions/t_psse_case2
-   functions/t_psse_case3
    functions/t_qps_matpower
    functions/t_run_mp
    functions/t_run_mp_3p
