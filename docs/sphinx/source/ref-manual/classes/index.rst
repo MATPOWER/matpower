@@ -374,6 +374,8 @@ Mathematical model element classes belonging to :class:`mp.xt_3p` extension:
 Legacy DC Line Extension
 ++++++++++++++++++++++++
 
+For more details, see :ref:`howto_element`.
+
 .. toctree::
    :name: sec_xt_legacy_dcline_class
 
@@ -412,3 +414,21 @@ Mathematical model element classes belonging to :class:`mp.xt_legacy_dcline` ext
       mp/mme_legacy_dcline_opf
       mp/mme_legacy_dcline_opf_ac
       mp/mme_legacy_dcline_opf_dc
+
+.. _ref_xt_oval_cap_curve_classes:
+
+Example User Constraint Extension
++++++++++++++++++++++++++++++++++
+
+For more details, see :ref:`howto_add_constraint`.
+
+.. toctree::
+   :name: sec_xt_oval_cap_curve
+
+   mp/xt_oval_cap_curve
+
+Mathematical model element class belonging to :class:`mp.xt_oval_cap_curve` extension:
+   .. toctree::
+      :name: xt_oval_cap_curve_mme_classes
+
+      mp/mme_gen_opf_ac_oval

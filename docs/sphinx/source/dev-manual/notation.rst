@@ -1,3 +1,5 @@
+.. _sec_notation:
+
 Notation
 ========
 
