@@ -96,7 +96,7 @@ if have_feature('mosek')
     mpopt = mpoption(mpopt, 'mosek.opts.MSK_DPAR_MIO_TOL_REL_GAP', 0);
     mpopt = mpoption(mpopt, 'mosek.opts.MSK_DPAR_MIO_TOL_ABS_GAP', 0);
 end
-if have_feature('intlinprog')
+if have_feature('intlinprog') && have_feature('intlinprog', 'vnum') < 24
     %mpopt = mpoption(mpopt, 'linprog.Algorithm', 'interior-point');
     %mpopt = mpoption(mpopt, 'linprog.Algorithm', 'active-set');
     %mpopt = mpoption(mpopt, 'linprog.Algorithm', 'simplex');

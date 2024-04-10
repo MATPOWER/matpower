@@ -5,6 +5,10 @@ Change history for MOST
 since 1.2
 ---------
 
+#### 4/4/24
+  - Tweak tests to avoid warnings and presolve bug with new HiGHS-based
+    `linprog` and `intlinprog` in Optimization Toolbox R2024a.
+
 #### 3/21/24
   - Add Sphinx-based Reference documentation.
 

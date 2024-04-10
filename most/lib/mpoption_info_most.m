@@ -1,5 +1,5 @@
 function opt = mpoption_info_most(selector)
-% mpoption_info_most - Returns MATPOWER option info for MOST.
+% mpoption_info_most - Returns |MATPOWER| option info for MOST.
 % ::
 %
 %   DEFAULT_OPTS = MPOPTION_INFO_MOST('D')

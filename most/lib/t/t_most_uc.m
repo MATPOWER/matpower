@@ -119,21 +119,26 @@ if have_feature('mosek')
     mpopt = mpoption(mpopt, 'mosek.opts.MSK_DPAR_MIO_TOL_ABS_GAP', 0);
 end
 if have_feature('intlinprog')
-    %mpopt = mpoption(mpopt, 'linprog.Algorithm', 'interior-point');
-    %mpopt = mpoption(mpopt, 'linprog.Algorithm', 'active-set');
-    %mpopt = mpoption(mpopt, 'linprog.Algorithm', 'simplex');
-    mpopt = mpoption(mpopt, 'linprog.Algorithm', 'dual-simplex');
-    %mpopt = mpoption(mpopt, 'intlinprog.RootLPAlgorithm', 'primal-simplex');
-    mpopt = mpoption(mpopt, 'intlinprog.RootLPAlgorithm', 'dual-simplex');
     mpopt = mpoption(mpopt, 'intlinprog.TolCon', 1e-9);
     mpopt = mpoption(mpopt, 'intlinprog.TolGapAbs', 0);
     mpopt = mpoption(mpopt, 'intlinprog.TolGapRel', 0);
-    mpopt = mpoption(mpopt, 'intlinprog.TolInteger', 1e-6);
-    %% next line is to work around a bug in intlinprog
-    % (Technical Support Case #01841662)
-    % (except actually in this case it triggers it rather than working
-    %  around it, so we comment it out)
-    %mpopt = mpoption(mpopt, 'intlinprog.LPPreprocess', 'none');
+    if have_feature('intlinprog', 'vnum') < 24
+        %mpopt = mpoption(mpopt, 'linprog.Algorithm', 'interior-point');
+        %mpopt = mpoption(mpopt, 'linprog.Algorithm', 'active-set');
+        %mpopt = mpoption(mpopt, 'linprog.Algorithm', 'simplex');
+        mpopt = mpoption(mpopt, 'linprog.Algorithm', 'dual-simplex');
+        %mpopt = mpoption(mpopt, 'intlinprog.RootLPAlgorithm', 'primal-simplex');
+        mpopt = mpoption(mpopt, 'intlinprog.RootLPAlgorithm', 'dual-simplex');
+        mpopt = mpoption(mpopt, 'intlinprog.TolInteger', 1e-6);
+        %% next line is to work around a bug in intlinprog
+        % (Technical Support Case #01841662)
+        % (except actually in this case it triggers it rather than working
+        %  around it, so we comment it out)
+        %mpopt = mpoption(mpopt, 'intlinprog.LPPreprocess', 'none');
+    else        mpopt = mpoption(mpopt, 'intlinprog.LPPreprocess', 'none');
+        s2 = warning('query', 'optim:intlinprog:IgnoreOptions');
+        warning('off', 'optim:intlinprog:IgnoreOptions');
+    end
 end
 if ~verbose
     mpopt = mpoption(mpopt, 'out.all', 0);
@@ -408,6 +413,8 @@ end
 
 if have_feature('octave')
     warning(s1.state, file_in_path_warn_id);
+elseif have_feature('intlinprog') && have_feature('intlinprog', 'vnum') >= 24 
+    warning(s2.state, 'optim:intlinprog:IgnoreOptions');
 end
 
 t_end;
