@@ -59,11 +59,13 @@ classdef (Abstract) mm_element < handle
             % Get corresponding data model element.
             % ::
             %
+            %   dme = mme.data_model_element(dm)
             %   dme = mme.data_model_element(dm, name)
             %
             % Inputs:
             %   dm (mp.data_model) : data model object
-            %   name (char array) : name of element type
+            %   name (char array) : *(optional)* name of element type
+            %       *(default is name of this object)*
             %
             % Output:
             %   dme (mp.dm_element) : data model element object
@@ -78,11 +80,13 @@ classdef (Abstract) mm_element < handle
             % Get corresponding network model element.
             % ::
             %
+            %   nme = mme.network_model_element(nm)
             %   nme = mme.network_model_element(nm, name)
             %
             % Inputs:
             %   nm (mp.net_model) : network model object
-            %   name (char array) : name of element type
+            %   name (char array) : *(optional)* name of element type
+            %       *(default is name of this object)*
             %
             % Output:
             %   nme (mp.nm_element) : network model element object

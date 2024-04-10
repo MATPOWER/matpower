@@ -130,11 +130,13 @@ classdef (Abstract) nm_element < handle
             % Get the corresponding data model element.
             % ::
             %
+            %   dme = nme.data_model_element(dm)
             %   dme = nme.data_model_element(dm, name)
             %
             % Inputs:
             %   dm (mp.data_model) : data model object
-            %   name (char array) : name of element type
+            %   name (char array) : *(optional)* name of element type
+            %       *(default is name of this object)*
             %
             % Output:
             %   dme (mp.dm_element) : data model element object
@@ -149,11 +151,13 @@ classdef (Abstract) nm_element < handle
             % Get the corresponding math model element.
             % ::
             %
+            %   mme = nme.math_model_element(mm)
             %   mme = nme.math_model_element(mm, name)
             %
             % Inputs:
             %   mm (mp.math_model) : math model object
-            %   name (char array) : name of element type
+            %   name (char array) : *(optional)* name of element type
+            %       *(default is name of this object)*
             %
             % Output:
             %   mme (mp.mm_element) : math model element object

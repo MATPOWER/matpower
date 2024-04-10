@@ -321,11 +321,13 @@ classdef (Abstract) dm_element < handle
             % Get corresponding data model converter element.
             % ::
             %
+            %   dmce = dme.dm_converter_element(dmc)
             %   dmce = dme.dm_converter_element(dmc, name)
             %
             % Inputs:
             %   dmc (mp.dm_converter) : data model converter object
-            %   name (char array) : name of element type
+            %   name (char array) : *(optional)* name of element type
+            %       *(default is name of this object)*
             %
             % Output:
             %   dmce (mp.dmc_element) : data model converter element object

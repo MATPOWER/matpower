@@ -439,7 +439,7 @@ classdef form_acc < mp.form_ac
             %   idx (integer) : index of subset of voltages of interest to
             %       include in constraint; if empty, include all
             %
-            % Outputs:
+            % Output:
             %   d2G (double) : sparse constraint Hessian, :math:`\g_{\x\x}(\lam)`
 
             %% unpack data
@@ -548,7 +548,7 @@ classdef form_acc < mp.form_ac
             %   idx (integer) : index of subset of voltages of interest to
             %       include in constraint; if empty, include all
             %
-            % Outputs:
+            % Output:
             %   d2G (double) : sparse constraint Hessian, :math:`\g_{\x\x}(\lam)`
 
             %% unpack data

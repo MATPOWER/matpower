@@ -71,11 +71,13 @@ classdef (Abstract) dmc_element < handle
             % Get the corresponding data model element.
             % ::
             %
+            %   dme = dmce.data_model_element(dm)
             %   dme = dmce.data_model_element(dm, name)
             %
             % Inputs:
             %   dm (mp.data_model) : data model object
-            %   name (char array) : name of element type
+            %   name (char array) : *(optional)* name of element type
+            %       *(default is name of this object)*
             %
             % Output:
             %   dme (mp.dm_element) : data model element object

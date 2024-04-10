@@ -8,8 +8,8 @@ classdef (Abstract) form_ac < mp.form
 %
 % mp.form_ac defines the complex port injections as functions of the state
 % variables :math:`\X`, that is, the complex voltages :math:`\V` and
-% non-voltage states :math:`\Z`. The are defined in terms of 3 compoents, the
-% linear current injection and linear power injection components,
+% non-voltage states :math:`\Z`. They are defined in terms of 3 components,
+% the linear current injection and linear power injection components,
 % 
 % .. math::
 % 
@@ -848,7 +848,7 @@ classdef (Abstract) form_ac < mp.form
             %       interest, if empty or missing, returns results
             %       corresponding to all ports
             %
-            % Outputs:
+            % Output:
             %   d2H (double) : sparse constraint Hessian matrix, :math:`\h_{\x\x}^\mathrm{flow}(\muv)`
             %
             % For details on the derivations of the formulas used, see |TN5|.
@@ -888,7 +888,7 @@ classdef (Abstract) form_ac < mp.form
             %       interest, if empty or missing, returns results
             %       corresponding to all ports
             %
-            % Outputs:
+            % Output:
             %   d2H (double) : sparse constraint Hessian matrix, :math:`\h_{\x\x}^\mathrm{flow}(\muv)`
             %
             % For details on the derivations of the formulas used, see |TN5|.
@@ -919,7 +919,7 @@ classdef (Abstract) form_ac < mp.form
             %       interest, if empty or missing, returns results
             %       corresponding to all ports
             %
-            % Outputs:
+            % Output:
             %   d2H (double) : sparse constraint Hessian matrix, :math:`\h_{\x\x}^\mathrm{flow}(\muv)`
             %
             % For details on the derivations of the formulas used, see |TN5|.
@@ -959,7 +959,7 @@ classdef (Abstract) form_ac < mp.form
             %       interest, if empty or missing, returns results
             %       corresponding to all ports
             %
-            % Outputs:
+            % Output:
             %   d2H (double) : sparse constraint Hessian matrix, :math:`\h_{\x\x}^\mathrm{flow}(\muv)`
             %
             % For details on the derivations of the formulas used, see |TN5|.
