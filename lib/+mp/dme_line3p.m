@@ -12,7 +12,7 @@ classdef dme_line3p < mp.dm_element
 %   ``bus_fr``   *integer*  bus ID (``uid``) of "from" 3-phase bus
 %   ``bus_to``   *integer*  bus ID (``uid``) of "to" 3-phase bus
 %   ``lc``       *double*   index into line construction table
-%   ``len``      *double*   line length *(?)*
+%   ``len``      *double*   line length *(miles)*
 %   ``pl1_fr``   *double*   phase 1 active power injection at "from" end *(kW)*
 %   ``ql1_fr``   *double*   phase 1 reactive power injection at "from" end *(kVAr)*
 %   ``pl2_fr``   *double*   phase 2 active power injection at "from" end *(kW)*
@@ -36,11 +36,11 @@ classdef dme_line3p < mp.dm_element
 %   ``id``  *integer*  unique line construction ID, referenced from
 %                      ``lc`` column of main data table
 %   ``r``   *double*   6 resistence parameters for forming symmetric 3x3
-%                      series impedance matrix
+%                      series impedance matrix *(p.u. per mile)*
 %   ``x``   *double*   6 reactance parameters for forming symmetric 3x3
-%                      series impedance matrix
+%                      series impedance matrix *(p.u. per mile)*
 %   ``c``   *double*   6 susceptance parameters for forming symmetric 3x3
-%                      shunt susceptance matrix
+%                      shunt susceptance matrix *(nF per mile)*
 %   ======  =========  ==================================================
 
 %   MATPOWER

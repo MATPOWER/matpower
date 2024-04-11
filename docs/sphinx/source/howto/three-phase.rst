@@ -143,10 +143,6 @@ Data Format
 
 The prototype examples included in |MATPOWER| 8 simply define a few extra fields in the standard |MATPOWER| case struct for the three-phase elements. The example above uses |t_case3p_a|_. This is a case with 4 three-phase buses, connected via 2 lines and 1 transformer, with a three-phase generator representing the substation at bus 1 and a three-phase load at bus 4.
 
-The data for the individual elements are found in the fields ``bus3p``, ``line3p``, ``xfrm3p``, ``load3p``, and ``gen3p`` fields of ``mpc``. The ``lc`` field contains the per-mile impedance parameters for different line construction configurations referenced by the individual lines.
-
-Besides the fields for the individual elements, cases with three-phase elements are also expected to include ``freq``, the system frequency in Hertz, and ``base_kVA``, the system per-unit kVA base for three-phase portions of the network.
-
 ::
 
     function mpc = t_case3p_a
@@ -215,6 +211,142 @@ Besides the fields for the individual elements, cases with three-phase elements 
     mpc.lc = [
         1	0.457541	0.15594 	0.153474	0.466617	0.157996	0.461462	1.078	0.501648	0.384909	1.04813	0.423624	1.06502	15.0671	-4.86241	-1.85323	15.875	-3.09098	14.3254
     ];
+
+The data for the individual elements are found in the fields ``bus3p``, ``line3p``, ``xfrm3p``, ``load3p``, and ``gen3p`` fields of ``mpc``. The ``lc`` field contains the per-mile impedance parameters for different line construction configurations referenced by the individual lines.
+
+Besides the fields for the individual elements, cases with three-phase elements are also expected to include ``freq``, the system frequency in Hertz, and ``base_kVA``, the system per-unit kVA base for three-phase portions of the network.
+
+Details of the data for the individual three-phase elements are summarized in the tables below.
+
+
+``bus3p``
+^^^^^^^^^
+
+===  =========  =====================
+Col  Name       Description — *see also* :class:`mp.dme_bus3p`
+===  =========  =====================
+  1  busid      unique 3-phase bus ID (positive integer)
+  2  type       bus type: 1 = PQ, 2 = PV, 3 = reference (voltage ref + slack)
+  3  basekV     nominal voltage in kV
+  4  Vm1        phase A voltage magnitude in p.u.
+  5  Vm2        phase B voltage magnitude in p.u.
+  6  Vm3        phase C voltage magnitude in p.u.
+  7  Va1        phase A voltage angle in degrees (nominal 0)
+  8  Va2        phase B voltage angle in degrees (nominal -120)
+  9  Va3        phase C voltage angle in degrees (nominal 120)
+===  =========  =====================
+
+
+``line3p``
+^^^^^^^^^^
+
+===  =========  =====================
+Col  Name       Description — *see also* :class:`mp.dme_line3p`
+===  =========  =====================
+  1  brid       unique 3-phase line ID (positive integer)
+  2  fbus       "from" bus ID
+  3  tbus       "to" bus ID
+  4  status     1 = in-service, 0 = out-of-service
+  5  lcid       line construction ID (to look up in ``lc`` table)
+  6  len        line length in miles
+===  =========  =====================
+
+
+``xfmr3p``
+^^^^^^^^^^
+
+===  =========  =====================
+Col  Name       Description — *see also* :class:`mp.dme_xfmr3p`
+===  =========  =====================
+  1  xfid       unique 3-phase transformer ID (positive integer)
+  2  fbus       "from" bus ID
+  3  tbus       "to" bus ID
+  4  status     1 = in-service, 0 = out-of-service
+  5  R          resistance (p.u. on transformer base)
+  6  X          reactance (p.u. on transformer base)
+  7  basekVA    transformer per-unit power base in kVA
+  8  basekV     transformer per-unit voltage base in kV
+===  =========  =====================
+
+
+``load3p``
+^^^^^^^^^^
+
+===  =========  =====================
+Col  Name       Description — *see also* :class:`mp.dme_load3p`
+===  =========  =====================
+  1  ldid       unique 3-phase load ID (positive integer)
+  2  ldbus      bus ID
+  3  status     1 = in-service, 0 = out-of-service
+  4  Pd1        phase A active power demand in kW
+  5  Pd2        phase B active power demand in kW
+  6  Pd3        phase C active power demand in kW
+  7  lpf1       phase A load power factor
+  8  lpf2       phase B load power factor
+  9  lpf3       phase C load power factor
+===  =========  =====================
+
+
+``gen3p``
+^^^^^^^^^
+
+===  =========  =====================
+Col  Name       Description — *see also* :class:`mp.dme_gen3p`
+===  =========  =====================
+  1  genid      unique 3-phase generator ID (positive integer)
+  2  gbus       bus ID
+  3  status     1 = in-service, 0 = out-of-service
+  4  Vg1        phase A voltage setpoint in p.u.
+  5  Vg2        phase B voltage setpoint in p.u.
+  6  Vg3        phase C voltage setpoint in p.u.
+  7  Pg1        phase A active power injection in kW
+  8  Pg2        phase B active power injection in kW
+  9  Pg3        phase C active power injection in kW
+ 10  Qg1        phase A reactive power injection in kVAr
+ 11  Qg2        phase B reactive power injection in kVAr
+ 12  Qg3        phase C reactive power injection in kVAr
+===  =========  =====================
+
+
+``lc``
+^^^^^^
+
+===  =========  =====================
+Col  Name       Description — *see also* :class:`mp.dme_line3p`
+===  =========  =====================
+  1  lcid       unique 3-phase line construction record ID (positive integer)
+  2  R11        resistance (p.u. per mile), element (1,1) of 3x3 matrix
+  3  R21        resistance (p.u. per mile), elements (2,1) & (1,2) of 3x3 matrix
+  4  R31        resistance (p.u. per mile), elements (3,1) & (1,3) of 3x3 matrix
+  5  R22        resistance (p.u. per mile), element (2,2) of 3x3 matrix
+  6  R32        resistance (p.u. per mile), elements (3,2) & (2,3) of 3x3 matrix
+  7  R33        resistance (p.u. per mile), element (3,3) of 3x3 matrix
+  8  X11        reactance (p.u. per mile), element (1,1) of 3x3 matrix)
+  9  X21        reactance (p.u. per mile), elements (2,1) & (1,2) of 3x3 matrix
+ 10  X31        reactance (p.u. per mile), elements (3,1) & (1,3) of 3x3 matrix
+ 11  X22        reactance (p.u. per mile), element (2,2) of 3x3 matrix
+ 12  X32        reactance (p.u. per mile), elements (3,2) & (2,3) of 3x3 matrix
+ 13  X33        reactance (p.u. per mile), element (3,3) of 3x3 matrix
+ 14  C11        capacitance (nF per mile), element (1,1) of 3x3 matrix
+ 15  C21        capacitance (nF per mile), elements (2,1) & (1,2) of 3x3 matrix
+ 16  C31        capacitance (nF per mile), elements (3,1) & (1,3) of 3x3 matrix
+ 17  C22        capacitance (nF per mile), element (2,2) of 3x3 matrix
+ 18  C32        capacitance (nF per mile), elements (3,2) & (2,3) of 3x3 matrix
+ 19  C33        capacitance (nF per mile), element (3,3) of 3x3 matrix
+===  =========  =====================
+
+
+``buslink``
+^^^^^^^^^^^
+
+===  =========  =====================
+Col  Name       Description — *see also* :class:`mp.dme_buslink`
+===  =========  =====================
+  1  linid      unique 3-phase buslink ID (positive integer)
+  2  busid      bus ID of single-phase bus
+  3  bus3pid    bus ID of three-phase bus
+  4  status     1 = in-service, 0 = out-of-service
+===  =========  =====================
 
 
 Example Cases
