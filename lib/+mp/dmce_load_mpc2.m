@@ -93,19 +93,19 @@ classdef dmce_load_mpc2 < mp.dmc_element % & mp.dmce_load
                 pw = mpc.sys_wide_zip_loads.pw;
                 qw = mpc.sys_wide_zip_loads.qw;
                 if any(size(pw) ~= [1 3])
-                    error('mp.dmce_load_mpc2/sys_wide_zip_loads: ''exp.sys_wide_zip_loads.pw'' must be a 1 x 3 vector');
+                    error('mp.dmce_load_mpc2.sys_wide_zip_loads: ''exp.sys_wide_zip_loads.pw'' must be a 1 x 3 vector');
                 end
                 if abs(sum(pw) - 1) > eps
-                    error('mp.dmce_load_mpc2/sys_wide_zip_loads: elements of ''exp.sys_wide_zip_loads.pw'' must sum to 1');
+                    error('mp.dmce_load_mpc2.sys_wide_zip_loads: elements of ''exp.sys_wide_zip_loads.pw'' must sum to 1');
                 end
                 if isempty(qw)
                     qw = pw;
                 else
                     if any(size(qw) ~= [1 3])
-                        error('mp.dmce_load_mpc2/sys_wide_zip_loads: ''exp.sys_wide_zip_loads.qw'' must be a 1 x 3 vector');
+                        error('mp.dmce_load_mpc2.sys_wide_zip_loads: ''exp.sys_wide_zip_loads.qw'' must be a 1 x 3 vector');
                     end
                     if abs(sum(qw) - 1) > eps
-                        error('mp.dmce_load_mpc2/sys_wide_zip_loads: elements of ''exp.sys_wide_zip_loads.qw'' must sum to 1');
+                        error('mp.dmce_load_mpc2.sys_wide_zip_loads: elements of ''exp.sys_wide_zip_loads.qw'' must sum to 1');
                     end
                 end
             else

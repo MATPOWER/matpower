@@ -135,13 +135,13 @@ classdef dmce_reserve_gen_mpc2 < mp.dmc_element
 
             %% check data for consistent dimensions
             if size(r.zones, 1) ~= nrz
-                error('mp.dmce_reserve_gen_mpc2/import: the number of rows in mpc.reserves.req (%d) and mpc.reserves.zones (%d) must match', nrz, size(r.zones, 1));
+                error('mp.dmce_reserve_gen_mpc2.import: the number of rows in mpc.reserves.req (%d) and mpc.reserves.zones (%d) must match', nrz, size(r.zones, 1));
             end
             if size(r.cost, 1) ~= ng0 && size(r.cost, 1) ~= ngr
-                error('mp.dmce_reserve_gen_mpc2/import: the number of rows in mpc.reserves.cost (%d) must equal the total number of generators (%d) or the number of generators able to provide reserves (%d)', size(r.cost, 1), ng0, ngr);
+                error('mp.dmce_reserve_gen_mpc2.import: the number of rows in mpc.reserves.cost (%d) must equal the total number of generators (%d) or the number of generators able to provide reserves (%d)', size(r.cost, 1), ng0, ngr);
             end
             if isfield(r, 'qty') && size(r.qty, 1) ~= size(r.cost, 1)
-                error('mp.dmce_reserve_gen_mpc2/import: mpc.reserves.cost (%d x 1) and mpc.reserves.qty (%d x 1) must be the same dimension', size(r.cost, 1), size(r.qty, 1));
+                error('mp.dmce_reserve_gen_mpc2.import: mpc.reserves.cost (%d x 1) and mpc.reserves.qty (%d x 1) must be the same dimension', size(r.cost, 1), size(r.qty, 1));
             end
 
             %% call parent (to create dme.tab and import uid, ..., req, zone)

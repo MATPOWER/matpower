@@ -459,7 +459,7 @@ classdef (Abstract) task < handle
                 if ismpc2(d)
                     d_fmt = 'mpc2';
                 else
-                    error('mp.task: input data format not recognized');
+                    error('mp.task.dm_converter_class: input data format not recognized');
                 end
 
                 %% get default class
@@ -467,7 +467,7 @@ classdef (Abstract) task < handle
                     case 'mpc2'
                         dmc_class = obj.dm_converter_class_mpc2_default();
                     otherwise
-                        error('mp.task: input data format not recognized');
+                        error('mp.task.dm_converter_class: input data format not recognized');
                 end
 
                 %% apply extensions
@@ -790,7 +790,7 @@ classdef (Abstract) task < handle
             % *Note: This is an abstract method that must be implemented
             % by a subclass.*
 
-            error('mp.task/network_model_class_default: must be implemented in subclass');
+            error('mp.task.network_model_class_default: must be implemented in subclass');
         end
 
         function nm = network_model_create(obj, dm, mpopt, mpx)
@@ -989,7 +989,7 @@ classdef (Abstract) task < handle
             % *Note: This is an abstract method that must be implemented
             % by a subclass.*
 
-            error('mp.task/math_model_class_default: must be implemented in subclass');
+            error('mp.task.math_model_class_default: must be implemented in subclass');
         end
 
         function mm = math_model_create(obj, nm, dm, mpopt, mpx)

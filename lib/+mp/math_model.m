@@ -67,7 +67,7 @@ classdef (Abstract) math_model < mp.element_container & opt_model
             %
             %   tag = mm.task_tag()
             
-            error('mp.math_model/task_tag: must be implemented in subclass');
+            error('mp.math_model.task_tag: must be implemented in subclass');
         end
 
         function name = task_name(obj)
@@ -76,7 +76,7 @@ classdef (Abstract) math_model < mp.element_container & opt_model
             %
             %   name = mm.task_name()
 
-            error('mp.math_model/task_name: must be implemented in subclass');
+            error('mp.math_model.task_name: must be implemented in subclass');
         end
 
         function tag = form_tag(obj)
@@ -85,7 +85,7 @@ classdef (Abstract) math_model < mp.element_container & opt_model
             %
             %   tag = mm.form_tag()
 
-            error('mp.math_model/form_tag: must be implemented in subclass');
+            error('mp.math_model.form_tag: must be implemented in subclass');
         end
 
         function name = form_name(obj)
@@ -94,7 +94,7 @@ classdef (Abstract) math_model < mp.element_container & opt_model
             %
             %   name = mm.form_name()
 
-            error('mp.math_model/form_name: must be implemented in subclass');
+            error('mp.math_model.form_name: must be implemented in subclass');
         end
 
         function obj = build(obj, nm, dm, mpopt)

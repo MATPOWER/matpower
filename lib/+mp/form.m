@@ -50,7 +50,7 @@ classdef (Abstract) form < handle
             % *Note: This is an abstract method that must be implemented
             % by a subclass.*
 
-            error('mp.form/form_name: must be implemented in subclass');
+            error('mp.form.form_name: must be implemented in subclass');
         end
 
         function tag = form_tag(obj)
@@ -65,7 +65,7 @@ classdef (Abstract) form < handle
             % *Note: This is an abstract method that must be implemented
             % by a subclass.*
 
-            error('mp.form/form_tag: must be implemented in subclass');
+            error('mp.form.form_tag: must be implemented in subclass');
         end
 
         function params = model_params(obj)
@@ -81,7 +81,7 @@ classdef (Abstract) form < handle
             % *Note: This is an abstract method that must be implemented
             % by a subclass.*
 
-            error('mp.form/model_params: must be implemented in subclass');
+            error('mp.form.model_params: must be implemented in subclass');
         end
 
         function vtypes = model_vvars(obj)
@@ -101,7 +101,7 @@ classdef (Abstract) form < handle
             % *Note: This is an abstract method that must be implemented
             % by a subclass.*
 
-            error('mp.form/model_vvars: must be implemented in subclass');
+            error('mp.form.model_vvars: must be implemented in subclass');
         end
 
         function vtypes = model_zvars(obj)
@@ -121,7 +121,7 @@ classdef (Abstract) form < handle
             % *Note: This is an abstract method that must be implemented
             % by a subclass.*
 
-            error('mp.form/model_zvars: must be implemented in subclass');
+            error('mp.form.model_zvars: must be implemented in subclass');
         end
 
         function varargout = get_params(obj, idx, names)
@@ -160,7 +160,7 @@ classdef (Abstract) form < handle
 
             if nargout > length(names)
                 namestr = sprintf(' ''%s''', names{:})
-                error('mp.form/get_params: return values must correspond to%s', namestr);
+                error('mp.form.get_params: return values must correspond to%s', namestr);
             end
 
             varargout = cell(1, nargout);

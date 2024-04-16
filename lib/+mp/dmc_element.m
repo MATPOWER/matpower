@@ -368,7 +368,7 @@ classdef (Abstract) dmc_element < handle
                     %% check for unique uid's if not generated
                     if strcmp(var_names{1}, 'uid') && ~strcmp(spec.vmap.uid{1}, 'IDs')
                         if length(unique(vals{1})) ~= spec.nr
-                            error('mp.dmc_element/import_table_values: ''uid'' values must be unique\ndata contains only %d unique ''uid'' value(s) for %d ''%s'' elements\n', ...
+                            error('mp.dmc_element.import_table_values: ''uid'' values must be unique\ndata contains only %d unique ''uid'' value(s) for %d ''%s'' elements\n', ...
                                 length(unique(vals{1})), spec.nr, obj.name);
                         end
                     end
@@ -429,7 +429,7 @@ classdef (Abstract) dmc_element < handle
                                 val = import_fcn(obj, d, spec, vn);
                             end
                         otherwise
-                            error('mp.dmc_element/get_input_table_values: %d is an unknown var map type', vm{1});
+                            error('mp.dmc_element.get_input_table_values: %d is an unknown var map type', vm{1});
                     end
                     if ~isempty(ridx)
                         vals{k} = val(ridx, :);
@@ -571,7 +571,7 @@ classdef (Abstract) dmc_element < handle
                             d = export_fcn(obj, dme, d, spec, vn, ridx);
                         end
                     otherwise
-                        error('mp.dmc_element/export_table_values: %d is an unknown var map type', vm{1});
+                        error('mp.dmc_element.export_table_values: %d is an unknown var map type', vm{1});
                 end
             end
         end

@@ -112,7 +112,7 @@ classdef task_pf < mp.task
                     ref0 = find(bus_dme.type == mp.NODE_TYPE.REF);
                     bidx = bus_dme.i2on(gen_dme.bus(gen_dme.on(mx)));   %% bus of mx
                     if length(ref0) > 1 && any(bus_dme.type(bidx) == mp.NODE_TYPE.REF)
-                        error('mp.task_pf/enforce_q_lims: Sorry, MATPOWER cannot enforce Q limits for slack buses in systems with multiple slacks.');
+                        error('mp.task_pf.enforce_q_lims: Sorry, MATPOWER cannot enforce Q limits for slack buses in systems with multiple slacks.');
                     end
                     %% set bus type to PQ
                     bus_dme.set_bus_type_pq(dm, bidx);

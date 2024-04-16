@@ -112,7 +112,7 @@ if nargin > 1       %% individual set
                 end
             end
         else                                    %% indexing required
-            error('@opt_model/params_legacy_cost: legacy cost set ''%s'' requires an IDX_LIST arg', name);
+            error('opf_model.params_legacy_cost: legacy cost set ''%s'' requires an IDX_LIST arg', name);
         end
     else                            %% indexed named set
         % (calls to substruct() are relatively expensive ...

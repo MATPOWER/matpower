@@ -69,7 +69,7 @@ classdef (Abstract) math_model_pf < mp.math_model
                         'need_jac',         0, ...
                         'update_fcn',       zg_x_update  );
                 otherwise
-                    error('mp.math_model_pf/solve_opts: invalid value for MPOPT.PF.ALG (%s)', mpopt.pf.alg);
+                    error('mp.math_model_pf.solve_opts: invalid value for MPOPT.PF.ALG (%s)', mpopt.pf.alg);
             end
             opt.verbose = mpopt.verbose;
         end

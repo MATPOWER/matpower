@@ -286,11 +286,11 @@ classdef mp_table
                             end
                         else    %% new variable
                             if R
-                                error('mp_table/subsagn: cannot index new variable ''%s''', s(1).subs);
+                                error('mp_table.subsagn: cannot index new variable ''%s''', s(1).subs);
                             end
                             %% check size compatibility
                             if size(b, 1) ~= size(obj, 1)
-                                error('mp_table/subsagn: number of rows (%d) in new variable ''%s'' does not match height of table (%d)', size(b, 1), s(1).subs, size(obj, 1));
+                                error('mp_table.subsagn: number of rows (%d) in new variable ''%s'' does not match height of table (%d)', size(b, 1), s(1).subs, size(obj, 1));
                             end
                             %% add variable
                             idx = size(obj, 2) + 1;
@@ -324,7 +324,7 @@ classdef mp_table
                         obj.Properties.Map = cell2struct(num2cell(1:nv), obj.Properties.VariableNames, 2);
                     end
                     if R
-                        error('mp_table/subasgn: sub-indexing following {}-indexing not supported');
+                        error('mp_table.subasgn: sub-indexing following {}-indexing not supported');
                     end
                 case '{}'
                     idx = make_idx_numeric(obj, s(1).subs{2});
@@ -345,7 +345,7 @@ classdef mp_table
                         j = j+nc;
                     end
                     if R
-                        error('mp_table/subasgn: sub-indexing following ()-indexing not supported');
+                        error('mp_table.subasgn: sub-indexing following ()-indexing not supported');
                     end
             end
         end
@@ -367,7 +367,7 @@ classdef mp_table
 
                 %% check for consistent number of rows
                 if nrj ~= nr
-                    error('mp_table/horzcat: number of rows in arg %d (%d) does not match that in arg 1 (%d)', ...
+                    error('mp_table.horzcat: number of rows in arg %d (%d) does not match that in arg 1 (%d)', ...
                         j+1, nrj, nr);
                 end
 
@@ -378,7 +378,7 @@ classdef mp_table
                         for k = 1:nrn
                             if ~strcmp(obj.Properties.RowNames{k}, ...
                                         Tj.Properties.RowNames{k})
-                                error('mp_table/horzcat: name of row %d in arg %d (%s) does not match the one in arg 1 (%s)', ...
+                                error('mp_table.horzcat: name of row %d in arg %d (%s) does not match the one in arg 1 (%s)', ...
                                     k, j+1, Tj.Properties.RowNames{k}, ...
                                         obj.Properties.RowNames{k});
                             end
@@ -397,7 +397,7 @@ classdef mp_table
                 if length(unique(obj.Properties.VariableNames)) < nvn
                     [~, ia, ~] = unique(obj.Properties.VariableNames);
                     k = find(ismember(1:nvn, ia));
-                    error('mp_table/horzcat: duplicate variable name ''%s''', ...
+                    error('mp_table.horzcat: duplicate variable name ''%s''', ...
                         obj.Properties.VariableNames{k(1)});
                 end
 
@@ -430,7 +430,7 @@ classdef mp_table
 
                 %% check for consistent number of variables
                 if nvj ~= nv
-                    error('mp_table/vertcat: number of variables in arg %d (%d) does not match that in arg 1 (%d)', ...
+                    error('mp_table.vertcat: number of variables in arg %d (%d) does not match that in arg 1 (%d)', ...
                         j+1, nvj, nv);
                 end
 
@@ -440,7 +440,7 @@ classdef mp_table
                     for k = 1:nvn
                         if ~strcmp(obj.Properties.VariableNames{k}, ...
                                     Tj.Properties.VariableNames{k})
-                            error('mp_table/vertcat: name of variable %d in arg %d (%s) does not match the one in arg 1 (%s)', ...
+                            error('mp_table.vertcat: name of variable %d in arg %d (%s) does not match the one in arg 1 (%s)', ...
                                 k, j+1, Tj.Properties.VariableNames{k}, ...
                                     obj.Properties.VariableNames{k});
                         end
@@ -474,7 +474,7 @@ classdef mp_table
                     if length(unique(obj.Properties.RowNames)) < nrn
                         [~, ia, ~] = unique(obj.Properties.RowNames);
                         k = find(ismember(1:nrn, ia));
-                        error('mp_table/horzcat: duplicate row name ''%s''', ...
+                        error('mp_table.horzcat: duplicate row name ''%s''', ...
                             obj.Properties.RowNames{k(1)});
                     end
                 end

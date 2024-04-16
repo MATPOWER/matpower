@@ -734,7 +734,7 @@ classdef data_model < mp.element_container
                 bus_dme.vm_ub(ib) = (1-use_vg) * bus_dme.vm_ub(ib) + use_vg * vm_ub(ib);
                 bus_dme.vm_lb(ib) = (1-use_vg) * bus_dme.vm_lb(ib) + use_vg * vm_lb(ib);
             else
-                error('mp.data_model/set_bus_v_lims_via_vg: option ''opf.use_vg'' (= %g) cannot be negative or greater than 1', use_vg);
+                error('mp.data_model.set_bus_v_lims_via_vg: option ''opf.use_vg'' (= %g) cannot be negative or greater than 1', use_vg);
             end
 
             %% update bus table as well (for output)

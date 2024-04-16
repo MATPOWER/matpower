@@ -153,10 +153,10 @@ classdef mme_gen_opf_ac < mp.mme_gen_opf
 
                 %% check for errors in capability curve data
                 if any( gen.pc1(k) >= gen.pc2(k) )
-                    error('mp.mme_gen_opf_ac/has_pq_cap: must have pc1 < pc2');
+                    error('mp.mme_gen_opf_ac.has_pq_cap: must have pc1 < pc2');
                 end
                 if any( gen.qc2_ub(k) <= gen.qc2_lb(k) & gen.qc1_ub(k) <= gen.qc1_lb(k) )
-                    error('mp.mme_gen_opf_ac/has_pq_cap: capability curve defines an empty set');
+                    error('mp.mme_gen_opf_ac.has_pq_cap: capability curve defines an empty set');
                 end
 
                 %% for which gens is it specified
@@ -208,7 +208,7 @@ classdef mme_gen_opf_ac < mp.mme_gen_opf
                 k = find(qg_lb(ivl) ~= 0 & qg_ub(ivl) ~= 0);
                 gidx = dme.tab.uid(dme.on(ivl(k)));
                 s = sprintf('Invalid qg limits for dispatchable load in row %d of gen table\n', gidx);
-                error('mp.mme_gen_opf_ac/disp_load_constant_pf_constraint: Either qg_lb or qg_ub must be equal to zero for each dispatchable load.\n%s', s);
+                error('mp.mme_gen_opf_ac.disp_load_constant_pf_constraint: Either qg_lb or qg_ub must be equal to zero for each dispatchable load.\n%s', s);
             end
 
             %% Initial values of PG and QG must be consistent with specified
@@ -219,7 +219,7 @@ classdef mme_gen_opf_ac < mp.mme_gen_opf
                 k = find(abs( qg(ivl) - pg(ivl) .* Qlim ./ pg_lb(ivl) ) > 1e-6);
                 gidx = dme.tab.uid(dme.on(ivl(k)));
                 s = sprintf('qg for dispatchable load in row %d of gen table must be pg * %g\n', [gidx Qlim ./ pg_lb(ivl)]');
-                error('mp.mme_gen_opf_ac/disp_load_constant_pf_constraint: %s\n         %s\n         %s\n         %s\n%s', ...
+                error('mp.mme_gen_opf_ac.disp_load_constant_pf_constraint: %s\n         %s\n         %s\n         %s\n%s', ...
                     'For a dispatchable load, pg and qg must be consistent', ...
                     'with the power factor defined by pg_lb and the relevant', ...
                     '(non-zero) qg_lb or qg_ub limit.', ...

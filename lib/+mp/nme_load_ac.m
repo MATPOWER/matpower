@@ -45,7 +45,7 @@ classdef (Abstract) nme_load_ac < mp.nme_load% & mp.form_ac
 
         function [I, Iv1, Iv2, Izr, Izi] = port_inj_current_nln(obj, Sd, x_, sysx, idx)
             %
-            error('mp.nme_load_ac/port_inj_current_nln: not yet implemented');
+            error('mp.nme_load_ac.port_inj_current_nln: not yet implemented');
 %             if nargin < 5
 %                 idx = [];
 %                 if nargin < 4

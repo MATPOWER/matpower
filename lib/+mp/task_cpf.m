@@ -60,7 +60,7 @@ classdef task_cpf < mp.task_pf
             % base and target inputs.
             if ~isa(d, 'mp.data_model')
                 if ~iscell(d) || length(d) < 2
-                    error('mp.task_cpf/run_pre: input cases must be provided in a 2-element cell array, specifying the base and target cases, respectively')
+                    error('mp.task_cpf.run_pre: input cases must be provided in a 2-element cell array, specifying the base and target cases, respectively')
                 end
                 d{1} = run_pre@mp.task_pf(obj, d{1}, mpopt);
                 d{2} = run_pre@mp.task_pf(obj, d{2}, mpopt);
@@ -123,7 +123,7 @@ classdef task_cpf < mp.task_pf
             if iscell(d) && length(d) == 2
                 dmc_class = dm_converter_class@mp.task_pf(obj, d{1}, mpopt, mpx);
             else
-                error('mp.task_cpf/dm_converter_class: d must be 2-element cell array');
+                error('mp.task_cpf.dm_converter_class: d must be 2-element cell array');
             end
         end
 
@@ -143,7 +143,7 @@ classdef task_cpf < mp.task_pf
                 dmt = data_model_build@mp.task_pf(obj, d{2}, dmc, mpopt, mpx);
                 dm.userdata.target = dmt;
             else
-                error('mp.task_cpf/data_model_build: d must be 2-element cell array');
+                error('mp.task_cpf.data_model_build: d must be 2-element cell array');
             end
         end
 
@@ -208,7 +208,7 @@ classdef task_cpf < mp.task_pf
                         end
                     end
                 case 'DC'
-                    error('mp.task_cpf/math_model_class_default: CPF not applicable for DC model');
+                    error('mp.task_cpf.math_model_class_default: CPF not applicable for DC model');
             end
         end
 

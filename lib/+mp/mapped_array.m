@@ -164,7 +164,7 @@ classdef mapped_array < handle
             N = length(names);
             for k = 1:N
                 if isfield(obj.p_.map, names{k}) && obj.p_.map.(names{k}) ~= k
-                    error('mp.mapped_array: ''%s'' already refers to element %d', ...
+                    error('mp.mapped_array.add_names: ''%s'' already refers to element %d', ...
                         names{k}, obj.p_.map.(names{k}));
                 end
             end

@@ -49,18 +49,18 @@ classdef task_opf < mp.task
                 switch alg
                     case 'IPOPT'
                         if ~have_feature('ipopt')
-                            error('mp.task_opf/run_pre: MPOPT.opf.ac.solver = ''%s'' requires IPOPT (see https://github.com/coin-or/Ipopt)', alg);
+                            error('mp.task_opf.run_pre: MPOPT.opf.ac.solver = ''%s'' requires IPOPT (see https://github.com/coin-or/Ipopt)', alg);
                         end
                     case 'FMINCON'
                         if ~have_feature('fmincon')
-                            error('mp.task_opf/run_pre: MPOPT.opf.ac.solver = ''%s'' requires FMINCON (Optimization Toolbox 2.x or later)', alg);
+                            error('mp.task_opf.run_pre: MPOPT.opf.ac.solver = ''%s'' requires FMINCON (Optimization Toolbox 2.x or later)', alg);
                         end
                     case 'KNITRO'
                         if ~have_feature('knitro')
-                            error('mp.task_opf/run_pre: MPOPT.opf.ac.solver = ''%s'' requires Artelys Knitro (see https://www.artelys.com/solvers/knitro/)', alg);
+                            error('mp.task_opf.run_pre: MPOPT.opf.ac.solver = ''%s'' requires Artelys Knitro (see https://www.artelys.com/solvers/knitro/)', alg);
                         end
                     case {'MINOPF', 'PDIPM', 'TRALM', 'SDPOPF'}
-                        error('mp.task_opf/run_pre: MPOPT.opf.ac.solver = ''%s'' not supported.', alg);
+                        error('mp.task_opf.run_pre: MPOPT.opf.ac.solver = ''%s'' not supported.', alg);
                 end
             end
         end

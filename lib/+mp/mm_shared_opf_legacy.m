@@ -108,10 +108,10 @@ classdef (Abstract) mm_shared_opf_legacy < handle
                     if any(cp.dd ~= 1) || any(cp.kk)    %% not simple quadratic form
                         if dc                           %% (includes "dead zone" or
                             if any(cp.dd ~= 1)          %%  quadratic "penalty")
-                                error('mp.mm_shared_opf_legacy/add_legacy_user_costs: DC OPF can only handle legacy user-defined costs with d = 1');
+                                error('mp.mm_shared_opf_legacy.add_legacy_user_costs: DC OPF can only handle legacy user-defined costs with d = 1');
                             end
                             if any(cp.kk)
-                                error('mp.mm_shared_opf_legacy/add_legacy_user_costs: DC OPF can only handle legacy user-defined costs with no "dead zone", i.e. k = 0');
+                                error('mp.mm_shared_opf_legacy.add_legacy_user_costs: DC OPF can only handle legacy user-defined costs with no "dead zone", i.e. k = 0');
                             end
                         else
                             %% use general nonlinear cost to implement legacy user cost
@@ -277,26 +277,26 @@ classdef (Abstract) mm_shared_opf_legacy < handle
                 if nw == 0
                     cp.N = sparse(nw, nx);
                 else
-                    error('@opt_model/add_legacy_cost: number of columns in N (%d x %d) does not match\nnumber of variables (%d)\n', nw, nx, nv);
+                    error('mp.mm_shared_opf_legacy.add_legacy_cost: number of columns in N (%d x %d) does not match\nnumber of variables (%d)\n', nw, nx, nv);
                 end
             end
             if size(cp.Cw, 1) ~= nw
-                error('@opt_model/add_legacy_cost: number of rows of Cw (%d x %d) and N (%d x %d) must match\n', size(cp.Cw), nw, nx);
+                error('mp.mm_shared_opf_legacy.add_legacy_cost: number of rows of Cw (%d x %d) and N (%d x %d) must match\n', size(cp.Cw), nw, nx);
             end
             if isfield(cp, 'H') && (size(cp.H, 1) ~= nw || size(cp.H, 2) ~= nw)
-                error('@opt_model/add_legacy_cost: both dimensions of H (%d x %d) must match the number of rows in N (%d x %d)\n', size(cp.H), nw, nx);
+                error('mp.mm_shared_opf_legacy.add_legacy_cost: both dimensions of H (%d x %d) must match the number of rows in N (%d x %d)\n', size(cp.H), nw, nx);
             end
             if isfield(cp, 'dd') && size(cp.dd, 1) ~= nw
-                error('@opt_model/add_legacy_cost: number of rows of dd (%d x %d) and N (%d x %d) must match\n', size(cp.dd), nw, nx);
+                error('mp.mm_shared_opf_legacy.add_legacy_cost: number of rows of dd (%d x %d) and N (%d x %d) must match\n', size(cp.dd), nw, nx);
             end
             if isfield(cp, 'rh') && size(cp.rh, 1) ~= nw
-                error('@opt_model/add_legacy_cost: number of rows of rh (%d x %d) and N (%d x %d) must match\n', size(cp.rh), nw, nx);
+                error('mp.mm_shared_opf_legacy.add_legacy_cost: number of rows of rh (%d x %d) and N (%d x %d) must match\n', size(cp.rh), nw, nx);
             end
             if isfield(cp, 'kk') && size(cp.kk, 1) ~= nw
-                error('@opt_model/add_legacy_cost: number of rows of kk (%d x %d) and N (%d x %d) must match\n', size(cp.kk), nw, nx);
+                error('mp.mm_shared_opf_legacy.add_legacy_cost: number of rows of kk (%d x %d) and N (%d x %d) must match\n', size(cp.kk), nw, nx);
             end
             if isfield(cp, 'mm') && size(cp.mm, 1) ~= nw
-                error('@opt_model/add_legacy_cost: number of rows of mm (%d x %d) and N (%d x %d) must match\n', size(cp.mm), nw, nx);
+                error('mp.mm_shared_opf_legacy.add_legacy_cost: number of rows of mm (%d x %d) and N (%d x %d) must match\n', size(cp.mm), nw, nx);
             end
 
             %% add the legacy cost set
@@ -360,7 +360,7 @@ classdef (Abstract) mm_shared_opf_legacy < handle
                             end
                         end
                     else
-                        error('@opt_model/eval_legacy_cost: legacy cost set ''%s'' requires an IDX_LIST arg when requesting DF output', name)
+                        error('mp.mm_shared_opf_legacy.eval_legacy_cost: legacy cost set ''%s'' requires an IDX_LIST arg when requesting DF output', name)
                     end
                 else                                %% indexed named set
                     [cp, vs] = om.params_legacy_cost(name, idx);
@@ -503,7 +503,7 @@ classdef (Abstract) mm_shared_opf_legacy < handle
                             end
                         end
                     else                                    %% indexing required
-                        error('@opt_model/params_legacy_cost: legacy cost set ''%s'' requires an IDX_LIST arg', name);
+                        error('mp.mm_shared_opf_legacy.params_legacy_cost: legacy cost set ''%s'' requires an IDX_LIST arg', name);
                     end
                 else                            %% indexed named set
                     % (calls to substruct() are relatively expensive ...

@@ -133,7 +133,7 @@ classdef math_model_pf_acps < mp.math_model_pf_ac & mp.mm_shared_pfcpf_acps
                     nm2.build(dm2);
                     [Y2, L, M] = nm2.get_params([], {'Y', 'L', 'M'});
                     if any(any(L)) || any(any(M))
-                        error('mp.math_model_pf_acps/zg_x_update: B matrix for Z-bus Gauss w/PV buses not implemented for models with non-zero L and/or M matrices.')
+                        error('mp.math_model_pf_acps.zg_x_update: B matrix for Z-bus Gauss w/PV buses not implemented for models with non-zero L and/or M matrices.')
                     end
                     Bpp = -nm2.C * imag(Y2) * nm2.C';
 
@@ -196,7 +196,7 @@ classdef math_model_pf_acps < mp.math_model_pf_ac & mp.mm_shared_pfcpf_acps
             [Y1, L, M] = nm1.get_params([], {'Y', 'L', 'M'});
             Y2 = nm2.get_params();
             if any(any(L)) || any(any(M))
-                error('mp.math_model_pf_acps/fd_jac_approx: fast-decoupled Jacobian approximation not implemented for models with non-zero L and/or M matrices.')
+                error('mp.math_model_pf_acps.fd_jac_approx: fast-decoupled Jacobian approximation not implemented for models with non-zero L and/or M matrices.')
             end
 
             %% form reduced Bp and Bpp matrices

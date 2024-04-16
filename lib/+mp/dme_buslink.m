@@ -107,14 +107,14 @@ classdef dme_buslink < mp.dm_element
             base_kv1 = dm.elements.bus.tab.base_kv(obj.bus);
             base_kv3 = dm.elements.bus3p.tab.base_kv(obj.bus3p);
             if any(base_kv1 ~= base_kv3)
-                error('mp.dme_buslink/build_params: buslink objects can only link buses with identical base_kv');
+                error('mp.dme_buslink.build_params: buslink objects can only link buses with identical base_kv');
             end
 
             %% check for at least one PQ bus per buslink
             type1 = dm.elements.bus.tab.type(obj.bus);
             type3 = dm.elements.bus3p.tab.type(obj.bus3p);
             if any(type1 ~= mp.NODE_TYPE.PQ & type3 ~= mp.NODE_TYPE.PQ)
-                error('mp.dme_buslink/build_params: at lease one of the buses linked by a buslink must be of type PQ');
+                error('mp.dme_buslink.build_params: at lease one of the buses linked by a buslink must be of type PQ');
             end
 
             %% check for balanced voltage magnitudes for REF and PV buses
@@ -124,7 +124,7 @@ classdef dme_buslink < mp.dm_element
             vm2_ref_pv = dm.elements.bus3p.tab.vm2(obj.bus3p(refpv));
             vm3_ref_pv = dm.elements.bus3p.tab.vm3(obj.bus3p(refpv));
             if any(vm1_ref_pv ~= vm2_ref_pv | vm2_ref_pv ~= vm3_ref_pv)
-                error('mp.dme_buslink/build_params: buslink objects can only link to REF or PV buses with balanced voltage magnitudes');
+                error('mp.dme_buslink.build_params: buslink objects can only link to REF or PV buses with balanced voltage magnitudes');
             end
         end
 

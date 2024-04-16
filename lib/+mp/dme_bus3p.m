@@ -77,7 +77,7 @@ classdef dme_bus3p < mp.dm_element
             bt = obj.tab.type;
             err = find(~mp.NODE_TYPE.is_valid(bt));
             if ~isempty(err)
-                error('mp.dme_bus/init_status: bus %d has an invalid type', err);
+                error('mp.dme_bus.init_status: bus %d has an invalid type', err);
             end
 
             %% temporarily set bus type property with dimensions for all buses

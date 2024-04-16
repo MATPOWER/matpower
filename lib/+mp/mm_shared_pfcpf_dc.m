@@ -49,7 +49,7 @@ classdef (Abstract) mm_shared_pfcpf_dc < mp.mm_shared_pfcpf
                 if isempty(st.order(k).idx)
                     obj.add_var(name, ad.npv+ad.npq, d.v0.(name)(pvq), d.vl.(name)(pvq), d.vu.(name)(pvq));
                 else
-                    error('mp.mm_shared_pfcpf_dc/add_system_vars_pf: handling of indexed sets not implmented here (yet)');
+                    error('mp.mm_shared_pfcpf_dc.add_system_vars_pf: handling of indexed sets not implmented here (yet)');
                 end
             end
             mmx_iN = obj.var.N;

@@ -64,7 +64,7 @@ classdef (Abstract) mme_branch_opf_ac < mp.mme_branch_opf
                     hess_flow = @(x, lam)port_current_lim_hess(nme, ...
                         mm.convert_x_m2n(x, nm), lam, nm, idx);
                 else
-                    error('mp.mme_branch_opf_ac/add_constraints: MPOPT.opf.flow_lim = ''%s'' not yet implemented.', mpopt.opf.flow_lim);
+                    error('mp.mme_branch_opf_ac.add_constraints: MPOPT.opf.flow_lim = ''%s'' not yet implemented.', mpopt.opf.flow_lim);
                 end
 
                 mm.add_nln_constraint({'Sf', 'St'}, [nl2;nl2], 0, fcn_flow, hess_flow);

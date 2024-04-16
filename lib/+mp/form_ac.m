@@ -271,7 +271,7 @@ classdef (Abstract) form_ac < mp.form
                     end
                 end
             elseif ~isempty(obj.snln)
-                error('mp.form_ac/port_inj_current: Nonlinear current function not defined for corresponding nonlinear power function.')
+                error('mp.form_ac.port_inj_current: Nonlinear current function not defined for corresponding nonlinear power function.')
             end
         end
 
@@ -410,7 +410,7 @@ classdef (Abstract) form_ac < mp.form
                     end
                 end
             elseif ~isempty(obj.inln)
-                error('mp.form_ac/port_inj_power: Nonlinear power function not defined for corresponding nonlinear current function.')
+                error('mp.form_ac.port_inj_power: Nonlinear power function not defined for corresponding nonlinear current function.')
             end
         end
 
@@ -508,7 +508,7 @@ classdef (Abstract) form_ac < mp.form
             if ~isempty(obj.inln_hess)
                 H = H + obj.inln_hess(x_, lam, sysx, idx);
             elseif ~isempty(obj.snln_hess)
-                error('mp.form_ac/port_inj_current_hess: Nonlinear current Hessian not defined for corresponding nonlinear power Hessian.')
+                error('mp.form_ac.port_inj_current_hess: Nonlinear current Hessian not defined for corresponding nonlinear power Hessian.')
             end
         end
 
@@ -606,7 +606,7 @@ classdef (Abstract) form_ac < mp.form
             if ~isempty(obj.snln_hess)
                 H = H + obj.snln_hess(x_, lam, sysx, idx);
             elseif ~isempty(obj.inln_hess)
-                error('mp.form_ac/port_inj_power_hess: Nonlinear power Hessian not defined for corresponding nonlinear current Hessian.')
+                error('mp.form_ac.port_inj_power_hess: Nonlinear power Hessian not defined for corresponding nonlinear current Hessian.')
             end
         end
 
@@ -617,7 +617,7 @@ classdef (Abstract) form_ac < mp.form
             % terms. See mp.form_acc.port_inj_current_jac and
             % mp.form_acp.port_inj_current_jac for details.
 
-            error('mp.form_ac/port_inj_current_jac: must be implemented in subclass');
+            error('mp.form_ac.port_inj_current_jac: must be implemented in subclass');
         end
 
         function [Iv1v1, Iv1v2, Iv2v2] = port_inj_current_hess_v(obj, x_, lam, v_, z_, diaginvic, Y, M, diagSlincJ, dlamJ)
@@ -627,7 +627,7 @@ classdef (Abstract) form_ac < mp.form
             % terms. See mp.form_acc.port_inj_current_hess_v and
             % mp.form_acp.port_inj_current_hess_v for details.
 
-            error('mp.form_ac/port_inj_current_hess_v: must be implemented in subclass');
+            error('mp.form_ac.port_inj_current_hess_v: must be implemented in subclass');
         end
 
         function [Iv1zr, Iv1zi, Iv2zr, Iv2zi] = port_inj_current_hess_vz(obj, x_, lam, v_, z_, diaginvic, N, dlamJ)
@@ -638,7 +638,7 @@ classdef (Abstract) form_ac < mp.form
             % mp.form_acc.port_inj_current_hess_vz and
             % mp.form_acp.port_inj_current_hess_vz for details.
 
-            error('mp.form_ac/port_inj_current_hess_vz: must be implemented in subclass');
+            error('mp.form_ac.port_inj_current_hess_vz: must be implemented in subclass');
         end
 
         function [Sv1, Sv2] = port_inj_power_jac(obj, n, v_, Y, M, diagv, diagvi, diagIlincJ)
@@ -648,7 +648,7 @@ classdef (Abstract) form_ac < mp.form
             % terms. See mp.form_acc.port_inj_power_jac and
             % mp.form_acp.port_inj_power_jac for details.
 
-            error('mp.form_ac/port_inj_power_jac: must be implemented in subclass');
+            error('mp.form_ac.port_inj_power_jac: must be implemented in subclass');
         end
 
         function [Sv1v1, Sv1v2, Sv2v2] = port_inj_power_hess_v(obj, x_, lam, v_, z_, diagvi, Y, M, diagIlincJ, dlamJ)
@@ -658,7 +658,7 @@ classdef (Abstract) form_ac < mp.form
             % terms. See mp.form_acc.port_inj_power_hess_v and
             % mp.form_acp.port_inj_power_hess_v for details.
 
-            error('mp.form_ac/port_inj_power_hess_v: must be implemented in subclass');
+            error('mp.form_ac.port_inj_power_hess_v: must be implemented in subclass');
         end
 
         function [Sv1zr, Sv1zi, Sv2zr, Sv2zi] = port_inj_power_hess_vz(obj, x_, lam, v_, z_, diagvi, L, dlamJ)
@@ -669,7 +669,7 @@ classdef (Abstract) form_ac < mp.form
             % mp.form_acc.port_inj_power_hess_vz and
             % mp.form_acp.port_inj_power_hess_vz for details.
 
-            error('mp.form_ac/port_inj_power_hess_vz: must be implemented in subclass');
+            error('mp.form_ac.port_inj_power_hess_vz: must be implemented in subclass');
         end
 
         function [h, dh] = port_apparent_power_lim_fcn(obj, x_, nm, idx, hmax)
@@ -996,7 +996,7 @@ classdef (Abstract) form_ac < mp.form
             % Implemented by mp.form_acc.aux_data_va_vm and
             % mp.form_acp.aux_data_va_vm.
 
-            error('mp.form_ac/aux_data_va_vm: must be implemented in subclass');
+            error('mp.form_ac.aux_data_va_vm: must be implemented in subclass');
         end
     end     %% methods
 end         %% classdef

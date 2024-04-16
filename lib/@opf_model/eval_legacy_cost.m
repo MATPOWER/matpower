@@ -56,7 +56,7 @@ if om.cost.N
                 end
             end
         else
-            error('@opt_model/eval_legacy_cost: legacy cost set ''%s'' requires an IDX_LIST arg when requesting DF output', name)
+            error('opf_model.eval_legacy_cost: legacy cost set ''%s'' requires an IDX_LIST arg when requesting DF output', name)
         end
     else                                %% indexed named set
         [cp, vs] = om.params_legacy_cost(name, idx);

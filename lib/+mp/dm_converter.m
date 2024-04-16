@@ -52,7 +52,7 @@ classdef (Abstract) dm_converter < mp.element_container
             % *Note: This is an abstract method that must be implemented
             % by a subclass.*
 
-            error('mp.dm_converter/format_tag: must be implemented by sub-class');
+            error('mp.dm_converter.format_tag: must be implemented by sub-class');
         end
 
         function new_obj = copy(obj)
@@ -198,7 +198,7 @@ classdef (Abstract) dm_converter < mp.element_container
             % *Note: This is an abstract method that must be implemented
             % by a subclass.*
 
-            error('mp.dm_converter/save: must be implemented by subclass');
+            error('mp.dm_converter.save: must be implemented by subclass');
         end
 
         function display(obj)
