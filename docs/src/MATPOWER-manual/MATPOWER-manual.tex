@@ -532,7 +532,7 @@ As a free, open-source tool, \matpower{} development relies on research grants a
 % Note: MATLAB 7.5 is the first version to support the 'catch me' construct
 % which is used in toggle_softlims() and loadmd(), and the first version to
 % support including prototypes for external methods in classdef, used by
-% @mp_idx_manager.
+% mp_idx_manager.
 % Octave 3.8.2 does not support some of the OO syntax we use.
 
 \subsection{System Requirements}
@@ -6247,9 +6247,9 @@ name & description \\
 \toprule
 name & description \\
 \midrule
-\code{dcopf\_solver}	& sets up and solves DC OPF problem using \code{@opt\_model/solve()}\tnote{\dag}	\\
+\code{dcopf\_solver}	& sets up and solves DC OPF problem using \code{opt\_model.solve()}\tnote{\dag}	\\
 \code{mopf\_solver}	& sets up and solves AC OPF problem using MINOPF\tnote{\ddag}	\\
-\code{nlpopf\_solver}	& sets up and solves AC OPF problem using \code{@opt\_model/solve()}\tnote{\dag}	\\
+\code{nlpopf\_solver}	& sets up and solves AC OPF problem using \code{opt\_model.solve()}\tnote{\dag}	\\
 \code{tspopf\_solver}	& sets up and solves AC OPF problem using PDIPM, SC-PDIPM or TRALM\tnote{\ddag}	\\
 \bottomrule
 \end{tabular}
@@ -7867,7 +7867,7 @@ The \href{https://matpower.org/docs/MATPOWER-manual-5.0.pdf}{\matpower{} 5.0 Use
     \item \code{case\_info()} for summarizing system information, including network connectivity.
     \item \code{extract\_islands()} to extract a network island into a separate \matpower{} case.
     \item \code{find\_islands()} to detect network islands.
-    \item \code{@opt\_model/describe\_idx()} to identify variable, constraint or cost row indices to aid in debugging.
+    \item \code{opt\_model.describe\_idx()} to identify variable, constraint or cost row indices to aid in debugging.
     \item \code{margcost()} for computing the marginal cost of generation.
     \item \code{psse2mpc()} to convert PSS/E RAW data into \matpower{} case format.
     \item \code{get\_losses()} to compute branch series losses and reactive charging injections and derivatives as functions of bus voltages.
@@ -8148,9 +8148,9 @@ with Octave, \matpower{}, and the \matpowerextraslink{} all pre-installed. See t
     \item \code{opf\_vlim\_hess()} evaluates Hessian of voltage magnitude limit constraints.
     \item \code{opf\_vref\_fcn()} evaluates reference voltage angle equality constraints and gradients.
     \item \code{opf\_vref\_hess()} evaluates Hessian of reference voltage angle equality constraints.
-    \item \code{opt\_model/add\_lin\_constraint()} to add linear constraints to an optimization model.
-    \item \code{opt\_model/add\_nln\_constraint()} to add nonlinear constraints to an optimization model.
-    \item \code{opt\_model/init\_indexed\_name()} to initialize the indices for an indexed name set of constraints, costs or variables.
+    \item \code{opt\_model.add\_lin\_constraint()} to add linear constraints to an optimization model.
+    \item \code{opt\_model.add\_nln\_constraint()} to add nonlinear constraints to an optimization model.
+    \item \code{opt\_model.init\_indexed\_name()} to initialize the indices for an indexed name set of constraints, costs or variables.
     \item \code{save2psse()} to export a \matpower{} case to PSS/E RAW data format.
     \item \code{savechgtab()} to save change tables, such as those used by \code{apply\_changes}, to a file.
     \end{itemize}
@@ -8260,11 +8260,11 @@ MATLAB/Octave path.
     \begin{itemize}
     \item \code{d2AIbr\_dV2()} -- use \code{dA2br\_dV2()} instead.
     \item \code{d2ASbr\_dV2()} -- use \code{dA2br\_dV2()} instead.
-    \item \code{opt\_model/add\_constraints()} -- use the corresponding one of the following methods instead: \code{add\_lin\_constraint()}, \code{add\_nln\_constraint()}, or \code{init\_indexed\_name()}.
-    \item \code{opt\_model/add\_costs()} -- use the corresponding one of the following methods instead: \code{add\_quad\_cost()},  \code{add\_nln\_cost()}, \code{add\_legacy\_cost()}, or\\ \code{init\_indexed\_name()}.
-    \item \code{opt\_model/linear\_constraints()} -- use \code{opt\_model/params\_lin\_constraint()} instead.
-    \item \code{opt\_model/build\_cost\_params()} -- no longer needed, incorporated into\\ \code{opt\_model/params\_legacy\_cost()}.
-    \item \code{opt\_model/get\_cost\_params()} -- use \code{opt\_model/params\_legacy\_cost()} instead.
+    \item \code{opt\_model.add\_constraints()} -- use the corresponding one of the following methods instead: \code{add\_lin\_constraint()}, \code{add\_nln\_constraint()}, or \code{init\_indexed\_name()}.
+    \item \code{opt\_model.add\_costs()} -- use the corresponding one of the following methods instead: \code{add\_quad\_cost()},  \code{add\_nln\_cost()}, \code{add\_legacy\_cost()}, or\\ \code{init\_indexed\_name()}.
+    \item \code{opt\_model.linear\_constraints()} -- use \code{opt\_model.params\_lin\_constraint()} instead.
+    \item \code{opt\_model.build\_cost\_params()} -- no longer needed, incorporated into\\ \code{opt\_model.params\_legacy\_cost()}.
+    \item \code{opt\_model.get\_cost\_params()} -- use \code{opt\_model.params\_legacy\_cost()} instead.
     \end{itemize}
 \end{itemize}
 
@@ -8322,7 +8322,7 @@ available even if it had an expired license or failed for some other reason.
     \end{itemize}
     \emph{Thanks to Mikhail Khokhlov and Dr. Artjoms Obusevs for reporting.}
 \item Remove \code{nln.mu.l.<name>} and \code{nln.mu.u.<name>} fields from OPF \code{results} struct. Use \code{nle.lambda.<name>} and \code{nli.mu.<name>} fields instead for nonlinear constraint multipliers.
-\item Modify order of default output arguments of \code{opt\_model/get\_idx()}.
+\item Modify order of default output arguments of \code{opt\_model.get\_idx()}.
 \item Add \code{mpopt} to input args for OPF \codeq{ext2int}, \codeq{formulation}, and \codeq{int2ext} callbacks.
 \item Eliminate unnecessary reordering of on-line generators (sorted by increasing bus index) from \code{ext2int()}. The order is now left unmodified by \code{ext2int()}. This change should only affect user code that explicitly depends on the order of generators with internal numbering (hopefully quite rare).
 \end{itemize}
@@ -8371,17 +8371,17 @@ The \href{https://matpower.org/docs/MATPOWER-manual-7.1.pdf}{\matpower{} 7.1 Use
             \item \code{mpopt2nlpopt()} creates or modifies an options struct for \code{nlps\_master()} from a \matpower{} options struct.
             \item \code{nleqs\_master()} provides a single wrapper function for calling any of \mpom{}'s nonlinear equation solvers.
             \item \code{nlps\_master()} provides a single wrapper function for calling any of \mpom{}'s nonlinear programming solvers.
-            \item \code{opt\_model/eval\_lin\_constraint()} method computes the constraint values for the full set or an individual named subset of linear constraints.
-            \item \code{opt\_model/get\_soln()} method extracts solved results for a given named set of variables, constraints or costs.
-            \item \code{opt\_model/params\_nln\_constraint()} method returns parameters for a named (and optionally indexed) set of nonlinear constraints.
-            \item \code{opt\_model/params\_nln\_cost()} method returns parameters for a named (and optionally indexed) set of general nonlinear costs.
-            \item \code{opt\_model/parse\_soln()} method returns a complete set of solution vector and shadow price values for a solved model.
-            \item \code{opt\_model/problem\_type()} determines the type of problem based on the characteristics of the variables, costs and constraints in the model.
-            \item \code{opt\_model/set\_params()} method modifies parameters for a given named set of existing variables, costs, or constraints of an \mpom{} object.
-            \item \code{opt\_model/solve()} solves the model using \code{mplinsolve()}, \code{qps\_master()}, \code{miqps\_master()}, \code{nleqs\_master()} or \code{nlps\_master()}, depending on the problem type.
+            \item \code{opt\_model.eval\_lin\_constraint()} method computes the constraint values for the full set or an individual named subset of linear constraints.
+            \item \code{opt\_model.get\_soln()} method extracts solved results for a given named set of variables, constraints or costs.
+            \item \code{opt\_model.params\_nln\_constraint()} method returns parameters for a named (and optionally indexed) set of nonlinear constraints.
+            \item \code{opt\_model.params\_nln\_cost()} method returns parameters for a named (and optionally indexed) set of general nonlinear costs.
+            \item \code{opt\_model.parse\_soln()} method returns a complete set of solution vector and shadow price values for a solved model.
+            \item \code{opt\_model.problem\_type()} determines the type of problem based on the characteristics of the variables, costs and constraints in the model.
+            \item \code{opt\_model.set\_params()} method modifies parameters for a given named set of existing variables, costs, or constraints of an \mpom{} object.
+            \item \code{opt\_model.solve()} solves the model using \code{mplinsolve()}, \code{qps\_master()}, \code{miqps\_master()}, \code{nleqs\_master()} or \code{nlps\_master()}, depending on the problem type.
             \item \code{osqp\_options()} initializes options for \osqplink{} solver.
             \item \code{osqpver()} returns/displays version information for \osqplink{}.
-            \item \dots plus \code{nleqs\_core()}, \code{nleqs\_fd\_newton()}, \code{nleqs\_fsolve()},\\ \code{nleqs\_gauss\_seidel()}, \code{nleqs\_newton()}, \code{nlps\_fmincon()}, \code{nlps\_ipopt()}, \code{nlps\_knitro()}, \code{opt\_model/copy()}, \code{opt\_model/is\_mixed\_integer()}, and \code{qps\_osqp()}.
+            \item \dots plus \code{nleqs\_core()}, \code{nleqs\_fd\_newton()}, \code{nleqs\_fsolve()},\\ \code{nleqs\_gauss\_seidel()}, \code{nleqs\_newton()}, \code{nlps\_fmincon()}, \code{nlps\_ipopt()}, \code{nlps\_knitro()}, \code{opt\_model.copy()}, \code{opt\_model.is\_mixed\_integer()}, and \code{qps\_osqp()}.
         \end{itemize}
 \item \code{nlpopf\_solver()} implements the AC OPF solver based on \code{opt\_model}'s new \code{solve()} method, and replaces the individual solver-specific functions \code{fmincopf\_solver()}, \code{ipoptopf\_solver()}, \code{ktropf\_solver()}, \code{mipsopf\_solver()}.
 \item \dots plus 45 individual feature detection functions for \code{have\_feature()} \\ \emph{(10 in \matpower{} proper, plus 2 in \mptest{}, 4 in \mips{}, and 29 in \mpom{}~\footnote{See Table~\ref{MPOMMAN-tab:have_feature_fcns} in the  \mpomman{} for details.})}.
@@ -8427,7 +8427,7 @@ The \href{https://matpower.org/docs/MATPOWER-manual-7.1.pdf}{\matpower{} 7.1 Use
 \subsubsection*{Other Improvements}
 \begin{itemize}
 \item Refactor \code{opt\_model} class to inherit from new abstract base class \code{mp\_idx\_manager} which can be used to manage the indexing of other sets of parameters, etc. in other contexts.
-\item Add to \code{opt\_model/eval\_nln\_constraint()} method the ability to compute constraints for a single named set.
+\item Add to \code{opt\_model.eval\_nln\_constraint()} method the ability to compute constraints for a single named set.
 \item Significant performance improvement for some problems when constructing sparse matrices for linear constraints or quadratic costs (e.g. during problem setup in \most{}).
 \emph{Thanks to Daniel Muldrew.}
 \item Move original implementation of Newton power flow for cartesian voltage representations to \code{newtonpf\_S\_hybrid()} and \code{newtonpf\_I\_hybrid()}, accessible by setting the \code{pf.v\_cartesian} option to 2. The \code{pf.alg} option can also be set to \codeq{NR-SH} or \codeq{NR-IH}, respectively, as shortcuts to select these formulations.
@@ -8458,7 +8458,7 @@ The \href{https://matpower.org/docs/MATPOWER-manual-7.1.pdf}{\matpower{} 7.1 Use
 \subsubsection*{Bugs Fixed}
 \begin{itemize}
 \item For \code{opt\_model}, incorrect evaluation of constant term has been fixed for vector valued quadratic costs with constant term supplied as a vector.
-\item Calling \code{opt\_model/params\_var()} method with empty \code{idx} no longer results in fatal error.
+\item Calling \code{opt\_model.params\_var()} method with empty \code{idx} no longer results in fatal error.
 \item Fix bug in \code{scale\_load()} where only one of multiple dispatchable loads at a bus would be scaled. \emph{Thanks to Christoph Funke.}
 \item Fix bug \#77 where incorrect indexing could cause fatal error in OPF with additional nonlinear constraints. \emph{Thanks to Sergio Garcia.}
 \item Fix OPF issue \#71 for \ipopt{} and \knitro{} where structure of Jacobian and/or Hessian could change from the structure provided (i.e. elements with value of zero were being eliminated from the sparsity structure). \emph{Thanks to Drosos Kourounis.}
@@ -8471,7 +8471,7 @@ The \href{https://matpower.org/docs/MATPOWER-manual-7.1.pdf}{\matpower{} 7.1 Use
 
 \subsubsection*{Incompatible Changes}
 \begin{itemize}
-\item Modify order of default output arguments of \code{opt\_model/get\_idx()} (again), removing the one related to legacy costs.
+\item Modify order of default output arguments of \code{opt\_model.get\_idx()} (again), removing the one related to legacy costs.
 \item \mpom{} has renamed the following functions and modified the order of their input args so that the \mpom{} object appears first. Ideally, these would be defined as methods of the \code{opt\_model} class, but Octave 4.2 and earlier is not able to find them via a function handle (as used in the \code{solve()} method) if they are inherited by a subclass.
     \begin{itemize}
     \item \code{opf\_consfcn()} $\rightarrow$ \code{nlp\_consfcn()}

@@ -66,29 +66,29 @@ previous versions, see Appendix H of the [MATPOWER User's Manual][2].
       of MP-Opt-Model's nonlinear equation solvers.
     - `nlps_master()` provides a single wrapper function for calling any
       of MP-Opt-Model's nonlinear programming solvers.
-    - `opt_model/eval_lin_constraint()` method computes the constraint values
+    - `opt_model.eval_lin_constraint()` method computes the constraint values
       for the full set or an individual named subset of linear constraints.
-    - `opt_model/get_soln()` method extracts solved results for a given named
+    - `opt_model.get_soln()` method extracts solved results for a given named
       set of variables, constraints or costs.
-    - `opt_model/params_nln_constraint()` method returns parameters for a
+    - `opt_model.params_nln_constraint()` method returns parameters for a
       named (and optionally indexed) set of nonlinear constraints.
-    - `opt_model/params_nln_cost()` method returns parameters for a named
+    - `opt_model.params_nln_cost()` method returns parameters for a named
       (and optionally indexed) set of general nonlinear costs.
-    - `opt_model/parse_soln()` method returns a complete set of solution
+    - `opt_model.parse_soln()` method returns a complete set of solution
       vector and shadow price values for a solved model.
-    - `opt_model/problem_type()` determines the type of problem based on the
+    - `opt_model.problem_type()` determines the type of problem based on the
       characteristics of the variables, costs and constraints in the model.
-    - `opt_model/set_params()` method modifies parameters for a given named
+    - `opt_model.set_params()` method modifies parameters for a given named
       set of existing variables, costs, or constraints of an MP-Opt-Model object.
-    - `opt_model/solve()` solves the model using `mplinsolve()`,
+    - `opt_model.solve()` solves the model using `mplinsolve()`,
       `qps_master()`, `miqps_master()`, `nleqs_master()` or `nlps_master()`,
       depending on the problem type.
     - `osqp_options()` initializes options for [OSQP][6] solver.
     - `osqpver()` returns/displays version information for [OSQP][6].
     - ... plus `nleqs_core()`, `nleqs_fd_newton()`, `nleqs_fsolve()`,
       `nleqs_gauss_seidel()`, `nleqs_newton()`, `nlps_fmincon()`,
-      `nlps_ipopt()`, `nlps_knitro()`, `opt_model/copy()`,
-      `opt_model/is_mixed_integer()`, and `qps_osqp()`.
+      `nlps_ipopt()`, `nlps_knitro()`, `opt_model.copy()`,
+      `opt_model.is_mixed_integer()`, and `qps_osqp()`.
 - `nlpopf_solver()` implements the AC OPF solver based on `opt_model`'s new
   `solve()` method, and replaces the individual solver-specific functions
   `fmincopf_solver()`, `ipoptopf_solver()`, `ktropf_solver()`, and 
@@ -127,7 +127,7 @@ previous versions, see Appendix H of the [MATPOWER User's Manual][2].
 - Refactor `opt_model` class to inherit from new abstract base class
   `mp_idx_manager` which can be used to manage the indexing of other sets
   of parameters, etc. in other contexts.
-- Add to `opt_model/eval_nln_constraint()` method the ability to compute
+- Add to `opt_model.eval_nln_constraint()` method the ability to compute
   constraints for a single named set.
 - Significant performance improvement for some problems when constructing
   sparse matrices for linear constraints or quadratic costs (e.g. during
@@ -172,7 +172,7 @@ previous versions, see Appendix H of the [MATPOWER User's Manual][2].
 #### Bugs Fixed:
 - For `opt_model`, incorrect evaluation of constant term has been fixed for
   vector valued quadratic costs with constant term supplied as a vector.
-- Calling `opt_model/params_var()` method with empty `idx` no longer results
+- Calling `opt_model.params_var()` method with empty `idx` no longer results
   in fatal error.
 - Fix bug in `scale_load()` where only one of multiple dispatchable loads at
   a bus would be scaled.
@@ -195,7 +195,7 @@ previous versions, see Appendix H of the [MATPOWER User's Manual][2].
   where Artelys Knitro was still using `fmincon` options.
 
 #### Incompatible Changes:
-- Modify order of default output arguments of `opt_model/get_idx()` (again),
+- Modify order of default output arguments of `opt_model.get_idx()` (again),
   removing the one related to legacy costs.
 - MP-Opt-Model has renamed the following functions and modified the order of
   their input args so that the MP-Opt-Model object appears first. Ideally,

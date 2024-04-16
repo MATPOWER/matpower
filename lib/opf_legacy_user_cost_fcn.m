@@ -9,7 +9,7 @@ function [f, df, d2f] = opf_legacy_user_cost_fcn(x, cp)
 %   Inputs:
 %     X : cell array with vectors of optimization variables
 %     CP : legacy user-defined cost parameter struct such as returned by
-%          @OPT_MODEL/GET_COST_PARAMS
+%          OPT_MODEL.GET_COST_PARAMS
 %
 %   Outputs:
 %     F  : sum of generator polynomial costs

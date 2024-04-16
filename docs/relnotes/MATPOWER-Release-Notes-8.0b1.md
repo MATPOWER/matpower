@@ -165,7 +165,7 @@ parameters and data formats. _But they do work!_
 - Remove deprecated functions:
   - `d2AIbr_dV2()` -- use `dA2br_dV2()` instead.
   - `d2ASbr_dV2()` -- use `dA2br_dV2()` instead.
-  - Deprecated methods of `@opf_model`:
+  - Deprecated methods of `opf_model`:
     - `add_constraints()` -- use the corresponding one of the following
       methods instead: `add_lin_constraint()`, `add_nln_constraint()`, or
       `init_indexed_name()`.

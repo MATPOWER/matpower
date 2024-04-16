@@ -148,7 +148,7 @@ Version 8.0b1 - *Dec 22, 2022*
   - Update to [MIPS][2] 1.5.
   - Update to [MP-Opt-Model][27] 4.1.
   - Update to [MOST][3] 1.2
-  - Remove deprecated legacy `@opt_model` methods. Summary of deprecated
+  - Remove deprecated legacy `opt_model` methods. Summary of deprecated
     method names, with current alternatives in parenthesis:
       - `add_constraints` (`add_lin_constraint` or `add_nln_constraint`)
       - `add_costs` (`add_legacy_cost`, `add_quad_cost` or `add_nln_cost`)
@@ -344,29 +344,29 @@ Version 7.1 - *Oct 8, 2020*
     and deprecate the original function names.
 
 #### 4/30/20
-  - Update `@opf_model` for MP-Opt-Model's refactored `@opt_model` class
-    based on the new `@mp_idx_manager` base class.
+  - Update `opf_model` for MP-Opt-Model's refactored `opt_model` class
+    based on the new `mp_idx_manager` base class.
 
 #### 4/29/20
   - **INCOMPATIBLE CHANGE:** MP-Opt-Model has renamed the following
     functions and modified the order of their input args so that the
     MP-Opt-Model object appears first. Ideally, these would be defined
-    as methods of the `@opt_model` class, but Octave 4.2 and earlier is
+    as methods of the `opt_model` class, but Octave 4.2 and earlier is
     not able to find them via a function handle (as used in the
     `solve()` method) if they are inherited by a subclass.
     - `opf_consfcn()` --> `nlp_consfcn()`
     - `opf_costfcn()` --> `nlp_costfcn()`
     - `opf_hessfcn()` --> `nlp_hessfcn()`
-  - Move code related to solver interfaces, `@opt_model` and a
+  - Move code related to solver interfaces, `opt_model` and a
     few other functions like `have_fcn()` and `nested_struct_copy()`
     into a separate package called [MP-Opt-Model][27], now included
     (v0.8) in a separate `mp-opt-model` sub-directory.
 
 #### 4/28/20
-  - Move deprecated `@opt_model` methods and code related to legacy
-    user-defined OPF costs from `@opt_model` to `@opf_model`.
+  - Move deprecated `opt_model` methods and code related to legacy
+    user-defined OPF costs from `opt_model` to `opf_model`.
   - **INCOMPATIBLE CHANGE:** Modify order of default output arguments of
-    `opt_model/get_idx()` (again), removing the one related to legacy
+    `opt_model.get_idx()` (again), removing the one related to legacy
     costs.
 
 #### 4/16/20
@@ -387,10 +387,10 @@ Version 7.1 - *Oct 8, 2020*
 
 #### 3/18/20
   - Add `nlpopf_solver()` based on the new `solver()` method of
-    `@opt_model`. This single function replaces `mipsopf_solver()`,
+    `opt_model`. This single function replaces `mipsopf_solver()`,
     `fmincopf_solver()`, `ipoptopf_solver()`, and `ktropf_solver()`.
   - Convert `dcopf_solver()` to use the new `solver()` method of
-    `@opt_model` instead of calling `qps_matpower()` manually.
+    `opt_model` instead of calling `qps_matpower()` manually.
   - Add new top-level wrapper function `nlps_matpower()` to provide
     a standard interface for MATPOWER's nonlinear program (NLP)
     solvers (`fmincon`, IPOPT, Artelys Knitro, and MIPS), with
@@ -401,7 +401,7 @@ Version 7.1 - *Oct 8, 2020*
     for `fmincon`, IPOPT, and Artelys Knitro solvers, respectively.
   - Add `mpopt2nlpopt()` to set up an options struct for
     `nlps_matpower()` based on a MATPOWER options struct.
-  - Add three new methods to `@opt_model` class:
+  - Add three new methods to `opt_model` class:
     - `is_mixed_integer()` - returns true if the model includes any binary
       or integer variables
     - `problem_type()` - returns one of the following strings, based on
@@ -434,7 +434,7 @@ Version 7.1 - *Oct 8, 2020*
     *Thanks to Florian.*
 
 #### 2/27/20
-  - Add `copy()` method to `@opt_model` class to get around issues
+  - Add `copy()` method to `opt_model` class to get around issues
     with inheritance in constructors that was preventing copy constructor
     from working in Octave 5.2 and earlier (see also [Octave bug
     52614](https://savannah.gnu.org/bugs/?52614).
@@ -495,11 +495,11 @@ Version 7.1 - *Oct 8, 2020*
     *Thanks to Sergio Garcia.*
 
 #### 8/15/19
-  - Improve performance of `@opt_model/add_named_set()`.
+  - Improve performance of `opt_model.add_named_set()`.
     (See [issue #79][22].)
     *Thanks to Baraa Mohandes.*
-  - Refactor code in `@opt_model/params_lin_constraint()` and
-    `@opt_model/params_quad_cost()` to speed up sparse matrix construction
+  - Refactor code in `opt_model.params_lin_constraint()` and
+    `opt_model.params_quad_cost()` to speed up sparse matrix construction
     when there are lots of constraint or cost sets. Results in significant
     speedups for some problems during problem setup in MOST.
     (See [pull request #70][21].)
@@ -853,7 +853,7 @@ Version 7.0b1 - *Oct 31, 2018*
     - `case_ACTIVSg10k` (10,000-bus US WECC synthetic model)
 
 #### 9/12/17
-  - Update `@opt_model` API for method naming consistency. Summary of
+  - Update `opt_model` API for method naming consistency. Summary of
     deprecated method names, with new alternatives in parenthesis:
     - `add_vars` (`add_var`)
     - `add_costs` (`add_legacy_cost`, `add_quad_cost` or `add_nln_cost`)
@@ -911,7 +911,7 @@ Version 7.0b1 - *Oct 31, 2018*
     fields from OPF `results` struct. Use `nle.lambda.<name>` and
     `nli.mu.<name>` fields instead for nonlinear constraint multipliers.
   - **INCOMPATIBLE CHANGE:** Modify order of default output arguments of
-    `opt_model/get_idx()`.
+    `opt_model.get_idx()`.
   - **INCOMPATIBLE CHANGE:** Add `mpopt` to OPF `formulation` callback
     input args.
 
@@ -919,7 +919,7 @@ Version 7.0b1 - *Oct 31, 2018*
   - Refactor AC OPF code to use the new nonlinear constraint handling
     of `opt_model` to build and evaluate power balance and branch flow
     constraints and their derivatives, and index shadow prices.
-  - Add option for `opt_model/get_idx()` to return arbitrarily selected
+  - Add option for `opt_model.get_idx()` to return arbitrarily selected
     index types.
 
 #### 7/10/17
@@ -932,14 +932,14 @@ Version 7.0b1 - *Oct 31, 2018*
     `add_lin_constraint()`, `add_nln_constraint()` or `init_indexed_name()`.
 
 #### 6/8/17
-  - Move `@opt_model`, `@opf_model` to use `classdef`. Modify code to use
-    OOP notation everywhere for `@opt_model`/`@opf_model` objects,
+  - Move `opt_model`, `opf_model` to use `classdef`. Modify code to use
+    OOP notation everywhere for `opt_model`/`opf_model` objects,
     e.g. `om.property`, `om.method()`.
     __IMPORTANT NOTE__: For Octave users, the minimum requirement for
     MATPOWER is now Octave 4 or later.
 
 #### 5/25/17
-  - Add option to call `@opt_model/compute_cost` without `idx` argument
+  - Add option to call `opt_model.compute_cost()` without `idx` argument
     and have it total over all indices for a given `name`.
 
 #### 5/24/17
@@ -1149,7 +1149,7 @@ Version 6.0b2 - *Nov 1, 2016*
     Samuel Perkin.*
 
 #### 8/15/16
-  - Fix a harmless bug in `@opt_model` where variable, constraint and
+  - Fix a harmless bug in `opt_model` where variable, constraint and
     cost sets indexed by a single variable would allocate a square
     matrix of starting and ending indices, rather than a simple vector.
     *Thanks to Alberto Lamadrid for catching this.*
@@ -1384,14 +1384,14 @@ Version 5.1 - *Mar 20, 2015*
     original case file. *Thanks to Yujia Zhu and Daniel Tylavsky.*
 
 #### 3/4/15
-  - Added variable type as an attribute to `@opt_model`, so you can
+  - Added variable type as an attribute to `opt_model`, so you can
     now specify variables as `C`, `I`, or `B` (continuous, integer,
     or binary) when adding variables with `add_vars()` and `getv()` can
     optionally return a variable-type string suitable for passing
     to `miqps_matpower()` and friends.
 
 #### 2/26/15
-  - Minor speed improvements in various `@opt_model` functions from
+  - Minor speed improvements in various `opt_model` functions from
     bypassing calls to `substruct()`.
 
 #### 2/25/15
@@ -1904,7 +1904,7 @@ Version 5.0b1 - *Jul 1, 2014*
     in results.
 
 #### 3/29/13
-  - Performance optimizations in `@opt_model` for cases with
+  - Performance optimizations in `opt_model` for cases with
     large numbers of variable sets and linear constraints
     or costs specified as entire rows (all columns as
     opposed to specific var sets).
@@ -1933,7 +1933,7 @@ Version 5.0b1 - *Jul 1, 2014*
     Optimization Toolbox is installed, but with no valid license.
 
 #### 8/30/12
-  - Major speed-up in `@opt_model/linear_constraints()` by building
+  - Major speed-up in `opt_model.linear_constraints()` by building
     transpose of `A` (assigning to full columns) then transposing
     back as opposed to building `A` directly (assigning full rows).
 
@@ -1942,16 +1942,16 @@ Version 5.0b1 - *Jul 1, 2014*
     generation.
 
 #### 7/20/12
-  - Added utility function `@opt_model/describe_idx()` to identify
+  - Added utility function `opt_model.describe_idx()` to identify
     variable, constraint or cost row indices to aid in debugging.
 
 #### 7/18/12
   - Made `N` optional field (default is identity matrix) in
-    `@opt_model/add_costs()`.
-  - Added missing optional 2nd arg to `@opt_model/build_cost_params()`.
+    `opt_model.add_costs()`.
+  - Added missing optional 2nd arg to `opt_model.build_cost_params()`.
 
 #### 6/26/12
-  - Fixed a bug in the new `@opt_model/add_vars()` when adding a var
+  - Fixed a bug in the new `opt_model.add_vars()` when adding a var
     set of dimension zero.
 
 #### 6/18/12
@@ -1961,8 +1961,8 @@ Version 5.0b1 - *Jul 1, 2014*
     `gurobi_mex()` interface.
   
 #### 5/3/12
-  - Reimplementated `@opf_model` class as subclass of the new
-    `@opt_model` class, which supports indexed named sets of
+  - Reimplementated `opf_model` class as subclass of the new
+    `opt_model` class, which supports indexed named sets of
     variables, constraints and costs.
 
 #### 5/2/12
@@ -2036,7 +2036,7 @@ Version 4.1 - *Dec 14, 2011*
     `toggle_dcline()` for details.
     
 #### 12/1/11
-  - Removed deprecated functions in `@opf_model`, `gen_lin_N()`,
+  - Removed deprecated `opf_model` methods, `gen_lin_N()`,
     `get_nln_N()`, `get_var_N()`, use `getN()` instead.
   - Removed all references to deprecated option `OUT_RAW`.
 
@@ -2303,7 +2303,7 @@ Version 4.0b2 - *Mar 19, 2010*
   - Added printing of MATPOWER and MIPS version lines to verbose output.
 
 #### 2/23/10
-  - For `@opf_model`, deprecated `get_var_N()`, `get_lin_N()` and `get_nln_N()`
+  - For `opf_model`, deprecated `get_var_N()`, `get_lin_N()` and `get_nln_N()`
     methods, replaced with single `getN()` method. Added `compute_cost()`.
   - Fixed per unit bug with reserve costs and prices in `toggle_reserves()`.
   - Added `cost` field to OPF `results` struct with final values of user-defined
@@ -2415,7 +2415,7 @@ Version 4.0b1 - *Dec 24, 2009*
 
 #### 7/10/09
   - Removed `sparse_qp` and `sparse_lp` from `have_fcn()`.
-  - Major speed-up in `@opf_model/linear_constraints()` for
+  - Major speed-up in `opf_model.linear_constraints()` for
     large problems (esp. DC OPF) and various other optimizations
     from profiling code.
 
@@ -2500,7 +2500,7 @@ Version 4.0b1 - *Dec 24, 2009*
     limit violations.
   - Fixed a (new) bug which caused the DC OPF solver to crash on
     problems with only polynomial costs.
-  - Added `userdata` to `@opf_model` object.
+  - Added `userdata` to `opf_model` class.
 
 #### 6/10/08
   - Added new way to specify user vars, constraints, costs via

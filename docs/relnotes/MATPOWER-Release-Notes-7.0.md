@@ -98,11 +98,11 @@ previous versions, see Appendix H of the [MATPOWER User's Manual][2].
       constraints and gradients.
     - `opf_vref_hess()` evaluates Hessian of reference voltage angle
       equality constraints.
-    - `opt_model/add_lin_constraint()` to add linear constraints to an
+    - `opt_model.add_lin_constraint()` to add linear constraints to an
       optimization model.
-    - `opt_model/add_nln_constraint()` to add nonlinear constraints to
+    - `opt_model.add_nln_constraint()` to add nonlinear constraints to
       an optimization model.
-    - `opt_model/init_indexed_name()` to initialize the indices for an
+    - `opt_model.init_indexed_name()` to initialize the indices for an
       indexed name set of constraints, costs or variables.
     - `save2psse()` to export a MATPOWER case to PSS/E RAW data format.
     - `savechgtab()` to save change tables, such as those used by
@@ -204,18 +204,18 @@ previous versions, see Appendix H of the [MATPOWER User's Manual][2].
 - Deprecated functions:
     - `d2AIbr_dV2()` -- use `dA2br_dV2()` instead.
     - `d2ASbr_dV2()` -- use `dA2br_dV2()` instead.
-    - `opt_model/add_constraints()` -- use the corresponding one of the
+    - `opt_model.add_constraints()` -- use the corresponding one of the
       following methods instead: `add_lin_constraint()`,
       `add_nln_constraint()`, or `init_indexed_name()`.
-    - `opt_model/add_costs()` -- use the corresponding one of the
+    - `opt_model.add_costs()` -- use the corresponding one of the
       following methods instead: `add_quad_cost()`,  `add_nln_cost()`,
       `add_legacy_cost()`, or `init_indexed_name()`.
-    - `opt_model/linear_constraints()` -- use
-      `opt_model/params_lin_constraint()` instead.
-    - `opt_model/build_cost_params()` -- no longer needed, incorporated
-      into `opt_model/params_legacy_cost()`.
-    - `opt_model/get_cost_params()` -- use
-      `opt_model/params_legacy_cost()` instead.
+    - `opt_model.linear_constraints()` -- use
+      `opt_model.params_lin_constraint()` instead.
+    - `opt_model.build_cost_params()` -- no longer needed, incorporated
+      into `opt_model.params_legacy_cost()`.
+    - `opt_model.get_cost_params()` -- use
+      `opt_model.params_legacy_cost()` instead.
 
 #### Bugs Fixed:
 - Fix bug in conversion of older versions of MATPOWER options.
@@ -296,7 +296,7 @@ previous versions, see Appendix H of the [MATPOWER User's Manual][2].
 - Remove `nln.mu.l.<name>` and `nln.mu.u.<name>` fields from OPF
   `results` struct. Use `nle.lambda.<name>` and `nli.mu.<name>` fields
   instead for nonlinear constraint multipliers.
-- Modify order of default output arguments of `opt_model/get_idx()`.
+- Modify order of default output arguments of `opt_model.get_idx()`.
 - Add `mpopt` to input args for OPF `'ext2int'`, `'formulation'`, and
   `'int2ext'` callbacks.
 - Eliminate unnecessary reordering of on-line generators (sorted by

@@ -680,7 +680,7 @@ try
     [N, fcn] = om.params_nln_constraint(1, 'mynle')
     t_ok(0, t);
 catch
-    t_ok(strfind(lasterr, '@opt_model/params_nln_constraint: nonlinear constraint set ''mynle'' requires an IDX_LIST arg'), t);
+    t_ok(strfind(lasterr, 'opt_model.params_nln_constraint: nonlinear constraint set ''mynle'' requires an IDX_LIST arg'), t);
 end
 
 t = 'om.params_nln_constraint(0, ''mynli'', {1,2})';
@@ -1200,7 +1200,7 @@ try
     cp = om.params_legacy_cost('wc')
     t_ok(0, t);
 catch
-    t_ok(strfind(lasterr, '@opt_model/params_legacy_cost: legacy cost set ''wc'' requires an IDX_LIST arg'), t);
+    t_ok(strfind(lasterr, 'opf_model.params_legacy_cost: legacy cost set ''wc'' requires an IDX_LIST arg'), t);
 end
 
 t = 'om.params_legacy_cost(''wc'', {1,2})';
@@ -1351,7 +1351,7 @@ try
     [N, fcn] = om.params_nln_cost('wc')
     t_ok(0, t);
 catch
-    t_ok(strfind(lasterr, '@opt_model/params_nln_cost: general nonlinear cost set ''wc'' requires an IDX_LIST arg'), t);
+    t_ok(strfind(lasterr, 'opt_model.params_nln_cost: general nonlinear cost set ''wc'' requires an IDX_LIST arg'), t);
 end
 
 t = 'om.params_nln_cost(''wc'', {1,2})';
