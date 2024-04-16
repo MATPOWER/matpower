@@ -494,10 +494,9 @@ opt = struct('scale', 'QUANTITY', 'which', 'DISPATCHABLE');
 err = 0;
 try
     [bus, gen] = scale_load(dmd, mpc.bus, mpc.gen, [], opt);
-catch
-    [msg, id] = lasterr;
+catch me
     expected = 'scale_load: impossible to make zone 2 load equal 80 by scaling non-existent dispatchable load';
-    if ~isempty(strfind(msg, expected))
+    if ~isempty(strfind(me.message, expected))
         err = 1;
     end
 end
@@ -984,10 +983,9 @@ opt = struct('scale', 'QUANTITY', 'which', 'DISPATCHABLE');
 err = 0;
 try
     mpc1 = scale_load(dmd, mpc, [], opt);
-catch
-    [msg, id] = lasterr;
+catch me
     expected = 'scale_load: impossible to make zone 2 load equal 80 by scaling non-existent dispatchable load';
-    if ~isempty(strfind(msg, expected))
+    if ~isempty(strfind(me.message, expected))
         err = 1;
     end
 end

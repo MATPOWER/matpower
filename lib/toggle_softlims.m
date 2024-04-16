@@ -1264,9 +1264,9 @@ for lm = fieldnames(lims).'
     %% filter cost to include only valid constraints
     try
         s.cost = s.cost(idxmask);
-    catch ME
+    catch me
         warning('softlims_init: something went wrong when handling the cost for limit %s. Perhaps the size of the ''cost'' vector didn''t match the size of the ''idx'' vector?', lim);
-        rethrow(ME);
+        rethrow(me);
     end
 
     %% upper bound on constraint violation variable (always a vector)
