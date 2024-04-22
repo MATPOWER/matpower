@@ -1608,7 +1608,7 @@ In addition to making use of the \code{verbose} option and the solver-specific o
 \toprule
 name & default & description \\
 \midrule
-\code{most.solver}	& \codeq{DEFAULT}	& solver option passed to \code{@opt\_model/solve()} in \code{opt.alg} , see \code{@opt\_model/solve} for details	\\
+\code{most.solver}	& \codeq{DEFAULT}	& solver option passed to \code{@opt\_model.solve()} in \code{opt.alg} , see \code{opt\_model.solve()} for details	\\
 \code{most.skip\_prices}	& 0	& skip price computation stage for mixed integer problems, see \code{miqps\_master} for details	\\
 \code{most.price\_stage\_warn\_tol}	& $10^{-7}$	& tolerance on the objective function value and primal variable relative match required to avoid mis-match warning message, see \code{miqps\_master} for details	\\
 \code{most.build\_model}	&  1	& toggle building of MIQP model \\
@@ -1991,7 +1991,7 @@ name & type\tnote{*} & description \\
 \code{C1}	& B	 & linear cost coefficient vector\tnote{\ddag}	\\
 \code{c1}	& B	 & constant cost term\tnote{\ddag}	\\
 \code{Cfstor}	& B	 & linear cost coefficients of full $x$ to reflect expected value of storage in terminal states	\\
-\code{opt}\tnote{\S}	& B	 & options struct for \code{@opt\_model/solver}, set by \most{} run options and solver-specific \matpower{} options via \code{mpopt2qpopt}	\\
+\code{opt}\tnote{\S}	& B	 & options struct for \code{opt\_model.solve()}, set by \most{} run options and solver-specific \matpower{} options via \code{mpopt2qpopt}	\\
 \code{exitflag}\tnote{\S}	& O	 & 1 = converged successfully, 0 or negative value = solver specific failure code	\\
 \code{output}\tnote{\S}	& O	 & struct with solver-specific fields and \code{alg} field specifying solver that was used	\\
 \code{lambda}\tnote{\S}	& O	 & Lagrange and Kuhn-Tucker multipliers on constraints \\
@@ -2006,7 +2006,7 @@ name & type\tnote{*} & description \\
  \item [*] {I = input, O = output, B = both, opt = taken from \matpower{} options. The \code{QP} struct and its fields are either contructed by \code{most} or taken as an input, based on the value of the \code{most.build\_model} option described in Table~\ref{tab:mostrunoptions}.}
  \item [\dag] {Including user defined coordination costs from \code{md.CoordCost}.}
  \item [\ddag] {Excluding user defined coordination costs from \code{md.CoordCost}.}
- \item [\S] {See input and output arguments for \code{opt\_model/solve()} (i.e. \code{qps\_master} or \code{miqps\_master}) for details.}
+ \item [\S] {See input and output arguments for \code{opt\_model.solve()} (i.e. \code{qps\_master} or \code{miqps\_master}) for details.}
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -3373,8 +3373,8 @@ The \href{https://matpower.org/docs/MOST-manual-1.1.pdf}{\most{} 1.1 User's Manu
     \begin{itemize}
     \item Significant performance improvement for some problems when constructing sparse matrices for linear constraints or quadratic costs (e.g. during problem setup).
     \emph{Thanks to Daniel Muldrew.}
-    \item Uses the \code{@opt\_model/solve()} method rather than calling \code{miqps\_matpower()} or \code{qps\_matpower()} directly.
-    \item Uses \code{@opt\_model/get\_soln()} to extract variable and shadow price results, rather than doing the indexing manually.
+    \item Uses the \code{opt\_model.solve()} method rather than calling \code{miqps\_matpower()} or \code{qps\_matpower()} directly.
+    \item Uses \code{opt\_model.get\_soln()} to extract variable and shadow price results, rather than doing the indexing manually.
     \end{itemize}
 \end{itemize}
 

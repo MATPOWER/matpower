@@ -2064,25 +2064,25 @@ mdo.om = om.copy();     %% make copy of opt_model object, so changes to
 if mpopt.most.solve_model
   %% check consistency of model options (in case mdi was built in previous call)
   if mdi.DCMODEL ~= mo.DCMODEL
-    error('MDI.DCMODEL inconsistent with MPOPT.most.dc_model');
+    error('most: MDI.DCMODEL inconsistent with MPOPT.most.dc_model');
   end
   if mdi.IncludeFixedReserves ~= mo.IncludeFixedReserves
-    error('MDI.IncludeFixedReserves inconsistent with MPOPT.most.fixed_res (and possible presence of MDI.FixedReserves(t,j,k))');
+    error('most: MDI.IncludeFixedReserves inconsistent with MPOPT.most.fixed_res (and possible presence of MDI.FixedReserves(t,j,k))');
   end
   if mdi.SecurityConstrained ~= mo.SecurityConstrained
-    error('MDI.SecurityConstrained inconsistent with MPOPT.most.security_constraints (and possible presence of MDI.cont(t,j).contab)');
+    error('most: MDI.SecurityConstrained inconsistent with MPOPT.most.security_constraints (and possible presence of MDI.cont(t,j).contab)');
   end
   if mdi.QCoordination ~= mo.QCoordination
-    error('MDI.QCoordination inconsistent with MPOPT.most.q_coordination');
+    error('most: MDI.QCoordination inconsistent with MPOPT.most.q_coordination');
   end
   if mdi.Storage.ForceCyclicStorage ~= mo.ForceCyclicStorage
-    error('MDI.Storage.ForceCyclicStorage inconsistent with MPOPT.most.storage.cyclic');
+    error('most: MDI.Storage.ForceCyclicStorage inconsistent with MPOPT.most.storage.cyclic');
   end
   if mdi.Storage.ForceExpectedTerminalStorage ~= mo.ForceExpectedTerminalStorage
-    error('MDI.Storage.ForceExpectedTerminalStorage inconsistent with MPOPT.most.storage.terminal_target (and possible presence of MDI.Storage.ExpectedTerminalStorageAim|Min|Max)');
+    error('most: MDI.Storage.ForceExpectedTerminalStorage inconsistent with MPOPT.most.storage.terminal_target (and possible presence of MDI.Storage.ExpectedTerminalStorageAim|Min|Max)');
   end
   if mdi.UC.run ~= UC
-    error('MDI.UC.run inconsistent with MPOPT.most.uc.run (and possible presence of MDI.UC.CommitKey)');
+    error('most: MDI.UC.run inconsistent with MPOPT.most.uc.run (and possible presence of MDI.UC.CommitKey)');
   end
   %% set options
   model = om.problem_type();

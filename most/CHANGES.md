@@ -109,11 +109,11 @@ Version 1.1 - *Oct 8, 2020*
   - Release 1.1.
 
 #### 9/9/20
-  - Use `@opt_model/get_soln()` to extract variable and shadow price
+  - Use `opt_model.get_soln()` to extract variable and shadow price
     results, rather than doing the indexing manually.
 
 #### 3/19/20
-  - Convert to using `@opt_model/solve()` method rather than calling
+  - Convert to using `opt_model.solve()` method rather than calling
     `miqps_matpower()` or `qps_matpower()` directly.
   - **INCOMPATIBLE CHANGE**: Update objective function value returned in
     `mdo.QP.f` to include the previously missing constant term.
@@ -181,10 +181,10 @@ Version 1.0.1 - *Oct 30, 2018*
     or StorageData resulted in a fatal error.
 
 #### 9/12/17
-  - Update for `@opt_model` API cleanup.
+  - Update for `opt_model` API cleanup.
 
 #### 9/1/17
-  - Use MATPOWER's new quadratic costs in `@opt_model` in place of the
+  - Use MATPOWER's new quadratic costs in `opt_model` in place of the
     legacy cost model.
 
 #### 8/7/17

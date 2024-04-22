@@ -18,9 +18,9 @@ previous versions, see Appendix B of the [MOST User's Manual][2].
     sparse matrices for linear constraints or quadratic costs (e.g. during
     problem setup).
     *Thanks to Daniel Muldrew.*
-    - Uses the `@opt_model/solve()` method rather than calling
+    - Uses the `opt_model.solve()` method rather than calling
       `miqps_matpower()` or `qps_matpower()` directly.
-    - Uses the `@opt_model/get_soln()` method to extract variable and shadow
+    - Uses the `opt_model.get_soln()` method to extract variable and shadow
       price results, rather than doing the indexing manually.
 
 #### Bugs Fixed:
