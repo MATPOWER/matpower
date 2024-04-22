@@ -19,6 +19,7 @@ TorF = exist('fsolve', 'file') == 2;
 if TorF
     if have_feature('matlab')
         v = have_feature('optim', 'all');
+        TorF = v.av;
         vstr = v.vstr;
         rdate = v.date;
     else

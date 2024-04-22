@@ -141,7 +141,7 @@ if N && ~isempty(s.eflag)
                     case 'mu_u'
                         varargout{k} = s.lambda.upper(i1:iN);
                     otherwise
-                        error('opt_model/get_soln: unknown tag ''%s''', tags{k});
+                        error('opt_model.get_soln: unknown tag ''%s''', tags{k});
                 end
             end
         case 'lin'
@@ -165,7 +165,7 @@ if N && ~isempty(s.eflag)
                         case 'mu_u'
                             varargout{k} = s.lambda.mu_u(i1:iN);
                         otherwise
-                            error('opt_model/get_soln: unknown tag ''%s''', tags{k});
+                            error('opt_model.get_soln: unknown tag ''%s''', tags{k});
                     end
                 end
             end
@@ -184,7 +184,7 @@ if N && ~isempty(s.eflag)
                     case 'lam'
                         varargout{k} = s.lambda.eqnonlin(i1:iN);
                     otherwise
-                        error('opt_model/get_soln: unknown tag ''%s''', tags{k});
+                        error('opt_model.get_soln: unknown tag ''%s''', tags{k});
                 end
             end
         case 'nli'
@@ -202,7 +202,7 @@ if N && ~isempty(s.eflag)
                     case 'mu'
                         varargout{k} = s.lambda.ineqnonlin(i1:iN);
                     otherwise
-                        error('opt_model/get_soln: unknown tag ''%s''', tags{k});
+                        error('opt_model.get_soln: unknown tag ''%s''', tags{k});
                 end
             end
         case 'nlc'
@@ -222,7 +222,7 @@ if N && ~isempty(s.eflag)
                     case 'd2f'
                         varargout{k} = d2f;
                     otherwise
-                        error('opt_model/get_soln: unknown tag ''%s''', tags{k});
+                        error('opt_model.get_soln: unknown tag ''%s''', tags{k});
                 end
             end
         case 'qdc'
@@ -242,11 +242,11 @@ if N && ~isempty(s.eflag)
                     case 'd2f'
                         varargout{k} = d2f;
                     otherwise
-                        error('opt_model/get_soln: unknown tag ''%s''', tags{k});
+                        error('opt_model.get_soln: unknown tag ''%s''', tags{k});
                 end
             end
         otherwise
-            error('opt_model/get_soln: unknown set_type ''%s''', set_type);
+            error('opt_model.get_soln: unknown set_type ''%s''', set_type);
     end     %% switch set_type
     end
 end     %% if N

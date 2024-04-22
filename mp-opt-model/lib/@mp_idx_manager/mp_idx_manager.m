@@ -156,7 +156,7 @@ classdef mp_idx_manager < handle
                         end
                     end
                 else
-                    error('@mp_idx_manager/mp_idx_manager: input must be an ''mp_idx_manager'' object or a struct');
+                    error('mp_idx_manager.mp_idx_manager: input must be an ''mp_idx_manager'' object or a struct');
                 end
             end
             

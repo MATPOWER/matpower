@@ -668,8 +668,8 @@ t = 'om.params_nln_constraint(1, ''mynle'') : error';
 try
     [N, fcn] = om.params_nln_constraint(1, 'mynle')
     t_ok(0, t);
-catch
-    t_ok(strfind(lasterr, '@opt_model/params_nln_constraint: nonlinear constraint set ''mynle'' requires an IDX_LIST arg'), t);
+catch me
+    t_ok(strfind(me.message, 'opt_model.params_nln_constraint: nonlinear constraint set ''mynle'' requires an IDX_LIST arg'), t);
 end
 
 t = 'om.params_nln_constraint(0, ''mynli'', {1,2})';
@@ -1164,8 +1164,8 @@ t = 'om.params_nln_cost(''wc'') : error';
 try
     [N, fcn] = om.params_nln_cost('wc')
     t_ok(0, t);
-catch
-    t_ok(strfind(lasterr, '@opt_model/params_nln_cost: general nonlinear cost set ''wc'' requires an IDX_LIST arg'), t);
+catch me
+    t_ok(strfind(me.message, 'opt_model.params_nln_cost: general nonlinear cost set ''wc'' requires an IDX_LIST arg'), t);
 end
 
 t = 'om.params_nln_cost(''wc'', {1,2})';
@@ -1253,18 +1253,18 @@ if have_feature('isequaln')
     try
         om.set_params('var', 'Va', 'v0', val);
         t_ok(0, [t 'Va, v0 (wrong size)']);
-    catch
-        me = lasterr;
-        TorF = strfind(me, 'parameter ''var'' ''Va'' ''v0'' should have length 4 (or 1)');
+    catch me
+        TorF = strfind(me.message, 'parameter ''var'' ''Va'' ''v0'' should have length 4 (or 1)');
         t_ok(TorF, [t 'Va, v0 (wrong size)']);
         if ~TorF
-            me
+            me.message
         end
     end
 
     t = 'om.set_params(''var'', name, ...) : ';
     val = [1:4]';
     s.var.data.v0.Va = val;
+    s.var.params = [];  % remove cache, as set_params() does
     om.set_params('var', 'Va', 'v0', val);
     t_ok(isequaln(struct(om), s), [t 'Va, v0']);
 
@@ -1278,12 +1278,11 @@ if have_feature('isequaln')
     try
         om.set_params('var', 'Pg', 'all', val);
         t_ok(0, [t 'Pg, all (wrong size)']);
-    catch
-        me = lasterr;
-        TorF = strfind(me, 'dimension change for ''var'' ''Pg'' not allowed');
+    catch me
+        TorF = strfind(me.message, 'dimension change for ''var'' ''Pg'' not allowed');
         t_ok(TorF, [t 'Pg, all (wrong size)']);
         if ~TorF
-            me
+            me.message
         end
     end
 
@@ -1314,17 +1313,17 @@ if have_feature('isequaln')
     try
         om.set_params('lin', 'Qmis', 'A', val);
         t_ok(0, [t 'Qmis, A (wrong size)']);
-    catch
-        me = lasterr;
-        TorF = strfind(me, 'dimension change for ''lin'' ''Qmis'' not allowed except for ''all''');
+    catch me
+        TorF = strfind(me.message, 'dimension change for ''lin'' ''Qmis'' not allowed except for ''all''');
         t_ok(TorF, [t 'Qmis, A (wrong size)']);
         if ~TorF
-            me
+            me.message
         end
     end
 
     val = sparse(m, n);
     s.lin.data.A.Qmis = val;
+    s.lin.params = [];  % remove cache, as set_params() does
     om.set_params('lin', 'Qmis', 'A', val);
     t_ok(isequaln(struct(om), s), [t 'Qmis, A']);
 
@@ -1363,12 +1362,11 @@ if have_feature('isequaln')
     try
         om.set_params('lin', 'mylin', {2,2}, 'all', val);
         t_ok(0, [t 'mylin{2,2}, all (wrong size)']);
-    catch
-        me = lasterr;
-        TorF = strfind(me, 'for ''lin'' ''mylin(2,2)'' number of columns of ''A'' (5) must be consistent with ''vs'' (170)');
+    catch me
+        TorF = strfind(me.message, 'for ''lin'' ''mylin(2,2)'' number of columns of ''A'' (5) must be consistent with ''vs'' (170)');
         t_ok(TorF, [t 'mylin{2,2}, all (wrong size)']);
         if ~TorF
-            me
+            me.message
         end
     end
     val = {A(:, 2:3), l(2:3), u(2:3), vs, 1};
@@ -1390,12 +1388,11 @@ if have_feature('isequaln')
     try
         om.set_params('nle', 'Qmise', 'N', val);
         t_ok(0, [t 'Qmise, N (wrong size)']);
-    catch
-        me = lasterr;
-        TorF = strfind(me, 'dimension change for ''nle'' ''Qmise'' not allowed except for ''all''');
+    catch me
+        TorF = strfind(me.message, 'dimension change for ''nle'' ''Qmise'' not allowed except for ''all''');
         t_ok(TorF, [t 'Qmise, N (wrong size)']);
         if ~TorF
-            me
+            me.message
         end
     end
 
@@ -1461,12 +1458,11 @@ if have_feature('isequaln')
     try
         om.set_params('nli', 'Qmisi', 'N', val);
         t_ok(0, [t 'Qmisi, N (wrong size)']);
-    catch
-        me = lasterr;
-        TorF = strfind(me, 'dimension change for ''nli'' ''Qmisi'' not allowed except for ''all''');
+    catch me
+        TorF = strfind(me.message, 'dimension change for ''nli'' ''Qmisi'' not allowed except for ''all''');
         t_ok(TorF, [t 'Qmisi, N (wrong size)']);
         if ~TorF
-            me
+            me.message
         end
     end
 
@@ -1526,18 +1522,17 @@ if have_feature('isequaln')
     try
         om.set_params('qdc', 'qc1', 'Q', val);
         t_ok(0, [t 'qc1, Q (wrong size)']);
-    catch
-        me = lasterr;
-        TorF = strfind(me, 'dimension change for ''qdc'' ''qc1'' not allowed except for ''all''');
+    catch me
+        TorF = strfind(me.message, 'dimension change for ''qdc'' ''qc1'' not allowed except for ''all''');
         t_ok(TorF, [t 'qc1, Q (wrong size)']);
         if ~TorF
-            me
+            me.message
         end
     end
 
     val = sparse(m, n);
     s.qdc.data.Q.qc1 = val;
-    s.qdc.params = [];
+    s.qdc.params = [];  % remove cache, as set_params() does
     om.set_params('qdc', 'qc1', 'Q', val);
     t_ok(isequaln(struct(om), s), [t 'qc1, Q']);
 
@@ -1576,12 +1571,11 @@ if have_feature('isequaln')
     try
         om.set_params('qdc', 'qc', {2,2}, 'all', val);
         t_ok(0, [t 'qc{2,2}, all (wrong size)']);
-    catch
-        me = lasterr;
-        TorF = strfind(me, 'for ''qdc'' ''qc(2,2)'' dimensions of ''Q'', ''c'', ''k'' (3) must be consistent with ''vs'' (170)');
+    catch me
+        TorF = strfind(me.message, 'for ''qdc'' ''qc(2,2)'' dimensions of ''Q'', ''c'', ''k'' (3) must be consistent with ''vs'' (170)');
         t_ok(TorF, [t 'qc{2,2}, all (wrong size)']);
         if ~TorF
-            me
+            me.message
         end
     end
     vs(2) = [];
@@ -1624,12 +1618,11 @@ if have_feature('isequaln')
     try
         om.set_params('nlc', 'wc', {2,2}, 'all', val);
         t_ok(0, [t 'wc{2,2}, all (vector cost)']);
-    catch
-        me = lasterr;
-        TorF = strfind(me, 'vector value for ''nlc'' ''wc(2,2)'' not yet implemented');
+    catch me
+        TorF = strfind(me.message, 'vector value for ''nlc'' ''wc(2,2)'' not yet implemented');
         t_ok(TorF, [t 'wc{2,2}, all (vector cost)']);
         if ~TorF
-            me
+            me.message
         end
     end
     val = {N, @my_nln_cost_fcn, vs};

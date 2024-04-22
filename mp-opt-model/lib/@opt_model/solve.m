@@ -136,7 +136,7 @@ end
 pt = om.problem_type();
 switch pt
     case 'MINLP'        %% MINLP - mixed integer non-linear program
-        error('@opt_model/solve: not yet implemented for ''MINLP'' problems.')
+        error('opt_model.solve: not yet implemented for ''MINLP'' problems.')
     case 'LEQ'          %% LEQ   - linear equations
         if isfield(opt, 'leq_opt')
             if isfield(opt.leq_opt, 'solver')

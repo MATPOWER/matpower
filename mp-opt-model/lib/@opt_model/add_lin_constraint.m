@@ -99,7 +99,7 @@ end
 
 %% check sizes
 if size(l, 1) ~= N || size(u, 1) ~= N
-    error('@opt_model/add_lin_constraint: sizes of A, l and u must match');
+    error('opt_model.add_lin_constraint: sizes of A, l and u must match');
 end
 
 %% convert varsets from cell to struct array if necessary
@@ -108,7 +108,7 @@ nv = om.varsets_len(varsets);   %% number of variables
 
 %% check consistency of varsets with size of A
 if M ~= nv
-    error('@opt_model/add_lin_constraint: number of columns of A does not match\nnumber of variables, A is %d x %d, nv = %d\n', N, M, nv);
+    error('opt_model.add_lin_constraint: number of columns of A does not match\nnumber of variables, A is %d x %d, nv = %d\n', N, M, nv);
 end
 
 %% add the named linear constraint set

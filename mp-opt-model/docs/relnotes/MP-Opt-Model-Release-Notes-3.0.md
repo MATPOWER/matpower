@@ -16,18 +16,18 @@ Manual][2].
     values and shadow prices, etc. from a solved  MP-Opt-Model object.
   - Results of the `solve()` method saved to the `soln` field of the
     MP-Opt-Model object.
-  - Allow `v0`, `vl`, and `vu` inputs to `opt_model/add_var()` method, and
-    `l` and `u` inputs to `opt_model/add_lin_constraint()` to be scalars
+  - Allow `v0`, `vl`, and `vu` inputs to `opt_model.add_var()` method, and
+    `l` and `u` inputs to `opt_model.add_lin_constraint()` to be scalars
     that get expanded automatically to the appropriate vector dimension.
   - New functions:
-    - `opt_model/set_params()` method modifies parameters for a given named
+    - `opt_model.set_params()` method modifies parameters for a given named
       set of existing variables, costs, or constraints of an MP-Opt-Model
       object.
-    - `opt_model/get_soln()` method extracts solved results for a given
+    - `opt_model.get_soln()` method extracts solved results for a given
       named set of variables, constraints or costs.
-    - `opt_model/parse_soln()` method returns a complete set of solution
+    - `opt_model.parse_soln()` method returns a complete set of solution
       vector and shadow price values for a solved model.
-    - `opt_model/eval_lin_constraint()` method computes the constraint values
+    - `opt_model.eval_lin_constraint()` method computes the constraint values
       for the full set or an individual named subset of linear constraints.
     - `qps_osqp()` provides standardized interface for using [OSQP][3] to
       solve LP/QP problems

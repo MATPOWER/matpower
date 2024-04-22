@@ -2,56 +2,67 @@ function d = nested_struct_copy(d, s, opt, parent)
 % nested_struct_copy - Copies values from one nested struct to another.
 % ::
 %
-%   DS = NESTED_STRUCT_COPY(D, S)
-%   DS = NESTED_STRUCT_COPY(D, S, OPT)
-%   DS = NESTED_STRUCT_COPY(D, S, OPT, PARENT)
+%   ds = nested_struct_copy(d, s)
+%   ds = nested_struct_copy(d, s, opt)
+%   ds = nested_struct_copy(d, s, opt, parent)
 %
-%   DS = NESTED_STRUCT_COPY(D, S) copies values from a source struct S to
-%   a destination struct D in a nested, recursive manner. That is, the value
-%   of each field in S is copied directly to the corresponding field in D,
-%   unless that value is itself a struct, in which case the copy is done
-%   via a recursive call to NESTED_STRUCT_COPY.
+% Copy values from a source struct ``s`` to a destination struct ``d`` in
+% a nested, recursive manner. That is, the value of each field in ``s`` is
+% copied directly to the corresponding field in ``d``, unless that value is
+% itself a struct, in which case the copy is done via a recursive call to
+% nested_struct_copy.
 %
-%   Inputs:
-%       D - the destination struct that values are copied to
-%       S - the source struct containing the values to be copied from
-%       OPT - (optional) options struct controlling copy behavior, with fields:
-%           check - check that field name is valid, by looking for it in
-%                   OPT.valid_fields (defaults to D), before copying
-%                0 - (default) do not do any field name checking
-%                1 - fatal error if S contains an invalid field name
-%               -1 - skip any invalid fields in S
-%           copy_mode - how to handle assignment of fields that are structs
-%               ''          - (default) recursive call to nested_struct_copy()
-%               '='         - direct assignment, D.<field> = S.<field>
-%               @<function> - pointer to a function to be called with field
-%                             from S, returning field to assign to D
-%                             D.<field> = <function>(S.<field>)
-%           valid_fields - (default = D) struct containing the heirarchy
-%                             of all of (and only) the valid field names
-%                             (field values are ignored)
-%           exceptions - a struct array, with the following fields, defining
-%                       exceptions to the top-level options
-%               name        - name (can be multi-level) of field to which
-%                             exception applies
-%               check       - same as OPT.check,     only for specified field
-%               copy_mode   - same as OPT.copy_mode, only for specified field
-%               valid_fields- same as OPT.valid_fields,   for specified field
-%       PARENT - cell array of parent field names used by NESTED_STRUCT_COPY
-%               with recursive calls to allow checking of multi-level field
-%               field names in exceptions, e.g. when called recursively to
-%               assign the field S.info.address.home the value of PARENT would
-%               be {'info', 'address'}.
+% Inputs:
+%   d (struct) : the destination struct that values are copied to
+%   s (struct) : the source struct containing the values to be copied from
+%   opt (struct) : *(optional)* options struct controlling copy behavior,
+%       with fields:
 %
-%   Output:
-%       DS - the combined destination struct 
+%       - ``check`` — check that field name is valid, by looking for it in
+%         ``opt.valid_fields``, before copying
 %
-%   Examples:
-%       See T_NESTED_STRUCT_COPY (t_nested_struct_copy.m).
+%           - 0 — *(default)* do not do any field name checking
+%           - 1 — fatal error if ``s`` contains an invalid field name
+%           - -1 — skip any invalid fields in ``s``
 %
-%   TO DO:  Finish example.
-%           Implement an error that passes back the full field string of
-%           an invalid field so that mpoption can refer to it as option foo.
+%       - ``copy_mode`` — how to handle assignment of fields that are structs
+%
+%           - ``''`` — *(default)* recursive call to nested_struct_copy
+%           - ``'='`` — direct assignment, :samp:`d.{<field>} = s.{<field>}`
+%           - ``@<function>`` — pointer to a function to be called with field
+%             from ``s``, returning field to assign to ``d``,
+%             :samp:`d.{<field>} = {<function>}(s.{<field>})`
+%
+%       - ``valid_fields`` — *(default =* ``d`` *)* struct containing the
+%         heirarchy of all of *(and only)* the valid field names *(field
+%         values are ignored)*
+%       - ``exceptions`` — a struct array, with the following fields, defining
+%         exceptions to the top-level options
+%
+%           - ``name``        — name (can be multi-level) of field to which
+%             exception applies
+%           - ``check`` — same as ``opt.check``, only for specified field
+%           - ``copy_mode`` — same as ``opt.copy_mode``, only for specified
+%             field
+%           - ``valid_fields`` — same as ``opt.valid_fields``, only for
+%             specified field
+%   parent (cell array) : *(optional)* parent field names used internally
+%       by nested_struct_copy with recursive calls to allow checking of
+%       multi-level field names in exceptions, e.g. when called recursively
+%       to assign the field ``s.info.address.home``, the value of ``parent``
+%       would be ``{'info', 'address'}``.
+%
+% Output:
+%   ds (struct) : the combined destination struct
+%
+% Examples:
+%   See t_nested_struct_copy source code for numerous examples.
+%
+% *To Do:*
+%
+%   - *Finish example.*
+%   - *Implement an error that passes back the full field string of
+%     an invalid field so that mpoption can refer to it as option foo.*
 
 %   MP-Opt-Model
 %   Copyright (c) 2013-2024, Power Systems Engineering Research Center (PSERC)

@@ -84,7 +84,7 @@ else                    %% simple named set
 end
 
 if N ~= 1
-    error('@opt_model/add_nln_cost: not yet implemented for vector valued functions (i.e. N currently must equal 1)');
+    error('opt_model.add_nln_cost: not yet implemented for vector valued functions (i.e. N currently must equal 1)');
 end
 
 %% convert varsets from cell to struct array if necessary

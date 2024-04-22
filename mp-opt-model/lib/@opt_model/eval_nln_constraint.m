@@ -116,7 +116,7 @@ if nargin < 4                       %% full set
     end
 else                                %% individual named set
     if isempty(idx) && prod(size(om_nlx.idx.i1.(name))) ~= 1
-        error('@opt_model/eval_nln_constraint: nonlinear constraint set ''%s'' requires an IDX_LIST arg', name)
+        error('opt_model.eval_nln_constraint: nonlinear constraint set ''%s'' requires an IDX_LIST arg', name)
     end
     [N, fcn, hess, vs] = om.params_nln_constraint(iseq, name, idx);
     xx = om.varsets_x(x, vs);

@@ -5,6 +5,18 @@ Change history for MP-Opt-Model
 Since version 4.1
 -----------------
 
+#### 4/22/24
+  - Fix false positive in `have_feature_fsolve` in case where the file is
+    present, but without a valid license.
+
+#### 4/5/24
+  - Fix bug in `miqps_mosek()` where the lower and upper bounds of binary
+    variables got overwritten with 0 and 1, respectively, effectively
+    relaxing any potentially tighter bounds provided as input.
+  - Clear cached parameters after updating linear constraints via
+    `opt_model.set_params()`.
+  - Add caching of aggregate output parameters in `opt_model.params_var()`.
+
 #### 3/21/24
   - Add to the `parse_soln()` method of `opt_model` an optional `stash`
     input argument that, if present and true, causes the parsed solution
@@ -48,19 +60,19 @@ Since version 4.1
     `opt.alg` to `'<MY_SOLVER>'` to allow for handling custom NLP solvers.
 
 #### 11/6/23
-  - Add to `opt_model/add_lin_constraint()` the option to provide/store
+  - Add to `opt_model.add_lin_constraint()` the option to provide/store
     the transpose of the `A` matrix instead of the original. This can
     potentially save significant memory for sparse matrices with many more
     columns than rows. E.g. storage constraints in [MOST][11] for 8760 hour
     planning horizon.
 
 #### 10/13/23
-  - Update `opt_model/display_soln()` to avoid displaying an infinite
+  - Update `opt_model.display_soln()` to avoid displaying an infinite
     average for quadratic costs when corresponding quantity is zero.
 
 #### 9/13/23
   - Clear cached parameters after updating quadratic costs via
-    `opt_model/set_params()`.
+    `opt_model.set_params()`.
 
 #### 9/12/23
   - Tweak some MI/QPS solver tests to make them more robust for `'DEFAULT'`
@@ -71,9 +83,9 @@ Since version 4.1
     which removed `x0` as a valid input to `linprog`.
 
 #### 3/7/23
-  - Add `opt_model/is_solved()` method to determine if the model
+  - Add `opt_model.is_solved()` method to determine if the model
     has been solved and contains the solution.
-  - Add `opt_model/display_soln()` method to display the results
+  - Add `opt_model.display_soln()` method to display the results
     of a solved model, including values, bounds and shadow prices for
     variables and linear constraints, values and shadow prices for
     nonlinear constraints, and individual cost components.
@@ -164,7 +176,7 @@ Version 4.0 - *Oct 18, 2021*
 
 #### 12/16/20
   - Update to use labels from `set_types` property as headers for
-    `opt_model/display()` to simplify things and facilitate use by
+    `opt_model.display()` to simplify things and facilitate use by
     subclasses.
 
 #### 12/1/20
@@ -235,8 +247,8 @@ Version 3.0 - *Oct 8, 2020*
     otherwise it is vector valued.
 
 #### 9/14/20
-  - Allow `v0`, `vl`, and `vu` inputs to `opt_model/add_var()` method,
-    and `l` and `u` inputs to `opt_model/add_lin_constraint()` to
+  - Allow `v0`, `vl`, and `vu` inputs to `opt_model.add_var()` method,
+    and `l` and `u` inputs to `opt_model.add_lin_constraint()` to
     be scalars that get expanded automatically to the appropriate
     vector dimension.
 
@@ -326,7 +338,7 @@ Version 2.0 - *Jul 8, 2020*
     `problem_type()` method returns `'NLEQ'` and the `solve()` method
     calls `nleqs_master()` to solve the problem.
   - Add tests for solving LP/QP, MILP/MIQP, NLP and NLEQ problems via
-    `opt_model/solve()`.
+    `opt_model.solve()`.
 
 #### 6/17/20
   - Add `nleqs_master()` function as unified interface for solving
@@ -393,9 +405,9 @@ Version 0.8 - *Apr 29, 2020*
 
 #### 4/28/20
   - Move deprecated `opt_model` methods and code related to legacy
-    user-defined OPF costs from `@opt_model` to `@opf_model`.
+    user-defined OPF costs from `opt_model` to `opf_model`.
   - **INCOMPATIBLE CHANGE:** Modify order of default output arguments of
-    `opt_model/get_idx()` (again), removing the one related to legacy
+    `opt_model.get_idx()` (again), removing the one related to legacy
     costs.
 
 #### 3/18/20
@@ -456,11 +468,11 @@ Version 0.8 - *Apr 29, 2020*
   - Artelys Knitro 12.1 compatibility fix.
 
 #### 8/15/19
-  - Improve performance of `opt_model/add_named_set()`.
+  - Improve performance of `opt_model.add_named_set()`.
     (See [issue #79][5].)
     *Thanks to Baraa Mohandes.*
-  - Refactor code in `opt_model/params_lin_constraint()` and
-    `opt_model/params_quad_cost()` to speed up sparse matrix construction
+  - Refactor code in `opt_model.params_lin_constraint()` and
+    `opt_model.params_quad_cost()` to speed up sparse matrix construction
     when there are lots of constraint or cost sets. Results in significant
     speedups for some problems during problem setup in MOST.
     (See [pull request #70][4].)

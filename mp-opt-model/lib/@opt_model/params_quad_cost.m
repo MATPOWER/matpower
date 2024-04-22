@@ -47,7 +47,7 @@ if nargin > 1       %% individual set
                 vs = om.qdc.data.vs.(name);
             end
         else                                    %% indexing required
-            error('@opt_model/params_quad_cost: quadratic cost set ''%s'' requires an IDX_LIST arg', name);
+            error('opt_model.params_quad_cost: quadratic cost set ''%s'' requires an IDX_LIST arg', name);
         end
     else                            %% indexed named set
         % (calls to substruct() are relatively expensive ...

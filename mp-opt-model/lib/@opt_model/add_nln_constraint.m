@@ -17,9 +17,10 @@ function om = add_nln_constraint(om, name, idx, N, iseq, fcn, hess, varsets)
 %   following interface:
 %       G = FCN(X)
 %       [G, DG] = FCN(X)
-%   where G is an N x 1 vector and DG is the N x NX gradient, where
+%   where G is an N x 1 vector and DG is the N x NX Jacobian, where
 %       DG(i, j) = dG(i)/dX(j)
-%   and NX is the number of elements in X.
+%   and NX is the number of elements in X. Note: DG is the transpose of
+%   what is expected from an input function for NLPS_MASTER and friends.
 %
 %   HESS should point to a function that returns an NX x NX matrix of
 %   derivatives of DG * LAMBDA, with the following interface:
@@ -111,7 +112,7 @@ varsets = om.varsets_cell2struct(varsets);
 %% add the named nonlinear constraint set
 if iscell(name)
     if length(name) ~= length(N)
-        error('@opt_model/add_nln_constraint: dimensions of NAME and N must match');
+        error('opt_model.add_nln_constraint: dimensions of NAME and N must match');
     end
     om.add_named_set(ff, name{1}, idx, N(1), fcn, hess, '', varsets);
     for k = 2:length(name)

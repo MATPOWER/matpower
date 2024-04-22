@@ -1,5 +1,5 @@
 classdef opt_model < mp_idx_manager
-% opt_model - Constructor for optimization model class.
+% opt_model - MP-Opt-Model optimization model class.
 % ::
 %
 %   OM = OPT_MODEL
@@ -111,6 +111,11 @@ classdef opt_model < mp_idx_manager
 %                     blocks in the order they appear in x
 %               .name   - name of the block, e.g. Pg
 %               .idx    - indices for name, {2,3} => Pg(2,3)
+%           .params - cache for previously assembled aggregate parameters
+%               .v0  - aggregate vector of variable initial values
+%               .vl  - aggregate vector of variable lower bounds
+%               .vu  - aggregate vector of variable upper bounds
+%               .vt  - aggregate vector of variable types
 %       .nle        - data for nonlinear equality constraints that make up the
 %                     full set of nonlinear constraints ghne(x)
 %           .idx
@@ -297,6 +302,7 @@ classdef opt_model < mp_idx_manager
                 'vl', es, ...
                 'vu', es, ...
                 'vt', es );
+            om.var.params = [];
             om.nle.data = struct( ...
                 'fcn', [], ...
                 'hess', [], ...

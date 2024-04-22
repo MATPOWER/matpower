@@ -47,7 +47,7 @@ end
 if isempty(idx)
     dims = size(om_nlx.idx.i1.(name));
     if prod(dims) ~= 1
-        error('@opt_model/params_nln_constraint: nonlinear constraint set ''%s'' requires an IDX_LIST arg', name)
+        error('opt_model.params_nln_constraint: nonlinear constraint set ''%s'' requires an IDX_LIST arg', name)
     end
     N = om_nlx.idx.N.(name);
     if nargout > 1
@@ -106,7 +106,7 @@ else
                     vs = {};
                 end
                 if nargout > 4
-                    error('@opt_model/params_nln_constraint: nonlinear constraint set ''%s'' cannot return INCLUDE, since a nonlinear constraint set computed by another set is currently only implemented for simple named sets, not yet for indexed named sets', name)
+                    error('opt_model.params_nln_constraint: nonlinear constraint set ''%s'' cannot return INCLUDE, since a nonlinear constraint set computed by another set is currently only implemented for simple named sets, not yet for indexed named sets', name)
                 end
             end
         end

@@ -84,25 +84,25 @@ nv = om.varsets_len(varsets);   %% number of variables
 [Mc, Nc] = size(c);
 if MQ
     if NQ ~= MQ && NQ ~= 1
-        error('@opt_model/add_quad_cost: Q (%d x %d) must be square or a column vector (or empty)', MQ, NQ);
+        error('opt_model.add_quad_cost: Q (%d x %d) must be square or a column vector (or empty)', MQ, NQ);
     end
 end
 if Mc && Nc ~= 1
-    error('@opt_model/add_quad_cost: c (%d x %d) must be a column vector (or empty)', Mc, Nc);
+    error('opt_model.add_quad_cost: c (%d x %d) must be a column vector (or empty)', Mc, Nc);
 end
 if MQ
     if Mc && Mc ~= MQ
-        error('@opt_model/add_quad_cost: dimensions of Q (%d x %d) and c (%d x %d) are not compatible', MQ, NQ, Mc, Nc);
+        error('opt_model.add_quad_cost: dimensions of Q (%d x %d) and c (%d x %d) are not compatible', MQ, NQ, Mc, Nc);
     end
     nx = MQ;
 else
     if nv && ~Mc
-        error('@opt_model/add_quad_cost: Q and c cannot both be empty');
+        error('opt_model.add_quad_cost: Q and c cannot both be empty');
     end
     nx = Mc;
 end
 if nx ~= nv
-    error('@opt_model/add_quad_cost: dimensions of Q (%d x %d) and c (%d x %d) do not match\nnumber of variables (%d)\n', MQ, NQ, Mc, Nc, nv);
+    error('opt_model.add_quad_cost: dimensions of Q (%d x %d) and c (%d x %d) do not match\nnumber of variables (%d)\n', MQ, NQ, Mc, Nc, nv);
 end
 
 %% size of named cost set

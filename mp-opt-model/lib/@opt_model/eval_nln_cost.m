@@ -45,7 +45,7 @@ if nargin < 3                       %% full set
         idx  = nlc.order(k).idx;
         [N, fcn, vs] = om.params_nln_cost(name, idx);
         if N ~= 1
-            error('@opt_model/eval_nln_cost: not yet implemented for vector valued functions');
+            error('opt_model.eval_nln_cost: not yet implemented for vector valued functions');
         end
         xx = om.varsets_x(x, vs);
         if nargout == 3
@@ -93,7 +93,7 @@ else                                %% individual named set
     if ~isempty(idx) || prod(dims) == 1 %% indexed, or simple named set
         [N, fcn, vs] = om.params_nln_cost(name, idx);
         if N ~= 1
-            error('@opt_model/eval_nln_cost: not yet implemented for vector valued functions');
+            error('opt_model.eval_nln_cost: not yet implemented for vector valued functions');
         end
         xx = om.varsets_x(x, vs);
         if nargout == 3
@@ -124,6 +124,6 @@ else                                %% individual named set
             end
         end
     else
-        error('@opt_model/eval_nln_cost: general nonlinear cost set ''%s'' requires an IDX_LIST arg when requesting DF output', name)
+        error('opt_model.eval_nln_cost: general nonlinear cost set ''%s'' requires an IDX_LIST arg when requesting DF output', name)
     end
 end

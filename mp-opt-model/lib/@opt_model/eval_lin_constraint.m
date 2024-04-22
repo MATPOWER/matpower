@@ -40,7 +40,7 @@ if om.lin.N
             [A, l, u, vs, ~, ~, tr] = om.params_lin_constraint(name);
             N = om.getN('lin', name);
         else
-            error('@opt_model/eval_lin_constraint: linear constraint set ''%s'' requires an IDX_LIST arg', name)
+            error('opt_model.eval_lin_constraint: linear constraint set ''%s'' requires an IDX_LIST arg', name)
         end
     else                                %% indexed named set
         [A, l, u, vs, ~, ~, tr] = om.params_lin_constraint(name, idx);

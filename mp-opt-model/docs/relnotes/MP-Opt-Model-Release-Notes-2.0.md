@@ -29,9 +29,9 @@ Manual][2].
         any of MP-Opt-Model's nonlinear equation solvers.
       - `nleqs_newton()` provides implementation of Newton's method solver
         with a unified nonlinear equation solver interface.
-      - `opt_model/params_nln_constraint()` method returns parameters for
+      - `opt_model.params_nln_constraint()` method returns parameters for
         a named (and optionally indexed) set of nonlinear constraints.
-      - `opt_model/params_nln_cost()` method returns parameters for a
+      - `opt_model.params_nln_cost()` method returns parameters for a
         named (and optionally indexed) set of general nonlinear costs.
 
 #### Other Changes
@@ -41,7 +41,7 @@ Manual][2].
     a single output argument.
   - Remove redundant MIPS tests from `test_mp_opt_model.m`.
   - Add tests for solving LP/QP, MILP/MIQP, NLP and NLEQ problems via
-    `opt_model/solve()`.
+    `opt_model.solve()`.
   - Add Table 6.1 of valid `have_fcn()` input tags to User's Manual.
 
 

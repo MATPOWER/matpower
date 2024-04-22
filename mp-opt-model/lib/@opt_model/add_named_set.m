@@ -61,6 +61,9 @@ switch set_type
             om_ff.data.vu = subsasgn(om_ff.data.vu, sc, vu);    %% upper bound
             om_ff.data.vt = subsasgn(om_ff.data.vt, sc, vt);    %% variable type
         end
+        if ~isempty(om_ff.params)       %% clear cache of aggregated params
+            om_ff.params = [];
+        end
     case 'lin'          %% linear constraint set
         [A, l, u, varsets, tr] = deal(varargin{:});
         if isempty(idx)

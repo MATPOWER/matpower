@@ -31,7 +31,7 @@ end
 if isempty(idx)
     dims = size(nlc.idx.i1.(name));
     if prod(dims) ~= 1
-        error('@opt_model/params_nln_cost: general nonlinear cost set ''%s'' requires an IDX_LIST arg', name)
+        error('opt_model.params_nln_cost: general nonlinear cost set ''%s'' requires an IDX_LIST arg', name)
     end
     N = nlc.idx.N.(name);
     fcn = nlc.data.fcn.(name);

@@ -213,8 +213,8 @@ if ~isempty(p.vtype)
             prob.ints.sub = (1:nx);
         elseif p.vtype == 'B'
             prob.ints.sub = (1:nx);
-            p.xmin = zeros(nx, 1);
-            p.xmax = ones(nx, 1);
+            p.xmin = max(zeros(nx, 1), p.xmin);
+            p.xmax = min(ones(nx, 1), p.xmax);
         end
     else
         k = find(p.vtype == 'B' | p.vtype == 'I');
@@ -227,8 +227,8 @@ if ~isempty(p.vtype)
             if isempty(p.xmax)
                 p.xmax = Inf(nx, 1);
             end
-            p.xmin(k) = 0;
-            p.xmax(k) = 1;
+            p.xmin(k) = max(0, p.xmin(k));
+            p.xmax(k) = max(1, p.xmax(k));
         end
     end
 end

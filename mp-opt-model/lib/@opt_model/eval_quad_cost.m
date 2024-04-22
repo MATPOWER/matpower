@@ -58,7 +58,7 @@ if om.qdc.N
                 end
             end
         else
-            error('@opt_model/eval_quad_cost: quadratic cost set ''%s'' requires an IDX_LIST arg when requesting DF output', name)
+            error('opt_model.eval_quad_cost: quadratic cost set ''%s'' requires an IDX_LIST arg when requesting DF output', name)
         end
     else                                %% indexed named set
         [Q, c, k, vs] = om.params_quad_cost(name, idx);

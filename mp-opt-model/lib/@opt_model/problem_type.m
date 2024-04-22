@@ -66,14 +66,14 @@ if isempty(om.prob_type) || nargin > 1 && recheck
         end
     else                    %% problem has no costs
         if nliN
-            error('@opt_model/problem_type: invalid problem - nonlinear inequality constraints with no costs');
+            error('opt_model.problem_type: invalid problem - nonlinear inequality constraints with no costs');
         end
         if nleN + linN == varN || nleN + linN == varN - 1   %% square (or almost) system
             if linN > 0
                 %% get lower & upper bounds
                 [A, l, u] = om.params_lin_constraint();
                 if any(l ~= u)
-                    error('@opt_model/problem_type: invalid problem - linear inequality constraints with no costs');
+                    error('opt_model.problem_type: invalid problem - linear inequality constraints with no costs');
                 end
             end
             if nleN + linN == varN  %% square system
@@ -87,13 +87,13 @@ if isempty(om.prob_type) || nargin > 1 && recheck
                     prob = 'PNE';       %% parameterized nonlinear set of equations
                 else
                     prob = 'PLEQ';      %% parameterized linear set of equations
-                    error('@opt_model/problem_type: invalid problem - PNE not implemented for for linear constraints only');
+                    error('opt_model.problem_type: invalid problem - PNE not implemented for for linear constraints only');
                 end
             else
-                error('@opt_model/problem_type: invalid problem - PNE must have num of vars = num of constraints + 1');
+                error('opt_model.problem_type: invalid problem - PNE must have num of vars = num of constraints + 1');
             end
         else
-            error('@opt_model/problem_type: invalid problem - non-square system with no costs');
+            error('opt_model.problem_type: invalid problem - non-square system with no costs');
         end
     end
     if om.is_mixed_integer() && ~strcmp(prob, 'NLEQ')

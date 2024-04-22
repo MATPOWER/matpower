@@ -49,12 +49,12 @@ if st_label
 else
     ff = fieldnames(obj.set_types);
     stypes = sprintf('\n  ''%s''', ff{:});
-    error('@mp_idx_manager/init_indexed_name: ''%s'' is not a valid SET_TYPE, must be one of the following:%s', set_type, stypes);
+    error('mp_idx_manager.init_indexed_name: ''%s'' is not a valid SET_TYPE, must be one of the following:%s', set_type, stypes);
 end
 
 %% prevent duplicate name in set of specified type
 if isfield(obj.(ff).idx.N, name)
-    error('@mp_idx_manager/init_indexed_name: %s set named ''%s'' already exists', ...
+    error('mp_idx_manager.init_indexed_name: %s set named ''%s'' already exists', ...
         st_label, name);
 end
 

@@ -80,10 +80,10 @@ else    %% general case
 
     %% check for invalid idxs
     if any(idxs > obj.(set_type).N)
-        error('@mp_idx_manager/set_type_idx_map: IDXS must not exceed maximum %s index (%d)', set_type, obj.(set_type).N);
+        error('mp_idx_manager.set_type_idx_map: IDXS must not exceed maximum %s index (%d)', set_type, obj.(set_type).N);
     end
     if any(idxs < 1)
-        error('@mp_idx_manager/set_type_idx_map: IDXS must be positive');
+        error('mp_idx_manager.set_type_idx_map: IDXS must be positive');
     end
 
     %% pre-allocate return struct

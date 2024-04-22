@@ -69,7 +69,7 @@ switch st
     case 'qdc'
         default_params = {'Q', 'c', 'k', 'vs'};
     otherwise
-        error('@opt_model/set_params: ''%s'' is not a valid SET_TYPE', st);
+        error('opt_model.set_params: ''%s'' is not a valid SET_TYPE', st);
 end
 
 %% standardize provided arguments in cell arrays params, vals
@@ -133,7 +133,7 @@ switch st
         %% check consistency of parameters
         %% no dimension change
         if N ~= N0
-            error('@opt_model/set_params: dimension change for ''%s'' ''%s'' not allowed', st, nameidxstr(name, idx));
+            error('opt_model.set_params: dimension change for ''%s'' ''%s'' not allowed', st, nameidxstr(name, idx));
         end
 
         %% check sizes of new values of v0, vl, vu, vt
@@ -157,7 +157,7 @@ switch st
                             p.(pn{1}) = p.(pn{1}) * ones(N, 1);   %% expand from scalar
                         end
                     else
-                        error('@opt_model/set_params: parameter ''%s'' ''%s'' ''%s'' should have length %d (or 1)', st, nameidxstr(name, idx), pn{1}, N);
+                        error('opt_model.set_params: parameter ''%s'' ''%s'' ''%s'' should have length %d (or 1)', st, nameidxstr(name, idx), pn{1}, N);
                     end
                 end
             end
@@ -179,6 +179,9 @@ switch st
                 end
             end
         end
+
+        %% clear cached parameters
+        om.var.params = [];
     case 'lin'
         %% get current parameters
         [A, l, u, vs, ~, ~, tr] = om.params_lin_constraint(name, idx);
@@ -226,11 +229,11 @@ switch st
         %% check consistency of parameters
         %% no dimension change unless 'all'
         if N ~= N0 && ~is_all
-            error('@opt_model/set_params: dimension change for ''%s'' ''%s'' not allowed except for ''all''', st, nameidxstr(name, idx));
+            error('opt_model.set_params: dimension change for ''%s'' ''%s'' not allowed except for ''all''', st, nameidxstr(name, idx));
         end
         %% no transpose change unless providing A
         if u.tr && ~u.A
-            error('@opt_model/set_params: update to ''tr'' for ''%s'' ''%s'' requires update to ''A''', st, nameidxstr(name, idx));
+            error('opt_model.set_params: update to ''tr'' for ''%s'' ''%s'' requires update to ''A''', st, nameidxstr(name, idx));
         end
 
         %% check sizes of new values of l, u
@@ -248,7 +251,7 @@ switch st
                     elseif nn == 1
                         p.(pn{1}) = p.(pn{1}) * ones(N, 1);   %% expand from scalar
                     else
-                        error('@opt_model/set_params: parameter ''%s'' ''%s'' ''%s'' should have length %d (or 1)', st, nameidxstr(name, idx), pn{1}, N);
+                        error('opt_model.set_params: parameter ''%s'' ''%s'' ''%s'' should have length %d (or 1)', st, nameidxstr(name, idx), pn{1}, N);
                     end
                 end
             end
@@ -259,7 +262,7 @@ switch st
             p.vs = om.varsets_cell2struct(p.vs);
             nv = om.varsets_len(p.vs);      %% number of variables
             if M ~= nv
-                error('@opt_model/set_params: for ''%s'' ''%s'' number of columns of ''A'' (%d) must be consistent with ''vs'' (%d)', st, nameidxstr(name, idx), M, nv);
+                error('opt_model.set_params: for ''%s'' ''%s'' number of columns of ''A'' (%d) must be consistent with ''vs'' (%d)', st, nameidxstr(name, idx), M, nv);
             end
         end
 
@@ -279,6 +282,9 @@ switch st
                 end
             end
         end
+
+        %% clear cached parameters
+        om.lin.params = [];
     case 'qdc'
         %% get current parameters
         [Q, c, kk, vs] = om.params_quad_cost(name, idx);
@@ -328,23 +334,23 @@ switch st
         %% check consistency of parameters
         %% no dimension change unless 'all'
         if (N ~= N0 || nx ~= nx0) && ~is_all
-            error('@opt_model/set_params: dimension change for ''%s'' ''%s'' not allowed except for ''all''', st, nameidxstr(name, idx));
+            error('opt_model.set_params: dimension change for ''%s'' ''%s'' not allowed except for ''all''', st, nameidxstr(name, idx));
         end
 
         %% Q and c can't both be empty
         if ~MQ && ~Mc
-            error('@opt_model/set_params: ''%s'' ''%s'' : ''Q'' and ''c'' cannot both be empty', st, nameidxstr(name, idx));
+            error('opt_model.set_params: ''%s'' ''%s'' : ''Q'' and ''c'' cannot both be empty', st, nameidxstr(name, idx));
         end
 
         %% check sizes of new values of Q, c, k
         if ~isempty(p.Q) && (MQ ~= nx || (MQ ~= NQ && NQ ~= 1) )
-            error('@opt_model/set_params: ''%s'' ''%s'' : ''%s'' is expected to be (%d x %d)', st, nameidxstr(name, idx), 'Q', MQ, NQ);
+            error('opt_model.set_params: ''%s'' ''%s'' : ''%s'' is expected to be (%d x %d)', st, nameidxstr(name, idx), 'Q', MQ, NQ);
         end
         if ~isempty(p.c) && Mc ~= nx
-            error('@opt_model/set_params: ''%s'' ''%s'' : ''%s'' is expected to be (%d x %d)', st, nameidxstr(name, idx), 'c', Mc, 1);
+            error('opt_model.set_params: ''%s'' ''%s'' : ''%s'' is expected to be (%d x %d)', st, nameidxstr(name, idx), 'c', Mc, 1);
         end
         if ~isempty(p.k) && any(p.k) && Nk ~= N && Nk ~= 1
-            error('@opt_model/set_params: ''%s'' ''%s'' : ''%s'' is expected to be (%d x %d)', st, nameidxstr(name, idx), 'k', N, 1);
+            error('opt_model.set_params: ''%s'' ''%s'' : ''%s'' is expected to be (%d x %d)', st, nameidxstr(name, idx), 'k', N, 1);
         end
 
         %% check consistency of Q, c, k and vs
@@ -352,7 +358,7 @@ switch st
             p.vs = om.varsets_cell2struct(p.vs);
             nv = om.varsets_len(p.vs);      %% number of variables
             if nx ~= nv
-                error('@opt_model/set_params: for ''%s'' ''%s'' dimensions of ''Q'', ''c'', ''k'' (%d) must be consistent with ''vs'' (%d)', st, nameidxstr(name, idx), nx, nv);
+                error('opt_model.set_params: for ''%s'' ''%s'' dimensions of ''Q'', ''c'', ''k'' (%d) must be consistent with ''vs'' (%d)', st, nameidxstr(name, idx), nx, nv);
             end
         end
 
@@ -408,12 +414,12 @@ switch st
         %% check consistency of parameters
         %% no dimension change unless 'all'
         if N ~= N0 && ~is_all
-            error('@opt_model/set_params: dimension change for ''%s'' ''%s'' not allowed except for ''all''', st, nameidxstr(name, idx));
+            error('opt_model.set_params: dimension change for ''%s'' ''%s'' not allowed except for ''all''', st, nameidxstr(name, idx));
         end
 
         %% included constraints not yet implemented
         if ~isempty(include)
-            error('@opt_model/set_params: modifications for ''%s'' ''%s'' not (yet) supported since it includes evaluation of other constraints', st, nameidxstr(name, idx));
+            error('opt_model.set_params: modifications for ''%s'' ''%s'' not (yet) supported since it includes evaluation of other constraints', st, nameidxstr(name, idx));
         end
 
         %% convert vs to struct
@@ -464,12 +470,12 @@ switch st
         %% check consistency of parameters
         %% no dimension change unless 'all'
         if N ~= N0 && ~is_all
-            error('@opt_model/set_params: dimension change for ''%s'' ''%s'' not allowed except for ''all''', st, nameidxstr(name, idx));
+            error('opt_model.set_params: dimension change for ''%s'' ''%s'' not allowed except for ''all''', st, nameidxstr(name, idx));
         end
 
         %% vector valued costs not yet implemented
         if N ~= 1
-            error('@opt_model/set_params: vector value for ''%s'' ''%s'' not yet implemented', st, nameidxstr(name, idx));
+            error('opt_model.set_params: vector value for ''%s'' ''%s'' not yet implemented', st, nameidxstr(name, idx));
         end
 
         %% assign new parameters
@@ -489,7 +495,7 @@ switch st
             end
         end
     otherwise
-        error('@opt_model/set_params: ''%s'' is not a valid SET_TYPE', st);
+        error('opt_model.set_params: ''%s'' is not a valid SET_TYPE', st);
 end
 
 %% update dimensions and indexing, if necessary

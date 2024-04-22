@@ -367,7 +367,7 @@ The \mpom{} GitHub project hosts the public Git code repository as well as a pub
 \section{Getting Started}
 
 % Note: MATLAB 7.5 is the first version to support including prototypes
-% for external methods in classdef, used by @mp_idx_manager.
+% for external methods in classdef, used by mp_idx_manager.
 % Octave 3.8.2 does not support some of the OO syntax we use.
 
 \subsection{System Requirements}
@@ -4353,7 +4353,7 @@ There is no User's Manual yet.
 
 \subsubsection*{Incompatible Changes}
 \begin{itemize}
-\item Modify order of default output arguments of \code{opt\_model/get\_idx()} (again), removing the one related to legacy costs.
+\item Modify order of default output arguments of \code{opt\_model.get\_idx()} (again), removing the one related to legacy costs.
 \item \mpom{} has renamed the following functions and modified the order of their input args so that the \mpom{} object appears first. Ideally, these would be defined as methods of the \code{opt\_model} class, but Octave 4.2 and earlier is not able to find them via a function handle (as used in the \code{solve()} method) if they are inherited by a subclass.
     \begin{itemize}
     \item \code{opf\_consfcn()} $\rightarrow$ \code{nlp\_consfcn()}
@@ -4396,8 +4396,8 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-2.0.pdf}{\mpom{} 2.0 Use
     \item \code{nleqs\_fsolve()} provides implementation of unified nonlinear equation solver interface for \code{fsolve}.
     \item \code{nleqs\_master()} provides a single wrapper function for calling any of \mpom{}'s nonlinear equation solvers.
     \item \code{nleqs\_newton()} provides implementation of Newton's method solver with a unified nonlinear equation solver interface.
-    \item \code{opt\_model/params\_nln\_constraint()} method returns parameters for a named (and optionally indexed) set of nonlinear constraints.
-    \item \code{opt\_model/params\_nln\_cost()} method returns parameters for a named (and optionally indexed) set of general nonlinear costs.
+    \item \code{opt\_model.params\_nln\_constraint()} method returns parameters for a named (and optionally indexed) set of nonlinear constraints.
+    \item \code{opt\_model.params\_nln\_cost()} method returns parameters for a named (and optionally indexed) set of general nonlinear costs.
     \end{itemize}
 \end{itemize}
 
@@ -4406,7 +4406,7 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-2.0.pdf}{\mpom{} 2.0 Use
 \item Add to \code{eval\_nln\_constraint()} method the ability to compute constraints for a single named set.
 \item Skip evaluation of gradient if \code{eval\_nln\_constraint()} is called with a single output argument.
 \item Remove redundant MIPS tests from \code{test\_mp\_opt\_model.m}.
-\item Add tests for solving LP/QP, MILP/MIQP, NLP and NLEQ problems via \code{opt\_model/solve()}.
+\item Add tests for solving LP/QP, MILP/MIQP, NLP and NLEQ problems via \code{opt\_model.solve()}.
 \item Add Table~6.1 of valid \code{have\_fcn()} input tags to User's Manual.
 
 \end{itemize}
@@ -4449,13 +4449,13 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-3.0.pdf}{\mpom{} 3.0 Use
 \item Support for modifying parameters of an existing \mpom{} object.
 \item Support for extracting specific named/indexed variables, costs, constraint values and shadow prices, etc. from a solved \mpom{} object.
 \item Results of the \code{solve()} method saved to the \code{soln} field of the \mpom{} object.
-\item Allow \code{v0}, \code{vl}, and \code{vu} inputs to \code{opt\_model/add\_var()} method, and \code{l} and \code{u} inputs to \code{opt\_model/add\_lin\_constraint()} to be scalars that get expanded automatically to the appropriate vector dimension.
+\item Allow \code{v0}, \code{vl}, and \code{vu} inputs to \code{opt\_model.add\_var()} method, and \code{l} and \code{u} inputs to \code{opt\_model.add\_lin\_constraint()} to be scalars that get expanded automatically to the appropriate vector dimension.
 \item New functions:
     \begin{itemize}
-    \item \code{opt\_model/set\_params()} method modifies parameters for a given named set of existing variables, costs, or constraints of an \mpom{} object.
-    \item \code{opt\_model/get\_soln()} method extracts solved results for a given named set of variables, constraints or costs.
-    \item \code{opt\_model/parse\_soln()} method returns a complete set of solution vector and shadow price values for a solved model.
-    \item \code{opt\_model/eval\_lin\_constraint()} method computes the constraint values for the full set or an individual named subset of linear constraints.
+    \item \code{opt\_model.set\_params()} method modifies parameters for a given named set of existing variables, costs, or constraints of an \mpom{} object.
+    \item \code{opt\_model.get\_soln()} method extracts solved results for a given named set of variables, constraints or costs.
+    \item \code{opt\_model.parse\_soln()} method returns a complete set of solution vector and shadow price values for a solved model.
+    \item \code{opt\_model.eval\_lin\_constraint()} method computes the constraint values for the full set or an individual named subset of linear constraints.
     \item \code{qps\_osqp()} provides standardized interface for using \osqplink{} to solve LP/QP problems
     \item \code{osqp\_options()} initializes options for \osqplink{} solver
     \item \code{osqpver()} returns/displays version information for \osqplink{}
@@ -4508,7 +4508,7 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-4.0.pdf}{\mpom{} 4.0 Use
     \item \code{pne\_pfcn\_pseudo\_arc\_length()} implements pseudo arc length parameterization.
     \item \code{pne\_register\_callbacks()} registers callback functions.
     \item \code{pne\_register\_events()} registers event functions.
-    \item \code{mp\_idx\_manager/set\_type\_idx\_map()} method returns information about mapping of indices for a given set type back to the corresponding named (and possibly indexed) sets.
+    \item \code{mp\_idx\_manager.set\_type\_idx\_map()} method returns information about mapping of indices for a given set type back to the corresponding named (and possibly indexed) sets.
     \item \code{mpopt2pneopt()} creates or modifies an options struct for \code{pnes\_master()} from a \matpower{} options struct.
     \end{itemize}
 \end{itemize}
@@ -4520,7 +4520,7 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-4.0.pdf}{\mpom{} 4.0 Use
 
 \subsubsection*{Other Changes}
 \begin{itemize}
-\item Labels from the \code{set\_types} property are now used as headers for \code{opt\_model/display()} to simplify things facilitate use by subclasses.
+\item Labels from the \code{set\_types} property are now used as headers for \code{opt\_model.display()} to simplify things facilitate use by subclasses.
 \item Refactored \code{describe\_idx} into a new method, \code{set\_type\_idx\_map}, that returns in information in a programmatically usable form, and an updated \code{describe\_idx} that calls the new method, then formats the results in the expected char array(s).
 \end{itemize}
 
@@ -4550,7 +4550,7 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-4.2.pdf}{\mpom{} 4.2 Use
 
 \subsubsection*{New Features}
 \begin{itemize}
-\item Option for \code{opt\_model/add\_lin\_constraint()} to provide/store the transpose of the $A$ matrix instead of the original. This can potentially save significant memory for sparse matrices with many more columns than rows. E.g. storage constraints in \mostlink{} for 8760 hour planning horizon.
+\item Option for \code{opt\_model.add\_lin\_constraint()} to provide/store the transpose of the $A$ matrix instead of the original. This can potentially save significant memory for sparse matrices with many more columns than rows. E.g. storage constraints in \mostlink{} for 8760 hour planning horizon.
 \item Add support to \code{nlps\_master()} for calling \code{nlps\_<my\_solver>()} by setting \code{opt.alg} to \codeq{<MY\_SOLVER>} to allow for handling custom NLP solvers.
 \item Add support to \code{miqps\_master()} for calling \code{miqps\_<my\_solver>()} by setting \code{opt.alg} to \codeq{<MY\_SOLVER>} to allow for handling custom MILP/MIQP solvers.
 \item Add to the \code{parse\_soln()} method of \code{opt\_model} an optional \code{stash} input argument that, if present and true, causes the parsed solution to be stored back in the object, as the \code{solve()} method was already doing when \code{opt.parse\_soln} is true.
@@ -4569,7 +4569,9 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-4.2.pdf}{\mpom{} 4.2 Use
 
 \subsubsection*{Bugs Fixed}
 \begin{itemize}
-\item Clear cached parameters after updating quadratic costs via \code{opt\_model/set\_params()}.
+\item Clear cached parameters after updating linear constraints or quadratic costs via \code{opt\_model.set\_params()}.
+\item In \code{miqps\_mosek()} the lower and upper bounds of binary variables got overwritten with 0 and 1, respectively, effectively relaxing any potentially tighter bounds provided as input.
+\item Fix false positive in \code{have\_feature\_fsolve} in case where the file is present, but without a valid license.
 \item 
     \emph{Thanks to Fulano.}
 \end{itemize}
@@ -4580,7 +4582,7 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-4.2.pdf}{\mpom{} 4.2 Use
 \emph{{\bf Note:} While MATPOWER no longer requires this, my recommendation is still to simply rename the MEX file to \code{ipopt.<mexext>}, with the appropriate architecture-specific extension, and delete the unnecessary \code{ipopt.m} entirely.}
 \item Update for compatibility with MATLAB R2023a (Optimization Toolbox 9.5) which removed \code{x0} as a valid input to \code{linprog}.
 \item Always skip price computation stage in \code{miqps\_<solver>()} functions for pure (as opposed to mixed) integer problems.
-
+\item Add caching of aggregate output parameters in \code{opt\_model.params\_var()}.
 
 \end{itemize}
 

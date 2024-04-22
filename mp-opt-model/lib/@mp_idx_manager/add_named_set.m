@@ -51,14 +51,14 @@ if st_label
 else
     ff = fieldnames(obj.set_types);
     stypes = sprintf('\n  ''%s''', ff{:});
-    error('@mp_idx_manager/add_named_set: ''%s'' is not a valid SET_TYPE, must be one of the following:%s', set_type, stypes);
+    error('mp_idx_manager.add_named_set: ''%s'' is not a valid SET_TYPE, must be one of the following:%s', set_type, stypes);
 end
 
 %% add general indexing info about this named set
 if isempty(idx)     %% simple named set
     %% prevent duplicate name in set of specified type
     if isfield(obj_ff.idx.N, name)
-        error('@mp_idx_manager/add_named_set: %s set named ''%s'' already exists', st_label, name);
+        error('mp_idx_manager.add_named_set: %s set named ''%s'' already exists', st_label, name);
     end
 
     %% add indexing info about this set
@@ -79,7 +79,7 @@ else                %% indexed named set
     if subsref(obj_ff.idx.i1, sn) ~= 0
         str = '%d'; for m = 2:length(idx), str = [str ',%d']; end
         nname = sprintf(['%s(' str, ')'], name, idx{:});
-        error('@mp_idx_manager/add_named_set: %s set named ''%s'' already exists', st_label, nname);
+        error('mp_idx_manager.add_named_set: %s set named ''%s'' already exists', st_label, nname);
     end
 
     %% add indexing info about this set
