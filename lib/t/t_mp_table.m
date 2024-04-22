@@ -200,7 +200,8 @@ for k = 1:nc
     if have_feature('matlab') && have_feature('matlab', 'vnum') < 9.005 % R2018b
         t_ok(isequal(T{:, 'flt'}, v2), [t 'T{:, ''flt''} == v2']);
     else
-        t_ok(isequal(T{:, "flt"}, v2), [t 'T{:, "flt"} == v2']);
+        cond = eval('isequal(T{:, "flt"}, v2)');
+        t_ok(cond, [t 'T{:, "flt"} == v2']);
     end
     t_ok(isequal(T{:, 'str'}, v3), [t 'T{:, ''str''} == v3']);
     t_ok(isequal(T{:, 'dbl'}, v4), [t 'T{:, ''dbl''} == v4']);
