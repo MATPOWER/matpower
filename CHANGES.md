@@ -13,6 +13,9 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 since 8.0b1
 -----------
 
+#### 4/23/24
+  - Fix crash in `radial_pf()` under MATLAB R2016a and earlier.
+
 #### 2/12/24
   - Fix [bug #223][37], fatal error in `save2psse()` for cases with
     dispatchable loads.

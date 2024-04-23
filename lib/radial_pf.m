@@ -102,7 +102,8 @@ mpc.branch(:,QT) = -imag(St)*mpc.baseMVA;
 mpc.gen(1,PG) = real(Sslack)*mpc.baseMVA;
 mpc.gen(1,QG) = imag(Sslack)*mpc.baseMVA;
 if ~isempty(pv)
-    C = gbus == pv';  % map gbus to pv
+    % C = gbus == pv';  % map gbus to pv (does not work on MATLAB <R2016b)
+    C = gbus*ones(1,length(pv)) == ones(length(gbus),1)*pv';
     Q = C*Qpv;  % Q for generators at gbus
     k = find(Q);  % update QG in gen for buses with non-zero Qpv
     mpc.gen(k,QG) = Q(k)*mpc.baseMVA;

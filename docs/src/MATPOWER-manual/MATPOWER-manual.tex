@@ -8609,6 +8609,7 @@ Prototype examples of PF, CPF, and OPF, built using the new \matpower{} Extensio
 \item Fix bug in previously undocumented feature of \code{makePTDF()} where the \code{slack} input is a matrix. \emph{Thanks to Jon Martinez Corral.}
 \item Fix bug \#210 where radial power flow methods resulted in numerical error with multiple generators at a bus. \emph{Thanks to Mirko Todorovski.}
 \item Fix bug \#223, fatal error in \code{save2psse()} for cases with dispatchable loads. \emph{Thanks to Ali Jahanbani.}
+\item Fix crash in \code{radial\_pf()} under \matlab{} R2016a and earlier.
 \end{itemize}
 
 \subsubsection*{Incompatible Changes}
