@@ -78,8 +78,12 @@ for k = 1:nc
             {'var1', 'var2', 'var3', 'var4', 'Var5', 'var6'}), [t 'VariableNames'] );
     end
     t_ok(isempty(T.Properties.RowNames), [t 'RowNames'] );
-    t_ok(isequal(T.Properties.DimensionNames, {'Row', 'Variables'}), ...
-        [t 'DimensionNames'] );
+    if skip_ml_tab
+        t_skip(1, [t 'DimensionNames not yet supported'] );
+    else
+        t_ok(isequal(T.Properties.DimensionNames, {'Row', 'Variables'}), ...
+            [t 'DimensionNames'] );
+    end
 % show_me(T)
 
     %% subsref () (w/o RowNames)
