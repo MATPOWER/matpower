@@ -27,7 +27,7 @@ For all features, including those based on the new MP-Core:
 *   [GNU Octave][4] version 6.2 or later
 
 Legacy features only (from 7.1 and earlier) are also available on:
-*   [MATLAB][3] version 7.5 (R2007b) or later, or
+*   [MATLAB][3] version 7.9 (R2009b) or later, or
 *   [GNU Octave][4] version 4 or later
 
 
