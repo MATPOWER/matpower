@@ -23,7 +23,7 @@ System Requirements
 -------------------
 
 For all features, including those based on the new MP-Core:
-*   [MATLAB][3] version 9.1 (R2016b) or later, or
+*   [MATLAB][3] version 9.0 (R2016a) or later, or
 *   [GNU Octave][4] version 6.2 or later
 
 Legacy features only (from 7.1 and earlier) are also available on:
