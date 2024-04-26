@@ -5,8 +5,11 @@ Change history for MP-Opt-Model
 Since version 4.1
 -----------------
 
+#### 4/23/24
+  - Fix bug in test `t_opt_model()` for MATLAB R2011b and earlier.
+
 #### 4/22/24
-  - Fix false positive in `have_feature_fsolve` in case where the file is
+  - Fix false positive in `have_feature_fsolve()` in case where the file is
     present, but without a valid license.
 
 #### 4/5/24

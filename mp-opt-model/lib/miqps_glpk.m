@@ -308,7 +308,8 @@ if mi && eflag == 1 && (~isfield(opt, 'skip_prices') || ~opt.skip_prices)
         opt.glpk_opt.lpsolver = 1;      %% simplex
         opt.glpk_opt.dual = 0;          %% primal simplex
         if have_feature('octave') && have_feature('octave', 'vnum') >= 3.007
-            opt.glpk_opt.dual = 1;      %% primal simplex
+            % opt.glpk_opt.dual = 1;      %% primal simplex
+            opt.glpk_opt.dual = 2;      %% dual simplex
         end
     
         [x_, f_, eflag_, output_, lambda] = qps_glpk(H, c, A, l, u, xmin, xmax, x0, opt);

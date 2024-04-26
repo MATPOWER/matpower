@@ -15,9 +15,9 @@ Cornell University as part of [MATPOWER][2].
 System Requirements
 -------------------
 
-*   [MATLAB][3] version 7.5 (R2007b) or later, or
+*   [MATLAB][3] version 7.9 (R2009b) or later, or
 *   [GNU Octave][4] version 4 or later
-*   [MP-Test][5], for running the MP-Opt-Model test suite
+*   [MP-Test][5]
 *   [MATPOWER Interior Point Solver (MIPS)][6]
 
 
