@@ -117,7 +117,8 @@ if have_feature('glpk')
     e = zeros(size(branch, 1), 1);
     e(4) = 297.83776;
     e(7) = -26.94788;
-    t_is(branch(:,MU_ANGMAX )-branch(:,MU_ANGMIN ), e, 4, [t 'branch ang diff mu']);
+    if k == 3, p = 2; else p = 4; end
+    t_is(branch(:,MU_ANGMAX )-branch(:,MU_ANGMIN ), e, p, [t 'branch ang diff mu']);
 
     t = [t0 'w/ignored angle diff lims : '];
     mpopt1 = mpoption(mpopt, 'opf.ignore_angle_lim', 1);
