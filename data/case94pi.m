@@ -224,7 +224,6 @@ mpc.branch = [  %% (r and x specified in ohms here, converted to p.u. below)
 %	2	startup	shutdown	n	c(n-1)	...	c0
 mpc.gencost = [
 	2	0	0	3	0	20	0;
-	2	0	0	3	0	20	0;
 ];
 
 

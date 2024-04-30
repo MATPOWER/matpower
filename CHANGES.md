@@ -14,6 +14,9 @@ since 8.0b1
 -----------
 
 #### 4/23/24
+  - Delete extra (duplicate) row in `gencost` in `case94pi.m`.
+
+#### 4/23/24
   - Fix crash in `radial_pf()` under MATLAB R2016a and earlier.
 
 #### 2/12/24
