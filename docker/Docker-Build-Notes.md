@@ -12,6 +12,8 @@ When a new version _x.y.z_ of the GNU Octave Docker image
   ```
   docker build -f docker/Dockerfile-octave -t matpower/octave:<x.y.z> .
   ```
+  _(Note: Likely requires an explicit `--platform=linux/amd64` flag when
+  building on macOS with Apple Silicon chip.)_
 - Update `latest` tag.
   ```
   docker tag matpower/octave:<x.y.z> matpower/octave:latest
