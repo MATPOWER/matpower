@@ -13,6 +13,7 @@ version of the Octave image being used.
 
 | Octave Version | [IPOPT][8] | [OSQP][9] | [SeDuMi][10] | [SDP3][11] | [YALMIP][12] |
 | :------------: | :--------: | :-------: | :----------: | :--------: | :----------: |
+|     9.x.x      |  &check;   |  &check;  |   &check;    |  &check;   |   &check;    |
 |     8.x.x      |  &check;   |  &check;  |   &check;    |  &check;   |   &check;    |
 |     7.x.x      |  &check;   |  &check;  |   &check;    |  &check;   |   &check;    |
 |     6.x.x      |  &check;   |  &check;  |   &check;    |  &check;   |   &check;    |
