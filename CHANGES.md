@@ -13,6 +13,11 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 since 8.0b1
 -----------
 
+#### 5/3/24
+  - Fix issue in `mp_table_subclass` that caused intermittent
+    "max_recursion_depth exceeded" errors in `t_mp_table` on some versions
+    of Octave.
+
 #### 4/23/24
   - Delete extra (duplicate) row in `gencost` in `case94pi.m`.
 

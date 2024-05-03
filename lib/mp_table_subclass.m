@@ -140,11 +140,13 @@ classdef mp_table_subclass
         end
 
         function n = numArgumentsFromSubscript(obj, varargin)
-            n = numArgumentsFromSubscript(obj.tab, varargin{:});
+            n = 1;
         end
 
+        % This is needed to avoid an error when doing T{r1:rN, c} = b;
+        % See https://github.com/apjanke/octave-tablicious/issues/80#issuecomment-855198281.
         function n = numel(obj, varargin)
-            n = numel(obj.tab, varargin{:});
+            n = 1;
         end
 
         function b = subsref(obj, varargin)
