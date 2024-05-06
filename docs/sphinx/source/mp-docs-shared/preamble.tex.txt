@@ -19,6 +19,10 @@
 \newcommand{\matpowerb}[0]{{\textbf{M{\smaller{ATPOWER}}}}}
 % \newcommand{\matpoweri}[0]{{\emph{M}{\smaller{\emph{ATPOWER}}}}}
 % \newcommand{\matpower}[0]{{\sc Matpower}}
+
+\newcommand{\matpowerextrasgithuburl}[0]{https://github.com/MATPOWER/matpower-extras}
+\newcommand{\matpowerextraslink}[0]{\href{\matpowerextrasgithuburl}{\matpower{} Extras}}
+
 \newcommand{\matlab}[0]{{\sc Matlab}}
 \newcommand{\matlabr}[0]{{\matlab{} \textsuperscript{\tiny \textregistered}}}
 \newcommand{\matlaburl}[0]{https://www.mathworks.com}

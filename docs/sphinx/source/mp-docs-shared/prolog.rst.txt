@@ -24,6 +24,9 @@
 .. |MATPOWER GitHub URL| replace:: https://github.com/MATPOWER/matpower
 .. |MUM| replace:: :raw-html:`<a href="https://matpower.org/docs/MATPOWER-manual-8.0b1.pdf">M<span style="font-size:smaller">ATPOWER</span> User's Manual</a>`:raw-latex:`\mum{}`
 
+.. |MATPOWER-Extras| replace:: :raw-html:`M<span style="font-size:smaller">ATPOWER</span> Extras`:raw-latex:`\matpower{} Extras`
+.. |MATPOWER-Extras>| replace:: :raw-html:`<a href="https://github.com/MATPOWER/matpower-extras">M<span style="font-size:smaller">ATPOWER</span> Extras</a>`:raw-latex:`\matpowerextraslink{}`
+
 .. |MATLAB| replace:: :raw-html:`M<span style="font-size:smaller">ATLAB</span>`:raw-latex:`\matlab{}`
 .. |MATLAB>| replace:: :raw-html:`<a href="https://www.mathworks.com">M<span style="font-size:smaller">ATLAB</span></a>`:raw-latex:`\matlablink{}`
 .. |MATLAB(R)| replace:: :raw-html:`M<span style="font-size:smaller">ATLAB<sup>&reg;</sup></span>`:raw-latex:`\matlabr{}`
