@@ -58,13 +58,13 @@
 .. |MOSTman| replace:: :raw-html:`<a href="https://matpower.org/docs/MOST-manual-1.2.pdf">MOST User's Manual</a>`:raw-latex:`\mostman{}`
 
 .. |TN5|  replace:: :raw-html:`<a href="https://matpower.org/docs/TN5-MP-Element.pdf"><em>M<span style="font-size:smaller">ATPOWER</span> Technical Note 5</em></a>`:raw-latex:`\TNfive{}`
-.. |MATPOWER-Users-Manual|  replace:: :raw-html:`<a class="reference external" href="https://matpower.org/documentation/users-manual/"><em>M<span style="font-size:smaller">ATPOWER</span> User’s Manual</em></a>`:raw-latex:`\userman{}`
-.. |MATPOWER-Dev-Manual|  replace:: :raw-html:`<a class="reference external" href="https://matpower.org/documentation/dev-manual/"><em>M<span style="font-size:smaller">ATPOWER</span> Developer’s Manual</em></a>`:raw-latex:`\devman{}`
-.. |MATPOWER-Ref-Manual|  replace:: :raw-html:`<a class="reference external" href="https://matpower.org/documentation/ref-manual/"><em>M<span style="font-size:smaller">ATPOWER</span> Reference Manual</em></a>`:raw-latex:`\refman{}`
+.. |MATPOWER-Users-Manual|  replace:: :raw-html:`<a class="reference external" href="https://matpower.org/doc/users-manual/"><em>M<span style="font-size:smaller">ATPOWER</span> User’s Manual</em></a>`:raw-latex:`\userman{}`
+.. |MATPOWER-Dev-Manual|  replace:: :raw-html:`<a class="reference external" href="https://matpower.org/doc/dev-manual/"><em>M<span style="font-size:smaller">ATPOWER</span> Developer’s Manual</em></a>`:raw-latex:`\devman{}`
+.. |MATPOWER-Ref-Manual|  replace:: :raw-html:`<a class="reference external" href="https://matpower.org/doc/ref-manual/"><em>M<span style="font-size:smaller">ATPOWER</span> Reference Manual</em></a>`:raw-latex:`\refman{}`
 
 ..
     .. |MATPOWER-Dev-Manual|  replace:: :ref:`Developer's Manual <dev_manual>`
     .. |MATPOWER-Dev-Manual| replace:: *Developer's Manual*
-    .. _MATPOWER-Dev-Manual: https://matpower.org/documentation/dev-manual/
+    .. _MATPOWER-Dev-Manual: https://matpower.org/doc/dev-manual/
     .. |MATPOWER-Ref-Manual| replace:: *Reference Manual*
-    .. _MATPOWER-Ref-Manual: https://matpower.org/documentation/ref-manual/
+    .. _MATPOWER-Ref-Manual: https://matpower.org/doc/ref-manual/
