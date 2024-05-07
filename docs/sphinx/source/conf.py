@@ -119,25 +119,25 @@ html_theme_options = {
 
 latex_logo = 'MATPOWER-md.png'
 latex_documents = [
-    (   'users-manual/index',
-        'matpower_users_manual.tex',
-        '\\matpower{} \\textrm{User\'s Manual}',
-        'Ray Zimmerman',
-        'manual'),
+#     (   'users-manual/index',
+#         'matpower_users_manual.tex',
+#         '\\matpower{} \\textrm{User\'s Manual}',
+#         'Ray D. Zimmerman, Carlos E. Murillo-Sánchez, Hongye Wang, et. al.',
+#         'manual'),
     (   'dev-manual/index',
         'matpower_dev_manual.tex',
         '\\matpower{} \\textrm{Developers\'s Manual}',
-        'Ray Zimmerman',\
+        'Ray D. Zimmerman, et. al.',\
         'manual'),
     (   'ref-manual/index',
         'matpower_ref_manual.tex',
         '\\matpower{} \\textrm{Reference Manual}',
-        'Ray Zimmerman',\
+        'Ray D. Zimmerman, et. al.',\
         'manual'),
 #     (   'users-manual-legacy/index',
 #         'matpower_users_manual_legacy.tex',
 #         '\\matpower{} \\textrm{User\'s Manual (Legacy)}',
-#         'Ray Zimmerman',
+#         'Ray D. Zimmerman, Carlos E. Murillo-Sánchez',
 #         'manual'),
 ]
 latex_additional_files = ["mp-docs-shared/preamble.tex.txt", "mp-docs-shared/mathCmds.tex.txt"]
@@ -147,6 +147,8 @@ latex_elements = {
     'fncychap': r'\usepackage[Bjornstrup]{fncychap}',
     'printindex': r'\footnotesize\raggedright\printindex',
     'maxlistdepth': '8',
+    'extraclassoptions': 'openany',     # chapters can start on any page
+    'maketitle': r'\date{May 7, 2024}\newcommand\sphinxbackoftitlepage{\begin{center}{~\vfill\copyright~1996--2024~\PSERC\\All Rights Reserved}\end{center}}\sphinxmaketitle',
     'extrapackages': r"""\usepackage{bm}
 \usepackage{upgreek}
 \usepackage{amsfonts}
