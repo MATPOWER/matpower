@@ -2,8 +2,11 @@ Change history for MP-Opt-Model
 ===============================
 
 
-Since version 4.1
------------------
+ Version 4.2 - *May 10, 2024*
+----------------------------
+
+#### 5/10/24
+  - Release 4.2.
 
 #### 4/23/24
   - Fix bug in test `t_opt_model()` for MATLAB R2011b and earlier.
@@ -20,6 +23,9 @@ Since version 4.1
     `opt_model.set_params()`.
   - Add caching of aggregate output parameters in `opt_model.params_var()`.
 
+#### 3/26/24
+  - Add Sphinx-based [Reference documentation][13].
+
 #### 3/21/24
   - Add to the `parse_soln()` method of `opt_model` an optional `stash`
     input argument that, if present and true, causes the parsed solution
@@ -34,7 +40,7 @@ Since version 4.1
     been renamed to architecture-specific names along with an `ipopt.m`
     wrapper function to call the appropriate one.
     *Thanks to Carlos Murillo-Sánchez.*  
-    _**Note:** While MATPOWER no longer requires this, my recommendation
+    _**Note:** While MP-Opt-Model no longer requires this, my recommendation
      is still to simply rename the MEX file to `ipopt.<mexext>`, with the
      appropriate architecture-specific extension, and delete the
      unnecessary `ipopt.m` entirely._
@@ -503,3 +509,4 @@ Version 0.7.0 - *Jun 20, 2019*
 [10]: https://savannah.gnu.org/bugs/?52614
 [11]: https://github.com/MATPOWER/most
 [12]: https://github.com/ebertolazzi/mexIPOPT
+[13]: https://matpower.org/doc/mpom/

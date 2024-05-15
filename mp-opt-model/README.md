@@ -54,17 +54,17 @@ of MATLAB or Octave, including setting up your MATLAB/Octave path.
   t_nleqs_master..........ok (30 of 150 skipped)
   t_pnes_master...........ok
   t_qps_master............ok (100 of 432 skipped)
-  t_miqps_master..........ok (68 of 288 skipped)
+  t_miqps_master..........ok (78 of 318 skipped)
   t_nlps_master...........ok
   t_opt_model.............ok
   t_om_solve_leqs.........ok
-  t_om_solve_nleqs........ok (36 of 194 skipped)
+  t_om_solve_nleqs........ok (36 of 195 skipped)
   t_om_solve_pne..........ok
-  t_om_solve_qps..........ok (81 of 387 skipped)
-  t_om_solve_miqps........ok (14 of 118 skipped)
+  t_om_solve_qps..........ok (81 of 388 skipped)
+  t_om_solve_miqps........ok (20 of 131 skipped)
   t_om_solve_nlps.........ok
-  All tests successful (3430 passed, 329 skipped of 3759)
-  Elapsed time 4.22 seconds.
+  All tests successful (3461 passed, 345 skipped of 3806)
+  Elapsed time 2.28 seconds.
 ```
 
 Sample Usage
@@ -202,11 +202,11 @@ function, e.g.: `qps_master`, `miqps_master`, and `nlps_master`.
 We request that publications derived from the use of MP-Opt-Model
 explicitly acknowledge that fact by citing the [MP-Opt-Model User's Manual][7].
 The citation and DOI can be version-specific or general, as appropriate.
-For version 4.1, use:
+For version 4.2, use:
 
->   R. D. Zimmerman. *MP-Opt-Model User's Manual, Version 4.1*. 2022.
-    [Online]. Available: https://matpower.org/docs/MP-Opt-Model-manual-4.1.pdf  
-    doi: [10.5281/zenodo.7434250](https://doi.org/10.5281/zenodo.7434250)
+>   R. D. Zimmerman. *MP-Opt-Model User's Manual, Version 4.2*. 2024.
+    [Online]. Available: https://matpower.org/docs/MP-Opt-Model-manual-4.2.pdf  
+    doi: [10.5281/zenodo.11177079](https://doi.org/10.5281/zenodo.11177079)
 
 For a version non-specific citation, use the following citation and DOI,
 with *\<YEAR\>* replaced by the year of the most recent release:

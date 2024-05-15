@@ -129,7 +129,7 @@
 
 %\hyphenation{matpower_manual}
 
-\newcommand{\mpver}[0]{7.1}
+\newcommand{\mpver}[0]{8.0}
 %\newcommand{\matlab}[0]{{Matlab}}
 %\newcommand{\matlab}[0]{{\sc Matlab}\textsuperscript{\tiny \textregistered}}
 \newcommand{\matlab}[0]{{\sc Matlab}}
@@ -140,31 +140,27 @@
 \newcommand{\mptest}[0]{{MP-Test}}
 \newcommand{\mptesturl}[0]{https://github.com/MATPOWER/mptest}
 \newcommand{\mptestlink}[0]{\href{\mptesturl}{\mptest{}}}
-\newcommand{\mptestver}[0]{8.0b1}
+\newcommand{\mptestver}[0]{8.0}
 \newcommand{\mips}[0]{{MIPS}}
 \newcommand{\mipsurl}[0]{https://github.com/MATPOWER/mips}
 \newcommand{\mipslink}[0]{\href{\mipsurl}{\mips{}}}
 \newcommand{\mipsname}[0]{{{\bf M}{\sc atpower} \textbf{I}nterior \textbf{P}oint \textbf{S}olver}}
-\newcommand{\mipsver}[0]{1.5}
+\newcommand{\mipsver}[0]{1.5.1}
 \newcommand{\mpom}[0]{\mbox{MP-Opt-Model}}
 \newcommand{\mpomurl}[0]{https://github.com/MATPOWER/mp-opt-model}
 \newcommand{\mpomlink}[0]{\href{\mpomurl}{\mpom{}}}
 \newcommand{\mpomname}[0]{\mpom{}}
 % \newcommand{\mpomname}[0]{{{\bf M}{\sc at}{\bf P}{\sc ower} \textbf{Opt}imization \textbf{Model}}}
-\newcommand{\mpomver}[0]{4.1+}
+\newcommand{\mpomver}[0]{4.2}
 \newcommand{\most}[0]{{MOST}}
 \newcommand{\mostname}[0]{{{\bf M}{\sc atpower} \textbf{O}ptimal \textbf{S}cheduling \textbf{T}ool}}
 \newcommand{\mosturl}[0]{https://github.com/MATPOWER/most}
 \newcommand{\mostlink}[0]{\href{\mosturl}{\most{}}}
-\newcommand{\mostver}[0]{1.2}
+\newcommand{\mostver}[0]{1.3}
 \newcommand{\syngrid}[0]{{SynGrid}}
 \newcommand{\syngridver}[0]{1.0.1}
 \newcommand{\syngridurl}[0]{https://github.com/MATPOWER/mx-syngrid}
 \newcommand{\syngridlink}[0]{\href{\syngridurl}{\syngrid{}}}
-\newcommand{\east}[0]{E4ST}
-\newcommand{\eastver}[0]{1.0b2}
-\newcommand{\easturl}[0]{http://www.e4st.com/}
-\newcommand{\eastlink}[0]{\href{\easturl}{\east}}
 \newcommand{\md}[0]{{\most{} Data struct}}
 \newcommand{\powerweb}[0]{{\sc PowerWeb}}
 \newcommand{\pserc}[0]{{\sc PSerc}}
@@ -243,7 +239,7 @@
 %\title{\hl{--- DRAFT  ---}\\\hl{\em do not distribute}\\~\\{\huge \bfseries \mpomname{} User's Manual } \\ ~ \\ \LARGE Version \mpomver{}\\
 \title{{\huge \bfseries \mpomname{} User's Manual } \\ ~ \\ \LARGE Version \mpomver{}}
 \author{Ray~D.~Zimmerman}
-%\date{December 13, 2022} % comment this line to display the current date
+\date{May 10, 2024} % comment this line to display the current date
 %\date{May 8, 2020\thanks{Second revision. First revision was April 29, 2020}} % comment this line to display the current date
 
 %%% BEGIN DOCUMENT
@@ -254,7 +250,7 @@
 \vfill
 \begin{center}
 {\scriptsize
-\copyright~2020--2023~\PSERC{}\\
+\copyright~2020--2024~\PSERC{}\\
 All Rights Reserved}
 \end{center}
 
@@ -291,7 +287,7 @@ The code in \mpom{} is distributed under the 3-clause BSD license
 ~\cite{bsd}. The full text of the license can be found in the \code{LICENSE} file at the top level of the distribution or at \url{https://github.com/MATPOWER/mp-opt-model/blob/master/LICENSE} and reads as follows.
 
 \begin{Notice}
-Copyright (c) 2004-2021, Power Systems Engineering Research Center
+Copyright (c) 2004-2024, Power Systems Engineering Research Center
 (PSERC) and individual contributors (see AUTHORS file for details).
 All rights reserved.
 
@@ -328,12 +324,12 @@ POSSIBILITY OF SUCH DAMAGE.
 \subsection{Citing \mpom{}}
 
 We request that publications derived from the use of \mpom{} explicitly acknowledge that fact by citing the \mpomname{} User's Manual~\cite{mpom_manual}.
-The citation and DOI can be version-specific or general, as appropriate. For version 4.1, use:
+The citation and DOI can be version-specific or general, as appropriate. For version 4.2, use:
 
 \begin{quote}
 \footnotesize
-R.~D. Zimmerman. \mpomname{} User's Manual, Version 4.1. 2022. [Online]. Available: \url{https://matpower.org/docs/MP-Opt-Model-manual-4.1.pdf}\\
-\doi{10.5281/zenodo.7434250}
+R.~D. Zimmerman. \mpomname{} User's Manual, Version 4.2. 2024. [Online]. Available: \url{https://matpower.org/docs/MP-Opt-Model-manual-4.2.pdf}\\
+\doi{10.5281/zenodo.11177079}
 \end{quote}
 For a version non-specific citation, use the following citation and DOI,
 with \emph{\textless{}YEAR\textgreater{}} replaced by the year of the most recent release:
@@ -414,17 +410,17 @@ t_nested_struct_copy....ok
 t_nleqs_master..........ok (30 of 150 skipped)
 t_pnes_master...........ok
 t_qps_master............ok (100 of 432 skipped)
-t_miqps_master..........ok (68 of 288 skipped)
+t_miqps_master..........ok (78 of 318 skipped)
 t_nlps_master...........ok
 t_opt_model.............ok
 t_om_solve_leqs.........ok
-t_om_solve_nleqs........ok (36 of 194 skipped)
+t_om_solve_nleqs........ok (36 of 195 skipped)
 t_om_solve_pne..........ok
-t_om_solve_qps..........ok (81 of 387 skipped)
-t_om_solve_miqps........ok (14 of 118 skipped)
+t_om_solve_qps..........ok (81 of 388 skipped)
+t_om_solve_miqps........ok (20 of 131 skipped)
 t_om_solve_nlps.........ok
-All tests successful (3430 passed, 329 skipped of 3759)
-Elapsed time 4.22 seconds.
+All tests successful (3461 passed, 345 skipped of 3806)
+Elapsed time 2.28 seconds.
 \end{Code}
 \end{enumerate}
 
@@ -1137,7 +1133,7 @@ fprintf('   %g\n', lambda.ineqnonlin);
 \end{Code}
 \begin{Code}
 >> nlps_master_ex2
-MATPOWER Interior Point Solver -- MIPS, Version 1.5, 12-Dec-2022
+MATPOWER Interior Point Solver -- MIPS, Version 1.5.1, 10-May-2024
  (using built-in linear solver)
  it    objective   step size   feascond     gradcond     compcond     costcond  
 ----  ------------ --------- ------------ ------------ ------------ ------------
@@ -2110,7 +2106,7 @@ fprintf('%4g%4g%4g\n', jac');
 \begin{Code}
 >> pne_ex1
 
-MP-Opt-Model Version 4.1, 13-Dec-2022 -- Predictor/Corrector Continuation Method
+MP-Opt-Model Version 4.2, 10-May-2024 -- Predictor/Corrector Continuation Method
 step   0  :                          lambda =  0.000,  6 corrector steps
 step   1  : PAL stepsize = 0.6       lambda =  0.081   2 corrector steps
 step   2  : PAL stepsize = 0.6       lambda =  0.162   2 corrector steps
@@ -4543,7 +4539,7 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-4.1.pdf}{\mpom{} 4.1 Use
 
 \end{itemize}
 
-\subsection{Version 4.2 -- released ??? ?, 202?}
+\subsection{Version 4.2 -- released May 10, 2024}
 \label{app:v42}
 
 The \href{https://matpower.org/docs/MP-Opt-Model-manual-4.2.pdf}{\mpom{} 4.2 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MP-Opt-Model-manual-4.2.pdf}}
@@ -4554,6 +4550,7 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-4.2.pdf}{\mpom{} 4.2 Use
 \item Add support to \code{nlps\_master()} for calling \code{nlps\_<my\_solver>()} by setting \code{opt.alg} to \codeq{<MY\_SOLVER>} to allow for handling custom NLP solvers.
 \item Add support to \code{miqps\_master()} for calling \code{miqps\_<my\_solver>()} by setting \code{opt.alg} to \codeq{<MY\_SOLVER>} to allow for handling custom MILP/MIQP solvers.
 \item Add to the \code{parse\_soln()} method of \code{opt\_model} an optional \code{stash} input argument that, if present and true, causes the parsed solution to be stored back in the object, as the \code{solve()} method was already doing when \code{opt.parse\_soln} is true.
+\item New Sphinx-based Reference documentation.\footnote{\url{https://matpower.org/doc/mpom/}}
 \item New functions:
     \begin{itemize}
     \item \code{convert\_lin\_constraint()} converts linear constraints from a single set of doubly-bounded inequality constraints to separate sets of equality and upper-bounded inequality constraints.
@@ -4561,8 +4558,8 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-4.2.pdf}{\mpom{} 4.2 Use
     \end{itemize}
 \item New \code{opt\_model} methods:
     \begin{itemize}
-      \item \code{is\_solved()} indicatess whether the model has been solved.
-      \item \code{has\_parsed\_soln()} indicatess whether a parsed solution is available in the model.
+      \item \code{is\_solved()} indicates whether the model has been solved.
+      \item \code{has\_parsed\_soln()} indicates whether a parsed solution is available in the model.
       \item \code{display\_soln()} display the results of a solved model, including values, bounds and shadow prices for variables and linear constraints, values and shadow prices for nonlinear constraints, and individual cost components.
     \end{itemize}
 \end{itemize}
@@ -4572,15 +4569,13 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-4.2.pdf}{\mpom{} 4.2 Use
 \item Clear cached parameters after updating linear constraints or quadratic costs via \code{opt\_model.set\_params()}.
 \item In \code{miqps\_mosek()} the lower and upper bounds of binary variables got overwritten with 0 and 1, respectively, effectively relaxing any potentially tighter bounds provided as input.
 \item Fix false positive in \code{have\_feature\_fsolve} in case where the file is present, but without a valid license.
-\item 
-    \emph{Thanks to Fulano.}
 \end{itemize}
 
 \subsubsection*{Other Changes}
 \begin{itemize}
+\item Update for compatibility with MATLAB R2023a (Optimization Toolbox 9.5) and later, which removed \code{x0} as a valid input to \code{linprog}.
 \item Update \code{have\_feature\_ipopt()} to recognize \ipopt{} MEX installations from Enrico Bertolazzi's \href{https://github.com/ebertolazzi/mexIPOPT}{mexIPOPT}\footnote{\href{https://github.com/ebertolazzi/mexIPOPT}{mexIPOPT} is available at \url{https://github.com/ebertolazzi/mexIPOPT}.}, which include MEX files that have been renamed to architecture-specific names along with an \code{ipopt.m} wrapper function to call the appropriate one. \emph{Thanks to Carlos Murillo-S{\'a}nchez.} \\
-\emph{{\bf Note:} While MATPOWER no longer requires this, my recommendation is still to simply rename the MEX file to \code{ipopt.<mexext>}, with the appropriate architecture-specific extension, and delete the unnecessary \code{ipopt.m} entirely.}
-\item Update for compatibility with MATLAB R2023a (Optimization Toolbox 9.5) which removed \code{x0} as a valid input to \code{linprog}.
+\emph{{\bf Note:} While MP-Opt-Model no longer requires this, my recommendation is still to simply rename the MEX file to \code{ipopt.<mexext>}, with the appropriate architecture-specific extension, and delete the unnecessary \code{ipopt.m} entirely.}
 \item Always skip price computation stage in \code{miqps\_<solver>()} functions for pure (as opposed to mixed) integer problems.
 \item Add caching of aggregate output parameters in \code{opt\_model.params\_var()}.
 
@@ -4635,7 +4630,7 @@ John~W.~Eaton, David~Bateman, S{\o}ren~Hauberg, Rik~Wehbring (2015). \emph{GNU O
 The BSD 3-Clause License. [Online]. Available: \url{https://opensource.org/licenses/BSD-3-Clause}.
 
 \bibitem{mpom_manual}
-R.~D. Zimmerman. \mpomname{} User's Manual. 2022.
+R.~D. Zimmerman. \mpomname{} User's Manual. 2024.
 [Online]. Available: \url{https://matpower.org/docs/MP-Opt-Model-manual.pdf}\\
 \doi{10.5281/zenodo.3818002}
 
@@ -4646,7 +4641,7 @@ Systems, IEEE Transactions on}, vol.~22, no.~3, pp. 1185--1193, August 2007.
 \doi{10.1109/TPWRS.2007.901301}
 
 \bibitem{mips_manual}
-R.~D. Zimmerman, H.~Wang. \mipsname{} (\mips{}) User's Manual. 2022.
+R.~D. Zimmerman, H.~Wang. \mipsname{} (\mips{}) User's Manual. 2024.
 [Online]. Available: \url{https://matpower.org/docs/MIPS-manual.pdf}\\
 \doi{10.5281/zenodo.3236506}
 

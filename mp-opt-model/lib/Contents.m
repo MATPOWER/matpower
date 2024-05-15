@@ -1,5 +1,5 @@
 % MP-Opt-Model
-%   Version 4.1         13-Dec-2022
+%   Version 4.2         10-May-2024
 %
 %   MP-Opt-Model is a package of MATLAB/Octave M-files for constructing
 %   and solving mathematical programming and optimization problems. It
@@ -18,7 +18,7 @@
 %   MIPS is covered by the 3-clause BSD License (see LICENSE for details).
 
 %   MP-Opt-Model
-%   Copyright (c) 2020-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2020-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.
