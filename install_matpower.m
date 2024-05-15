@@ -52,7 +52,7 @@ function succ = install_matpower(modify, save_it, verbose, rm_oldpaths)
 %   See also ADDPATH, SAVEPATH.
 
 %   MATPOWER
-%   Copyright (c) 2017-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2017-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -61,7 +61,9 @@ function succ = install_matpower(modify, save_it, verbose, rm_oldpaths)
 
 %% installation data for each component
 min_ver.Octave = '4.0.0';
-min_ver.MATLAB = '7.5.0';
+min_ver.MATLAB = '7.9.0';
+min_ver_mp_core.Octave = '6.2.0';
+min_ver_mp_core.MATLAB = '9.0.0';
 install = struct( ...
     'name', { ...       %% (not currently used)
         'matpower', ...
