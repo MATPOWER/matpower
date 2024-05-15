@@ -98,12 +98,12 @@ the following 2007 paper.
 The [MATPOWER Interior Point Solver (MIPS) User's Manual][7] should also be
 cited explicitly in work that refers to or is derived from its content.
 The citation and DOI can be version-specific or general, as appropriate.
-For version 1.5, use:
+For version 1.5.1, use:
 
 >   R. D. Zimmerman, H. Wang. *MATPOWER Interior Point Solver (MIPS)
-    User's Manual, Version 1.5*. 2022. [Online].
-    Available: https://matpower.org/docs/MIPS-manual-1.5.pdf  
-    doi: [10.5281/zenodo.7430306](https://doi.org/10.5281/zenodo.7430306)
+    User's Manual, Version 1.5.1*. 2024. [Online].
+    Available: https://matpower.org/docs/MIPS-manual-1.5.1.pdf  
+    doi: [10.5281/zenodo.11176870](https://doi.org/10.5281/zenodo.11176870)
 
 For a version non-specific citation, use the following citation and DOI,
 with *\<YEAR\>* replaced by the year of the most recent release:

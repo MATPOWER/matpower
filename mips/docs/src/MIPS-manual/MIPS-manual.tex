@@ -140,22 +140,22 @@
 \newcommand{\mptest}[0]{{MP-Test}}
 \newcommand{\mptesturl}[0]{https://github.com/MATPOWER/mptest}
 \newcommand{\mptestlink}[0]{\href{\mptesturl}{\mptest{}}}
-\newcommand{\mptestver}[0]{8.0b1}
+\newcommand{\mptestver}[0]{8.0}
 \newcommand{\mips}[0]{{MIPS}}
 \newcommand{\mipsurl}[0]{https://github.com/MATPOWER/mips}
 \newcommand{\mipslink}[0]{\href{\mipsurl}{\mips{}}}
 \newcommand{\mipsname}[0]{{{\bf M}{\sc atpower} \textbf{I}nterior \textbf{P}oint \textbf{S}olver}}
-\newcommand{\mipsver}[0]{1.5}
+\newcommand{\mipsver}[0]{1.5.1}
 \newcommand{\mpom}[0]{\mbox{MP-Opt-Model}}
 \newcommand{\mpomurl}[0]{https://github.com/MATPOWER/mp-opt-model}
 \newcommand{\mpomlink}[0]{\href{\mpomurl}{\mpom{}}}
 \newcommand{\mpomname}[0]{\mpom{}}
 % \newcommand{\mpomname}[0]{{{\bf M}{\sc at}{\bf P}{\sc ower} \textbf{Opt}imization \textbf{Model}}}
-\newcommand{\mpomver}[0]{4.1}
+\newcommand{\mpomver}[0]{4.2}
 \newcommand{\most}[0]{{MOST}}
 \newcommand{\mostname}[0]{{{\bf M}{\sc atpower} \textbf{O}ptimal \textbf{S}cheduling \textbf{T}ool}}
 \newcommand{\mosturl}[0]{https://github.com/MATPOWER/most}
-\newcommand{\mostver}[0]{1.2}
+\newcommand{\mostver}[0]{1.3}
 \newcommand{\md}[0]{{\most{} Data struct}}
 \newcommand{\powerweb}[0]{{\sc PowerWeb}}
 \newcommand{\pserc}[0]{{\sc PSerc}}
@@ -228,7 +228,7 @@
 \title{\mipsname{}\\\mips{} \mipsver{}\\
 User's Manual}
 \author{Ray~D.~Zimmerman \and Hongye~Wang}
-%\date{December 12, 2022} % comment this line to display the current date
+\date{May 10, 2024} % comment this line to display the current date
 %\date{December 14, 2011\thanks{Second revision. First revision was December 13, 2011}} % comment this line to display the current date
 
 %%% BEGIN DOCUMENT
@@ -238,7 +238,7 @@ User's Manual}
 \vfill
 \begin{center}
 {\scriptsize
-\copyright~2009--2022~\PSERC{}\\
+\copyright~2009--2024~\PSERC{}\\
 All Rights Reserved}
 \end{center}
 
@@ -275,7 +275,7 @@ The code in \mips{} is distributed under the 3-clause BSD license\footnote{Versi
 ~\cite{bsd}. The full text of the license can be found in the \code{LICENSE} file at the top level of the distribution or at \url{https://github.com/MATPOWER/mips/blob/master/LICENSE} and reads as follows.
 
 \begin{Notice}
-Copyright (c) 1996-2016, Power Systems Engineering Research Center
+Copyright (c) 1996-2024, Power Systems Engineering Research Center
 (PSERC) and individual contributors (see AUTHORS file for details).
 All rights reserved.
 
@@ -322,13 +322,13 @@ Systems, IEEE Transactions on}, vol.~22, no.~3, pp. 1185--1193, August 2007.\\
 
 The \mipsname{} (\mips{}) User's Manual~\cite{mips_manual} should also be cited explicitly
 in work that refers to or is derived from its content. The citation and
-DOI can be version-specific or general, as appropriate. For version 1.5,
+DOI can be version-specific or general, as appropriate. For version 1.5.1,
 use:
 
 \begin{quote}
 \footnotesize
-R.~D. Zimmerman, H.~Wang. \mipsname{} (\mips{}) User's Manual, Version 1.5. 2022. [Online]. Available: \url{https://matpower.org/docs/MIPS-manual-1.5.pdf}\\
-\doi{10.5281/zenodo.7430306}
+R.~D. Zimmerman, H.~Wang. \mipsname{} (\mips{}) User's Manual, Version 1.5.1. 2024. [Online]. Available: \url{https://matpower.org/docs/MIPS-manual-1.5.1.pdf}\\
+\doi{10.5281/zenodo.11176870}
 \end{quote}
 For a version non-specific citation, use the following citation and DOI,
 with \emph{\textless{}YEAR\textgreater{}} replaced by the year of the most recent release:
@@ -681,7 +681,7 @@ fprintf('   %g\n', lambda.ineqnonlin);
 \end{Code}
 \begin{Code}
 >> mips_example2
-MATPOWER Interior Point Solver -- MIPS, Version 1.5, 12-Dec-2022
+MATPOWER Interior Point Solver -- MIPS, Version 1.5.1, 10-May-2024
  (using built-in linear solver)
  it    objective   step size   feascond     gradcond     compcond     costcond  
 ----  ------------ --------- ------------ ------------ ------------ ------------
@@ -1328,14 +1328,17 @@ The \href{https://matpower.org/docs/MIPS-manual-1.5.pdf}{\mips{} 1.5 User's Manu
 \end{itemize}
 
 
-\subsection{Version 1.5.x -- released xxx xx, 202x}
-\label{app:v15x}
+\subsection{Version 1.5.1 -- released May 10, 2024}
+\label{app:v151}
 
-The \href{https://matpower.org/docs/MIPS-manual-1.5.x.pdf}{\mips{} 1.5.x User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MIPS-manual-1.5.x.pdf}}
+The \href{https://matpower.org/docs/MIPS-manual-1.5.1.pdf}{\mips{} 1.5.1 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MIPS-manual-1.5.1.pdf}}
 
 \subsubsection*{New Features}
 \begin{itemize}
-\item Add Sphinx-based Reference documentation.
+\item Add Sphinx-based Reference documentation.\footnote{\url{https://matpower.org/doc/mips/}}
+\item Add \code{full\_hist} option to enable saving in \code{output.hist}
+    trajectories of \code{x}, \code{z}, \code{g}, \code{h}, \code{lam}, and
+    \code{mu} (issue \#4).
 \end{itemize}
 
 
@@ -1400,7 +1403,7 @@ R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez (2022). \matpower{}\\~
 \doi{10.5281/zenodo.3236535}
 
 \bibitem{mips_manual}
-R.~D. Zimmerman, H.~Wang. \mipsname{} (\mips{}) User's Manual. 2022.
+R.~D. Zimmerman, H.~Wang. \mipsname{} (\mips{}) User's Manual. 2024.
 [Online]. Available: \url{https://matpower.org/docs/MIPS-manual.pdf}\\
 \doi{10.5281/zenodo.3236506}
 
