@@ -5,6 +5,18 @@ Functions
 
 .. _ref_top_level_functions:
 
+|MATPOWER| Installer
+--------------------
+
+.. note::
+
+   The :func:`install_matpower` function is generally **not** in your |MATLAB|/Octave path, unless you change your current working directory to the |MATPOWER| install directory where it is located.
+
+.. toctree::
+
+   install_matpower
+
+
 Top-Level Simulation Functions
 ------------------------------
 

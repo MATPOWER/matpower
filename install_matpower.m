@@ -1,55 +1,89 @@
 function succ = install_matpower(modify, save_it, verbose, rm_oldpaths)
-%INSTALL_MATPOWER  Assist user in setting path to install MATPOWER.
-%   INSTALL_MATPOWER
-%   INSTALL_MATPOWER(MODIFY)
-%   INSTALL_MATPOWER(MODIFY, SAVE_IT)
-%   INSTALL_MATPOWER(MODIFY, SAVE_IT, VERBOSE)
-%   INSTALL_MATPOWER(MODIFY, SAVE_IT, VERBOSE, RM_OLDPATHS)
-%   SUCCESS = INSTALL_MATPOWER(...)
+% install_matpower - Assist user in setting path to install |MATPOWER|.
+% ::
 %
-%   Assists the user in setting up the proper MATLAB/Octave path to
-%   be able to use MATPOWER and run its tests. With no input arguments
-%   it prompts interactively to determine how to handle the paths.
+%   install_matpower
+%   install_matpower(modify)
+%   install_matpower(modify, save_it)
+%   install_matpower(modify, save_it, verbose)
+%   install_matpower(modify, save_it, verbose, rm_oldpaths)
+%   success = install_matpower(...)
 %
-%   Inputs (all are optional):
-%       MODIFY : select how to set path
-%           0 (default) - generate relevant ADDPATH() commands, but
-%               don't execute them
-%           1 - modify the path directly executing the relevant
-%               ADDPATH() commands
-%       SAVE_IT : indicates whether or not to save the results
-%           0 or [] (default) - don't save any results
-%           if MODIFY is 0
-%               SAVE_IT = <string> : the relevant ADDPATH() commands
-%                   are saved to a file whose name is provided in SAVE_IT
-%               SAVE_IT = <other true value> : the relevant ADDPATH() commands
-%                   are saved to a file named 'startup.m' in the current
-%                   directory
-%               otherwise : the commands are displayed, but not saved
-%           if MODIFY is 1
-%               SAVE_IT = <any true value> : the path will be modified
-%                   and saved with SAVEPATH
-%               otherwise : the path will be modified but not saved
-%       VERBOSE : prints the relevant ADDPATH commands if true (default),
-%               silent otherwise
-%       RM_OLDPATHS : remove existing installation
-%           0 (default) - do NOT remove existing MATPOWER from path
-%           1 - remove existing MATPOWER paths first
+% Assists the user in setting up the proper |MATLAB|/Octave path to
+% be able to use |MATPOWER| and run its tests. With no input arguments
+% it prompts interactively to determine how to handle the paths.
 %
-%   Outputs (all are optional):
-%       SUCCESS : 1 if all commands succeeded, 0 otherwise
+% .. note::
 %
-%   Examples:
-%       install_matpower;           %% print the required ADDPATH() commands
-%       install_matpower(0, 1);     %% save the commands to startup.m
-%       install_matpower(1, 1);     %% modify my path and save
-%       install_matpower(1, 0, 0);  %% modify my path temporarily and silently
-%       install_matpower(0, 'matpower6');   %% save the commands to matpower6.m
-%       install_matpower(0, 0, 1, 1);   %% uninstall MATPOWER from path
-%                                   %% (must call SAVEPATH separately
-%                                   %%  to make permanent)
+%   This function is generally **not** in your |MATLAB|/Octave path, unless
+%   you change your current working directory to the |MATPOWER| install
+%   directory where it is located.
 %
-%   See also ADDPATH, SAVEPATH.
+% There are two main approaches for installing |MATPOWER|.
+%
+%   1. If you have a single version of |MATPOWER|, select the options to
+%      modify and save the path (interactive option 3). This will add
+%      |MATPOWER| to your default |MATLAB|/Octave path for all future
+%      sessions.
+%
+%   2. If you have multiple versions of |MATPOWER|, select the options to
+%      not modify the path (interactive option 1), but to save the
+%      :func:`addpath` commands to a file. Then execute the saved file to
+%      use this version of |MATPOWER|.
+%
+% *All inputs and outputs are optional.*
+%
+% Inputs:
+%   modify (boolean) : select how to set path
+%
+%       - 0 *(default)* - generate relevant :func:`addpath` commands, but
+%         don't execute them; |MATPOWER| is not installed
+%       - 1 - modify the path by executing the relevant :func:`addpath`
+%         commands; |MATPOWER| is installed for this session
+%   save_it (integer or string) : indicates whether or not to save the
+%       results
+%
+%       - 0 or [] *(default)* - don't save any results
+%       - if ``modify`` is 0
+%
+%           - ``save_it`` = :samp:`{<string>}` : the relevant :func:`addpath`
+%             commands are saved to a file whose name is provided in
+%             ``save_it``; execute saved file in any session to make
+%             |MATPOWER| available for the session
+%           - ``save_it`` = :samp:`{<other true value>}` : the relevant
+%             :func:`addpath` commands are saved to a file named
+%             ``'startup.m'`` in the current directory; |MATPOWER| is
+%             available in any session affected by this ``'startup.m'`` file
+%           - *otherwise* : the commands are displayed, but not saved
+%       - if ``modify`` is 1
+%
+%           - ``save_it`` = :samp:`{<any true value>}` : the path will be
+%             modified and saved with :func:`savepath`; |MATPOWER| is
+%             available in this and all future sessions
+%           - *otherwise* : the path will be modified but not saved
+%   verbose (boolean) : prints the relevant :func:`addpath` commands if true
+%       *(default)*, silent otherwise
+%   rm_oldpaths (boolean) : remove existing installation
+%
+%       - 0 *(default)* - do **not** remove existing |MATPOWER| from path
+%       - 1 - remove existing |MATPOWER| paths first
+%
+% Output:
+%     success (boolean) : 1 if all commands succeeded, 0 otherwise
+%
+% Examples::
+%
+%   install_matpower                    % interactive mode, prompt for options
+%   install_matpower(0);                % print the required addpath() commands
+%   install_matpower(0, 1);             % save the commands to startup.m
+%   install_matpower(1, 1);             % modify my path and save
+%   install_matpower(1, 0, 0);          % modify my path temporarily & silently
+%   install_matpower(0, 'matpower8');   % save the commands to matpower8.m
+%   install_matpower(0, 0, 1, 1);       % uninstall MATPOWER from path (must
+%                                       % call savepath() separately to make
+%                                       % permanent)
+%
+%   See also addpath, savepath.
 
 %   MATPOWER
 %   Copyright (c) 2017-2024, Power Systems Engineering Research Center (PSERC)

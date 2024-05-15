@@ -104,6 +104,9 @@ for k = 1:length(stub_types)
         end
         rel_path_str = repmat('../', 1, length(rel_paths));
         tgt_dir = sprintf('%s%s%s%s', src, rel_path_str, stub_type.list(m).src_path, pkg_dir);
+        if tgt_dir(end) == '/'
+            tgt_dir(end) = [];  % delete trailing '/' (e.g. empty src_dir)
+        end
         names = stub_type.list(m).names;
         for f = 1:length(names)
             %% create symlink
