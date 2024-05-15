@@ -2,8 +2,11 @@ Change history for MP-Test
 ==========================
 
 
-Since 8.0b1
------------
+Version 8.0 - *May 10, 2024*
+----------------------------
+
+#### 5/10/24
+  - Release 8.0.
 
 #### 3/1/24
   - Add Sphinx-based User and Reference documentation.

@@ -1,13 +1,14 @@
 function [TorF, vstr, rdate] = have_feature_rithmaticker()
-%HAVE_FEATURE_RITHMATICKER  Detect availability/version info for rithmaticker
+% have_feature_rithmaticker - Detect availability/version info for rithmaticker.
 %
-%   Feature detection function implementing 'rithmaticker' tag for HAVE_FEATURE
-%   to detect availability of RITHMATICKER (HAVE_FEATURE test function).
+% Private feature detection function implementing ``'rithmaticker'`` tag for
+% have_feature to detect availability of rithmaticker (have_feature test
+% function).
 %
-%   See also HAVE_FEATURE.
+% See also have_feature.
 
 %   MP-Test
-%   Copyright (c) 2004-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Test.
