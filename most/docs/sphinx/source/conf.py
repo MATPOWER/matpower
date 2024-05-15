@@ -22,7 +22,7 @@ copyright = '2011-2024, Power Systems Engineering Research Center (PSERC)'
 author = 'Ray D. Zimmerman, Carlos E. Murillo-Sánchez'
 
 # The full version, including alpha/beta/rc tags
-release = '1.3+'
+release = '1.3'
 
 
 # -- General configuration ---------------------------------------------------

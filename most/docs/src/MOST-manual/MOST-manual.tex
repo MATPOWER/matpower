@@ -129,7 +129,7 @@
 
 %\hyphenation{matpower}
 
-\newcommand{\mpver}[0]{7.1}
+\newcommand{\mpver}[0]{8.0}
 %\newcommand{\matlab}[0]{{Matlab}}
 %\newcommand{\matlab}[0]{{\sc Matlab}\textsuperscript{\tiny \textregistered}}
 \newcommand{\matlab}[0]{{\sc Matlab}}
@@ -143,23 +143,23 @@
 \newcommand{\mptest}[0]{{MP-Test}}
 \newcommand{\mptesturl}[0]{https://github.com/MATPOWER/mptest}
 \newcommand{\mptestlink}[0]{\href{\mptesturl}{\mptest{}}}
-\newcommand{\mptestver}[0]{8.0b1}
+\newcommand{\mptestver}[0]{8.0}
 \newcommand{\mips}[0]{{MIPS}}
 \newcommand{\mipsurl}[0]{https://github.com/MATPOWER/mips}
 \newcommand{\mipslink}[0]{\href{\mipsurl}{\mips{}}}
 \newcommand{\mipsname}[0]{{{\bf M}{\sc atpower} \textbf{I}nterior \textbf{P}oint \textbf{S}olver}}
-\newcommand{\mipsver}[0]{1.5}
+\newcommand{\mipsver}[0]{1.5.1}
 \newcommand{\mpom}[0]{\mbox{MP-Opt-Model}}
 \newcommand{\mpomurl}[0]{https://github.com/MATPOWER/mp-opt-model}
 \newcommand{\mpomlink}[0]{\href{\mpomurl}{\mpom{}}}
 \newcommand{\mpomname}[0]{\mpom{}}
 % \newcommand{\mpomname}[0]{{{\bf M}{\sc at}{\bf P}{\sc ower} \textbf{Opt}imization \textbf{Model}}}
-\newcommand{\mpomver}[0]{4.1}
+\newcommand{\mpomver}[0]{4.2}
 \newcommand{\most}[0]{{MOST}}
 \newcommand{\mostname}[0]{{{\bf M}{\sc atpower} \textbf{O}ptimal \textbf{S}cheduling \textbf{T}ool}}
 \newcommand{\mosturl}[0]{https://github.com/MATPOWER/most}
 \newcommand{\mostlink}[0]{\href{\mosturl}{\most{}}}
-\newcommand{\mostver}[0]{1.2+}
+\newcommand{\mostver}[0]{1.3}
 \newcommand{\md}[0]{{\most{} Data struct}}
 \newcommand{\powerweb}[0]{{\sc PowerWeb}}
 \newcommand{\pserc}[0]{{\sc PSerc}}
@@ -240,7 +240,7 @@ User's Manual}
 %%% BEFORE PUBLISHING A NEW VERSION:
 %%%   Update the publication year for \bibitem{matpower} and
 %%%   \bibitem{matpower_manual} to the year of the latest release
-%\date{December 13, 2022} % comment this line to display the current date
+\date{May 10, 2024} % comment this line to display the current date
 %\date{December 14, 2011\thanks{Second revision. First revision was December 13, 2011}} % comment this line to display the current date
 
 %%% BEGIN DOCUMENT
@@ -250,7 +250,7 @@ User's Manual}
 \vfill
 \begin{center}
 {\scriptsize
-\copyright~2011--2023~\PSERC{}\\
+\copyright~2011--2024~\PSERC{}\\
 All Rights Reserved}
 \end{center}
 
@@ -279,7 +279,7 @@ The primary developers of \most{} are Carlos~E.~Murillo-S\'anchez\footnote{Unive
 The code in \most{} is distributed along with \matpower{} under the 3-clause BSD license~\cite{bsd}. The full text of the license can be found in the \code{LICENSE} file at the top level of the distribution or at \url{https://matpower.org/license/} and reads as follows.
 
 \begin{Notice}
-Copyright (c) 1996-2016, Power Systems Engineering Research Center
+Copyright (c) 1996-2024, Power Systems Engineering Research Center
 (PSERC) and individual contributors (see AUTHORS file for details).
 All rights reserved.
 
@@ -331,12 +331,12 @@ C.~E. Murillo-S{\'a}nchez, R.~D. Zimmerman, C.~L. Anderson, and R.~J. Thomas, ``
 The \mostname{} (\most) User's Manual~\cite{most_manual} should also be
 cited explicitly in work that refers to or is derived from its content.
 The citation and DOI can be version-specific or general, as appropriate.
-For version 1.2, use:
+For version 1.3, use:
 
 \begin{quote}
 \footnotesize
-R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez. \mostname{} (\most{}) User's Manual, Version 1.2. 2022. [Online]. Available: \url{https://matpower.org/docs/MOST-manual-1.2.pdf}\\
-\doi{10.5281/zenodo.7434827}
+R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez. \mostname{} (\most{}) User's Manual, Version 1.3. 2024. [Online]. Available: \url{https://matpower.org/docs/MOST-manual-1.3.pdf}\\
+\doi{10.5281/zenodo.11177189}
 \end{quote}
 For a version non-specific citation, use the following citation and DOI,
 with \emph{\textless{}YEAR\textgreater{}} replaced by the year of the most recent release:
@@ -376,7 +376,7 @@ The first step in beginning to use the \most{} is to get familiar with \matpower
 \label{sec:sysreq}
 To use \most{}~\mostver{} you will need:
 \begin{itemize}
-\item \matpower{} version 7.1 or later\footnote{\most{}~1.0.1 and 1.0.2 required \matpower{}~7 and \most{}~1.0 required \matpower{}~6.}
+\item \matpower{} version 8.x or later\footnote{\most{}~1.0.1 and 1.0.2 required \matpower{}~7 and \most{}~1.0 required \matpower{}~6.}
 \item \emph{(highly recommended)} a high-performance LP/MILP, QP/MIQP solver such as \gurobi{}, \cplex{}, \mosek{}, \matlab{}'s \ot{} or \glpk{} \emph{(included with Octave)}.
 \end{itemize}
 
@@ -405,12 +405,12 @@ t_most_30b_3_1_0.......ok
 t_most_fixed_res.......ok
 t_most_30b_1_1_0_uc....ok
 t_most_mpopf...........ok
-t_most_uc..............ok (272 of 340 skipped)
+t_most_uc..............ok (276 of 345 skipped)
 t_most_suc.............ok (148 of 185 skipped)
 t_most_tlmp............ok
 t_most_w_ds............ok
-All tests successful (359 passed, 420 skipped of 779)
-Elapsed time 39.45 seconds.
+All tests successful (360 passed, 424 skipped of 784)
+Elapsed time 16.20 seconds.
 \end{Code}
 
 If, for some reason, you prefer to install your own copy of MOST directly
@@ -473,12 +473,12 @@ mdo = most(mdi, mpopt);
 
 \begin{Code}
 =============================================================================
-          MATPOWER Optimal Scheduling Tool  --  MOST Version 1.2
+          MATPOWER Optimal Scheduling Tool  --  MOST Version 1.3
           A multiperiod stochastic secure OPF with unit commitment
                        -----  Built on MATPOWER  -----
   by Carlos E. Murillo-Sanchez, Universidad Nacional de Colombia--Manizales
                   and Ray D. Zimmerman, Cornell University
-       (c) 2012-2022 Power Systems Engineering Research Center (PSERC)       
+       (c) 2012-2024 Power Systems Engineering Research Center (PSERC)       
 =============================================================================
 - Building indexing structures.
 - Building expected storage-tracking mechanism.
@@ -498,9 +498,9 @@ mdo = most(mdi, mpopt);
 
 ============================================================================
 
-Gurobi Version 10.0.0 -- automatic MILP solver
+Gurobi Version 11.0.1 -- automatic MILP solver
 --- Integer stage complete, starting price computation stage ---
-Gurobi Version 10.0.0 -- automatic LP solver
+Gurobi Version 11.0.1 -- automatic LP solver
 
 ============================================================================
 - MOST: MILP solved successfully.
@@ -3429,28 +3429,28 @@ Previously it should have been $\gamma^{t+1}$, as it was in the code.
 \end{itemize}
 
 
-\subsection{Version 1.2.x -- released xxx xx, 202x}
-\label{app:v12x}
+\subsection{Version 1.3 -- released May 10, 2024}
+\label{app:v13}
 
-The \href{https://matpower.org/docs/MOST-manual-1.2.x.pdf}{\most{} 1.2.x User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MOST-manual-1.2.pdf}}
+The \href{https://matpower.org/docs/MOST-manual-1.3.pdf}{\most{} 1.3 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MOST-manual-1.3.pdf}}
 
 \subsubsection*{New Features}
 \begin{itemize}
-\item Add Sphinx-based Reference documentation.
+\item Add Sphinx-based Reference documentation.\footnote{\url{https://matpower.org/doc/most/}}
 \end{itemize}
 
 \subsubsection*{Changes}
 \begin{itemize}
 \item Reduce memory requirements for long horizon cases with storage by forming/storing transposes of matrices for storage constraints.\\
-\emph{Requires \mpomlink{} version~$>$~4.1.}
+\emph{Requires \mpomlink{}~4.2 or later.}
 \item Speed up building unit commitment (min up/down time) constraints. Improvement can be quite substantial on large problems.
 
 \end{itemize}
 
 \subsubsection*{Bugs Fixed}
 \begin{itemize}
-\item Fix issue \#39 in which the value of \code{mdi.Delta\_T}, the number of hours represented by each period, was not being accounted for in most of the terms in the objective function. \emph{Thanks to Stefano Nicolin.}
 \item Fix issue \#37 which caused a fatal error in storage input checks with multiple storage units under some circumstances. \emph{Thanks to Keir Steegstra.}
+\item Fix issue \#39 in which the value of \code{mdi.Delta\_T}, the number of hours represented by each period, was not being accounted for in most of the terms in the objective function. \emph{Thanks to Stefano Nicolin.}
 \end{itemize}
 
 \subsubsection*{Incompatible Changes}
@@ -3500,7 +3500,7 @@ R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez (2022). \matpower{}\\~
 \doi{10.5281/zenodo.3236535}
 
 \bibitem{matpower_manual}
-R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez. \matpower{} User's Manual. 2022.\\~
+R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez. \matpower{} User's Manual. 2024.\\~
 [Online]. Available: \url{https://matpower.org/docs/MATPOWER-manual.pdf}\\
 \doi{10.5281/zenodo.3236519}
 
@@ -3522,7 +3522,7 @@ General Meeting, 2009 IEEE}, pp. 1--7, July 26--30 2009.
 The BSD 3-Clause License. [Online]. Available: \url{https://opensource.org/licenses/BSD-3-Clause}.
 
 \bibitem{most_manual}
-R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez. \mostname{} (\most{}) User's Manual. 2022. [Online]. Available: \url{https://matpower.org/docs/MOST-manual.pdf}\\
+R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez. \mostname{} (\most{}) User's Manual. 2024. [Online]. Available: \url{https://matpower.org/docs/MOST-manual.pdf}\\
 \doi{10.5281/zenodo.3236531}
 
 \bibitem{superopf2008}

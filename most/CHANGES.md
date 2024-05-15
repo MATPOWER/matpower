@@ -2,8 +2,11 @@ Change history for MOST
 =======================
 
 
-since 1.2
----------
+Version 1.3 - *May 10, 2024*
+----------------------------
+
+#### 5/10/24
+  - Release 1.3.
 
 #### 4/4/24
   - Tweak tests to avoid warnings and presolve bug with new HiGHS-based
