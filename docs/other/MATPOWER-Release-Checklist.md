@@ -59,13 +59,6 @@ Pre-release
     - `\mpver` (update `\mptestver`, `\mpomver`, `\mipsver`, `\mostver`, `\sdpopfver` and `\syngridver` too)
     - do search for all possible old versions 6.1-dev, 7.0b1
   - Copyright line in `LICENSE`.
-- Update Docker files
-  - follow instructions in `docker/Docker-Build-Notes.md` for new Octave
-    images, if applicable
-  - update value listed for _current release_ of MATPOWER in **Versions** section
-    of `docker/MATPOWER-Docker.md`, and add new rows to table.
-  - add lines in `build_matpower_images.sh` for new MATPOWER version
-  - build and test a new "local" image with MATPOWER Extras installed
 - In `docs/src/MATPOWER-manual/MATPOWER-manual.tex`
   - update output of:
     - `test_matpower` (Section 2.3, Step 3), use `test_matpower_no_options`
@@ -79,7 +72,7 @@ Pre-release
   - Make updates for current version specific citations:
     - version number (3 places)
     - year
-    - latest version DOI, current is: 10.5281/zenodo.4074122
+    - latest version DOI, current is: 10.5281/zenodo.11212313
       - (update here each time)
     ... in the following places ...
     - CITATION file
@@ -97,7 +90,7 @@ Pre-release
   - Make updates for current version specific citations:
     - version number (2 places)
     - year
-    - latest version DOI, current is: 10.5281/zenodo.4074135
+    - latest version DOI, current is: 10.5281/zenodo.11212330
       - (update here each time)
     ... in the following places ...
     - CITATION file
@@ -111,34 +104,40 @@ Pre-release
         - e.g. MIPS, MOST, SynGrid, MP-Sim, sopf1 manuals, TN2, TN3, TN4
 - Copy latest `MIPS-manual.aux`, `MP-Opt-Model-manual.aux`, `MOST-manual.aux`
   to `docs/src/MATPOWER-manual` for `\externaldocument`
-- Create `MATPOWER-manual.pdf` from `MATPOWER-manual.tex`
-  - move to `docs`
-  - make copy named `MATPOWER-manual-x.x.pdf`
-    - copy to `docs` directory of `matpower.org-static` git repo
-      - update `MATPOWER-manual.pdf` symlink on `https://matpower.org/docs/` to point
-        to new `MATPOWER-manual-x.x.pdf` (replaces existing current version)
-        - `cd dev/projects/matpower.org-static/docs`
-        - `rm MATPOWER-manual.pdf`
-        - `ln -s ./MATPOWER-manual-x.x.pdf MATPOWER-manual.pdf`
-      - commit & push, then pull to matpower.org
-    - upload `MATPOWER-manual-x.x.pdf` to Zenodo and finish entry for "New Version"
-      - update:
-        - Publication date
-        - Version
-        - Identifiers:
-          - version number in "identical to"
-          - version specific DOI for "is documented by this upload"
-  - add link on `https://matpower.org/doc/manuals/` page
+- Create `MATPOWER-manual.pdf` from `MATPOWER-manual.tex` and move to `docs`.
+- Update Docker files
+  - follow instructions in `docker/Docker-Build-Notes.md` for new Octave
+    images, if applicable
+  - update value listed for _current release_ of MATPOWER in **Versions** section
+    of `docker/MATPOWER-Docker.md`, and add new rows to table.
+  - add lines in `build_matpower_images.sh` for new MATPOWER version
+  - build and test a new "local" image with MATPOWER Extras installed
 - Add release notice with date and version in `CHANGES.md`.
 - Commit all changes to `prep-for-release`.
 - Push `prep-for-release` to GitHub.
 - Make sure CI checks are ok.
+- Make copy of `docs/MATPOWER-manual.pdf` named `MATPOWER-manual-x.x.pdf`
+  - copy to `docs` directory of `matpower.org-static` git repo
+    - update `MATPOWER-manual.pdf` symlink on `https://matpower.org/docs/` to point
+      to new `MATPOWER-manual-x.x.pdf` (replaces existing current version)
+      - `cd dev/projects/matpower.org-static/docs`
+      - `rm MATPOWER-manual.pdf`
+      - `ln -s ./MATPOWER-manual-x.x.pdf MATPOWER-manual.pdf`
+    - commit & push, then pull to matpower.org
+  - upload `MATPOWER-manual-x.x.pdf` to Zenodo and finish entry for "New Version"
+    - update:
+      - Publication date
+      - Version
+      - Identifiers:
+        - version number in "identical to"
+        - version specific DOI for "Documents"
+  - add link on `https://matpower.org/doc/manuals/` page
 
 
 Release
 -------
 - Merge latest `prep-for-release` into `master`.
-- Tag with version number, e.g. `7.0b1`.
+- Tag with version number, e.g. `8.0`.
 - Push `master` to GitHub.
 - create archive with MATPOWER-Extras
   - `cd matpower/untracked/`
@@ -190,6 +189,10 @@ Release
     - use "Releases" category
   - update download counter file at rdzman@matpower.org:/home4/rdzman/matpower.org-downloads
     - add a column to the header line at the top of matpower-download-log.txt
+  - build latest MATPOWER Sphinx documentation
+    - commit to matpower-docs
+    - push
+    - pull to matpower.org
 - MATLAB Central File Exchange
     - https://www.mathworks.com/matlabcentral/fileexchange/72085-matpower/
     (this is currently just a link)

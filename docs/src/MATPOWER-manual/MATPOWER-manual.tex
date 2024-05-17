@@ -140,7 +140,7 @@
 
 %\hyphenation{matpower}
 
-\newcommand{\mpver}[0]{8.0b1}
+\newcommand{\mpver}[0]{8.0}
 %\newcommand{\matlab}[0]{{Matlab}}
 %\newcommand{\matlab}[0]{{\sc Matlab}\textsuperscript{\tiny \textregistered}}
 \newcommand{\matlab}[0]{{\sc Matlab}}
@@ -162,18 +162,18 @@
 \newcommand{\mptest}[0]{{MP-Test}}
 \newcommand{\mptesturl}[0]{https://github.com/MATPOWER/mptest}
 \newcommand{\mptestlink}[0]{\href{\mptesturl}{\mptest{}}}
-\newcommand{\mptestver}[0]{8.0b1}
+\newcommand{\mptestver}[0]{8.0}
 \newcommand{\mips}[0]{{MIPS}}
 \newcommand{\mipsurl}[0]{https://github.com/MATPOWER/mips}
 \newcommand{\mipslink}[0]{\href{\mipsurl}{\mips{}}}
 \newcommand{\mipsname}[0]{{{\bf M}{\sc atpower} \textbf{I}nterior \textbf{P}oint \textbf{S}olver}}
-\newcommand{\mipsver}[0]{1.5}
+\newcommand{\mipsver}[0]{1.5.1}
 \newcommand{\mpom}[0]{\mbox{MP-Opt-Model}}
 \newcommand{\mpomurl}[0]{https://github.com/MATPOWER/mp-opt-model}
 \newcommand{\mpomlink}[0]{\href{\mpomurl}{\mpom{}}}
 \newcommand{\mpomname}[0]{\mpom{}}
 % \newcommand{\mpomname}[0]{{{\bf M}{\sc at}{\bf P}{\sc ower} \textbf{Opt}imization \textbf{Model}}}
-\newcommand{\mpomver}[0]{4.1}
+\newcommand{\mpomver}[0]{4.2}
 \newcommand{\mpcore}{{MP-Core}}
 \newcommand{\mpe}{{MP-Element}}
 \newcommand{\mpeurl}[0]{https://github.com/MATPOWER/mp-element}
@@ -182,7 +182,7 @@
 \newcommand{\mostname}[0]{{{\bf M}{\sc atpower} \textbf{O}ptimal \textbf{S}cheduling \textbf{T}ool}}
 \newcommand{\mosturl}[0]{https://github.com/MATPOWER/most}
 \newcommand{\mostlink}[0]{\href{\mosturl}{\most{}}}
-\newcommand{\mostver}[0]{1.2}
+\newcommand{\mostver}[0]{1.3}
 \newcommand{\md}[0]{{\most{} Data struct}}
 \newcommand{\east}[0]{E4ST}
 \newcommand{\eastver}[0]{1.0b2}
@@ -233,9 +233,9 @@
 \newcommand{\results}[0]{\code{results}}
 \newcommand{\mumurl}[0]{https://matpower.org/docs/MATPOWER-manual-\mpver.pdf}
 \newcommand{\mum}[0]{\href{\mumurl}{\matpower{} User's Manual}}
-\newcommand{\mdmurl}[0]{https://matpower.org/documentation/dev-manual}
+\newcommand{\mdmurl}[0]{https://matpower.org/doc/dev-manual}
 \newcommand{\mdm}[0]{\href{\mdmurl}{\matpower{} Developer's Manual}}
-\newcommand{\mrmurl}[0]{https://matpower.org/documentation/ref-manual}
+\newcommand{\mrmurl}[0]{https://matpower.org/doc/ref-manual}
 \newcommand{\mrm}[0]{\href{\mrmurl}{\matpower{} Reference Manual}}
 \newcommand{\mipsmanurl}[0]{https://matpower.org/docs/MIPS-manual-\mipsver.pdf}
 \newcommand{\mpommanurl}[0]{https://matpower.org/docs/MP-Opt-Model-manual-\mpomver.pdf}
@@ -289,7 +289,7 @@
 %\title{\hl{--- DRAFT  ---}\\\hl{\em do not distribute}\\~\\\matpower{} \mpver{}\\User's Manual}
 \title{User's Manual}
 \author{Ray~D.~Zimmerman \and Carlos~E.~Murillo-S\'anchez}
-\date{December 22, 2022} % comment this line to display the current date
+\date{May 17, 2024} % comment this line to display the current date
 %\date{December 14, 2011\thanks{Second revision. First revision was December 13, 2011}} % comment this line to display the current date
 
 %%% BEGIN DOCUMENT
@@ -313,7 +313,7 @@
             {\large \@date \par}%
 \vfill
 {\scriptsize
-\copyright~2010--2022~\PSERC\\
+\copyright~2010--2024~\PSERC\\
 All Rights Reserved}
         \end{center}
     \end{titlepage}
@@ -367,7 +367,7 @@ Beginning with version 5.1, the code in \matpower{} is distributed under the 3-c
 ~\cite{bsd}. The full text of the license can be found in the \code{LICENSE} file at the top level of the distribution or at \url{https://matpower.org/license/} and reads as follows.
 
 \begin{Notice}
-Copyright (c) 1996-2022, Power Systems Engineering Research Center
+Copyright (c) 1996-2024, Power Systems Engineering Research Center
 (PSERC) and individual contributors (see AUTHORS file for details).
 All rights reserved.
 
@@ -445,13 +445,13 @@ corresponding case files.
 
 For the sake of reproducibility of research results, it is best to cite
 the specific version of the software used, with the version-specfic DOI.
-For example, for version 7.1 of \matpower{}:
+For example, for version 8.0 of \matpower{}:
 
 \begin{quote}
 \footnotesize
-R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez (2020). \matpower{} (Version 7.1)\\~
+R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez (2024). \matpower{} (Version 8.0)\\~
 [Software]. Available: \url{https://matpower.org}\\
-\doi{10.5281/zenodo.4074135}
+\doi{10.5281/zenodo.11212330}
 \end{quote}
 
 To cite the \matpower{} software generally, without reference to a specific
@@ -473,13 +473,13 @@ found via the general DOI at \url{https://doi.org/10.5281/zenodo.3236535}.
 The \matpower{}, \mips{} and \most{} User's Manuals should also be cited
 explicitly in work that refers to or is derived from their content.\footnote{For information on citing the \mips{} or \most{} User's Manuals, please see the \code{mips/CITATION} and \code{most/CITATION} files, respectively.} As
 with the software, the citation and DOI can be version-specific or
-general, as appropriate. For version 7.1 of the \mum{}, use:
+general, as appropriate. For version 8.0 of the \mum{}, use:
 
 \begin{quote}
 \footnotesize
-R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez. \matpower{} User's Manual, Version 7.1. 2020.
-[Online]. Available: \url{https://matpower.org/docs/MATPOWER-manual-7.1.pdf}\\
-\doi{10.5281/zenodo.4074122}
+R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez. \matpower{} User's Manual, Version 8.0. 2024.
+[Online]. Available: \url{https://matpower.org/docs/MATPOWER-manual-8.0.pdf}\\
+\doi{10.5281/zenodo.11212313}
 \end{quote}
 
 For a version non-specific citation, use the following citation and DOI,
@@ -683,17 +683,17 @@ t_nested_struct_copy......ok
 t_nleqs_master............ok (30 of 150 skipped)
 t_pnes_master.............ok
 t_qps_master..............ok (324 of 432 skipped)
-t_miqps_master............ok (288 of 288 skipped)
+t_miqps_master............ok (318 of 318 skipped)
 t_nlps_master.............ok (378 of 540 skipped)
 t_opt_model...............ok
 t_om_solve_leqs...........ok
-t_om_solve_nleqs..........ok (36 of 194 skipped)
+t_om_solve_nleqs..........ok (36 of 195 skipped)
 t_om_solve_pne............ok
-t_om_solve_qps............ok (270 of 387 skipped)
-t_om_solve_miqps..........ok (118 of 118 skipped)
-t_om_solve_nlps...........ok (329 of 504 skipped)
+t_om_solve_qps............ok (270 of 388 skipped)
+t_om_solve_miqps..........ok (131 of 131 skipped)
+t_om_solve_nlps...........ok (329 of 505 skipped)
 t_qps_matpower............ok (288 of 396 skipped)
-t_miqps_matpower..........ok (288 of 288 skipped)
+t_miqps_matpower..........ok (276 of 276 skipped)
 t_feval_w_path............ok
 t_mpoption................ok
 t_loadcase................ok
@@ -705,7 +705,7 @@ t_totcost.................ok
 t_modcost.................ok
 t_hasPQcap................ok
 t_mp_mapped_array.........ok
-t_mp_table................ok
+t_mp_table................ok (17 of 1044 skipped)
 t_mp_data_model...........ok
 t_dmc_element.............ok
 t_mp_dm_converter_mpc2....ok
@@ -719,9 +719,11 @@ t_node_test...............ok
 \emph{continued from previous page}
 \begin{Code}
 t_run_mp..................ok
+t_run_opf_default.........ok
 t_run_mp_3p...............ok
 t_pretty_print............ok
 t_mpxt_reserves...........ok
+t_mpxt_legacy_dcline......ok
 t_pf_ac...................ok
 t_pf_dc...................ok
 t_pf_radial...............ok
@@ -750,8 +752,8 @@ t_psse....................ok
 t_off2case................ok
 t_auction_mips............ok
 t_runmarket...............ok
-All tests successful (13079 passed, 2800 skipped of 15879)
-Elapsed time 99.93 seconds.
+All tests successful (14006 passed, 2848 skipped of 16854)
+Elapsed time 60.24 seconds.
 \end{Code}
 \end{enumerate}
 
@@ -839,6 +841,18 @@ for more information on \matpower{}'s options.
 
 There are a number of sources of documentation for \matpower{}.
 
+\subsubsection{\matpower{} Documentation Website}
+
+The new \href{https://matpower.org/doc/}{\matpower{} Documentation site}~\cite{mp_docs} is the home for all \matpower{} documentation going forward. Besides the legacy User's Manuals listed in the next section, it also contains HTML documention, namely:
+\begin{itemize}
+\item \mdm{}~\cite{dev_manual} \emph{(also available as PDF)}
+\item \mrm{}~\cite{ref_manual} \emph{(also available as PDF)}
+\item manuals and reference documentation for \mptestlink{}, \mipslink{}, \mpomlink{}, and \mostlink{}
+\item How-To Guides
+\end{itemize}
+
+As new documentation is written and legacy manuals are rewritten, they will be found here in HTML and PDF formats. The site is generated by \href{https://www.sphinx-doc.org/}{Sphinx}~\cite{sphinx} and the content is written in reStructuredText (reST) format.
+
 \subsubsection{User's Manuals}
 
 The User's Manuals are available as PDF files in the \matpower{} distribution as well as online.
@@ -848,7 +862,7 @@ The User's Manuals are available as PDF files in the \matpower{} distribution as
 \item \mostman{}~\cite{most_manual} -- describes the \mostname{} (\most{}) and its problem formulation, features, data formats and options.
 \item \mpomman{}~\cite{mpom_manual} -- describes \mpomname{}, the mathematical modeling framework used by \matpower{}, along with its solver interfaces and options.
 \item \mipsman{}~\cite{mips_manual} -- describes the \mipsname{} (\mips{}), \matpower{}'s default nonlinear optimization (e.g. AC OPF) solver with its formulation, algorithm and options.
-\item \href{https://github.com/MATPOWER/mptest/blob/release/README.md}{MP-Test README} -- describes the testing framework used for \matpower{}'s automated test suite.
+\item \href{https://matpower.org/doc/mptest/}{MP-Test User's Manual} -- describes the testing framework used for \matpower{}'s automated test suite.
 \end{itemize}
 They can be found in the \matpower{} distribution, respectively, at:
 \begin{itemize}
@@ -866,26 +880,16 @@ The latest versions are also available online, respectively, at:
 \item \url{\currentmostmanurl}
 \item \url{\currentmpommanurl}
 \item \url{\currentmipsmanurl}
-\item \url{https://github.com/MATPOWER/mptest/blob/release/README.md}
+\item \url{https://matpower.org/doc/mptest/}
 \end{itemize}
 Current and past versions of the manuals are also available online at:
 \begin{itemize}
 \item \url{https://matpower.org/doc/manuals}
 \end{itemize}
 
-\subsubsection{\matpower{} Documentation Website}
-
-The new \href{https://matpower.org/documentation/}{\matpower{} Documentation site}~\cite{mp_docs} is intended to be the home for all future MATPOWER documentation. It is very much a work-in-progress and currently contains the new:
-\begin{itemize}
-\item \mdm{}~\cite{dev_manual}
-\item \mrm{}~\cite{ref_manual}
-\end{itemize}
-
-As new documentation is written and legacy manuals are rewritten, they will be found here in HTML and PDF formats. The site is generated by \href{https://www.sphinx-doc.org/}{Sphinx}~\cite{sphinx} and the content is written in reStructuredText (reST) format.
-
 \subsubsection{\matpower{} Online Function Reference}
 
-The \href{https://matpower.org/docs/ref}{\matpower{} Online Function Reference} allows you to view not only the help text, but also the code itself for each \matpower{} function directly from a web browser. It is available online at: \url{https://matpower.org/docs/ref}
+The \href{https://matpower.org/docs/ref}{\matpower{} Online Function Reference}, available for older versions of \matpower{}, allows you to view not only the help text, but also the code itself for each \matpower{} function directly from a web browser. It is available online at: \url{https://matpower.org/docs/ref}
 
 \subsubsection{Built-in Help}
 
@@ -896,7 +900,9 @@ As an example, the help for \code{runopf} looks like:
 % UPDATE BEFORE RELEASE
 \begin{Code}
 >> help runopf
- RUNOPF  Runs an optimal power flow.
+  runopf - Runs an optimal power flow.
+  ::
+ 
     [RESULTS, SUCCESS] = RUNOPF(CASEDATA, MPOPT, FNAME, SOLVEDCASE)
  
     Runs an optimal power flow (AC OPF by default), optionally returning
@@ -905,10 +911,10 @@ As an example, the help for \code{runopf} looks like:
     Inputs (all are optional):
         CASEDATA : either a MATPOWER case struct or a string containing
             the name of the file with the case data (default is 'case9')
-            (see also CASEFORMAT and LOADCASE)
+            (see CASEFORMAT and LOADCASE)
         MPOPT : MATPOWER options struct to override default options
             can be used to specify the solution algorithm, output options
-            termination tolerances, and more (see also MPOPTION).
+            termination tolerances, and more (see MPOPTION).
         FNAME : name of a file to which the pretty-printed output will
             be appended
         SOLVEDCASE : name of file to which the solved case will be saved
@@ -942,7 +948,7 @@ As an example, the help for \code{runopf} looks like:
     Example:
         results = runopf('case30');
  
-    See also RUNDCOPF, RUNUOPF.
+  See also rundcopf, runuopf.
 \end{Code}
 
 
@@ -2303,13 +2309,13 @@ results = runcpf(mpcb, mpct, mpopt);
 \end{Code}
 This should result in something like the following output to the screen.
 \begin{Code}
-MATPOWER Version 8.0b1, 22-Dec-2022 -- AC Continuation Power Flow
+MATPOWER Version 8.0, 17-May-2024 -- AC Continuation Power Flow
 step   0  :                      lambda =  0.000,  4 Newton steps
 
-MATPOWER Version 8.0b1, 22-Dec-2022
+MATPOWER Version 8.0, 17-May-2024
 Continuation Power Flow -- AC-polar-power formulation
 
-MP-Opt-Model Version 4.1, 13-Dec-2022 -- Predictor/Corrector Continuation Method
+MP-Opt-Model Version 4.2, 10-May-2024 -- Predictor/Corrector Continuation Method
 step   0  :                          lambda =  0.000,  0 corrector steps
 step   1  : PAL stepsize = 0.2       lambda =  0.181   2 corrector steps
 step   2  : PAL stepsize = 0.2       lambda =  0.359   2 corrector steps
@@ -4535,11 +4541,11 @@ The \code{feval\_w\_path} function is identical to \matlab{}'s own \code{feval},
 
 \subsubsection{\tt have\_fcn}
 
-Now deprecated, but included as part of \mpomlink{}~\cite{mpom} (see \mpompath{}). Instead, please use \code{have\_feature}, a modular, extensible replacement for \code{have\_fcn} that is now included as part of \mptestlink{} (see \mptestpath{}) and described in the \mptest{} \href{\mptesturl/blob/master/README.md}{\code{README}} file.
+Now deprecated, but included as part of \mpomlink{}~\cite{mpom_manual} (see \mpompath{}). Instead, please use \code{have\_feature}, a modular, extensible replacement for \code{have\_fcn} that is now included as part of \mptestlink{} (see \mptestpath{}) and described in the \mptest{} \href{\mptesturl/blob/master/README.md}{\code{README}} file.
 
 \subsubsection{\tt mpopt2qpopt}
 
-Now included as part of \mpomlink{}~\cite{mpom} (see \mpompath{}).
+Now included as part of \mpomlink{}~\cite{mpom_manual} (see \mpompath{}).
 
 \subsubsection{\tt mpver}
 \begin{Code}
@@ -4552,7 +4558,7 @@ The \code{mpver} function returns the current \matpower{} version number. With t
 
 \subsubsection{\tt nested\_struct\_copy}
 
-Now included as part of \mpomlink{}~\cite{mpom} (see \mpompath{}).
+Now included as part of \mpomlink{}~\cite{mpom_manual} (see \mpompath{}).
 
 
 \subsection{Private Feature Detection Functions}
@@ -8483,10 +8489,10 @@ The \href{https://matpower.org/docs/MATPOWER-manual-7.1.pdf}{\matpower{} 7.1 Use
 
 
 \clearpage
-\subsection{Version 8.0b2 -- released ??? ??, 202?}
+\subsection{Version 8.0 -- released May 17, 2024}
 \label{app:v80}
 
-The \href{https://matpower.org/docs/MATPOWER-manual-8.0b2.pdf}{\matpower{} 8.0b2 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MATPOWER-manual-8.0b2.pdf}}
+The \href{https://matpower.org/docs/MATPOWER-manual-8.0.pdf}{\matpower{} 8.0 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MATPOWER-manual-8.0.pdf}}
 
 \subsubsection*{Major Redesign}
 
@@ -8519,9 +8525,9 @@ Prototype examples of PF, CPF, and OPF, built using the new \matpower{} Extensio
 
 \subsubsection*{New Features}
 \begin{itemize}
-\item \mptestlink{} 8.0b1 includes new functions for testing string values and text file contents. For details, see the \href{\mptesturl/blob/master/docs/relnotes/MP-Test-Release-Notes-8.0.md}{\mptest{} 8.0b1 release notes}.
-\item \mipslink{} 1.5 adds to \code{mplinsolve()} the ability to save an LU factorization and reuse it to solve for additional right-hand sides. For details, see the \href{\mipsurl/blob/master/docs/relnotes/MIPS-Release-Notes-1.5.md}{\mips{} 1.5 release notes}.\footnote{See Appendix~\ref{MIPSMAN-app:release_history} in the \mipsman{}.}
-\item \mpomlink{} 4.1 adds support for:
+\item \mptestlink{} 8.0 includes new functions for testing string values and text file contents. For details, see the \href{\mptesturl/blob/master/docs/relnotes/MP-Test-Release-Notes-8.0.md}{\mptest{} 8.0 release notes}.
+\item \mipslink{} 1.5.1 adds to \code{mplinsolve()} the ability to save an LU factorization and reuse it to solve for additional right-hand sides. For details, see the release notes for \mips{} \href{\mipsurl/blob/master/docs/relnotes/MIPS-Release-Notes-1.5.md}{1.5} and \href{\mipsurl/blob/master/docs/relnotes/MIPS-Release-Notes-1.5.1.md}{1.5.1}.\footnote{See Appendix~\ref{MIPSMAN-app:release_history} in the \mipsman{}.}
+\item \mpomlink{} 4.2 adds support for:
   \begin{itemize}
     \item New class of problems -- parameterized nonlinear equations (PNE), providing generalized continuation power flow (CPF) capabilities to \mpcore{}.
       \begin{itemize}
@@ -8530,10 +8536,12 @@ Prototype examples of PF, CPF, and OPF, built using the new \matpower{} Extensio
       \item User-defined event functions and callback functions.
       \item Warm-start capabilities.
       \end{itemize}
-    \item Artelys Knitro 13.1 and more.
+    \item Memory savings via optional use of transpose of linear constraint matrix.
+    \item Display of solved model solution.
+    \item \matlab{} Optimization Toolbox 9.5 and later (\matlab{} R2023a and later), Artelys Knitro 13.1 and more.
   \end{itemize}
- For details, see the release notes for \mpom{}  \href{\mpomurl/blob/master/docs/relnotes/MP-Opt-Model-Release-Notes-4.0.md}{4.0} and \href{\mpomurl/blob/master/docs/relnotes/MP-Opt-Model-Release-Notes-4.1.md}{4.1}.\footnote{See Appendix~\ref{MPOMMAN-app:release_history} in the \mpomman{}.}
-\item \mostlink{} 1.2 adds calculation of expected temporal locational marginal price (TLMP), includes transitions into first period in ramping reserves, and more. For details, see the \href{\mosturl/blob/master/docs/relnotes/MOST-Release-Notes-1.2.md}{\most{} 1.2 release notes}.\footnote{See Appendix~\ref{MOSTMAN-app:release_history} in the \mostman{}.}
+ For details, see the release notes for \mpom{}  \href{\mpomurl/blob/master/docs/relnotes/MP-Opt-Model-Release-Notes-4.0.md}{4.0}, \href{\mpomurl/blob/master/docs/relnotes/MP-Opt-Model-Release-Notes-4.1.md}{4.1}, and \href{\mpomurl/blob/master/docs/relnotes/MP-Opt-Model-Release-Notes-4.2.md}{4.2}.\footnote{See Appendix~\ref{MPOMMAN-app:release_history} in the \mpomman{}.}
+\item \mostlink{} 1.3 improves speed and memory usage on certain problems, and adds calculation of expected temporal locational marginal price (TLMP), includes transitions into first period in ramping reserves, and more. For details, see the release notes for \most{} \href{\mosturl/blob/master/docs/relnotes/MOST-Release-Notes-1.2.md}{1.2} and \href{\mosturl/blob/master/docs/relnotes/MOST-Release-Notes-1.3.md}{1.3}.\footnote{See Appendix~\ref{MOSTMAN-app:release_history} in the \mostman{}.}
 \item SimulinkMATPOWER,\footnote{See \url{https://github.com/MATPOWER/mx-simulink_matpower}.} included in \matpowerextraslink{}, enables the use of \matpower{} from \matlab{}'s Simulink\textsuperscript{\tiny \textregistered} environment.\footnote{See \url{https://www.mathworks.com/products/simulink.html}.} \emph{Thanks to Lukas Ortmann.}
 \item New options:
 \begin{itemize}
@@ -8548,12 +8556,13 @@ Prototype examples of PF, CPF, and OPF, built using the new \matpower{} Extensio
         \item \code{run\_pf} -- Wrapper around \code{run\_mp} for running PF.
         \item \code{run\_cpf} -- Wrapper around \code{run\_mp} for running CPF.
         \item \code{run\_opf} -- Wrapper around \code{run\_mp} for running OPF.
-        \item MP-Opt-Model 4.1
+        \item MP-Opt-Model 4.2
             \begin{itemize}
                 \item \code{pnes\_master()} -- unified interface for parameterized nonlinear equation (PNE) solvers
-                \item \code{mpopt2pneopt()} -- creates or modifies an options struct for \code{pnes\_master()} from a MATPOWER options struct
+                \item \code{mpopt2pneopt()} -- creates or modifies an options struct for \code{pnes\_master()} from a \matpower{} options struct
+                \item other functions used to implement PNE functionality
             \end{itemize}
-        \item MP-Test 8.0b1
+        \item MP-Test 8.0
             \begin{itemize}
                 \item \code{t\_str\_match()} -- test that a string matches expected value
                 \item \code{t\_file\_match()} -- test that the content of a text files matches that of another file
@@ -8583,19 +8592,19 @@ Prototype examples of PF, CPF, and OPF, built using the new \matpower{} Extensio
 
 \subsubsection*{New Documentation}
 \begin{itemize}
+    \item \href{https://matpower.org/doc/}{\matpower{} Documentation site}~\cite{mp_docs} -- new documentation website with \matpower{} manuals, reference docs, and how-to guides
     \item \mdm{}~\cite{dev_manual} -- describes the architecture of the new \mpcore{} and \matpower{} flexible framework
-    \item \mrm{}~\cite{ref_manual} -- reference for the functions and classes in the new \mpcore{} and \matpower{} flexible framework
+    \item \mrm{}~\cite{ref_manual} -- reference for \matpower{} functions and classes, espcially those in the new \mpcore{} and \matpower{} flexible framework
     \item \TNfive{} ``\mpe{}: A Unified \matpower{} Element Model, with Corresponding Functions and Derivatives''~\cite{zimmerman2020}
 \end{itemize}
 
 \subsubsection*{Other Improvements}
 \begin{itemize}
 \item \mpom{} object is now used for power flow as well as OPF and is added as \code{om} field to power flow \code{results} struct.
-\item New MATPOWER Docker image (named \href{https://hub.docker.com/r/matpower/matpower}{\code{matpower/matpower}}) is based on the official GNU Octave image (\href{https://hub.docker.com/r/gnuoctave/octave}{\code{gnuoctave/octave}}) and is available for multiple \matpower{} and Octave versions.
+\item New \matpower{} Docker image (named \href{https://hub.docker.com/r/matpower/matpower}{\code{matpower/matpower}}) is based on the official GNU Octave image (\href{https://hub.docker.com/r/gnuoctave/octave}{\code{gnuoctave/octave}}) and is available for multiple \matpower{} and Octave versions.
 \item Each power flow is initialized with the solved voltages of the previous one when changing PV buses to PQ during Q limit enforcement. \emph{Thanks to Tostado-Véliz, Kamel, Jurado.}
 \item The \code{makePTDF()} function can now optionally use a different slack distribution for each bus by specifying the \code{slack} input as a matrix. \emph{Thanks to Jon Martinez Corral.}
 \item Automatically reduce order of polynomial generator costs with higher order coefficients equal to zero. Allows the DC OPF to solve cases, e.g. with cubic costs where the 3rd order term is 0, such as cases exported by PowerWorld. \emph{Thanks to Rajesh Mookerjee.}
-\item Update for compatibility with \matlab{} R2023a (\ot{} 9.5) which removed \code{x0} as a valid input to \code{linprog()}.
 \item New option to \code{makeLODF()} to replace with \code{NaN} any columns corresponding to ``bridge'' branches which, if removed, result in islands. \emph{Thanks to Liangyu Zhang.}
 \end{itemize}
 
@@ -8701,7 +8710,7 @@ R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez, and R.~J. Thomas, ``\matpower{}: Ste
 \doi{10.1109/TPWRS.2010.2051168}
 
 \bibitem{matpower}
-R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez (2022). \matpower{}\\~
+R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez (2024). \matpower{}\\~
 [Software]. Available: \url{https://matpower.org}
 \doi{10.5281/zenodo.3236535}
 
@@ -8729,20 +8738,19 @@ Systems, IEEE Transactions on}, vol.~22, no.~3, pp.~1185--1193, August 2007.
 John~W.~Eaton, David~Bateman, S{\o}ren~Hauberg, Rik~Wehbring (2015). \emph{GNU Octave version 4.0.0 manual: a high-level interactive language for numerical computations.} Available: \url{https://www.gnu.org/software/octave/doc/interpreter/}.
 
 \bibitem{most_manual}
-R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez. \mostname{} (\most{}) User's Manual. 2022. [Online]. Available: \url{https://matpower.org/docs/MOST-manual.pdf}\\
+R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez. \mostname{} (\most{}) User's Manual. 2024. [Online]. Available: \url{\currentmostmanurl}\\
 \doi{10.5281/zenodo.3236531}
 
 \bibitem{mpom_manual}
-R.~D. Zimmerman. \mpomname{} User's Manual. 2022.
-[Online]. Available: \url{https://matpower.org/docs/MP-Opt-Model-manual.pdf}\\
+R.~D. Zimmerman. \mpomname{} User's Manual. 2024. [Online]. Available: \url{\currentmpommanurl}\\
 \doi{10.5281/zenodo.3818002}
 
 \bibitem{mips_manual}
-R.~D. Zimmerman, H. Wang. \mipsname{} (\mips{}) User's Manual. 2022. [Online]. Available: \url{\currentmipsmanurl}
+R.~D. Zimmerman, H. Wang. \mipsname{} (\mips{}) User's Manual. 2024. [Online]. Available: \url{\currentmipsmanurl}
 \doi{10.5281/zenodo.3236506}
 
 \bibitem{mp_docs}
-\matpower Documentation website. [Online]. Available: \url{https://matpower.org/documentation/}.
+\matpower{} Documentation website. [Online]. Available: \url{https://matpower.org/doc/}.
 
 \bibitem{dev_manual}
 R.~D. Zimmerman. \mdm. 2023. [Online]. Available: \url{\mdmurl}.
@@ -8904,10 +8912,6 @@ A.~J.~Lamadrid, S.~Maneevitjit, T.~D.~Mount, C.~E.~Murillo-S{\'a}nchez, R.~J.~Th
 \bibitem{murillo-sanchez2013}
 C.~E. Murillo-S{\'a}nchez, R.~D. Zimmerman, C.~L. Anderson, and R.~J. Thomas, ``A Stochastic, Contingency-Based Security-Constrained Optimal Power Flow for the Procurement of Energy and Distributed Reserve,'' \emph{Decision Support Systems}, Vol.~56, Dec.~2013, pp.~1--10.
 \doi{10.1016/j.dss.2013.04.006}
-
-\bibitem{mpom}
-R.~D. Zimmerman. \mpomname{} User's Manual. 2022. [Online]. Available: \url{\currentmpommanurl}
-\doi{10.5281/zenodo.3818002}
 
 \bibitem{wang2007}
 H.~Wang, \emph{On the Computation and Application of Multi-period Security-constrained Optimal Power Flow for Real-time Electricity Market Operations}, Ph.D. thesis, Electrical and Computer Engineering, Cornell University, May 2007.

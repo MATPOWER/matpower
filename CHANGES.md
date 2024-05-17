@@ -10,8 +10,11 @@ For change history for [MP-Opt-Model][27], see [mp-opt-model/CHANGES.md](mp-opt-
 For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 
 
-since 8.0b1
------------
+Version 8.0 - *May 17, 2024
+---------------------------
+
+#### 5/17/24
+  - Release 8.0.
 
 #### 5/3/24
   - Fix issue in `mp_table_subclass` that caused intermittent
@@ -3415,7 +3418,7 @@ First Public Release – *Jun 25, 1997*
 [31]: https://doi.org/10.5281/zenodo.4110676
 [32]: https://hub.docker.com/r/matpower/matpower
 [33]: https://hub.docker.com/r/gnuoctave/octave
-[34]: https://matpower.org/documentation/dev-manual/
+[34]: https://matpower.org/doc/dev-manual/
 [35]: https://github.com/MATPOWER/mx-simulink_matpower
 [36]: https://github.com/MATPOWER/matpower/issues/210
 [37]: https://github.com/MATPOWER/matpower/issues/223
