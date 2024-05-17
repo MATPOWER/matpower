@@ -10,7 +10,7 @@ previous versions, see Appendix H of the [MATPOWER User's Manual][2].
 
 #### Major Redesign:
 
-MATPOWERÊ8 introduces a major redesign and rewrite of all of the MATPOWER
+MATPOWERÂ 8 introduces a major redesign and rewrite of all of the MATPOWER
 internals in the form of the flexible, all-new MATPOWER object-oriented core
 architecture (*MP-Core*) and new two user-level frameworks to access it.
 *(Previously developed under the name [MP-Element][3] in a separate repository
@@ -30,7 +30,7 @@ legacy `runpf()`, `runcpf()`, `runopf()`, etc. Facilitates use of legacy
 test suite, but is restricted to legacy customization mechanisms.
 
 See the new [MATPOWER Developer's Manual][4] and [*MATPOWER Technical
-NoteÊ5*][5] for details of the new architecture. The User's Manual has
+NoteÂ 5*][5] for details of the new architecture. The User's Manual has
 not yet been updated for the flexible framework.
 
 The features based on MP-Core are available under MATLAB 9.1 or Octave 6.2
@@ -122,7 +122,7 @@ parameters and data formats. _But they do work!_
 
 - [MATPOWER Developer's Manual][4] -- describes the architecture of the
   new MP-Core and MATPOWER flexible framework
-- [*MATPOWER Technical NoteÊ5*][5] "MP-Element: A Unified MATPOWER
+- [*MATPOWER Technical NoteÂ 5*][5] "MP-Element: A Unified MATPOWER
   Element Model, with Corresponding Functions and Derivatives"
 
 
@@ -135,7 +135,7 @@ parameters and data formats. _But they do work!_
   is available for multiple MATPOWER and Octave versions.
 - Each power flow is initialized with the solved voltages of the previous
   one when changing PV buses to PQ during Q limit enforcement.
-  *Thanks to Tostado-VŽliz, Kamel, Jurado.*
+  *Thanks to Tostado-VÃ©liz, Kamel, Jurado.*
 - The `makePTDF()` function can now optionally use a different slack
   distribution for each bus by specifying the `slack` input as a matrix.
   *Thanks to Jon Martinez Corral.*
