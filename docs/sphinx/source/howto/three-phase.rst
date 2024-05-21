@@ -20,8 +20,8 @@ Below is an example run.
 
     >> mpopt = mpoption('verbose', 2);
     >> run_pf('t_case3p_a', mpopt, 'mpx', mp.xt_3p)
-    
-    MATPOWER Version 8.0b1+, 15-Feb-2024
+
+    MATPOWER Version 8.0, 17-May-2024
     Power Flow -- AC-polar-power formulation
     
      it    max residual        max ∆x
@@ -35,7 +35,7 @@ Below is an example run.
     Newton's method converged in 5 iterations.
     PF successful
     
-    PF succeeded in 0.23 seconds (0.22 setup + 0.01 solve)
+    PF succeeded in 0.17 seconds (0.16 setup + 0.01 solve)
     ================================================================================
     |     System Summary                                                           |
     ================================================================================

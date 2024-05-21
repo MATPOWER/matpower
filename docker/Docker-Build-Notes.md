@@ -49,6 +49,12 @@ When a new MATPOWER version _X.Y_ is released ...
   docker tag matpower/matpower:<X.Y> matpower/matpower:<X.Y>c
   ```
 
+- Push to [Docker Hub][4].
+  ```
+  docker push matpower/matpower:<X.Y>
+  docker push matpower/matpower:<X.Y>c
+  docker push matpower/matpower:latest
+  ```
 To build a new MATPOWER image from the latest `master` branch ...
 ```
 docker build --build-arg MP_SRC=github -f docker/Dockerfile -t matpower/matpower:dev-<YYYY-MM-DD> .

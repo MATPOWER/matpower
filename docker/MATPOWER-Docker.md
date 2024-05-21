@@ -105,7 +105,7 @@ GitHub repositories.
 | **_release versions_** |                  |                   |
 | `latest`             | _current release_  | _current release_ |
 | `<X.Y>c`             |       _X.Y_        | _current release_ |
-| `8.0b1`              |        8.0b1       |       7.3.0       |
+| `8.0`                |        8.0         |       9.1.0       |
 | `7.1`                |        7.1         |       5.2.0       |
 | `7.0`                |        7.0         |       5.1.0       |
 | `6.0`                |        6.0         |       4.2.2       |

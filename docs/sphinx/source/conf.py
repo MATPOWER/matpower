@@ -24,7 +24,7 @@ copyright = '1996-2024, Power Systems Engineering Research Center (PSERC)'
 author = 'Ray D. Zimmerman, Carlos E. Murillo-Sánchez, Hongye Wang, et. al.'
 
 # The full version, including alpha/beta/rc tags
-release = '8.0b1'
+release = '8.0'
 
 
 # -- General configuration ---------------------------------------------------
@@ -130,12 +130,12 @@ latex_documents = [
     (   'dev-manual/index',
         'matpower_dev_manual.tex',
         '\\matpower{} \\textrm{Developers\'s Manual}',
-        'Ray D. Zimmerman, et. al.',\
+        'Ray D. Zimmerman',\
         'manual'),
     (   'ref-manual/index',
         'matpower_ref_manual.tex',
         '\\matpower{} \\textrm{Reference Manual}',
-        'Ray D. Zimmerman, et. al.',\
+        'Ray D. Zimmerman',\
         'manual'),
 #     (   'users-manual-legacy/index',
 #         'matpower_users_manual_legacy.tex',
@@ -151,7 +151,7 @@ latex_elements = {
     'printindex': r'\footnotesize\raggedright\printindex',
     'maxlistdepth': '8',
     'extraclassoptions': 'openany',     # chapters can start on any page
-    'maketitle': r'\date{May 7, 2024}\newcommand\sphinxbackoftitlepage{\begin{center}{~\vfill\copyright~1996--2024~\PSERC\\All Rights Reserved}\end{center}}\sphinxmaketitle',
+    'maketitle': r'\date{May 17, 2024}\newcommand\sphinxbackoftitlepage{\begin{center}{~\vfill\copyright~1996--2024~\PSERC\\All Rights Reserved}\end{center}}\sphinxmaketitle',
     'extrapackages': r"""\usepackage{bm}
 \usepackage{upgreek}
 \usepackage{amsfonts}

@@ -49,6 +49,9 @@ Pre-release
     `docs/relnotes/MATPOWER-Release-Notes-#.#.md`.
 - Update version number and date in:
   - `mpver.m`
+  - `docs/sphinx/source/conf.py`
+     - version in `release = 'X.Y'`
+     - date in `latex_elements.maketitle`
   - `lib/Contents.m`
   - `docs/relnotes/MATPOWER-Release-Notes-#.#.md`
   - `docs/relnotes/MATPOWER-Announce-#.#.md`
@@ -96,7 +99,7 @@ Pre-release
     - CITATION file
     - Citing ... section of README.md
     - Citing ... section of User's Manual
-    - Citing ... section of website (https://matpower.org/citing/)
+    - Citing ... section of website (https://matpower.org/citing/), (use code editor)
   - Make updates for non-version specific citations:
     - search everywhere for 10.5281/zenodo.3236535 and update year
       - User's Manual
@@ -141,7 +144,7 @@ Release
 - Push `master` to GitHub.
 - create archive with MATPOWER-Extras
   - `cd matpower/untracked/`
-  - `ship_it.sh 7.0b1`
+  - `ship_it.sh 8.0`
   - (obsolete) copy resulting `matpower#.#.zip` file to
     `https://matpower.org/downloads/#.#/`
 - upload to Zenodo and finish entry for "New Version"
@@ -162,7 +165,7 @@ Release
         [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3236535.svg)](https://doi.org/10.5281/zenodo.3236535)
 
         Version Specific DOI:
-        [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3251119.svg)](https://doi.org/10.5281/zenodo.3251119)
+        [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.11212330.svg)](https://doi.org/10.5281/zenodo.11212330)
 - (obsolete)
   - Add version number to
     - `https://matpower.org/sw-download-config.php`
@@ -209,13 +212,14 @@ Post-release
   - comment out date line so it uses current date
 - new dev version number
 - update web site
-- `cd /usr/local/matpower/dist`
-- `git clone --branch 7.1 git@github.com:MATPOWER/matpower.git matpower-version7_1`
-- `cd /usr/local/matpower/dist/matpower-version7_1`
-- `rm -rf .git`
-- `git clone --branch 7.1 git@github.com:MATPOWER/matpower-extras.git extras`
-- `cd extras`
-- `rm -rf .git`
+- add official release version on local machine
+  - `cd /usr/local/matpower/dist`
+  - `git clone --branch 8.0 git@github.com:MATPOWER/matpower.git matpower-version8_0`
+  - `cd /usr/local/matpower/dist/matpower-version8_0`
+  - `rm -rf .git`
+  - `git clone --branch 8.0 git@github.com:MATPOWER/matpower-extras.git extras`
+  - `cd extras`
+  - `rm -rf .git`
 
 
 To create the Online Function Reference
