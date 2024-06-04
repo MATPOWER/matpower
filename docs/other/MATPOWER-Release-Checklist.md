@@ -180,6 +180,16 @@ Release
         `meta_key` equal to `_filesize`, set the value equal to the file
         size in bytes
         (note that the post_id may be 1 more than the download ID)
+        ```
+        SELECT * FROM `wp_postmeta` WHERE `meta_key` LIKE "_filesize" ORDER BY `post_id`;
+        ```
+        - postid - ver - bytes
+        - 486 - 7.0b1 - 32064873
+        - 1245 - 7.0 - 32844306
+        - 1394 - 7.1 - 33852202
+        - 1524 - 8.0b1 - 40315426
+        - 1632 - 8.0 - 45767223
+    - check the "Redirect to file" option in the right sidebar
     - create new Custom HTML widget for new Download button
     - use this widget in release landing page
     - update download IDs in release landing page
