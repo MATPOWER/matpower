@@ -1,5 +1,4 @@
-version: '3'
 services:
   sut:
-    image: matpower/matpower:${CACHE_TAG}
+    image: matpower/matpower:${DOCKER_TAG}
     command: matpower_docker_tests.sh

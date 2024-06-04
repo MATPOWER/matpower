@@ -6,6 +6,7 @@
 #                  matpower-extras from GitHub
 #          github - (default) to clone matpower and matpower-extras from GitHub
 #   BRANCH=<branch or tag> to specify the branch or tag for GitHub checkouts
+#       (default is 'master')
 #
 # docker build -f docker/Dockerfile-matpower -t matpower/matpower:latest .
 # docker build --build-arg BRANCH=7.1 --build-arg BASE_TAG=5.2.0 -f docker/Dockerfile-matpower -t matpower/matpower:7.1-oct-5.2.0 .
@@ -35,7 +36,7 @@ WORKDIR /tmp
 FROM base AS matpower_local
 ONBUILD ARG MP_SRC
 ONBUILD ARG BRANCH
-ONBUILD COPY ./docker/matpower_docker_tests/matpower_docker_tests_7.sh /usr/local/bin/matpower_docker_tests.sh
+ONBUILD COPY ./docker/matpower_docker_tests/matpower_docker_tests_8.sh /usr/local/bin/matpower_docker_tests.sh
 ONBUILD COPY . $HOME/packages/matpower
 ONBUILD RUN git clone -b ${BRANCH} --depth=1 https://github.com/MATPOWER/matpower-extras.git $HOME/packages/matpower/extras && \
     rm -rf $HOME/packages/matpower/extras/.git && \
@@ -45,7 +46,7 @@ ONBUILD RUN git clone -b ${BRANCH} --depth=1 https://github.com/MATPOWER/matpowe
 FROM base AS matpower_github
 ONBUILD ARG MP_SRC
 ONBUILD ARG BRANCH
-ONBUILD COPY ./docker/matpower_docker_tests/matpower_docker_tests_7.sh /usr/local/bin/matpower_docker_tests.sh
+ONBUILD COPY ./docker/matpower_docker_tests/matpower_docker_tests_8.sh /usr/local/bin/matpower_docker_tests.sh
 ONBUILD RUN git clone -b ${BRANCH} --depth=1 https://github.com/MATPOWER/matpower.git $HOME/packages/matpower && \
     git clone -b ${BRANCH} --depth=1 https://github.com/MATPOWER/matpower-extras.git $HOME/packages/matpower/extras && \
     rm -rf $HOME/packages/matpower/.git && \
