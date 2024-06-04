@@ -22,17 +22,26 @@ classdef mme_branch_pf_dc < mp.mme_branch
         function obj = data_model_update_on(obj, mm, nm, dm, mpopt)
             %
 
+            dme = obj.data_model_element(dm);
+
             %% branch active power flows
             pp = nm.get_idx('port');
             pl_fr = nm.soln.gp(pp.i1.branch(1):pp.iN.branch(1));
             pl_to = nm.soln.gp(pp.i1.branch(2):pp.iN.branch(2));
 
+            %% branch shunt power losses
+            psh_fr = dme.tab.g_fr(dme.on);
+            psh_to = dme.tab.g_to(dme.on);
+
             %% update in the data model
-            dme = obj.data_model_element(dm);
             dme.tab.pl_fr(dme.on) = pl_fr * dm.base_mva;
             dme.tab.ql_fr(dme.on) = 0;
             dme.tab.pl_to(dme.on) = pl_to * dm.base_mva;
             dme.tab.ql_to(dme.on) = 0;
+            dme.tab.psh_fr(dme.on) = psh_fr * dm.base_mva;
+            dme.tab.qsh_fr(dme.on) = 0;
+            dme.tab.psh_to(dme.on) = psh_to * dm.base_mva;
+            dme.tab.qsh_to(dme.on) = 0;
         end
     end     %% methods
 end         %% classdef

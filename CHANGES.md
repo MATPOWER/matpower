@@ -10,6 +10,17 @@ For change history for [MP-Opt-Model][27], see [mp-opt-model/CHANGES.md](mp-opt-
 For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 
 
+since 8.0
+---------
+
+#### 6/4/24
+  - Add shunt loss columns (`psh_fr`, `qsh_fr`, `psh_to`, `qsh_to`) to
+    branch data model. In pretty-printed output, separate branch loss summary
+    into series and shunt losses and add series loss columns to branch detail
+    output.
+    *Thanks to Wilson González Vanegas.*
+
+
 Version 8.0 - *May 17, 2024
 ---------------------------
 

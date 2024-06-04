@@ -46,6 +46,10 @@ mpopt = mpoption(mpopt, 'out.gen', 1);
 mpopt = mpoption(mpopt, 'out.lim.all', 2);
 % mpopt = mpoption(mpopt, 'out.lim.all', -1, 'out.sys_sum', 0, 'out.bus', 0, 'out.branch', 0, 'out.gen', 1, 'out.lim.v', 0, 'out.lim.pg', 0, 'out.lim.qg', 0, 'out.lim.line', 0); mpopt.out.load = 0; mpopt.out.shunt = 0; mpopt.out.lim.elm.reserve_gen = 2;
 
+reps = { {' -(0.0+) ', '  $1 ', 1, 1}, ...
+         {'in (.*) seconds \((.*) setup \+ (.*) solve\)', ...
+            'in 0.00 seconds (0.00 setup + 0.00 solve)', 1, 1} };
+
 %% define named indices into data matrices
 [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
     MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
@@ -69,9 +73,6 @@ mpc = loadcase(casefile);
 t_is(rg.cost, mpc.reserves.cost, 12, [t 'cost']);
 t_is(rg.qty, mpc.reserves.qty, 12, [t 'qty']);
 t_is(sum(rg.total_cost), 177.8047, 4, [t 'totalcost']);
-reps = { {' -(0.0+) ', '  $1 ', 1, 1}, ...
-         {'in (.*) seconds \((.*) setup \+ (.*) solve\)', ...
-            'in 0.00 seconds (0.00 setup + 0.00 solve)', 1, 1} };
 if ~t_file_match(fname_g, fname_e, [t 'pretty printing'], reps, 1);
     fprintf('  compare these 2 files:\n    %s\n    %s\n', fname_g, fname_e);
     if show_diff_on_fail
@@ -102,9 +103,6 @@ t_is(rg.mu_pg_ub, [0; 0; 0; 0; 0], 7, [t 'mu.Pmax']);
 t_is(rg.cost, mpc.reserves.cost, 12, [t 'cost']);
 t_is(rg.qty, mpc.reserves.qty, 12, [t 'qty']);
 t_is(sum(rg.total_cost), 187.5, 4, [t 'totalcost']);
-reps = { {' -(0.0+) ', '  $1 ', 1, 1}, ...
-         {'in (.*) seconds \((.*) setup \+ (.*) solve\)', ...
-            'in 0.00 seconds (0.00 setup + 0.00 solve)', 1, 1} };
 if ~t_file_match(fname_g, fname_e, [t 'pretty printing'], reps, 1);
     fprintf('  compare these 2 files:\n    %s\n    %s\n', fname_g, fname_e);
     if show_diff_on_fail
@@ -164,9 +162,6 @@ t_is(rg.mu_pg_ub, [0; 0; 0; 0; 0; 0], 7, [t 'mu.Pmax']);
 t_is(rg.cost, mpc.reserves.cost, 12, [t 'cost']);
 t_is(rg.qty, mpc.reserves.qty, 12, [t 'qty']);
 t_is(sum(rg.total_cost), 187.5, 4, [t 'totalcost']);
-reps = { {' -(0.0+) ', '  $1 ', 1, 1}, ...
-         {'in (.*) seconds \((.*) setup \+ (.*) solve\)', ...
-            'in 0.00 seconds (0.00 setup + 0.00 solve)', 1, 1} };
 if ~t_file_match(fname_g, fname_e, [t 'pretty printing'], reps, 1);
     fprintf('  compare these 2 files:\n    %s\n    %s\n', fname_g, fname_e);
     if show_diff_on_fail
@@ -210,9 +205,6 @@ t_is(rg.mu_ub, [0.1; 0; 0; 0; 0; 0], 7, [t 'mu.u']);
 t_is(rg.mu_pg_ub, [0; 0; 0; 0; 0.5; 0], 7, [t 'mu.Pmax']);
 t_is(rg.cost, mpc.reserves.cost, 12, [t 'cost']);
 t_is(sum(rg.total_cost), 177.8047, 4, [t 'totalcost']);
-reps = { {' -(0.0+) ', '  $1 ', 1, 1}, ...
-         {'in (.*) seconds \((.*) setup \+ (.*) solve\)', ...
-            'in 0.00 seconds (0.00 setup + 0.00 solve)', 1, 1} };
 if ~t_file_match(fname_g, fname_e, [t 'pretty printing'], reps, 1);
     fprintf('  compare these 2 files:\n    %s\n    %s\n', fname_g, fname_e);
     if show_diff_on_fail
@@ -241,9 +233,6 @@ t_is(rg.mu_pg_ub, [0; 0; 0; 0; 0.33006533; 0], 7, [t 'mu.Pmax']);
 t_is(rg.cost, mpc.reserves.cost, 12, [t 'cost']);
 t_is(rg.qty, mpc.reserves.qty, 12, [t 'qty']);
 t_is(sum(rg.total_cost), 177.5, 4, [t 'totalcost']);
-reps = { {' -(0.0+) ', '  $1 ', 1, 1}, ...
-         {'in (.*) seconds \((.*) setup \+ (.*) solve\)', ...
-            'in 0.00 seconds (0.00 setup + 0.00 solve)', 1, 1} };
 if ~t_file_match(fname_g, fname_e, [t 'pretty printing'], reps, 1);
     fprintf('  compare these 2 files:\n    %s\n    %s\n', fname_g, fname_e);
     if show_diff_on_fail

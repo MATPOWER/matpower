@@ -61,6 +61,10 @@ classdef mme_branch_opf_dc < mp.mme_branch_opf
             pl_fr = nm.soln.gp(pp.i1.branch(1):pp.iN.branch(1));
             pl_to = nm.soln.gp(pp.i1.branch(2):pp.iN.branch(2));
 
+            %% branch shunt power losses
+            psh_fr = dme.tab.g_fr(dme.on);
+            psh_to = dme.tab.g_to(dme.on);
+
             %% shadow prices on branch flow constraints
             ibr = mm.userdata.flow_constrained_branch_idx;
             mu_flow_fr_ub = zeros(nme.nk, 1);
@@ -77,7 +81,13 @@ classdef mme_branch_opf_dc < mp.mme_branch_opf
 
             %% update in the data model
             dme.tab.pl_fr(dme.on) = pl_fr * dm.base_mva;
+            dme.tab.ql_fr(dme.on) = 0;
             dme.tab.pl_to(dme.on) = pl_to * dm.base_mva;
+            dme.tab.ql_to(dme.on) = 0;
+            dme.tab.psh_fr(dme.on) = psh_fr * dm.base_mva;
+            dme.tab.qsh_fr(dme.on) = 0;
+            dme.tab.psh_to(dme.on) = psh_to * dm.base_mva;
+            dme.tab.qsh_to(dme.on) = 0;
             dme.tab.mu_flow_fr_ub(dme.on) = mu_flow_fr_ub / dm.base_mva;
             dme.tab.mu_flow_to_ub(dme.on) = mu_flow_to_ub / dm.base_mva;
             dme.tab.mu_vad_lb(dme.on) = mu_vad_lb * pi/180;

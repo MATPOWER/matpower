@@ -35,6 +35,10 @@ classdef dme_branch < mp.dm_element
 %   ``ql_fr``    *double*   reactive power injection at "from" end
 %   ``pl_to``    *double*   active power injection at "to" end
 %   ``ql_to``    *double*   reactive power injection at "to" end
+%   ``psh_fr``   *double*   active power shunt losses at "from" end
+%   ``qsh_fr``   *double*   reactive power shunt losses at "from" end
+%   ``psh_to``   *double*   active power shunt losses at "to" end
+%   ``qsh_to``   *double*   reactive power shunt losses at "to" end
 %   ===========  =========  ========================================
 
 %   MATPOWER
@@ -57,6 +61,7 @@ classdef dme_branch < mp.dm_element
         tm      % transformer off-nominal turns ratio for branches that are on
         ta      % xformer phase-shift angle (radians) for branches that are on
         rate_a  % long term flow limit (p.u.) for branches that are on
+        loss_tol = 1e-4;    % loss values < this are displayed as ``-``
     end     %% properties
 
     methods
@@ -92,12 +97,14 @@ classdef dme_branch < mp.dm_element
                 'g_to', 'b_to', 'sm_ub_a', 'sm_ub_b', 'sm_ub_c', ...
                 'cm_ub_a', 'cm_ub_b', 'cm_ub_c', 'vad_lb', 'vad_ub', ...
                 'tm', 'ta', ... %% remove these when we separate out xformers
-                'pl_fr', 'ql_fr', 'pl_to', 'ql_to'} );
+                'pl_fr', 'ql_fr', 'pl_to', 'ql_to', ...
+                'psh_fr', 'qsh_fr', 'psh_to', 'qsh_to'} );
         end
 
         function vars = export_vars(obj)
             %
-            vars = {'pl_fr', 'ql_fr', 'pl_to', 'ql_to'};
+            vars = {'pl_fr', 'ql_fr', 'pl_to', 'ql_to', ...
+                'psh_fr', 'qsh_fr', 'psh_to', 'qsh_to'};
         end
 
         function s = export_vars_offline_val(obj)
@@ -108,6 +115,10 @@ classdef dme_branch < mp.dm_element
             s.ql_fr = 0;
             s.pl_to = 0;
             s.ql_to = 0;
+            s.psh_fr = 0;
+            s.qsh_fr = 0;
+            s.psh_to = 0;
+            s.qsh_to = 0;
         end
 
         function obj = initialize(obj, dm)
@@ -193,11 +204,43 @@ classdef dme_branch < mp.dm_element
             pp_data_sum@mp.dm_element(obj, dm, rows, out_e, mpopt, fd, pp_args);
 
             %% print branch summary
-            fprintf(fd, '  %-29s  %12.2f MW', 'Total branch losses', ...
-                sum(obj.tab.pl_fr(obj.on)) + sum(obj.tab.pl_to(obj.on)) );
+            p_loss = sum(obj.tab.pl_fr(obj.on)) + sum(obj.tab.pl_to(obj.on));
+            p_shunt = sum(obj.tab.psh_fr(obj.on)) + sum(obj.tab.psh_to(obj.on));
+            p_series = p_loss - p_shunt;
+            if abs(p_series) < obj.loss_tol
+                p_series_str = '- ';
+            else
+                p_series_str = sprintf('%12.2f', p_series);
+            end
+            fprintf(fd, '  %-29s  %12s MW', 'Total branch series losses', ...
+                 p_series_str);
             if mpopt.model(1) ~= 'D'    %% AC model
-                fprintf(fd, ' %12.2f MVAr', ...
-                    sum(obj.tab.ql_fr(obj.on)) + sum(obj.tab.ql_to(obj.on)) );
+                q_loss = sum(obj.tab.ql_fr(obj.on)) + sum(obj.tab.ql_to(obj.on));
+                q_shunt = sum(obj.tab.qsh_fr(obj.on)) + ...
+                          sum(obj.tab.qsh_to(obj.on));
+                q_series = q_loss - q_shunt;
+                if abs(q_series) < obj.loss_tol
+                    q_series_str = '- ';
+                else
+                    q_series_str = sprintf('%12.2f', q_series);
+                end
+                fprintf(fd, ' %12s MVAr', q_series_str);
+            end
+            fprintf(fd, '\n');
+            if abs(p_shunt) < obj.loss_tol
+                p_shunt_str = '- ';
+            else
+                p_shunt_str = sprintf('%12.2f', p_shunt);
+            end
+            fprintf(fd, '  %-29s  %12s MW', 'Total branch shunt losses', ...
+                p_shunt_str );
+            if mpopt.model(1) ~= 'D'    %% AC model
+                if abs(q_shunt) < obj.loss_tol
+                    q_shunt_str = '- ';
+                else
+                    q_shunt_str = sprintf('%12.2f', q_shunt);
+                end
+                fprintf(fd, ' %12s MVAr', q_shunt_str );
             end
             fprintf(fd, '\n');
         end
@@ -209,6 +252,33 @@ classdef dme_branch < mp.dm_element
                     '   ID      Bus ID    Bus ID   Status   P (MW)   Q (MVAr)   P (MW)   Q (MVAr)', ...
                     '--------  --------  --------  ------  --------  --------  --------  --------' } ];
             %%       1234567 123456789 123456789 -----1 1234567.90 123456.89 123456.89 123456.89
+            if mpopt.model(1) ~= 'D'    %% AC model
+                h{end-2} = [h{end-2} '      Series Loss'];
+                h{end-1} = [h{end-1}  '   P (MW)   Q (MVAr)'];
+                h{end}   = [h{end}    '  --------  --------'];
+                %%                     12345.789 123456.89
+                %%                     12345.789 123456.89
+            end
+        end
+
+        function f = pp_get_footers_det(obj, dm, out_e, mpopt, pp_args)
+            %
+            if mpopt.model(1) == 'D'    %% DC model (series losses)
+                f = {};
+            else                        %% AC model
+                p_loss = sum(obj.tab.pl_fr(obj.on)) + ...
+                         sum(obj.tab.pl_to(obj.on));
+                p_shunt = sum(obj.tab.psh_fr(obj.on)) + ...
+                          sum(obj.tab.psh_to(obj.on));
+                p_series = p_loss - p_shunt;
+                q_loss = sum(obj.tab.ql_fr(obj.on)) + ...
+                         sum(obj.tab.ql_to(obj.on));
+                q_shunt = sum(obj.tab.qsh_fr(obj.on)) + ...
+                          sum(obj.tab.qsh_to(obj.on));
+                q_series = q_loss - q_shunt;
+                f = {'                                                                              --------  --------',
+                    sprintf('%69s Total:%9.3f %9.2f', '', p_series, q_series)};
+            end
         end
 
         function TorF = pp_have_section_det(obj, mpopt, pp_args)
@@ -223,6 +293,13 @@ classdef dme_branch < mp.dm_element
                 obj.tab.status(k), ...
                 obj.tab.pl_fr(k), obj.tab.ql_fr(k), ...
                 obj.tab.pl_to(k), obj.tab.ql_to(k) );
+            if mpopt.model(1) ~= 'D'    %% AC model
+                str = sprintf('%s %9.3f %9.2f', str, ...
+                    obj.tab.pl_fr(k) + obj.tab.pl_to(k) ...
+                        - obj.tab.psh_fr(k) - obj.tab.psh_to(k), ...
+                    obj.tab.ql_fr(k) + obj.tab.ql_to(k) ...
+                        - obj.tab.qsh_fr(k) - obj.tab.qsh_to(k) );
+            end
         end
     end     %% methods
 end         %% classdef

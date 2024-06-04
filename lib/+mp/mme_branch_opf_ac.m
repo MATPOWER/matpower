@@ -103,11 +103,25 @@ classdef (Abstract) mme_branch_opf_ac < mp.mme_branch_opf
             %% shadow prices on angle difference limits
             [mu_vad_lb, mu_vad_ub] = obj.ang_diff_prices(mm, nme);
 
+            %% branch shunt power losses
+            v = nme.C' * nm.soln.v;
+            vm2 = v .* conj(v);
+            vm2_fr = vm2(1:length(v)/2);
+            vm2_to = vm2(length(v)/2+1:end);
+            psh_fr =  vm2_fr .* dme.tab.g_fr(dme.on);
+            qsh_fr = -vm2_fr .* dme.tab.b_fr(dme.on);
+            psh_to =  vm2_to .* dme.tab.g_to(dme.on);
+            qsh_to = -vm2_to .* dme.tab.b_to(dme.on);
+
             %% update in the data model
             dme.tab.pl_fr(dme.on) = real(S_fr) * dm.base_mva;
             dme.tab.ql_fr(dme.on) = imag(S_fr) * dm.base_mva;
             dme.tab.pl_to(dme.on) = real(S_to) * dm.base_mva;
             dme.tab.ql_to(dme.on) = imag(S_to) * dm.base_mva;
+            dme.tab.psh_fr(dme.on) = psh_fr * dm.base_mva;
+            dme.tab.qsh_fr(dme.on) = qsh_fr * dm.base_mva;
+            dme.tab.psh_to(dme.on) = psh_to * dm.base_mva;
+            dme.tab.qsh_to(dme.on) = qsh_to * dm.base_mva;
             dme.tab.mu_flow_fr_ub(dme.on) = mu_flow_fr_ub / dm.base_mva;
             dme.tab.mu_flow_to_ub(dme.on) = mu_flow_to_ub / dm.base_mva;
             dme.tab.mu_vad_lb(dme.on) = mu_vad_lb * pi/180;

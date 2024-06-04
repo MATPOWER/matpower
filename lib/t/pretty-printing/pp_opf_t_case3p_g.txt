@@ -1,5 +1,5 @@
 
-OPF succeeded in 0.40 seconds (0.32 setup + 0.08 solve)
+OPF succeeded in 0.18 seconds (0.15 setup + 0.03 solve)
 Objective Function Value = 5773.54 $/hr
 ================================================================================
 |     System Summary                                                           |
@@ -24,7 +24,8 @@ Objective Function Value = 5773.54 $/hr
   Total max generation capacity        820.0 MW        900.0 MVAr
   Total min generation capacity         30.0 MW       -900.0 MVAr
   Total load                           315.0 MW        115.0 MVAr
-  Total branch losses                    4.08 MW       -86.61 MVAr
+  Total branch series losses             4.08 MW        45.57 MVAr
+  Total branch shunt losses                -  MW      -132.18 MVAr
   Total 3-ph load                    16350.0 kW       7327.7 kVAr
   Total 3-ph line loss                1684.5 kW       3521.3 kVAr
   Total 3-ph transformer loss          295.1 kW       1770.6 kVAr
@@ -79,18 +80,20 @@ Load ID    Bus ID   Status   P (MW)   Q (MVAr)
 ================================================================================
 |     Branch Data                                                              |
 ================================================================================
- Branch     From       To             From Bus Injection   To Bus Injection
-   ID      Bus ID    Bus ID   Status   P (MW)   Q (MVAr)   P (MW)   Q (MVAr)
---------  --------  --------  ------  --------  --------  --------  --------
-      1         1         4      1      90.28     21.16    -90.28    -16.20
-      2         4         5      1      35.51     -1.52    -35.29    -12.54
-      3         5         6      1     -54.71    -17.46     55.93    -12.40
-      4         3         6      1      93.28     -5.55    -93.28     10.67
-      5         6         7      1      37.35      1.73    -37.16    -20.96
-      6         7         8      1     -62.84    -14.04     63.18      2.26
-      7         8         2      1    -141.63     -4.44    141.63     16.99
-      8         8         9      1      72.34     -2.02    -70.61    -18.73
-      9         9         4      1     -54.39    -31.27     54.77     17.72
+ Branch     From       To             From Bus Injection   To Bus Injection      Series Loss
+   ID      Bus ID    Bus ID   Status   P (MW)   Q (MVAr)   P (MW)   Q (MVAr)   P (MW)   Q (MVAr)
+--------  --------  --------  ------  --------  --------  --------  --------  --------  --------
+      1         1         4      1      90.28     21.16    -90.28    -16.20     0.000      4.95
+      2         4         5      1      35.51     -1.52    -35.29    -12.54     0.226      1.22
+      3         5         6      1     -54.71    -17.46     55.93    -12.40     1.221      5.32
+      4         3         6      1      93.28     -5.55    -93.28     10.67     0.000      5.12
+      5         6         7      1      37.35      1.73    -37.16    -20.96     0.182      1.54
+      6         7         8      1     -62.84    -14.04     63.18      2.26     0.347      2.94
+      7         8         2      1    -141.63     -4.44    141.63     16.99    -0.000     12.55
+      8         8         9      1      72.34     -2.02    -70.61    -18.73     1.731      8.71
+      9         9         4      1     -54.39    -31.27     54.77     17.72     0.377      3.21
+                                                                              --------  --------
+                                                                      Total:    4.085     45.57
 
 ================================================================================
 |     3-ph Bus Data                                                            |

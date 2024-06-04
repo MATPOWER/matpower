@@ -59,6 +59,10 @@ classdef dmce_branch_mpc2 < mp.dmc_element % & mp.dmce_branch
             vmap.ql_fr{2}   = QF;
             vmap.pl_to{2}   = PT;
             vmap.ql_to{2}   = QT;
+            vmap.psh_fr     = {'num', 0};   %% zeros
+            vmap.qsh_fr     = {'num', 0};   %% zeros
+            vmap.psh_to     = {'num', 0};   %% zeros
+            vmap.qsh_to     = {'num', 0};   %% zeros
             vmap.mu_flow_fr_ub{2} = MU_SF;
             vmap.mu_flow_to_ub{2} = MU_ST;
             vmap.mu_vad_lb{2}     = MU_ANGMIN;

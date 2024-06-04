@@ -48,6 +48,10 @@ mpopt = mpoption(mpopt, 'opf.dc.solver', 'MIPS');
 mpopt = mpoption(mpopt, 'out.gen', 1);
 mpopt = mpoption(mpopt, 'out.lim.all', 2);
 
+reps = { {' -(0.0+) ', '  $1 ', 1, 1}, ...
+         {'in (.*) seconds \((.*) setup \+ (.*) solve\)', ...
+            'in 0.00 seconds (0.00 setup + 0.00 solve)', 1, 1} };
+
 casefile = 'case9';
 
 t = sprintf('run_pf(''%s'')', casefile);
@@ -56,8 +60,6 @@ fname = sprintf('pp_pf_%s', casefile);
 fname_e = fullfile(pathstr, 'pretty-printing', sprintf('%s.txt', fname));
 fname_g = sprintf('%s_%d.txt', fname, rn);
 task = run_pf(casefile, mpopt, 'print_fname', fname_g);
-reps = { {'in (.*) seconds \((.*) setup \+ (.*) solve\)', ...
-            'in 0.00 seconds (0.00 setup + 0.00 solve)', 1, 1} };
 if ~t_file_match(fname_g, fname_e, t, reps, 1);
     fprintf('  compare these 2 files:\n    %s\n    %s\n', fname_g, fname_e);
     if show_diff_on_fail
@@ -73,8 +75,6 @@ fname = sprintf('pp_cpf_%s', casefile);
 fname_e = fullfile(pathstr, 'pretty-printing', sprintf('%s.txt', fname));
 fname_g = sprintf('%s_%d.txt', fname, rn);
 task = run_cpf({casefile, [casefile 'target']}, mpopt, 'print_fname', fname_g);
-reps = { {'in (.*) seconds \((.*) setup \+ (.*) solve\)', ...
-            'in 0.00 seconds (0.00 setup + 0.00 solve)', 1, 1} };
 if ~t_file_match(fname_g, fname_e, t, reps, 1);
     fprintf('  compare these 2 files:\n    %s\n    %s\n', fname_g, fname_e);
     if show_diff_on_fail
@@ -90,8 +90,6 @@ fname = sprintf('pp_opf_%s', casefile);
 fname_e = fullfile(pathstr, 'pretty-printing', sprintf('%s.txt', fname));
 fname_g = sprintf('%s_%d.txt', fname, rn);
 task = run_opf(casefile, mpopt, 'print_fname', fname_g);
-reps = { {'in (.*) seconds \((.*) setup \+ (.*) solve\)', ...
-            'in 0.00 seconds (0.00 setup + 0.00 solve)', 1, 1} };
 if ~t_file_match(fname_g, fname_e, t, reps, 1);
     fprintf('  compare these 2 files:\n    %s\n    %s\n', fname_g, fname_e);
     if show_diff_on_fail
@@ -113,8 +111,6 @@ fname = sprintf('pp_pf_%s', casefile);
 fname_e = fullfile(pathstr, 'pretty-printing', sprintf('%s.txt', fname));
 fname_g = sprintf('%s_%d.txt', fname, rn);
 task = run_pf(mpc, mpopt, 'print_fname', fname_g);
-reps = { {'in (.*) seconds \((.*) setup \+ (.*) solve\)', ...
-            'in 0.00 seconds (0.00 setup + 0.00 solve)', 1, 1} };
 if ~t_file_match(fname_g, fname_e, t, reps, 1);
     fprintf('  compare these 2 files:\n    %s\n    %s\n', fname_g, fname_e);
     if show_diff_on_fail
@@ -130,9 +126,6 @@ fname = sprintf('pp_opf_%s', casefile);
 fname_e = fullfile(pathstr, 'pretty-printing', sprintf('%s.txt', fname));
 fname_g = sprintf('%s_%d.txt', fname, rn);
 task = run_opf(mpc, mpoption(mpopt, 'out.lim.all', 1), 'print_fname', fname_g);
-reps = { {' -(0.0+) ', '  $1 ', 1, 1}, ...
-         {'in (.*) seconds \((.*) setup \+ (.*) solve\)', ...
-            'in 0.00 seconds (0.00 setup + 0.00 solve)', 1, 1} };
 if ~t_file_match(fname_g, fname_e, t, reps, 1);
     fprintf('  compare these 2 files:\n    %s\n    %s\n', fname_g, fname_e);
     if show_diff_on_fail
@@ -150,8 +143,6 @@ fname = sprintf('pp_pf_%s', casefile);
 fname_e = fullfile(pathstr, 'pretty-printing', sprintf('%s.txt', fname));
 fname_g = sprintf('%s_%d.txt', fname, rn);
 task = run_pf(casefile, mpopt, 'print_fname', fname_g, 'mpx', mp.xt_3p());
-reps = { {'in (.*) seconds \((.*) setup \+ (.*) solve\)', ...
-            'in 0.00 seconds (0.00 setup + 0.00 solve)', 1, 1} };
 if ~t_file_match(fname_g, fname_e, t, reps, 1);
     fprintf('  compare these 2 files:\n    %s\n    %s\n', fname_g, fname_e);
     if show_diff_on_fail
@@ -170,8 +161,6 @@ fname_e = fullfile(pathstr, 'pretty-printing', sprintf('%s.txt', fname));
 fname_g = sprintf('%s_%d.txt', fname, rn);
 mpopt.exp.mpx = mp.xt_3p();
 task = run_opf(casefile, mpopt, 'print_fname', fname_g);
-reps = { {'in (.*) seconds \((.*) setup \+ (.*) solve\)', ...
-            'in 0.00 seconds (0.00 setup + 0.00 solve)', 1, 1} };
 if ~t_file_match(fname_g, fname_e, t, reps, 1);
     fprintf('  compare these 2 files:\n    %s\n    %s\n', fname_g, fname_e);
     if show_diff_on_fail
