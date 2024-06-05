@@ -1,4 +1,6 @@
 services:
   sut:
-    image: matpower/matpower:${DOCKER_TAG}
+    build:
+      context: ../
+      dockerfile: ./docker/Dockerfile
     command: matpower_docker_tests.sh
