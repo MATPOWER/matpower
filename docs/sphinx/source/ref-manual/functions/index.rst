@@ -33,5 +33,5 @@ Other Functions
 ---------------
 
 .. toctree::
-
+   mp/load_dm
    mp_table_class

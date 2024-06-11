@@ -25,6 +25,7 @@ since 8.0
   - Make optional the `mpopt` argument to `mp.task.run()`.
   - Refactor part of `mp.task.run()` method into new `mp.task.load_dm()`
     method used to load the data model object.
+  - Add `mp.load_dm()` function to load the data model object.
 
 #### 6/4/24
   - Add shunt loss columns (`psh_fr`, `qsh_fr`, `psh_to`, `qsh_to`) to
