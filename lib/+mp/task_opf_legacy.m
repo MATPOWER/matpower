@@ -34,7 +34,8 @@ classdef task_opf_legacy < mp.task_opf & mp.task_shared_legacy
             %
             % Inputs:
             %   d : data source specification, currently assumed to be a
-            %       |MATPOWER| case name or case struct (``mpc``)
+            %       |MATPOWER| case name or case struct (``mpc``), **or**
+            %       data model object
             %   mpopt (struct) : |MATPOWER| options struct
             %
             % Outputs:
