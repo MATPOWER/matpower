@@ -668,7 +668,7 @@ classdef (Abstract) task < handle
             % Create and build data model object.
             % ::
             %
-            %   dm = task.data_model_create(d, dmc, mpopt, mpx)
+            %   dm = task.data_model_build(d, dmc, mpopt, mpx)
             %
             % Inputs:
             %   d : data source specification, currently assumed to be a
