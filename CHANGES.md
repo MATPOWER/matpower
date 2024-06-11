@@ -13,6 +13,10 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 since 8.0
 ---------
 
+#### 6/11/24
+  - Fix bug where optional `'soln_fname'` input to `run_mp()` (hence also to
+    `run_pf()`, `run_cpf()`, and `run_opf()`) was being ignored.
+
 #### 6/4/24
   - Add shunt loss columns (`psh_fr`, `qsh_fr`, `psh_to`, `qsh_to`) to
     branch data model. In pretty-printed output, separate branch loss summary

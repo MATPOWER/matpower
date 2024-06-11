@@ -19,7 +19,7 @@ function task_rv = run_mp(task_class, d, mpopt, varargin)
 %       flow, mp.task_cpf for CPF, and mp.task_opf for OPF
 %   d : data source specification, currently assumed to be a |MATPOWER|
 %       case name or case struct (``mpc``)
-%   mpopt (struct) : |MATPOWER| options struct
+%   mpopt (struct) : *(optional)* |MATPOWER| options struct
 %
 %       Additional optional inputs can be provided as *<name>, <val>* pairs,
 %       with the following options:
@@ -68,7 +68,7 @@ for k = 1:2:length(varargin)
     switch varargin{k}      %% arg name
         case 'print_fname'
             print_fname = val;
-        case 'solved_case'
+        case 'soln_fname'
             soln_fname = val;
         case 'mpx'
             if iscell(val)

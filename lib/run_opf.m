@@ -15,7 +15,7 @@ function varargout = run_opf(varargin)
 % Inputs:
 %   d : data source specification, currently assumed to be a |MATPOWER|
 %       case name or case struct (``mpc``)
-%   mpopt (struct) : |MATPOWER| options struct
+%   mpopt (struct) : *(optional)* |MATPOWER| options struct
 %
 %       Additional optional inputs can be provided as *<name>, <val>* pairs,
 %       with the following options:

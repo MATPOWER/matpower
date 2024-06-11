@@ -16,7 +16,7 @@ function varargout = run_cpf(varargin)
 %   d : data source specification, currently assumed to be a cell array
 %       of two |MATPOWER| case names or case structs (``mpc``), the first
 %       being the base case, the second the target case
-%   mpopt (struct) : |MATPOWER| options struct
+%   mpopt (struct) : *(optional)* |MATPOWER| options struct
 %
 %       Additional optional inputs can be provided as *<name>, <val>* pairs,
 %       with the following options:
