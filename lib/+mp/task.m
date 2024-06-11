@@ -94,6 +94,57 @@ classdef (Abstract) task < handle
 
     methods
         %%-----  task methods  -----
+        function obj = load_dm(obj, d, mpopt, mpx)
+            % Load the data model.
+            % ::
+            %
+            %   task.load_dm(d)
+            %   task.load_dm(d, mpopt)
+            %   task.load_dm(d, mpopt, mpx)
+            %
+            % Inputs:
+            %   d : data source specification, currently assumed to be a
+            %       |MATPOWER| case name or case struct (``mpc``)
+            %   mpopt (struct) : |MATPOWER| options struct
+            %   mpx (cell array of mp.extension) : |MATPOWER| Extensions
+            %
+            % Output:
+            %   task (mp.task) : task object containing the newly loaded
+            %       data model converter and data model objects, in
+            %       ``task.dmc`` and ``task.dm``, respectively.
+            %
+            % Create the data model converter and the data model object.
+            %
+            % See the :ref:`sec_task` section in the |MATPOWER-Dev-Manual|
+            % for more information.
+
+            if nargin < 4
+                mpx = {};   %% no MATPOWER extensions by default
+                if nargin < 3
+                    mpopt = mpoption();
+                end
+            end
+
+            [d, mpopt] = obj.run_pre(d, mpopt);
+
+            if isa(d, 'mp.data_model')
+                %% already have the data model object
+                obj.dm = d;
+
+                %% grab the data model converter object, if missing
+                if isempty(obj.dmc)
+                    obj.dmc = obj.dm_converter_build(obj.dm.source, mpopt, mpx);
+                end
+            else
+                %% get the data model converter
+                dmc = obj.dm_converter_build(d, mpopt, mpx);
+                obj.dmc = dmc;
+
+                %% use it to build data model
+                obj.dm = obj.data_model_build(d, dmc, mpopt, mpx);
+            end
+        end
+
         function obj = run(obj, d, mpopt, mpx)
             % Execute the task.
             % ::
@@ -104,7 +155,7 @@ classdef (Abstract) task < handle
             %
             % Inputs:
             %   d : data source specification, currently assumed to be a
-            %       |MATPOWER| case name or case struct (``mpc``), **or**
+            %       |MATPOWER| case name or case struct (``mpc``) **or**
             %       data model object
             %   mpopt (struct) : *(optional)* |MATPOWER| options struct
             %   mpx (cell array of mp.extension) : *(optional)* |MATPOWER|
@@ -131,20 +182,13 @@ classdef (Abstract) task < handle
                 end
             end
 
-            [d, mpopt] = obj.run_pre(d, mpopt);
-
-            dmc = obj.dm_converter_build(d, mpopt, mpx);
-            obj.dmc = dmc;
-
             %% initialize
-            obj.i_dm = 0;   %% iteration counter for data model loop
+            obj.i_dm = 1;   %% iteration counter for data model loop
             obj.i_nm = 0;   %% iteration counter for network model loop
             obj.i_mm = 0;   %% iteration counter for math model loop
 
-            %% build data model
-            obj.i_dm = obj.i_dm + 1;
-            dm = obj.data_model_build(d, dmc, mpopt, mpx);
-            obj.dm = dm;    %% stash current data model in task object
+            obj.load_dm(d, mpopt, mpx);
+            dm = obj.dm;
 
             while ~isempty(dm)  %% begin data model loop
                 %% build network model
