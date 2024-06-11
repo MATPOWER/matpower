@@ -98,6 +98,7 @@ classdef (Abstract) task < handle
             % Execute the task.
             % ::
             %
+            %   task.run(d)
             %   task.run(d, mpopt)
             %   task.run(d, mpopt, mpx)
             %
@@ -105,8 +106,9 @@ classdef (Abstract) task < handle
             %   d : data source specification, currently assumed to be a
             %       |MATPOWER| case name or case struct (``mpc``), **or**
             %       data model object
-            %   mpopt (struct) : |MATPOWER| options struct
-            %   mpx (cell array of mp.extension) : |MATPOWER| Extensions
+            %   mpopt (struct) : *(optional)* |MATPOWER| options struct
+            %   mpx (cell array of mp.extension) : *(optional)* |MATPOWER|
+            %       Extensions
             %
             % Output:
             %   task (mp.task) : task object containing the solved run
@@ -124,6 +126,9 @@ classdef (Abstract) task < handle
             t0 = tic;       %% start timer
             if nargin < 4
                 mpx = {};   %% no MATPOWER extensions by default
+                if nargin < 3
+                    mpopt = mpoption();
+                end
             end
 
             [d, mpopt] = obj.run_pre(d, mpopt);

@@ -22,6 +22,7 @@ since 8.0
     bus table).
   - Add `rebuild()` method to `mp.data_model`, used to update the data model
     internals after making changes to data in the data tables of the elements.
+  - Make optional the `mpopt` argument to `mp.task.run()`.
 
 #### 6/4/24
   - Add shunt loss columns (`psh_fr`, `qsh_fr`, `psh_to`, `qsh_to`) to
