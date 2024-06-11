@@ -65,7 +65,7 @@ classdef (Abstract) dm_element < handle
 %   * init_status - initialize ``status`` column
 %   * update_status - update (online/offline) status based on connectivity, etc
 %   * build_params - extract/convert/calculate parameters for online elements
-%   * rebuild - rebuild object, calling count(), initialize(), build_params()
+%   * rebuild - rebuild object, calling count(), initialize(), update_status(), build_params()
 %   * display - display the data model element object
 %   * pretty_print - pretty-print data model element to console or file
 %   * pp_have_section - true if pretty-printing for element has specified section
@@ -525,7 +525,8 @@ classdef (Abstract) dm_element < handle
         end
 
         function obj = rebuild(obj, dm)
-            % Rebuild object, calling count(), initialize(), build_params().
+            % Rebuild object, calling count(), initialize(), update_status(),
+            % build_params().
             % ::
             %
             %   dme.rebuild(dm)
@@ -537,6 +538,7 @@ classdef (Abstract) dm_element < handle
 
             obj.count(dm);
             obj.initialize(dm);
+            obj.update_status(dm);
             obj.build_params(dm);
         end
 
