@@ -91,12 +91,15 @@ classdef dme_load < mp.dm_element
 %             s = export_vars_offline_val@mp.dm_element(obj);     %% call parent
 %         end
 
-        function nr = count(obj, dm)
+        function obj = initialize(obj, dm)
             %
-            nr = count@mp.dm_element(obj, dm);
-            if nr
-                obj.bus = obj.tab.source_uid;
-            end
+            initialize@mp.dm_element(obj, dm);    %% call parent
+
+            %% get bus mapping info
+            b2i = dm.elements.bus.ID2i;     %% bus num to idx mapping
+
+            %% set bus index vectors for port connectivity
+            obj.bus = b2i(obj.tab.bus);
         end
 
         function obj = update_status(obj, dm)

@@ -17,6 +17,9 @@ since 8.0
   - Fix bug where optional `'soln_fname'` input to `run_mp()` (hence also to
     `run_pf()`, `run_cpf()`, and `run_opf()`) was being ignored.
   - Add missing update_status() call to `dm_element.rebuild()`.
+  - Build load and shunt connectivity using `bus` column in main table (i.e.
+    bus numbers), not `source_uid` column (i.e. row indices in original
+    bus table).
 
 #### 6/4/24
   - Add shunt loss columns (`psh_fr`, `qsh_fr`, `psh_to`, `qsh_to`) to
