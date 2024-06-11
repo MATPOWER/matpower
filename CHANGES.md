@@ -20,6 +20,8 @@ since 8.0
   - Build load and shunt connectivity using `bus` column in main table (i.e.
     bus numbers), not `source_uid` column (i.e. row indices in original
     bus table).
+  - Add `rebuild()` method to `mp.data_model`, used to update the data model
+    internals after making changes to data in the data tables of the elements.
 
 #### 6/4/24
   - Add shunt loss columns (`psh_fr`, `qsh_fr`, `psh_to`, `qsh_to`) to

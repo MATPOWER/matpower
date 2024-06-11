@@ -29,6 +29,7 @@ classdef data_model < mp.element_container
 %   * initialize - initialize (online/offline) status of each element
 %   * update_status - update (online/offline) status based on connectivity, etc
 %   * build_params - extract/convert/calculate parameters for online elements
+%   * rebuild - rebuild object, calling count(), initialize(), update_status(), build_params()
 %   * online - get number of online elements of named type
 %   * display - display the data model object
 %   * pretty_print - pretty print data model to console or file
@@ -234,6 +235,22 @@ classdef data_model < mp.element_container
             for k = 1:length(obj.elements)
                 obj.elements{k}.build_params(obj);
             end
+        end
+
+        function obj = rebuild(obj)
+            % Rebuild object, calling count(), initialize(), update_status(),
+            % build_params().
+            % ::
+            %
+            %   dm.rebuild()
+            %
+            % Typically used after modifying data in the main tables of
+            % one or more of the elements.
+
+            obj.count();
+            obj.initialize();
+            obj.update_status();
+            obj.build_params();
         end
 
         function n = online(obj, name)
