@@ -77,11 +77,11 @@ ONBUILD ARG SKIP_OSQP
 # Install latest Ipopt from source
 ONBUILD RUN mkdir -p coinbrew && \
     cd coinbrew && \
-    wget https://raw.githubusercontent.com/coin-or/coinbrew/v1.0/coinbrew && \
+    wget https://raw.githubusercontent.com/coin-or/coinbrew/master/coinbrew && \
     chmod a+x coinbrew && \
     export with_lapack_lflags="-lopenblas" && \
     ./coinbrew fetch Ipopt --no-prompt && \
-    ./coinbrew build Ipopt --prefix /usr --tests all --with-intsize=64 --no-prompt && \
+    ./coinbrew build Ipopt --prefix /usr --tests all --with-intsize=64 --no-prompt --disable-java && \
     cd .. && \
     rm -rf coinbrew
 # Install mexIPOPT
