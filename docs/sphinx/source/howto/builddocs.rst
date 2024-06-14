@@ -3,7 +3,7 @@ How to Build the Documentation
 
 1. Install `Python <https://www.python.org/>`_.
 
-2. Create and activate a `virtual environment <https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/#creating-a-virtual-environment>`_ *(optional, but recommended)*
+2. Create and activate a `virtual environment <https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/#creating-a-virtual-environment>`_ *(optional, but recommended)*.
 
    .. tabs::
 
@@ -37,13 +37,13 @@ How to Build the Documentation
     
             where python
 
-   To leave the virtual environment:
+   To leave the virtual environment *(when finished building the documentation)*:
    
     .. code-block:: console
 
        deactivate
 
-3. Install `Sphinx <https://www.sphinx-doc.org>`_, `sphinxcontrib-matlabdomain <https://pypi.org/project/sphinxcontrib-matlabdomain/>`_, `sphinx-tabs <https://pypi.org/project/sphinx-tabs/>`_ and `sphinx-rtd-theme <https://pypi.org/project/sphinx-rtd-theme/>`_
+3. Install `Sphinx <https://www.sphinx-doc.org>`_, `sphinxcontrib-matlabdomain <https://pypi.org/project/sphinxcontrib-matlabdomain/>`_ [MD]_, `sphinx-tabs <https://pypi.org/project/sphinx-tabs/>`_ and `sphinx-rtd-theme <https://pypi.org/project/sphinx-rtd-theme/>`_.
 
    .. code-block:: console
 
@@ -61,7 +61,7 @@ How to Build the Documentation
        make html
        make latexpdf
 
-   ... twice. That's right, you re-run ``make html`` after the LaTeX build so it can pick up the links to the PDF and then re-run ``make latexpdf`` to ensure that tables of contents, cross-references, etc. are all up to date.
+   ... twice. That's right, you re-run ``make html`` after the LaTeX build so it can pick up the links to the PDFs and then re-run ``make latexpdf`` to ensure that tables of contents, cross-references, etc. are all up to date.
    
    If everything builds properly, you should find the PDF manuals in :file:`docs/sphinx/build/latex` and the HTML documentation in :file:`docs/sphinx/build/html` (start with :file:`index.html`).
 
@@ -97,3 +97,7 @@ Reference Manual Utility Functions
 
 .. |generate_matpower_autodoc_m| replace:: :file:`lib/t/generate_matpower_autodoc.m`
 .. _generate_matpower_autodoc_m: https://github.com/MATPOWER/matpower/blob/master/lib/t/generate_matpower_autodoc.m
+
+----------------------
+
+.. [MD] Jørgen Cederberg, et. al. (2024). sphinx-contrib/matlabdomain: 0.21.5 (0.21.5). Zenodo. https://zenodo.org/doi/10.5281/zenodo.7746009
