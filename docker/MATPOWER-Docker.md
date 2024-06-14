@@ -95,24 +95,23 @@ the `master` branch of the [MATPOWER][5] and [MATPOWER Extras][6]
 GitHub repositories.
 
 
-|         tag          |  MATPOWER version  |  Octave version   |
-| -------------------- | :----------------: | :---------------: |
-| **_development versions_** |              |                   |
-| `dev-latest`         | _latest_ `master`  | _current release_ |
-| `dev-latest-<x.y.z>` | _latest_ `master`  |      _x.y.z_      |
-| `dev-<YYYY-MM-DD>`   | `master` _on date_ | _current release_ |
-|                      |                    |                   |
-| **_release versions_** |                  |                   |
-| `latest`             | _current release_  | _current release_ |
-| `<X.Y>c`             |       _X.Y_        | _current release_ |
-| `8.0`                |        8.0         |       9.1.0       |
-| `7.1`                |        7.1         |       5.2.0       |
-| `7.0`                |        7.0         |       5.1.0       |
-| `6.0`                |        6.0         |       4.2.2       |
-| `5.1`                |        5.1         |       4.0.3       |
-| `5.0`                |        5.0         |       4.0.3       |
-| `4.1`                |        4.1         |       4.0.3       |
-| `4.0`                |        4.0         |       4.0.3       |
+|            tag             |  MATPOWER version  |  Octave version   |
+| -------------------------- | :----------------: | :---------------: |
+| **_development versions_** |                    |                   |
+| `dev-latest`               | _latest_ `master`  | _current release_ |
+| `dev-<YYYY-MM-DD>-<x.y.z>` | `master` _on date_ |      _x.y.z_      |
+|                            |                    |                   |
+| **_release versions_**     |                    |                   |
+| `latest`                   | _current release_  | _current release_ |
+| `<X.Y>c`                   |       _X.Y_        | _current release_ |
+| `8.0`                      |        8.0         |       9.1.0       |
+| `7.1`                      |        7.1         |       5.2.0       |
+| `7.0`                      |        7.0         |       5.1.0       |
+| `6.0`                      |        6.0         |       4.2.2       |
+| `5.1`                      |        5.1         |       4.0.3       |
+| `5.0`                      |        5.0         |       4.0.3       |
+| `4.1`                      |        4.1         |       4.0.3       |
+| `4.0`                      |        4.0         |       4.0.3       |
 
 ---
 

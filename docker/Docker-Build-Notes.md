@@ -31,6 +31,8 @@ When a new version _x.y.z_ of the GNU Octave Docker image
 - Manually update README files for [`matpower/octave`][1] and
   [`matpower/matpower`][7] on DockerHub from [Octave-Docker.md][6] and
   [MATPOWER-Docker.md][5], respectively.
+  **Note:** _The latter gets overwritten by any push to the GitHub master
+  branch._
 
 
 MATPOWER Images ([`matpower/matpower`][7]) (v7.0+)
