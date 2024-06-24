@@ -5459,7 +5459,7 @@ name & default & description \\
 \begin{tablenotes}
  \scriptsize
  \item [\dag] For \code{opf.dc.solver} option set to \codeq{GLPK} only. Requires the installation of the optional \glpk{} package. See Appendix~\ref{app:glpk} for details.
- \item [\ddag] For details, see \code{help glpk\_options} or the ``param'' section of the \glpk{} documentation at  \url{https://www.gnu.org/software/octave/doc/interpreter/Linear-Programming.html}.
+ \item [\ddag] For details, see \code{help glpk\_options} or the ``param'' section of the \glpk{} documentation at  \url{https://docs.octave.org/latest/Linear-Programming.html}.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -7468,7 +7468,7 @@ The \glpk{}~\cite{glpk} ({\bf G}NU {\bf L}inear {\bf P}rogramming {\bf K}it) pac
 To use \glpk{} with \matpower{}, a MEX interface is required\footnote{The \url{http://glpkmex.sourceforge.net} site and Davide Barcelli's page \url{http://www.dii.unisi.it/~barcelli/software.php} may be useful in obtaining the MEX source or pre-compiled binaries for Mac or Linux platforms.}. For Microsoft Windows users, a pre-compiled MEX version of \glpk{} (and numerous other solvers, such as \clp{} and \ipopt{}) are easily installable as part of the OPTI Toolbox\footnote{The OPTI Toolbox is available from 
 \url{https://www.inverseproblem.co.nz/OPTI/}.}~\cite{opti}.
 
-When \glpk{} is installed, either as part of Octave or with a MEX interface for \matlab{}, it can be used to solve DC OPF problems that do not include any quadratic costs by setting the \code{opf.dc.solver} option equal to \codeq{GLPK}. The solution algorithms and other \glpk{} parameters can be set directly via \matpower{}'s \code{glpk.opts} option. A ``\glpk{} user options'' function can also be specified via \code{glpk.opt\_fname} to override the defaults for any of the many \glpk{} parameters. See \code{help glpk\_options} and the parameters section the \glpk{} documentation at \url{https://www.gnu.org/software/octave/doc/interpreter/Linear-Programming.html} for details. See Table~\ref{tab:glpkoptions} for a summary of the \glpk{}-related \matpower{} options. 
+When \glpk{} is installed, either as part of Octave or with a MEX interface for \matlab{}, it can be used to solve DC OPF problems that do not include any quadratic costs by setting the \code{opf.dc.solver} option equal to \codeq{GLPK}. The solution algorithms and other \glpk{} parameters can be set directly via \matpower{}'s \code{glpk.opts} option. A ``\glpk{} user options'' function can also be specified via \code{glpk.opt\_fname} to override the defaults for any of the many \glpk{} parameters. See \code{help glpk\_options} and the parameters section the \glpk{} documentation at \url{https://docs.octave.org/latest/Linear-Programming.html} for details. See Table~\ref{tab:glpkoptions} for a summary of the \glpk{}-related \matpower{} options. 
 
 \glpk{} can also be used to solve general LP problems via \matpower{}'s common QP solver interface \code{qps\_master}, or MILP problems via \code{miqps\_master}, with the algorithm option set to \codeq{GLPK}, or by calling \code{qps\_glpk} or \code{miqps\_glpk} directly.
 
@@ -8784,7 +8784,7 @@ Systems, IEEE Transactions on}, vol.~22, no.~3, pp.~1185--1193, August 2007.
 \doi{10.1109/TPWRS.2007.901301}
 
 \bibitem{octave}
-John~W.~Eaton, David~Bateman, S{\o}ren~Hauberg, Rik~Wehbring (2015). \emph{GNU Octave version 4.0.0 manual: a high-level interactive language for numerical computations.} Available: \url{https://www.gnu.org/software/octave/doc/interpreter/}.
+John~W.~Eaton, David~Bateman, S{\o}ren~Hauberg, Rik~Wehbring (2024). \emph{GNU Octave version 9.2.0 manual: a high-level interactive language for numerical computations.} Available: \url{https://docs.octave.org/v9.2.0/}.
 
 \bibitem{most_manual}
 R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez. \mostname{} (\most{}) User's Manual. 2024. [Online]. Available: \url{\currentmostmanurl}\\
