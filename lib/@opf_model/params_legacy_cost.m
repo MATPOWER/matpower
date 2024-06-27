@@ -157,7 +157,7 @@ if nargin > 1       %% individual set
         end
     end
 else                %% aggregate
-    cache = om.cost.params;
+    cache = om.cost.cache;
     if isempty(cache)       %% build the aggregate
         nx = om.var.N;          %% number of variables
         nw = om.cost.N;         %% number of cost rows
@@ -204,9 +204,9 @@ else                %% aggregate
         end
 
         %% cache aggregated parameters
-        om.cost.params = struct( ...
+        om.cost.cache = struct( ...
             'N', Nt', 'Cw', Cw, 'H', H, 'dd', dd, 'rh', rh, 'kk', kk, 'mm', mm );
-        cp = om.cost.params;
+        cp = om.cost.cache;
     else                    %% return cached values
         cp = cache;
     end

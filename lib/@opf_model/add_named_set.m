@@ -95,8 +95,8 @@ switch set_type
                 om_ff.data.mm = subsasgn(om_ff.data.mm, sc, cp.mm);
             end
         end
-        if ~isempty(om_ff.params)       %% clear cache of aggregated params
-            om_ff.params = [];
+        if ~isempty(om_ff.cache)       %% clear cache of aggregated params
+            om_ff.cache = [];
         end
         om.cost = om_ff;
 end

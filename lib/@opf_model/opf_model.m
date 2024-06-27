@@ -134,7 +134,7 @@ classdef opf_model < opt_model
                 'kk', es, ...
                 'mm', es, ...
                 'vs', es );
-            om.cost.params = [];
+            om.cost.cache = [];
         end
     end     %% methods
 end         %% classdef

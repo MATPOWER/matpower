@@ -38,7 +38,7 @@ classdef (Abstract) mm_shared_opf_legacy < handle
                 'kk', es, ...
                 'mm', es, ...
                 'vs', es );
-            obj.cost.params = [];
+            obj.cost.cache = [];
         end
 
         function mpc = get_mpc(om)
@@ -540,7 +540,7 @@ classdef (Abstract) mm_shared_opf_legacy < handle
                     end
                 end
             else                %% aggregate
-                cache = om.cost.params;
+                cache = om.cost.cache;
                 if isempty(cache)       %% build the aggregate
                     nx = om.var.N;          %% number of variables
                     nw = om.cost.N;         %% number of cost rows
@@ -587,9 +587,9 @@ classdef (Abstract) mm_shared_opf_legacy < handle
                     end
 
                     %% cache aggregated parameters
-                    om.cost.params = struct( ...
+                    om.cost.cache = struct( ...
                         'N', Nt', 'Cw', Cw, 'H', H, 'dd', dd, 'rh', rh, 'kk', kk, 'mm', mm );
-                    cp = om.cost.params;
+                    cp = om.cost.cache;
                 else                    %% return cached values
                     cp = cache;
                 end
@@ -664,8 +664,8 @@ classdef (Abstract) mm_shared_opf_legacy < handle
                             om_ff.data.mm = subsasgn(om_ff.data.mm, sc, cp.mm);
                         end
                     end
-                    if ~isempty(om_ff.params)       %% clear cache of aggregated params
-                        om_ff.params = [];
+                    if ~isempty(om_ff.cache)       %% clear cache of aggregated params
+                        om_ff.cache = [];
                     end
                     om.cost = om_ff;
             end
