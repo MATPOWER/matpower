@@ -47,7 +47,8 @@ classdef math_model_opf_acpi_legacy < mp.math_model_opf_acpi & mp.mm_shared_opf_
         function obj = def_set_types(obj)
             %
 
-            obj.def_set_types_legacy();
+            def_set_types@mp.math_model_opf_acpi(obj);
+            obj.mod_set_types_legacy();
         end
 
         function obj = init_set_types(obj)
