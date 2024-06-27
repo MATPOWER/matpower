@@ -29,6 +29,7 @@ classdef (Abstract) task < handle
 %   * et - elapsed time (seconds) for run() method
 %
 % mp.task Methods:
+%   * load_dm - load the data model
 %   * run - execute the task
 %   * next_mm - controls iterations over mathematical models
 %   * next_nm - controls iterations over network models

@@ -19,7 +19,7 @@ function [dm, task_rv] = load_dm(d, task_class, mpopt, varargin)
 %   d : data source specification, currently assumed to be a |MATPOWER|
 %       case name or case struct (``mpc``)
 %   task_class (function handle) : *(optional)* handle to constructor of
-%       task class, *(default is mp.task_opf)*
+%       task class, *(default is* mp.task_opf *)*
 %   mpopt (struct) : *(optional)* |MATPOWER| options struct
 %
 %       Additional optional inputs can be provided as *<name>, <val>* pairs,
