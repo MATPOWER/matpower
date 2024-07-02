@@ -620,7 +620,7 @@ t_is(A, A2, 14, [t ' : A']);
 
 for i = 1:2
     for j = 1:2
-        t = sprintf('om.params_lin_constraint(''mylin'', {%d,%d})', i,j);
+        t = sprintf('om.eval_lin_constraint(''mylin'', {%d,%d})', i,j);
         A3 = sparse([1:(i+j) 1:(i+j)]', [1:(i+j) 5*ones(1,i+j)]', ...
             [ones(i+j,1);-ones(i+j,1)], i+j, 3+2+(i==2 && j==1));
         l3 = -ones(i+j, 1); u = [];
@@ -680,7 +680,7 @@ try
     [N, fcn] = om.params_nln_constraint(1, 'mynle')
     t_ok(0, t);
 catch me
-    t_ok(strfind(me.message, 'opt_model.params_nln_constraint: nonlinear constraint set ''mynle'' requires an IDX_LIST arg'), t);
+    t_ok(strfind(me.message, 'nonlinear constraint set ''mynle'' requires an IDX_LIST arg'), t);
 end
 
 t = 'om.params_nln_constraint(0, ''mynli'', {1,2})';
@@ -1200,7 +1200,7 @@ try
     cp = om.params_legacy_cost('wc')
     t_ok(0, t);
 catch me
-    t_ok(strfind(me.message, 'opf_model.params_legacy_cost: legacy cost set ''wc'' requires an IDX_LIST arg'), t);
+    t_ok(strfind(me.message, 'legacy cost set ''wc'' requires an IDX_LIST arg'), t);
 end
 
 t = 'om.params_legacy_cost(''wc'', {1,2})';
@@ -1351,7 +1351,7 @@ try
     [N, fcn] = om.params_nln_cost('wc')
     t_ok(0, t);
 catch me
-    t_ok(strfind(me.message, 'opt_model.params_nln_cost: general nonlinear cost set ''wc'' requires an IDX_LIST arg'), t);
+    t_ok(strfind(me.message, 'general nonlinear cost set ''wc'' requires an IDX_LIST arg'), t);
 end
 
 t = 'om.params_nln_cost(''wc'', {1,2})';
