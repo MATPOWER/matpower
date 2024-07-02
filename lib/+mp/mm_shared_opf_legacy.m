@@ -21,7 +21,7 @@ classdef (Abstract) mm_shared_opf_legacy < handle
         function obj = mod_set_types_legacy(obj)
             %
 
-            obj.set_types.cost = 'LEGACY COSTS';
+            obj.set_types.cost = mp.sm_legacy_cost('LEGACY COSTS');
         end
 
         function obj = init_set_types_legacy(obj)

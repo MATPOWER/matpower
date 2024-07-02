@@ -114,7 +114,7 @@ classdef opf_model < opt_model
             % Define set types ``var``, ``lin``, ``nle``, ``nli``, ``qdc``, ``nlc``, ``cost``.
 
             def_set_types@opt_model(om);
-            om.set_types.cost = 'LEGACY COSTS';
+            om.set_types.cost = mp.sm_legacy_cost('LEGACY COSTS');
         end
 
         function om = init_set_types(om)
