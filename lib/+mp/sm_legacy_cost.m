@@ -1,4 +1,4 @@
-classdef sm_legacy_cost < mp.set_manager
+classdef sm_legacy_cost < mp.set_manager_opt_model
 % mp.sm_legacy_cost -  MP Set Manager class for legacy costs.
 % ::
 %
@@ -14,7 +14,7 @@ classdef sm_legacy_cost < mp.set_manager
 % mp.sm_legacy_cost Methods:
 %   * sm_legacy_cost - constructor
 %
-% See also mp.set_manager.
+% See also mp.set_manager, mp.set_manager_opt_model.
 
 %   MATPOWER
 %   Copyright (c) 2024, Power Systems Engineering Research Center (PSERC)
@@ -37,7 +37,7 @@ classdef sm_legacy_cost < mp.set_manager
             %   sm = mp.sm_legacy_cost(label)
 
             es = struct();  %% empty struct
-            obj@mp.set_manager(varargin{:});
+            obj@mp.set_manager_opt_model(varargin{:});
             obj.data = struct( ...
                 'N', es, ...
                 'H', es, ...
