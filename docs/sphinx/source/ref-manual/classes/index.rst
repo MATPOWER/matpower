@@ -259,6 +259,7 @@ Miscellaneous Classes
    mp/element_container
    mp/mapped_array
    mp/NODE_TYPE
+   mp/sm_legacy_cost
 
 
 |MATPOWER| Extension Classes
