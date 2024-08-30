@@ -1,5 +1,9 @@
 function obj = init_indexed_name(obj, set_type, name, dim_list)
 % init_indexed_name - Initializes the dimensions for an indexed named set.
+%
+% .. note::
+%    .. deprecated:: 4.3 Please use mp.set_manager.init_indexed_name instead.
+%
 % ::
 %
 %   OBJ.INIT_INDEXED_NAME(SET_TYPE, NAME, DIM_LIST)
@@ -45,26 +49,9 @@ function obj = init_indexed_name(obj, set_type, name, dim_list)
 %% check for valid type for named set
 st_label = obj.valid_named_set_type(set_type);
 if st_label
-    ff = set_type;
+    obj.(set_type).init_indexed_name(name, dim_list);
 else
     ff = fieldnames(obj.set_types);
     stypes = sprintf('\n  ''%s''', ff{:});
     error('mp_idx_manager.init_indexed_name: ''%s'' is not a valid SET_TYPE, must be one of the following:%s', set_type, stypes);
 end
-
-%% prevent duplicate name in set of specified type
-if isfield(obj.(ff).idx.N, name)
-    error('mp_idx_manager.init_indexed_name: %s set named ''%s'' already exists', ...
-        st_label, name);
-end
-
-%% use column vector if single dimension
-if length(dim_list) == 1
-    dim_list = {dim_list{:}, 1};
-end
-
-%% add general info about this named set
-zero_vector = zeros(dim_list{:});
-obj.(ff).idx.i1.(name)  = zero_vector;  %% starting index
-obj.(ff).idx.iN.(name)  = zero_vector;  %% ending index
-obj.(ff).idx.N.(name)   = zero_vector;  %% number of vars/constraints/costs

@@ -1,5 +1,9 @@
 function label = describe_idx(obj, set_type, idxs)
 % describe_idx - Identifies element indices for a give set type.
+%
+% .. note::
+%    .. deprecated:: 4.3 Please use mp.set_manager.describe_idx instead.
+%
 % ::
 %
 %   LABEL = OBJ.DESCRIBE_IDX(SET_TYPE, IDXS)
@@ -23,24 +27,4 @@ function label = describe_idx(obj, set_type, idxs)
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See https://github.com/MATPOWER/mp-opt-model for more info.
 
-label = cell(size(idxs));       %% pre-allocate return cell array
-
-if ~isempty(idxs)
-    s = obj.set_type_idx_map(set_type, idxs);
-end
-for i = 1:length(idxs(:))
-    idx = s(i).idx;
-    if isempty(idx)
-        label{i} = sprintf('%s(%d)', s(i).name, s(i).i);
-    else
-        if length(idx) <= 1
-            idxstr = sprintf('%d', idx{1});
-        else
-            idxstr = [sprintf('%d', idx{1}) sprintf(',%d', idx{2:end})];
-        end
-        label{i} = sprintf('%s(%s)(%d)', s(i).name, idxstr, s(i).i);
-    end
-end
-if isscalar(idxs)               %% return scalar
-    label = label{1};
-end
+label = obj.(set_type).describe_idx(idxs);

@@ -1,5 +1,10 @@
-function [N, fcn, vs] = params_nln_cost(om, name, idx)
+function varargout = params_nln_cost(om, varargin)
 % params_nln_cost - Returns cost parameters for general nonlinear costs.
+%
+% .. note::
+%    .. deprecated:: 4.3 Please use mp.sm_nln_cost.params instead, as
+%       in ``om.nlc.params(...)``.
+%
 % ::
 %
 %   [N, FCN] = OM.PARAMS_NLN_COST(NAME)
@@ -23,28 +28,4 @@ function [N, fcn, vs] = params_nln_cost(om, name, idx)
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See https://github.com/MATPOWER/mp-opt-model for more info.
 
-nlc = om.nlc;
-if nargin < 3
-    idx = {};
-end
-
-if isempty(idx)
-    dims = size(nlc.idx.i1.(name));
-    if prod(dims) ~= 1
-        error('opt_model.params_nln_cost: general nonlinear cost set ''%s'' requires an IDX_LIST arg', name)
-    end
-    N = nlc.idx.N.(name);
-    fcn = nlc.data.fcn.(name);
-    vs = nlc.data.vs.(name);
-else
-    %% calls to substruct() are relatively expensive, so we pre-build the
-    %% structs for addressing cell and numeric array fields
-    %% sn = substruct('.', name, '()', idx);
-    %% sc = substruct('.', name, '{}', idx);
-    sc = struct('type', {'.', '{}'}, 'subs', {name, idx});  %% cell array field
-    sn = sc; sn(2).type = '()';                             %% num array field
-
-    N = subsref(nlc.idx.N, sn);
-    fcn = subsref(nlc.data.fcn, sc);
-    vs = subsref(nlc.data.vs, sc);
-end
+[varargout{1:nargout}] = om.nlc.params(om.var, varargin{:});

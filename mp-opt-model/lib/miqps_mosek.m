@@ -407,34 +407,26 @@ if nargout > 1
                 if isfield(sol, 'slx')
                     lambda.lower = sol.slx;
                 else
-                    lambda.lower = [];
+                    lambda.lower = NaN(nx, 1);
                 end
                 if isfield(sol, 'sux')
                     lambda.upper = sol.sux;
                 else
-                    lambda.upper = [];
+                    lambda.upper = NaN(nx, 1);
                 end
                 if isfield(sol, 'slc')
                     lambda.mu_l  = sol.slc;
                 else
-                    lambda.mu_l  = [];
+                    lambda.mu_l  = NaN(nA, 1);
                 end
                 if isfield(sol, 'suc')
                     lambda.mu_u  = sol.suc;
                 else
-                    lambda.mu_u  = [];
+                    lambda.mu_u  = NaN(nA, 1);
                 end
             else
-                if isfield(p, 'xmin') && ~isempty(p.xmin)
-                    lambda.lower = NaN(nx, 1);
-                else
-                    lambda.lower = [];
-                end
-                if isfield(p, 'xmax') && ~isempty(p.xmax)
-                    lambda.upper = NaN(nx, 1);
-                else
-                    lambda.upper = [];
-                end
+                lambda.lower = NaN(nx, 1);
+                lambda.upper = NaN(nx, 1);
                 lambda.mu_l = NaN(nA, 1);
                 lambda.mu_u = NaN(nA, 1);
             end

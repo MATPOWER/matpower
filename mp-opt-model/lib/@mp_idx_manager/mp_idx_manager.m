@@ -22,7 +22,7 @@ classdef mp_idx_manager < handle
 %           struct defining the various set types, where the key is the
 %           set type name, which must also be declared as a property in
 %           the object's class, and the value is a string name used for
-%           display purposes.
+%           display purposes or a mp.set_manager object.
 %
 %           E.g.
 %               function obj = def_set_types(obj)
@@ -145,23 +145,25 @@ classdef mp_idx_manager < handle
                     if have_feature('octave')
                         warning(s1.state, 'Octave:classdef-to-struct');
                     end
+                    [~, k] = ismember('set_types', props);
+                    props(k) = [];  %% remove 'set_types'
                     for k = 1:length(props)
-                        obj.(props{k}) = s.(props{k});
+                        obj = copy_prop(s, obj, props{k});
                     end
                 elseif isstruct(s)
                     props = fieldnames(obj);
                     for k = 1:length(props)
                         if isfield(s, props{k})
-                            obj.(props{k}) = s.(props{k});
+                            obj = copy_prop(s, obj, props{k});
                         end
                     end
                 else
                     error('mp_idx_manager.mp_idx_manager: input must be an ''mp_idx_manager'' object or a struct');
                 end
             end
-            
+
             obj.def_set_types();
-            
+
             %% The INIT_SET_TYPES() method should ideally be (1) called here
             %% in the MP_IDX_MANAGER constructor and (2) skipped if constructed
             %% from an existing object, neither of which work in Octave 5.2
@@ -180,31 +182,27 @@ classdef mp_idx_manager < handle
         function obj = init_set_types(obj)
             % Initialize indexing structures for each set type.
 
-            %% base data struct for each type
-            es = struct();
-            ds = struct( ...
-                'idx', struct( ...
-                    'i1', es, ...
-                    'iN', es, ...
-                    'N', es ), ...
-                'N', 0, ...
-                'NS', 0, ...
-                'order', struct( ...
-                    'name', [], ...
-                    'idx', [] ), ...
-                'data', es );
+            %% Can allow def_set_types() to return a struct whose values
+            %% are either char arrays or mp.set_manager objects.
 
             %% initialize each (set_type) field with base data structure
             for f = fieldnames(obj.set_types)'
-                obj.(f{1}) = ds;
+                nis = obj.set_types.(f{1});
+                if ischar(nis)
+                    nis = mp.set_manager(nis);
+                end
+                obj.(f{1}) = nis;
             end
         end
 
         function new_obj = copy(obj)
             % Duplicate the object.
 
-            %% make shallow copy of object
+            %% initialize copy
             new_obj = eval(class(obj));  %% create new object
+            new_obj.init_set_types();
+
+            %% copy properties/fields
             if have_feature('octave')
                 s1 = warning('query', 'Octave:classdef-to-struct');
                 warning('off', 'Octave:classdef-to-struct');
@@ -213,42 +211,17 @@ classdef mp_idx_manager < handle
             if have_feature('octave')
                 warning(s1.state, 'Octave:classdef-to-struct');
             end
+            [~, k] = ismember('set_types', props);
+            props(k) = [];  %% remove 'set_types'
             for k = 1:length(props)
-                new_obj.(props{k}) = obj.(props{k});
+                new_obj = copy_prop(obj, new_obj, props{k});
             end
         end
 
         function display_set(obj, stype, sname)
             % Display indexing information for a given set type.
 
-            if nargin < 3
-                sname = obj.set_types.(stype);
-            end
-            st = obj.(stype);    %% data for set type of interest
-            if st.NS
-                fmt = '%-26s %6s %8s %8s %8s\n';
-                fprintf(fmt, sname, 'name', 'i1', 'iN', 'N');
-                fprintf(fmt, repmat('=', 1, length(sname)), '------', '-----', '-----', '------');
-                idx = st.idx;
-                fmt = '%10d:%22s %8d %8d %8d\n';
-                for k = 1:st.NS
-                    name = st.order(k).name;
-                    if isempty(st.order(k).idx)
-                        fprintf(fmt, k, name, idx.i1.(name), idx.iN.(name), idx.N.(name));
-                    else
-                        vsidx = st.order(k).idx;
-                        str = '%d'; for m = 2:length(vsidx), str = [str ',%d']; end
-                        s = substruct('.', name, '()', vsidx);
-                        nname = sprintf(['%s(' str, ')'], name, vsidx{:});
-                        fprintf(fmt, k, nname, ...
-                                subsref(idx.i1, s), subsref(idx.iN, s), subsref(idx.N, s));
-                    end
-                end
-                fmt = sprintf('%%10d = %%s.NS%%%dd = %%s.N\\n\\n', 35-length(stype));
-                fprintf(fmt, st.NS, stype, st.N, stype);
-            else
-                fprintf('%-26s  :  <none>\n', sname);
-            end
+            obj.(stype).display(stype);
         end
 
         obj = add_named_set(obj, set_type, name, idx, N, varargin)
@@ -270,3 +243,14 @@ classdef mp_idx_manager < handle
         str = valid_named_set_type(obj, set_type)
     end     %% methods
 end         %% classdef
+
+function d = copy_prop(s, d, prop)
+    if isa(s.(prop), 'mp.set_manager')
+        d.(prop) = s.(prop).copy();
+    elseif isa(d.(prop), 'mp.set_manager')
+        d.(prop) = nested_struct_copy( ...
+            d.(prop), s.(prop));
+    else
+        d.(prop) = s.(prop);
+    end
+end

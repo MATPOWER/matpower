@@ -57,8 +57,12 @@ else    %% octave
 end
 
 n = 18;
+diff_tool = 'bbdiff';
+show_diff_on_fail = false;
 
-t_begin(15+n*length(cfg), quiet);
+reps = {};
+
+t_begin(16+n*length(cfg), quiet);
 
 for k = 1:length(cfg)
     alg   = cfg{k}{1};
@@ -195,8 +199,29 @@ t_is(dg, jac(1:2, 1:2), 14, [t 'jac']);
 
 t = 'parse_soln : ';
 t_ok(om.has_parsed_soln(), [t 'has_parsed_soln() is true']);
-t_is(om.soln.var.val.x1, om.get_soln('var', 'x1'), 14, [t 'var.val.x1']);
-t_is(om.soln.var.val.x2, om.get_soln('var', 'x2'), 14, [t 'var.val.x2']);
+t_is(om.var.soln.val.x1, om.get_soln('var', 'x1'), 14, [t 'var.val.x1']);
+t_is(om.var.soln.val.x2, om.get_soln('var', 'x2'), 14, [t 'var.val.x2']);
+
+t = 'disp_soln';
+rn = fix(1e9*rand);
+[pathstr, name, ext] = fileparts(which('t_opt_model'));
+fname = 't_om_solve_nleqs_display_soln';
+fname_e = fullfile(pathstr, 'display_soln', sprintf('%s.txt', fname));
+fname_g = sprintf('%s_%d.txt', fname, rn);
+[fd, msg] = fopen(fname_g, 'wt');   %% open solution file
+if fd == -1
+    error('t_om_solve_nleqs: could not create %d : %s', fname, msg);
+end
+om.display_soln(fd);    %% write out solution
+fclose(fd);
+if ~t_file_match(fname_g, fname_e, t, reps, 1);
+    fprintf('  compare these 2 files:\n    %s\n    %s\n', fname_g, fname_e);
+    if show_diff_on_fail
+        cmd = sprintf('%s %s %s', diff_tool, fname_g, fname_e);
+        [status, result] = system(cmd);
+        keyboard
+    end
+end
 
 t_end;
 

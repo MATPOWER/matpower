@@ -2,7 +2,64 @@ Change history for MP-Opt-Model
 ===============================
 
 
- Version 4.2 - *May 10, 2024*
+since 4.2
+---------
+
+#### 8/17/24
+  - Add `mp.set_manager_opt_model` base class to handle common `opt_model`
+    functionality, such as handling solutions, for the individual field
+    object subclasses.
+  - Refactor `opt_model` to move lots of functionality into new
+    `mp.set_manager_opt_model` subclasses:
+    - `mp.sm_lin_constraint` - set manager class for linear constraints
+    - `mp.sm_nln_constraint` - set manager class for nonlinear constraints
+    - `mp.sm_nln_cost` - set manager class for general nonlinear costs
+    - `mp.sm_quad_cost` - set manager class for quadratic costs
+    - `mp.sm_variable` - set manager class for variables
+  - Deprecate the following `opt_model` methods in favor of methods of the
+    individual `mp.set_manager` objects contained by the `opt_model` object:
+    - `add_named_set()` --> use `mp.set_manager.add()`
+    - `describe_idx()` --> use `mp.set_manager.describe_idx()`
+    - `getN()` --> use `mp.set_manager.get_N()`
+    - `init_indexed_name()` --> use `mp.set_manager.init_indexed_name()`
+    - `set_type_idx_map()` --> use `mp.set_manager.set_type_idx_map()`
+    - `add_lin_constraint()` --> use `mp.sm_lin_constraint.add()`
+    - `add_nln_constraint()` --> use `mp.sm_nln_constraint.add()`
+    - `add_nln_cost()` --> use `mp.sm_nln_cost.add()`
+    - `add_quad_cost()` --> use `mp.sm_quad_cost.add()`
+    - `add_var()` --> use `mp.sm_variable.add()`
+    - `eval_lin_constraint()` --> use `mp.sm_lin_constraint.eval()`
+    - `eval_nln_constraint()` --> use `mp.sm_nln_constraint.eval()`
+    - `eval_nln_constraint_hess()` --> use `mp.sm_nln_constraint.eval_hess()`
+    - `eval_nln_cost()` --> use `mp.sm_nln_cost.eval()`
+    - `eval_quad_cost()` --> use `mp.sm_quad_cost.eval()`
+    - `init_indexed_name()` --> use `mp.set_manager.init_indexed_name()`
+    - `params_lin_constraint()` --> use `mp.sm_lin_constraint.params()`
+    - `params_nln_constraint()` --> use `mp.sm_nln_constraint.params()`
+    - `params_nln_cost()` --> use `mp.sm_nln_cost.params()`
+    - `params_quad_cost()` --> use `mp.sm_quad_cost.params()`
+    - `params_var()` --> use `mp.sm_variable.params()`
+    - `set_params()` --> use `mp.set_manager.set_params()`
+    - `varsets_cell2struct()` --> use `mp.sm_variable.varsets_cell2struct()`
+    - `varsets_idx()` --> use `mp.sm_variable.varsets_idx()`
+    - `varsets_len()` --> use `mp.sm_variable.varsets_len()`
+    - `varsets_x()` --> use `mp.sm_variable.varsets_x()`
+  - **INCOMPATIBLE CHANGE:** Move parsed solution from `soln` property
+    of `opt_model` object to `soln` property of individual child
+    `mp.set_manager_opt_model` objects. Currently it is still available at
+    the original location, but this is now deprecated.
+
+#### 7/10/24
+  - Add option for `opt_model.display_soln()` to print to a file.
+
+#### 6/24/24
+  - Add `mp.set_manager` class to encapsulate `mp_idx_manager` functionality
+    into an individual field object representing a specific set type, rather
+    than in the container class.
+  - Refactor `mp_idx_manager` to use new `mp.set_manager` class.
+
+
+Version 4.2 - *May 10, 2024*
 ----------------------------
 
 #### 5/10/24

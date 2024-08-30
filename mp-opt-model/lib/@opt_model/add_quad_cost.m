@@ -1,5 +1,10 @@
-function om = add_quad_cost(om, name, idx, Q, c, k, varsets)
+function om = add_quad_cost(om, name, idx, varargin)
 % add_quad_cost - Adds a set of user costs to the model.
+%
+% .. note::
+%    .. deprecated:: 4.3 Please use mp.sm_quad_cost.add instead, as
+%       in ``om.qdc.add(...)``.
+%
 % ::
 %
 %   OM.ADD_QUAD_COST(NAME, Q, C);
@@ -16,7 +21,7 @@ function om = add_quad_cost(om, name, idx, Q, c, k, varsets)
 %   K is a scalar and NX is the number of elements in X. Here X is the vector
 %   formed by combining the specified VARSETS (the full optimization vector
 %   by default). Alternatively, if Q is an NX x 1 vector or empty, then F(X)
-%   is also NX x 1, and K can be either NX + 1 or scalar.
+%   is also NX x 1, and K can be either NX x 1 or scalar.
 %       F(X) = 1/2 * Q .* X.^2 + C .* X + K
 %
 %   Indexed Named Sets
@@ -54,63 +59,4 @@ function om = add_quad_cost(om, name, idx, Q, c, k, varsets)
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See https://github.com/MATPOWER/mp-opt-model for more info.
 
-%% initialize input arguments
-if iscell(idx)          %% indexed named set
-    if nargin < 7
-        varsets = {};
-    end
-else                    %% simple named set
-    if nargin < 6
-        varsets = {};
-    else
-        varsets = k;
-    end
-    if nargin < 5
-        k = 0;
-    else
-        k = c;
-    end
-    c = Q;
-    Q = idx;
-    idx = {};
-end
-
-%% convert varsets from cell to struct array if necessary
-varsets = om.varsets_cell2struct(varsets);
-nv = om.varsets_len(varsets);   %% number of variables
-
-%% check sizes
-[MQ, NQ] = size(Q);
-[Mc, Nc] = size(c);
-if MQ
-    if NQ ~= MQ && NQ ~= 1
-        error('opt_model.add_quad_cost: Q (%d x %d) must be square or a column vector (or empty)', MQ, NQ);
-    end
-end
-if Mc && Nc ~= 1
-    error('opt_model.add_quad_cost: c (%d x %d) must be a column vector (or empty)', Mc, Nc);
-end
-if MQ
-    if Mc && Mc ~= MQ
-        error('opt_model.add_quad_cost: dimensions of Q (%d x %d) and c (%d x %d) are not compatible', MQ, NQ, Mc, Nc);
-    end
-    nx = MQ;
-else
-    if nv && ~Mc
-        error('opt_model.add_quad_cost: Q and c cannot both be empty');
-    end
-    nx = Mc;
-end
-if nx ~= nv
-    error('opt_model.add_quad_cost: dimensions of Q (%d x %d) and c (%d x %d) do not match\nnumber of variables (%d)\n', MQ, NQ, Mc, Nc, nv);
-end
-
-%% size of named cost set
-if NQ == 1 || isempty(Q)    %% if Q is a column vector or empty
-    N = nx;                 %%   cost is element-wise, i.e. a vector
-else                        %% otherwise Q is a square matrix
-    N = 1;                  %%   cost is scalar
-end
-
-%% add the named quadratic cost set
-om.add_named_set('qdc', name, idx, N, Q, c, k, varsets);
+om.qdc.add(om.var, name, idx, varargin{:});

@@ -669,7 +669,7 @@ try
     [N, fcn] = om.params_nln_constraint(1, 'mynle')
     t_ok(0, t);
 catch me
-    t_ok(strfind(me.message, 'opt_model.params_nln_constraint: nonlinear constraint set ''mynle'' requires an IDX_LIST arg'), t);
+    t_ok(strfind(me.message, 'nonlinear constraint set ''mynle'' requires an IDX_LIST arg'), t);
 end
 
 t = 'om.params_nln_constraint(0, ''mynli'', {1,2})';
@@ -1165,7 +1165,7 @@ try
     [N, fcn] = om.params_nln_cost('wc')
     t_ok(0, t);
 catch me
-    t_ok(strfind(me.message, 'opt_model.params_nln_cost: general nonlinear cost set ''wc'' requires an IDX_LIST arg'), t);
+    t_ok(strfind(me.message, 'general nonlinear cost set ''wc'' requires an IDX_LIST arg'), t);
 end
 
 t = 'om.params_nln_cost(''wc'', {1,2})';
@@ -1254,7 +1254,7 @@ if have_feature('isequaln')
         om.set_params('var', 'Va', 'v0', val);
         t_ok(0, [t 'Va, v0 (wrong size)']);
     catch me
-        TorF = strfind(me.message, 'parameter ''var'' ''Va'' ''v0'' should have length 4 (or 1)');
+        TorF = strfind(me.message, 'parameter ''Va'' ''v0'' should have length 4 (or 1)');
         t_ok(TorF, [t 'Va, v0 (wrong size)']);
         if ~TorF
             me.message
@@ -1264,7 +1264,7 @@ if have_feature('isequaln')
     t = 'om.set_params(''var'', name, ...) : ';
     val = [1:4]';
     s.var.data.v0.Va = val;
-    s.var.params = [];  % remove cache, as set_params() does
+    s.var.cache = [];   % remove cache, as set_params() does
     om.set_params('var', 'Va', 'v0', val);
     t_ok(isequaln(struct(om), s), [t 'Va, v0']);
 
@@ -1279,7 +1279,7 @@ if have_feature('isequaln')
         om.set_params('var', 'Pg', 'all', val);
         t_ok(0, [t 'Pg, all (wrong size)']);
     catch me
-        TorF = strfind(me.message, 'dimension change for ''var'' ''Pg'' not allowed');
+        TorF = strfind(me.message, 'dimension change for ''Pg'' not allowed');
         t_ok(TorF, [t 'Pg, all (wrong size)']);
         if ~TorF
             me.message
@@ -1314,7 +1314,7 @@ if have_feature('isequaln')
         om.set_params('lin', 'Qmis', 'A', val);
         t_ok(0, [t 'Qmis, A (wrong size)']);
     catch me
-        TorF = strfind(me.message, 'dimension change for ''lin'' ''Qmis'' not allowed except for ''all''');
+        TorF = strfind(me.message, 'dimension change for ''Qmis'' not allowed except for ''all''');
         t_ok(TorF, [t 'Qmis, A (wrong size)']);
         if ~TorF
             me.message
@@ -1323,7 +1323,7 @@ if have_feature('isequaln')
 
     val = sparse(m, n);
     s.lin.data.A.Qmis = val;
-    s.lin.params = [];  % remove cache, as set_params() does
+    s.lin.cache = [];   % remove cache, as set_params() does
     om.set_params('lin', 'Qmis', 'A', val);
     t_ok(isequaln(struct(om), s), [t 'Qmis, A']);
 
@@ -1363,7 +1363,7 @@ if have_feature('isequaln')
         om.set_params('lin', 'mylin', {2,2}, 'all', val);
         t_ok(0, [t 'mylin{2,2}, all (wrong size)']);
     catch me
-        TorF = strfind(me.message, 'for ''lin'' ''mylin(2,2)'' number of columns of ''A'' (5) must be consistent with ''vs'' (170)');
+        TorF = strfind(me.message, 'for ''mylin(2,2)'' number of columns of ''A'' (5) must be consistent with ''vs'' (170)');
         t_ok(TorF, [t 'mylin{2,2}, all (wrong size)']);
         if ~TorF
             me.message
@@ -1389,7 +1389,7 @@ if have_feature('isequaln')
         om.set_params('nle', 'Qmise', 'N', val);
         t_ok(0, [t 'Qmise, N (wrong size)']);
     catch me
-        TorF = strfind(me.message, 'dimension change for ''nle'' ''Qmise'' not allowed except for ''all''');
+        TorF = strfind(me.message, 'dimension change for ''Qmise'' not allowed except for ''all''');
         t_ok(TorF, [t 'Qmise, N (wrong size)']);
         if ~TorF
             me.message
@@ -1459,7 +1459,7 @@ if have_feature('isequaln')
         om.set_params('nli', 'Qmisi', 'N', val);
         t_ok(0, [t 'Qmisi, N (wrong size)']);
     catch me
-        TorF = strfind(me.message, 'dimension change for ''nli'' ''Qmisi'' not allowed except for ''all''');
+        TorF = strfind(me.message, 'dimension change for ''Qmisi'' not allowed except for ''all''');
         t_ok(TorF, [t 'Qmisi, N (wrong size)']);
         if ~TorF
             me.message
@@ -1523,7 +1523,7 @@ if have_feature('isequaln')
         om.set_params('qdc', 'qc1', 'Q', val);
         t_ok(0, [t 'qc1, Q (wrong size)']);
     catch me
-        TorF = strfind(me.message, 'dimension change for ''qdc'' ''qc1'' not allowed except for ''all''');
+        TorF = strfind(me.message, 'dimension change for ''qc1'' not allowed except for ''all''');
         t_ok(TorF, [t 'qc1, Q (wrong size)']);
         if ~TorF
             me.message
@@ -1532,7 +1532,7 @@ if have_feature('isequaln')
 
     val = sparse(m, n);
     s.qdc.data.Q.qc1 = val;
-    s.qdc.params = [];  % remove cache, as set_params() does
+    s.qdc.cache = [];   % remove cache, as set_params() does
     om.set_params('qdc', 'qc1', 'Q', val);
     t_ok(isequaln(struct(om), s), [t 'qc1, Q']);
 
@@ -1572,7 +1572,7 @@ if have_feature('isequaln')
         om.set_params('qdc', 'qc', {2,2}, 'all', val);
         t_ok(0, [t 'qc{2,2}, all (wrong size)']);
     catch me
-        TorF = strfind(me.message, 'for ''qdc'' ''qc(2,2)'' dimensions of ''Q'', ''c'', ''k'' (3) must be consistent with ''vs'' (170)');
+        TorF = strfind(me.message, 'for ''qc(2,2)'' dimensions of ''Q'', ''c'', ''k'' (3) must be consistent with ''vs'' (170)');
         t_ok(TorF, [t 'qc{2,2}, all (wrong size)']);
         if ~TorF
             me.message
@@ -1619,7 +1619,7 @@ if have_feature('isequaln')
         om.set_params('nlc', 'wc', {2,2}, 'all', val);
         t_ok(0, [t 'wc{2,2}, all (vector cost)']);
     catch me
-        TorF = strfind(me.message, 'vector value for ''nlc'' ''wc(2,2)'' not yet implemented');
+        TorF = strfind(me.message, 'vector value for ''wc(2,2)'' not yet implemented');
         t_ok(TorF, [t 'wc{2,2}, all (vector cost)']);
         if ~TorF
             me.message
@@ -1728,21 +1728,21 @@ g = om.describe_idx('var', 15);
 t_ok(isequal(g, 'Vm2(3)'), [t '''var'', 15']);
 if have_feature('isequaln')
     g = om.describe_idx('nli', 15);
-    t_ok(isequal(g, 'mynli(2,2)(4)'), [t '''nli'', 15']);
+    t_ok(isequal(g, 'mynli{2,2}(4)'), [t '''nli'', 15']);
     g = om.describe_idx('qdc', [5;192;20]);
-    e = {'qc3(3)'; 'qc(1,2)(1)'; 'qc5(7)'};
+    e = {'qc3(3)'; 'qc{1,2}(1)'; 'qc5(7)'};
     t_ok(isequal(g, e), [t '''qdc'', [5;192;20]']);
     g = om.describe_idx('lin', [12 3;2 10]);
-    e = {'mylin(2,1)(2)', 'Qmis(1)'; 'Pmis(2)', 'mylin(1,2)(3)'};
+    e = {'mylin{2,1}(2)', 'Qmis(1)'; 'Pmis(2)', 'mylin{1,2}(3)'};
     t_ok(isequal(g, e), [t '''lin'', [12 3;2 10]']);
 else
     g = om.describe_idx('nli', 13);
-    t_ok(isequal(g, 'mynli(2,2)(3)'), [t '''nli'', 13']);
+    t_ok(isequal(g, 'mynli{2,2}(3)'), [t '''nli'', 13']);
     g = om.describe_idx('qdc', [5;192;20]);
     e = {'qc3(3)'; 'qc6(169)'; 'qc5(4)'};
     t_ok(isequal(g, e), [t '''qdc'', [5;192;20]']);
     g = om.describe_idx('lin', [12 3;2 10]);
-    e = {'mylin(2,1)(1)', 'Pmis(3)'; 'Pmis(2)', 'mylin(1,2)(2)'};
+    e = {'mylin{2,1}(1)', 'Pmis(3)'; 'Pmis(2)', 'mylin{1,2}(2)'};
     t_ok(isequal(g, e), [t '''lin'', [12 3;2 10]']);
 end
 

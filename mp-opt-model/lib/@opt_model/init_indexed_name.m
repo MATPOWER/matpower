@@ -1,5 +1,13 @@
 function om = init_indexed_name(om, set_type, name, dim_list)
 % init_indexed_name - Initializes the dimensions for an indexed named set.
+%
+% .. note::
+%    .. deprecated:: 4.3 Please use mp.set_manager.init_indexed_name instead,
+%       as in ``om.lin.init_indexed_name(...)``,
+%       ``om.nle.init_indexed_name(...)``, ``om.nli.init_indexed_name(...)``,
+%       ``om.nlc.init_indexed_name(...)``, ``om.qdc.init_indexed_name(...)``,
+%       or ``om.var.init_indexed_name(...)``.
+%
 % ::
 %
 %   OM.INIT_INDEXED_NAME(SET_TYPE, NAME, DIM_LIST)
@@ -57,41 +65,4 @@ if isempty(om.var)          %% only if not already initialized
     om.init_set_types();
 end
 
-%% use column vector if single dimension
-if length(dim_list) == 1
-    dim_list = {dim_list{:}, 1};
-end
-
-%% call parent method (also checks for valid type for named set)
-om = init_indexed_name@mp_idx_manager(om, set_type, name, dim_list);
-
-%% add type-specific info about this named set
-empty_cell  = cell(dim_list{:});
-switch set_type
-    case 'var'          %% variable set
-        om.var.data.v0.(name)   = empty_cell;   %% initial value
-        om.var.data.vl.(name)   = empty_cell;   %% lower bound
-        om.var.data.vu.(name)   = empty_cell;   %% upper bound
-        om.var.data.vt.(name)   = empty_cell;   %% variable type
-    case 'lin'          %% linear constraint set
-        om.lin.data.A.(name)    = empty_cell;
-        om.lin.data.l.(name)    = empty_cell;
-        om.lin.data.u.(name)    = empty_cell;
-        om.lin.data.vs.(name)   = empty_cell;
-    case 'nle'          %% nonlinear equality constraint set
-        om.nle.data.fcn.(name)  = empty_cell;
-        om.nle.data.hess.(name) = empty_cell;
-        om.nle.data.vs.(name)   = empty_cell;
-    case 'nli'          %% nonlinear inequality constraint set
-        om.nli.data.fcn.(name)  = empty_cell;
-        om.nli.data.hess.(name) = empty_cell;
-        om.nli.data.vs.(name)   = empty_cell;
-    case 'nlc'          %% nonlinear cost set
-        om.nlc.data.fcn.(name)  = empty_cell;
-        om.nlc.data.vs.(name)   = empty_cell;
-    case 'qdc'          %% quadratic cost set
-        om.qdc.data.Q.(name)    = empty_cell;
-        om.qdc.data.c.(name)    = empty_cell;
-        om.qdc.data.k.(name)    = empty_cell;
-        om.qdc.data.vs.(name)   = empty_cell;
-end
+om.(set_type).init_indexed_name(name, dim_list);

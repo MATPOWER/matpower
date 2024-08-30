@@ -1,5 +1,9 @@
 function s = set_type_idx_map(obj, set_type, idxs, group_by_name)
 % set_type_idx_map - Maps index for set type back to named set & index within set
+%
+% .. note::
+%    .. deprecated:: 4.3 Please use mp.set_manager.set_type_idx_map instead.
+%
 % ::
 %
 %   S = OBJ.SET_TYPE_IDX_MAP(SET_TYPE, IDXS)
@@ -46,114 +50,4 @@ if nargin < 4
     end
 end
 
-NS = obj.(set_type).NS;
-
-%% special case : everything and grouped by name
-if group_by_name && isempty(idxs)
-    %% pre-allocate return struct
-    c = cell(NS, 1);    %% pre-allocate return cell array
-    s = struct('name', c, 'idx', c, 'i', c);
-    for k = 1:NS;
-        name = obj.(set_type).order(k).name;    %% name of individual set
-        idx = obj.(set_type).order(k).idx;      %% idx of individual set
-        s(k).name = name;
-        if isempty(idx)
-            i1 = obj.(set_type).idx.i1.(name);
-            iN = obj.(set_type).idx.iN.(name);
-            N = obj.(set_type).idx.N.(name);
-            s(k).i = [1:N]';
-            s(k).j = [i1:iN]';
-        else
-            s(k).idx = idx;
-            ss = substruct('.', name, '()', idx);
-            i1 = subsref(obj.(set_type).idx.i1, ss);
-            iN = subsref(obj.(set_type).idx.iN, ss);
-            N = subsref(obj.(set_type).idx.N, ss);
-            s(k).i = [1:N]';
-            s(k).j = [i1:iN]';
-        end
-    end
-else    %% general case
-    if isempty(idxs)
-        idxs = [1:obj.(set_type).N]';   %% all indices
-    end
-
-    %% check for invalid idxs
-    if any(idxs > obj.(set_type).N)
-        error('mp_idx_manager.set_type_idx_map: IDXS must not exceed maximum %s index (%d)', set_type, obj.(set_type).N);
-    end
-    if any(idxs < 1)
-        error('mp_idx_manager.set_type_idx_map: IDXS must be positive');
-    end
-
-    %% pre-allocate return struct
-    c = cell(size(idxs));       %% pre-allocate return cell array
-    s = struct('name', c, 'idx', c, 'i', c);
-
-    %% sort idxs so we can go through loop only once
-    [sorted_idxs, jj] = sort(idxs(:), 'descend');
-    k = NS;                         %% index into set type (decrementing)
-    name = obj.(set_type).order(k).name;    %% name of individual set
-    idx = obj.(set_type).order(k).idx;      %% idx of individual set
-    for i = 1:length(sorted_idxs)   %% index into sorted_idxs
-        ii = sorted_idxs(i);        %% idx of interest
-        j = jj(i);                  %% index into s and original idxs
-        while k > 0
-            if isempty(idx)
-                i1 = obj.(set_type).idx.i1.(name);
-                if ii >= i1
-                    s(j).name = name;
-                    s(j).i = ii - i1 + 1;
-                    break;
-                else
-                    k = k - 1;
-                    name = obj.(set_type).order(k).name;
-                    idx = obj.(set_type).order(k).idx;
-                end
-            else
-                ss = substruct('.', name, '()', idx);
-                i1 = subsref(obj.(set_type).idx.i1, ss);
-                if ii >= i1
-                    s(j).name = name;
-                    s(j).i = ii - i1 + 1;
-                    s(j).idx = idx;
-                    break;
-                else
-                    k = k - 1;
-                    name = obj.(set_type).order(k).name;
-                    idx = obj.(set_type).order(k).idx;
-                end
-            end
-        end
-    end
-
-    %% consolidate indices into vectors for each unique
-    %% name/idx pair, if requested
-    if group_by_name
-        %% extract fields
-        [name, idx, i] = deal(cell(size(idxs)));
-        [name{:}] = deal(s.name);
-        [idx{:}]  = deal(s.idx);
-        [i{:}]    = deal(s.i);      i = cell2mat(i);
-
-        %% find unique name/idx
-        name_idx = cellfun(@join_name_idx, name, idx, ...
-            'UniformOutput', 0);
-        [c, ia, ic] = unique(name_idx);
-
-        %% recreate struct, grouped by name/idx
-        c0 = cell(size(c));
-        s = struct('name', name(ia), 'idx', idx(ia), 'i', c0, 'j', c0);
-        for k = 1:length(ia)
-            s(k).i  = i(ic == k);
-            s(k).j = idxs(ic == k);
-        end
-    end
-end
-
-function name_idx = join_name_idx(name, idx)
-if isempty(idx)
-    name_idx = name;
-else
-    name_idx = [name sprintf('_%d', idx{:})];
-end
+s = obj.(set_type).set_type_idx_map(idxs, group_by_name);

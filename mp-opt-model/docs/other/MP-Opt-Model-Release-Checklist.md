@@ -25,6 +25,9 @@ Pre-release
     - copyright (front page and LICENSE text)
     - Appendix C Release History
     - `\mpomver` (update `\mpver`, `\mptestver`, `\mostver`, `mipsver` too)
+  - deprecation notices:
+    - search all code for `'.. deprecated::'` and make sure anything referring
+      to this release has the correct version number
   - Sphinx docs
     - `mp-docs-shared/preamble.tex.txt` - \mpomver
     - `mp-docs-shared/prolog.rst.txt` - in URL in raw-html for |MPOMman|

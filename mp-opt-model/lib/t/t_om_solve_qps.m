@@ -20,7 +20,12 @@ does_qp = [1 1 1 1 1 1 1 1 1 1 0 1];
 
 n = 30;
 nqp = 21;
-t_begin(28+n*length(algs), quiet);
+diff_tool = 'bbdiff';
+show_diff_on_fail = false;
+
+reps = {};
+
+t_begin(29+n*length(algs), quiet);
 
 diff_alg_warn_id = 'optim:linprog:WillRunDiffAlg';
 if have_feature('quadprog') && have_feature('quadprog', 'vnum') == 7.005
@@ -208,7 +213,7 @@ for k = 1:length(algs)
 end
 
 t = 'om.soln.';
-opt.alg = 'DEFAULT';
+opt.alg = 'MIPS';
 %% from https://v8doc.sas.com/sashtml/iml/chap8/sect12.htm
 H = [   1003.1  4.3     6.3     5.9;
         4.3     2.2     2.1     3.9;
@@ -269,11 +274,32 @@ t_is(df, H*x+c, 14, [t 'df']);
 
 t = 'parse_soln : ';
 t_ok(om.has_parsed_soln(), [t 'has_parsed_soln() is true']);
-t_is(om.soln.var.val.x, om.get_soln('var', 'x'), 14, [t 'var.val.x']);
-t_is(om.soln.var.mu_l.x, om.get_soln('var', 'mu_l', 'x'), 14, [t 'var.mu_l.x']);
-t_is(om.soln.var.mu_u.x, om.get_soln('var', 'mu_u', 'x'), 14, [t 'var.mu_u.x']);
-t_is(om.soln.lin.mu_l.Ax, om.get_soln('lin', 'mu_l', 'Ax'), 14, [t 'lin.mu_l.Ax']);
-t_is(om.soln.lin.mu_u.Ax, om.get_soln('lin', 'mu_u', 'Ax'), 14, [t 'lin.mu_u.Ax']);
+t_is(om.var.soln.val.x, om.get_soln('var', 'x'), 14, [t 'var.val.x']);
+t_is(om.var.soln.mu_l.x, om.get_soln('var', 'mu_l', 'x'), 14, [t 'var.mu_l.x']);
+t_is(om.var.soln.mu_u.x, om.get_soln('var', 'mu_u', 'x'), 14, [t 'var.mu_u.x']);
+t_is(om.lin.soln.mu_l.Ax, om.get_soln('lin', 'mu_l', 'Ax'), 14, [t 'lin.mu_l.Ax']);
+t_is(om.lin.soln.mu_u.Ax, om.get_soln('lin', 'mu_u', 'Ax'), 14, [t 'lin.mu_u.Ax']);
+
+t = 'disp_soln';
+rn = fix(1e9*rand);
+[pathstr, name, ext] = fileparts(which('t_opt_model'));
+fname = 't_om_solve_qps_display_soln';
+fname_e = fullfile(pathstr, 'display_soln', sprintf('%s.txt', fname));
+fname_g = sprintf('%s_%d.txt', fname, rn);
+[fd, msg] = fopen(fname_g, 'wt');   %% open solution file
+if fd == -1
+    error('t_om_solve_qps: could not create %d : %s', fname, msg);
+end
+om.display_soln(fd);    %% write out solution
+fclose(fd);
+if ~t_file_match(fname_g, fname_e, t, reps, 1);
+    fprintf('  compare these 2 files:\n    %s\n    %s\n', fname_g, fname_e);
+    if show_diff_on_fail
+        cmd = sprintf('%s %s %s', diff_tool, fname_g, fname_e);
+        [status, result] = system(cmd);
+        keyboard
+    end
+end
 
 if have_feature('quadprog') && have_feature('quadprog', 'vnum') == 7.005
     warning(s1.state, diff_alg_warn_id);

@@ -50,15 +50,20 @@ m = max([ieq; igt; ilt]);   %% number of original constraints in (1)
 nlt = length(ilt);          %% number of upper bounded inequalities
 
 %% initialize multipliers
-mu_l = zeros(m, 1);
-mu_u = zeros(m, 1);
-
-%% convert equality constraint multipliers
-kl = find(lam < 0);
-ku = find(lam >= 0);
-mu_l(ieq(kl)) = -lam(kl);
-mu_u(ieq(ku)) = lam(ku);
-
-%% convert inequality constraint multipliers
-mu_l(igt) = mu(nlt+1:end);
-mu_u(ilt) = mu(1:nlt);
+if all(isnan(lam)) && all(isnan(mu))
+    mu_l = NaN(m, 1);
+    mu_u = NaN(m, 1);
+else
+    mu_l = zeros(m, 1);
+    mu_u = zeros(m, 1);
+    
+    %% convert equality constraint multipliers
+    kl = find(lam < 0);
+    ku = find(lam >= 0);
+    mu_l(ieq(kl)) = -lam(kl);
+    mu_u(ieq(ku)) = lam(ku);
+    
+    %% convert inequality constraint multipliers
+    mu_l(igt) = mu(nlt+1:end);
+    mu_u(ilt) = mu(1:nlt);
+end

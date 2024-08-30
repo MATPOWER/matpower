@@ -310,12 +310,8 @@ output = results;
 %% check for empty results (in case optimization failed)
 if ~isfield(results, 'x') || isempty(results.x)
     x = NaN(nx, 1);
-    lam.lower   = NaN(nx, 1);
-    lam.upper   = NaN(nx, 1);
 else
     x = results.x;
-    lam.lower   = zeros(nx, 1);
-    lam.upper   = zeros(nx, 1);
 end
 if ~isfield(results, 'objval') || isempty(results.objval)
     f = NaN;
@@ -333,10 +329,17 @@ else
     rc  = results.rc;
 end
 
-kl = find(rc > 0);   %% lower bound binding
-ku = find(rc < 0);   %% upper bound binding
-lam.lower(kl)   =  rc(kl);
-lam.upper(ku)   = -rc(ku);
+if all(isnan(rc))
+    lam.lower   = NaN(nx, 1);
+    lam.upper   = NaN(nx, 1);
+else
+    lam.lower   = zeros(nx, 1);
+    lam.upper   = zeros(nx, 1);
+    kl = find(rc > 0);   %% lower bound binding
+    ku = find(rc < 0);   %% upper bound binding
+    lam.lower(kl)   =  rc(kl);
+    lam.upper(ku)   = -rc(ku);
+end
 
 [mu_l, mu_u] = convert_lin_constraint_multipliers(-pi(1:neq), -pi(neq+(1:niq)), ieq, igt, ilt);
 

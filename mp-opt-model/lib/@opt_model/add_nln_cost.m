@@ -1,5 +1,10 @@
-function om = add_nln_cost(om, name, idx, N, fcn, varsets)
+function om = add_nln_cost(om, name, idx, varargin)
 % add_nln_cost - Adds a set of general nonlinear costs to the model.
+%
+% .. note::
+%    .. deprecated:: 4.3 Please use mp.sm_nln_cost.add instead, as
+%       in ``om.nlc.add(...)``.
+%
 % ::
 %
 %   OM.ADD_NLN_COST(NAME, N, FCN);
@@ -67,28 +72,4 @@ function om = add_nln_cost(om, name, idx, N, fcn, varsets)
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See https://github.com/MATPOWER/mp-opt-model for more info.
 
-%% initialize input arguments
-if iscell(idx)          %% indexed named set
-    if nargin < 6
-        varsets = {};
-    end
-else                    %% simple named set
-    if nargin < 5
-        varsets = {};
-    else
-        varsets = fcn;
-    end
-    fcn = N;
-    N = idx;
-    idx = {};
-end
-
-if N ~= 1
-    error('opt_model.add_nln_cost: not yet implemented for vector valued functions (i.e. N currently must equal 1)');
-end
-
-%% convert varsets from cell to struct array if necessary
-varsets = om.varsets_cell2struct(varsets);
-
-%% add the named general nonlinear cost set
-om.add_named_set('nlc', name, idx, N, fcn, varsets);
+om.nlc.add(om.var, name, idx, varargin{:});

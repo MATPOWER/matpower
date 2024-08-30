@@ -425,7 +425,7 @@ fname = sprintf('ktropts_%06d.txt', fix(1e6*rand));
 %% open file
 [fd, msg] = fopen(fname, 'wt');     %% write options file
 if fd == -1
-    error('could not create %d : %s', fname, msg);
+    error('nlps_knitro: could not create %d : %s', fname, msg);
 end
 
 %% write options

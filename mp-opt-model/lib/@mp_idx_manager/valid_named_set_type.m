@@ -37,7 +37,12 @@ function str = valid_named_set_type(obj, set_type)
 %   See https://github.com/MATPOWER/mp-opt-model for more info.
 
 if isfield(obj.set_types, set_type)
-    str = obj.set_types.(set_type);
+    st = obj.set_types.(set_type);
+    if ischar(st)
+        str = st;
+    else
+        str = st.label;
+    end
 else
     str = '';
 end

@@ -13,6 +13,13 @@ Use :class:`opt_model` to build and solve your mathematical programming and opti
 
    classes/opt_model
    classes/mp_idx_manager
+   classes/mp/set_manager
+   classes/mp/set_manager_opt_model
+   classes/mp/sm_variable
+   classes/mp/sm_lin_constraint
+   classes/mp/sm_nln_constraint
+   classes/mp/sm_nln_cost
+   classes/mp/sm_quad_cost
 
 
 |MPOM| Functions

@@ -1,5 +1,10 @@
-function om = add_lin_constraint(om, name, idx, A, l, u, varsets, tr)
+function om = add_lin_constraint(om, name, idx, varargin)
 % add_lin_constraint - Adds a set of linear constraints to the model.
+%
+% .. note::
+%    .. deprecated:: 4.3 Please use mp.sm_lin_constraint.add instead, as
+%       in ``om.lin.add(...)``.
+%
 % ::
 %
 %   OM.ADD_LIN_CONSTRAINT(NAME, A, L, U);
@@ -12,7 +17,7 @@ function om = add_lin_constraint(om, name, idx, A, l, u, varsets, tr)
 %
 %   Linear constraints are of the form L <= A * x <= U, where x is a
 %   vector made of the vars specified in VARSETS (in the order given).
-%   This allows the A matrix to be defined only in terms of the relevant
+%   This allows the A matrix to be defined in terms of only the relevant
 %   variables without the need to manually create a lot of zero columns.
 %   If VARSETS is empty, x is taken to be the full vector of all
 %   optimization variables. If L or U are empty, they are assumed to be
@@ -56,60 +61,4 @@ function om = add_lin_constraint(om, name, idx, A, l, u, varsets, tr)
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See https://github.com/MATPOWER/mp-opt-model for more info.
 
-%% initialize input arguments
-if iscell(idx)          %% indexed named set
-    if nargin < 8
-        tr = 0;
-        if nargin < 7
-            varsets = {};
-        end
-    end
-else                    %% simple named set
-    if nargin < 7
-        tr = 0;
-    else
-        tr = varsets;
-    end
-    if nargin < 6
-        varsets = {};
-    else
-        varsets = u;
-    end
-    u = l;
-    l = A;
-    A = idx;
-    idx = {};
-end
-
-if tr
-    [M, N] = size(A);
-else
-    [N, M] = size(A);
-end
-if isempty(l)                   %% default l is -Inf
-    l = -Inf(N, 1);
-elseif N > 1 && length(l) == 1  %% expand from scalar as needed
-    l = l * ones(N, 1);
-end
-if isempty(u)                   %% default u is Inf
-    u = Inf(N, 1);
-elseif N > 1 && length(u) == 1  %% expand from scalar as needed
-    u = u * ones(N, 1);
-end
-
-%% check sizes
-if size(l, 1) ~= N || size(u, 1) ~= N
-    error('opt_model.add_lin_constraint: sizes of A, l and u must match');
-end
-
-%% convert varsets from cell to struct array if necessary
-varsets = om.varsets_cell2struct(varsets);
-nv = om.varsets_len(varsets);   %% number of variables
-
-%% check consistency of varsets with size of A
-if M ~= nv
-    error('opt_model.add_lin_constraint: number of columns of A does not match\nnumber of variables, A is %d x %d, nv = %d\n', N, M, nv);
-end
-
-%% add the named linear constraint set
-om.add_named_set('lin', name, idx, N, A, l, u, varsets, tr);
+om.lin.add(om.var, name, idx, varargin{:});

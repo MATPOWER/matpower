@@ -151,7 +151,7 @@
 \newcommand{\mpomlink}[0]{\href{\mpomurl}{\mpom{}}}
 \newcommand{\mpomname}[0]{\mpom{}}
 % \newcommand{\mpomname}[0]{{{\bf M}{\sc at}{\bf P}{\sc ower} \textbf{Opt}imization \textbf{Model}}}
-\newcommand{\mpomver}[0]{4.2}
+\newcommand{\mpomver}[0]{4.3-dev}
 \newcommand{\most}[0]{{MOST}}
 \newcommand{\mostname}[0]{{{\bf M}{\sc atpower} \textbf{O}ptimal \textbf{S}cheduling \textbf{T}ool}}
 \newcommand{\mosturl}[0]{https://github.com/MATPOWER/most}
@@ -239,7 +239,7 @@
 %\title{\hl{--- DRAFT  ---}\\\hl{\em do not distribute}\\~\\{\huge \bfseries \mpomname{} User's Manual } \\ ~ \\ \LARGE Version \mpomver{}\\
 \title{{\huge \bfseries \mpomname{} User's Manual } \\ ~ \\ \LARGE Version \mpomver{}}
 \author{Ray~D.~Zimmerman}
-\date{May 10, 2024} % comment this line to display the current date
+%\date{May 10, 2024} % comment this line to display the current date
 %\date{May 8, 2020\thanks{Second revision. First revision was April 29, 2020}} % comment this line to display the current date
 
 %%% BEGIN DOCUMENT
@@ -2168,6 +2168,10 @@ om = opt_model;
 
 Variables, constraints and costs can then be added to the model using named sets. For variables and constraints, each set represents a column vector, and the sets are stacked in the order they are added to construct the full optimization variable or full constraint vector. For costs, each set represents a component of a scalar cost, and the components are summed together to construct the full objective function value.
 
+\subsection*{Important Note}
+
+\mpom{} 4.3 introduced a major refactorization of \code{opt\_model}. While it is mostly backward compatible with what is described here, please see Section~\ref{sec:mp_set_manager} and the online \href{https://matpower.org/doc/mpom/}{\mpom{} Reference Manual}\footnote{\url{https://matpower.org/doc/mpom/}} for more details and up-to-date documentation.
+
 \subsection{Adding Variables}
 \label{sec:add_var}
 
@@ -2438,7 +2442,8 @@ name & default & description \\
 0 & print no progress info \\
 1--5 & print increasing level of progress info \\
 \end{tabular}	\\
-\code{~~parse\_soln}	& 0	& flag that specifies whether or not to call the \code{parse\_soln} method and place the return values in \code{om.soln}	\\
+\code{~~parse\_soln}	& 0	& flag that specifies whether or not to call the \code{parse\_soln} method and place the return values in the \code{soln}
+property of the field type objects \\
 \code{~~x0}	& \emph{empty}	& optional initial value of $x$, overrides value stored in model, \emph{(ignored by some solvers)}	\\
 \midrule
 \multicolumn{3}{l}{\emph{Additional Options for Specific Problem Types}} \\
@@ -2931,11 +2936,17 @@ $\le 0$ & solver-specific failure code \\
 \code{~~~~~~.eqnonlin} & nonlinear equality constraints	\\
 \code{~~~~~~.ineqnonlin} & nonlinear inequality constraints	\\
 \\
+\multicolumn{2}{l}{\emph{Parsed Solution (deprecated)}\tnote{\dag}} \\
+\code{~~~~.var} & parsed solution for variables\tnote{\ddag} \\
+\code{~~~~.lin} & parsed solution for linear constraints\tnote{\ddag} \\
+\code{~~~~.nle} & parsed solution for nonlinear equality constraints\tnote{\ddag} \\
+\code{~~~~.nli} & parsed solution for nonlinear inequality constraints\tnote{\ddag} \\
+\\
 \multicolumn{2}{l}{\emph{Parsed Solution}\tnote{\dag}} \\
-\code{~~~.var} & parsed solution for variables\tnote{\ddag} \\
-\code{~~~.lin} & parsed solution for linear constraints\tnote{\ddag} \\
-\code{~~~.nle} & parsed solution for nonlinear equality constraints\tnote{\ddag} \\
-\code{~~~.nli} & parsed solution for nonlinear inequality constraints\tnote{\ddag} \\
+\code{~~.var.soln} & parsed solution for variables\tnote{\ddag} \\
+\code{~~.lin.soln} & parsed solution for linear constraints\tnote{\ddag} \\
+\code{~~.nle.soln} & parsed solution for nonlinear equality constraints\tnote{\ddag} \\
+\code{~~.nli.soln} & parsed solution for nonlinear inequality constraints\tnote{\ddag} \\
 & \\
 \bottomrule
 \end{tabular}
@@ -3107,7 +3118,7 @@ fields & description \\
 The value of each element in the returned struct can be obtained
 via the \code{get\_soln} method as well, but \code{parse\_soln} is generally more efficient if a complete set of values is needed.
 
-If the optional \code{stash} input argument is present and true, the fields of the return struct are copied to \code{om.soln} where they are available with others listed in Table~\ref{tab:soln}.
+If the optional \code{stash} input argument is present and true, the fields of the return struct are copied to the \code{soln} property of the corresponding set type object in \code{om}. They are also copied to \code{om.soln} where they are available with others listed in Table~\ref{tab:soln}, but this is deprecated.
 
 \subsubsection*{\code{has\_parsed\_soln}}
 \label{sec:has_parsed_soln}
@@ -3115,7 +3126,7 @@ If the optional \code{stash} input argument is present and true, the fields of t
 TorF = om.has_parsed_soln()
 \end{Code}
 
-The \code{has\_parsed\_soln} method returns \code{1} if the model has a parsed solution available in \code{om.soln}, \code{0} otherwise.
+The \code{has\_parsed\_soln} method returns \code{1} if the model has a parsed solution available in the \code{soln} property of the set type objects, \code{0} otherwise.
 
 
 \clearpage
@@ -3340,9 +3351,63 @@ om.init_set_types()
 \end{Code}
 Initializes the base data structures for each set type.
 
+
+\subsection{MP Set Manager Class -- {\tt mp.set\_manager}}
+
+The \code{opt\_model} class manages several ordered sets of entities, such as variables, various kinds of constraints, costs, etc. These sets consist of named (or named and indexed) subsets.
+
+The functionality for managing the indexing and data for these various ordered set types is implemented in \code{mp.set\_manager} and several subclasses. The properties and methods implemented by \code{mp.set\_manager} are shown in Table~\ref{tab:mp_set_manager}.
+
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
+\caption{MP Set Manager (\code{mp.set\_manager}) Properties and Methods}
+\label{tab:mp_set_manager}
+\footnotesize
+\begin{tabular}{lp{0.66\textwidth}}
+\toprule
+name & description \\
+\midrule
+\multicolumn{2}{l}{\emph{Properties}} \\
+\code{~~idx}	& struct with fields:	\\
+& \begin{tabular}{c @{ -- } p{0.65\textwidth}}
+\code{i1} & starting index of subset within full set\tnote{*} \\
+\code{iN} & ending index of subset within full set\tnote{*} \\
+\code{N} & number of elements in this subset\tnote{*} \\
+\end{tabular}	\\
+\code{~~N}	& total number of entities in the full set	\\
+\code{~~NS}	& number of named or named/indexed subsets or blocks	\\
+\code{~~order}	& struct array of blocks in order, with fields:	\\
+& \begin{tabular}{c @{ -- } p{0.65\textwidth}}
+\code{name} & name of the block \\
+\code{idx} & cell array of indices for the name \\
+\end{tabular}	\\
+\code{~~data}	& struct of additional set-type-specific data for each block\tnote{*}	\\
+\\
+\multicolumn{2}{l}{\emph{Public Methods}} \\
+\code{~~mp.set\_manager}	& constructor for \code{mp.set\_manager} class	\\
+\code{~~add}	& adds indexing information for new named (or named and indexed) subset	\\
+\code{~~copy}	& makes a copy of an existing \code{mp.set\_manager} object	\\
+\code{~~describe\_idx}	& describes indices of the set, e.g.~element 361 corresponds to \code{w(68)}, see also Section~\ref{sec:describe_idx} \\
+\code{~~display}	& displays summary of indexing for the set	\\
+\code{~~init\_indexed\_name}	& initializes dimensions for a particular indexed named subset	\\
+\code{~~set\_type\_idx\_map}	& maps indices of the set, e.g.~element 361 corresponds to \code{w(68)}, see Section~\ref{sec:set_type_idx_map} \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+ \scriptsize
+ \item [*] {This field is a struct and the description applies to each field of the struct. The fields are the names corresponding to the subsets added.}
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+
 \subsection{\matpower{} Index Manager Base Class -- {\tt mp\_idx\_manager}}
 
 Most of the functionality of the \code{opt\_model} class related to managing the indexing of the various set types is inherited from the \matpower{} Index Manager base class named \code{mp\_idx\_manager}. The properties and methods implemented in this base class and inherited or overridden by \code{opt\_model} are listed in Table~\ref{tab:mp_idx_manager2}.
+
+Since \mpom{} 4.2, the implementation for most of the functionality for the \matpower{} Index Manager base class has been moved to \code{mp.set\_manager}. Now it is essentially a backward compatible container base class for \code{mp.set\_manager} objects and many of its methods are just wrappers around the corresponding \code{mp.set\_manager} method.
 
 The \matpower{} Index Manager base class initializes and manages the data that is common across all set types. Table~\ref{tab:obj_structure} illustrates for an example \codeq{var} set type, such as defined in \code{opt\_model}, what the data structure looks like, but it is the same for any other set types defined by child classes, such as \code{opt\_model}.
 
@@ -3364,19 +3429,19 @@ name & description \\
 \multicolumn{2}{l}{\emph{Public Methods}} \\
 \code{~~mp\_idx\_manager}	& constructor for \code{mp\_idx\_manager} class	\\
 \code{~~copy}	& makes a copy of an existing \code{mp\_idx\_manager} object	\\
-\code{~~describe\_idx}	& describes indices of a given set type, e.g.~variable 361 corresponds to \code{w(68)}, see Section~\ref{sec:describe_idx} \\
-\code{~~display\_set}	& displays indexing for a particular set type, typically called by \code{display}	\\
+\code{~~describe\_idx}	& wrapper around \code{describe\_idx} for a given set object \\
+\code{~~display\_set}	& wrapper around \code{display} for a given set object, typically called by \code{display}	\\
 \code{~~get}	& access (possibly nested) fields of the object	\\
 \code{~~get\_idx}	& returns index structure(s) for specified set type(s), with starting/ending indices and number of elements for each named (and optionally indexed) block	\\
 \code{~~get\_userdata}	& retreives values of user data stored in the object	\\
 \code{~~getN}	& returns the number of elements of any given set type\tnote{\dag}	\\
-\code{~~init\_indexed\_name}	& initializes dimensions for a particular indexed named set	\\
-\code{~~set\_type\_idx\_map}	& maps indices of a given set type, e.g.~variable 361 corresponds to \code{w(68)}, see Section~\ref{sec:set_type_idx_map} \\
+\code{~~init\_indexed\_name}	& wrapper around \code{init\_indexed\_name} for a given set object	\\
+\code{~~set\_type\_idx\_map}	& wrapper around \code{set\_type\_idx\_map} for a given set object \\
 \\
 \multicolumn{2}{l}{\emph{Private Methods}\tnote{\ddag}} \\
-\code{~~add\_named\_set}	& adds indexing information for new instance of a given set type	\\
+\code{~~add\_named\_set}	& wrapper around \code{add} for a given set object	\\
 \code{~~init\_set\_types}	& initializes the data structures for each set type	\\
-\code{~~valid\_named\_set\_type}	& returns label for given named set type if valid, empty otherwise	\\
+\code{~~valid\_named\_set\_type}	& returns label or set object for given named set type if valid, empty otherwise	\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -3401,7 +3466,7 @@ name & description \\
 \midrule
 \code{obj}	& 	\\
 \code{~~.set\_types}	& struct whose fields define the valid set types	\\
-\code{~~.var}	& data for \codeq{var} set type, e.g. variable sets that make up the full optimization variable $x$	\\
+\code{~~.var}	& \code{mp.set\_manager} object with data for \codeq{var} set type, e.g. variable sets that make up the full optimization variable $x$	\\
 \code{~~~~.idx}	& 	\\
 \code{~~~~~~.i1}	& starting index within $x$	\\
 \code{~~~~~~.iN}	& ending index within $x$	\\
@@ -3412,7 +3477,7 @@ name & description \\
 \code{~~~~.order}	& struct array of names/indices for variable blocks in the order they appear in $x$	\\
 \code{~~~~~~.name}	& name of the block, e.g. \code{z}	\\
 \code{~~~~~~.idx}	& indices for name, \code{\{2,3\}} $\rightarrow$ \code{z(2,3)}	\\
-\code{~~.<other-set-types>}	& with structure identical to \code{var}	\\
+\code{~~.<other-set-types>}	& other \code{mp.set\_manager} objects, with structure identical to \code{var}	\\
 \code{~~.userdata}	& struct for storing arbitrary user-defined data	\\
 \bottomrule
 \end{tabular}
@@ -3422,6 +3487,22 @@ name & description \\
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
+
+\clearpage
+\subsection{\matpower{} Set Manager -- {\tt mp.set\_manager}}
+\label{sec:mp_set_manager}
+
+\mpom{} 4.3 introduced a major refactorization in which much of the functionality of the \code{mp\_idx\_manager} and \code{opt\_model} classes were moved from the container class, into individual set type properties which were converted from simple structs into mostly backward-compatible objects that inherit from the new \code{mp.set\_manager} and \code{mp.set\_manager\_opt\_model} classes, namely:
+
+\begin{itemize}
+\item \code{mp.sm\_lin\_constraint} - set manager class for linear constraints
+\item \code{mp.sm\_nln\_constraint} - set manager class for nonlinear constraints
+\item \code{mp.sm\_nln\_cost} - set manager class for general nonlinear costs
+\item \code{mp.sm\_quad\_cost} - set manager class for quadratic costs
+\item \code{mp.sm\_variable} - set manager class for variables
+\end{itemize}
+
+For more details on these classes, please see the online \href{https://matpower.org/doc/mpom/}{\mpom{} Reference Manual}\footnote{\url{https://matpower.org/doc/mpom/}}.
 
 \clearpage
 \subsection{Reference}
@@ -4581,10 +4662,87 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-4.2.pdf}{\mpom{} 4.2 Use
 
 \end{itemize}
 
-% \subsection{Version 4.0 -- released ??? ?, 202?}
-% \label{app:v40}
+\subsection{Version 4.3 -- released ??? ?, 202?}
+\label{app:v43}
+
+The \href{https://matpower.org/docs/MP-Opt-Model-manual-4.3.pdf}{\mpom{} 4.3 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MP-Opt-Model-manual-4.3.pdf}}
+
+\subsubsection*{New Features}
+\begin{itemize}
+\item 
+\item New classes:
+    \begin{itemize}
+    \item \code{mp.set\_manager} encapsulates \code{mp\_idx\_manager} functionality into an individual field object representing a specific set type, rather than in the container class.
+    \item \code{mp.set\_manager\_opt\_model} is a subclass of \code{mp.set\_manager} that handles common functionality, e.g. related to handling solution data, for all of the set manager subclasses used by \code{opt\_model}.
+    \item \code{mp.sm\_lin\_constraint} - set manager class for linear constraints
+    \item \code{mp.sm\_nln\_constraint} - set manager class for nonlinear constraints
+    \item \code{mp.sm\_nln\_cost} - set manager class for general nonlinear costs
+    \item \code{mp.sm\_quad\_cost} - set manager class for quadratic costs
+    \item \code{mp.sm\_variable} - set manager class for variables
+    \end{itemize}
+\item New functions:
+    \begin{itemize}
+    \item \code{foobar()} does whizbang.
+    \end{itemize}
+\end{itemize}
+
+\subsubsection*{Bugs Fixed}
+\begin{itemize}
+\item 
+    \emph{Thanks to Fulano.}
+\end{itemize}
+
+\subsubsection*{Other Changes}
+\begin{itemize}
+\item Major refactor of \code{mp\_idx\_manager} to use new \code{mp.set\_manager} class.
+\item Major refactor of \code{opt\_model} to use new \code{mp.set\_manager\_opt\_model} subclasses:
+    \begin{itemize}
+    \item \code{mp.sm\_lin\_constraint} - set manager class for linear constraints
+    \item \code{mp.sm\_nln\_constraint} - set manager class for nonlinear constraints
+    \item \code{mp.sm\_nln\_cost} - set manager class for general nonlinear costs
+    \item \code{mp.sm\_quad\_cost} - set manager class for quadratic costs
+    \item \code{mp.sm\_variable} - set manager class for variables
+    \end{itemize}
+\item Deprecate the following \code{opt\_model} methods in favor of methods of the individual \code{mp.set\_manager} objects contained by the \code{opt\_model} object:
+    \begin{itemize}
+    \item \code{add\_named\_set()} -- use \code{mp.set\_manager.add()}
+    \item \code{describe\_idx()} -- use \code{mp.set\_manager.describe\_idx()}
+    \item \code{getN()} -- use \code{mp.set\_manager.get\_N()}
+    \item \code{init\_indexed\_name()} -- use \code{mp.set\_manager.init\_indexed\_name()}
+    \item \code{set\_type\_idx\_map()} -- use \code{mp.set\_manager.set\_type\_idx\_map()}
+    \item \code{add\_lin\_constraint()} -- use \code{mp.sm\_lin\_constraint.add()}
+    \item \code{add\_nln\_constraint()} -- use \code{mp.sm\_nln\_constraint.add()}
+    \item \code{add\_nln\_cost()} -- use \code{mp.sm\_nln\_cost.add()}
+    \item \code{add\_quad\_cost()} -- use \code{mp.sm\_quad\_cost.add()}
+    \item \code{add\_var()} -- use \code{mp.sm\_variable.add()}
+    \item \code{eval\_lin\_constraint()} -- use \code{mp.sm\_lin\_constraint.eval()}
+    \item \code{eval\_nln\_constraint()} -- use \code{mp.sm\_nln\_constraint.eval()}
+    \item \code{eval\_nln\_constraint\_hess()} -- use \code{mp.sm\_nln\_constraint.eval\_hess()}
+    \item \code{eval\_nln\_cost()} -- use \code{mp.sm\_nln\_cost.eval()}
+    \item \code{eval\_quad\_cost()} -- use \code{mp.sm\_quad\_cost.eval()}
+    \item \code{init\_indexed\_name()} -- use \code{mp.set\_manager.init\_indexed\_name()}
+    \item \code{params\_lin\_constraint()} -- use \code{mp.sm\_lin\_constraint.params()}
+    \item \code{params\_nln\_constraint()} -- use \code{mp.sm\_nln\_constraint.params()}
+    \item \code{params\_nln\_cost()} -- use \code{mp.sm\_nln\_cost.params()}
+    \item \code{params\_quad\_cost()} -- use \code{mp.sm\_quad\_cost.params()}
+    \item \code{params\_var()} -- use \code{mp.sm\_variable.params()}
+    \item \code{set\_params()} -- use \code{mp.set\_manager.set\_params()}
+    \item \code{varsets\_cell2struct()} -- use \code{mp.sm\_variable.varsets\_cell2struct()}
+    \item \code{varsets\_idx()} -- use \code{mp.sm\_variable.varsets\_idx()}
+    \item \code{varsets\_len()} -- use \code{mp.sm\_variable.varsets\_len()}
+    \item \code{varsets\_x()} -- use \code{mp.sm\_variable.varsets\_x()}
+    \end{itemize}
+\end{itemize}
+
+\subsubsection*{Incompatible Changes}
+\begin{itemize}
+\item Parsed solution information was moved from the \code{soln} property of the \code{opt\_model} object to the \code{soln} property of the individual child \code{mp.set\_manager\_opt\_model} objects. Currently it is still available at the original location, but this is now deprecated.
+\end{itemize}
+
+% \subsection{Version 5.0 -- released ??? ?, 202?}
+% \label{app:v50}
 % 
-% The \href{https://matpower.org/docs/MP-Opt-Model-manual-4.0.pdf}{\mpom{} 4.0 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MP-Opt-Model-manual-4.0.pdf}}
+% The \href{https://matpower.org/docs/MP-Opt-Model-manual-5.0.pdf}{\mpom{} 5.0 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MP-Opt-Model-manual-5.0.pdf}}
 % 
 % \subsubsection*{New Features}
 % \begin{itemize}
@@ -4619,12 +4777,12 @@ R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez, and R.~J. Thomas, ``\matpower{}: Ste
 \doi{10.1109/TPWRS.2010.2051168}
 
 \bibitem{matpower}
-R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez (2022). \matpower{}\\~
+R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez (2024). \matpower{}\\~
 [Software]. Available: \url{https://matpower.org}\\
 \doi{10.5281/zenodo.3236535}
 
 \bibitem{octave}
-John~W.~Eaton, David~Bateman, S{\o}ren~Hauberg, Rik~Wehbring (2015). \emph{GNU Octave version 4.0.0 manual: a high-level interactive language for numerical computations.} Available: \url{https://www.gnu.org/software/octave/doc/interpreter/}.
+John~W.~Eaton, David~Bateman, S{\o}ren~Hauberg, Rik~Wehbring (2024). \emph{GNU Octave version 9.2.0 manual: a high-level interactive language for numerical computations.} Available: \url{https://docs.octave.org/v9.2.0/}.
 
 \bibitem{bsd}
 The BSD 3-Clause License. [Online]. Available: \url{https://opensource.org/licenses/BSD-3-Clause}.

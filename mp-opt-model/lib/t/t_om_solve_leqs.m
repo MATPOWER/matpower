@@ -107,8 +107,12 @@ b3 = [
 n3 = size(A3, 2);
 
 n = 10;
+diff_tool = 'bbdiff';
+show_diff_on_fail = false;
 
-t_begin(11+n*length(cfg), quiet);
+reps = {};
+
+t_begin(12+n*length(cfg), quiet);
 
 for k = 1:length(cfg)
     alg   = cfg{k}{1};
@@ -183,6 +187,27 @@ t_is(g, f(3), 14, [t 'l3 - A3 * x']);
 
 t = 'parse_soln : ';
 t_ok(om.has_parsed_soln(), [t 'has_parsed_soln() is true']);
-t_is(om.soln.var.val.x, om.get_soln('var', 'x'), 14, [t 'var.val.x']);
+t_is(om.var.soln.val.x, om.get_soln('var', 'x'), 14, [t 'var.val.x']);
+
+t = 'disp_soln';
+rn = fix(1e9*rand);
+[pathstr, name, ext] = fileparts(which('t_opt_model'));
+fname = 't_om_solve_leqs_display_soln';
+fname_e = fullfile(pathstr, 'display_soln', sprintf('%s.txt', fname));
+fname_g = sprintf('%s_%d.txt', fname, rn);
+[fd, msg] = fopen(fname_g, 'wt');   %% open solution file
+if fd == -1
+    error('t_om_solve_leqs: could not create %d : %s', fname, msg);
+end
+om.display_soln(fd);    %% write out solution
+fclose(fd);
+if ~t_file_match(fname_g, fname_e, t, reps, 1);
+    fprintf('  compare these 2 files:\n    %s\n    %s\n', fname_g, fname_e);
+    if show_diff_on_fail
+        cmd = sprintf('%s %s %s', diff_tool, fname_g, fname_e);
+        [status, result] = system(cmd);
+        keyboard
+    end
+end
 
 t_end;
