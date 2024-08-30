@@ -8678,6 +8678,7 @@ The \href{https://matpower.org/docs/MATPOWER-manual-8.0.1-dev.pdf}{\matpower{} 8
 
 \subsubsection*{Other Improvements}
 \begin{itemize}
+\item Major \mpomlink{} refactor of \code{mp\_idx\_manager} and \code{opt\_model} to use the new classes \code{mp.set\_manager}, \code{mp\_set\_manager\_opt\_model}, and their subclasses. See \code{mp-opt-model/CHANGES.md} for details.
 \item Add shunt loss columns (\code{psh\_fr}, \code{qsh\_fr}, \code{psh\_to}, \code{qsh\_to}) to branch data model. In pretty-printed output, separate branch loss summary into series and shunt losses and add series loss columns to branch detail output.
 \emph{Thanks to Wilson Gonz\'alez Vanegas.}
 \item Deprecated functions:
@@ -8689,7 +8690,7 @@ The \href{https://matpower.org/docs/MATPOWER-manual-8.0.1-dev.pdf}{\matpower{} 8
 % \pagebreak
 \subsubsection*{Bugs Fixed}
 \begin{itemize}
-\item  Optional \codeq{soln\_fname} input to \code{run\_mp()} (hence also to \code{run\_pf()}, \code{run\_cpf()}, and \code{run\_opf()} was being ignored.
+\item  Optional \codeq{soln\_fname} input to \code{run\_mp()}, hence also to \code{run\_pf()}, \code{run\_cpf()}, and \code{run\_opf()}, was being ignored.
 
 \end{itemize}
 

@@ -13,6 +13,12 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 since 8.0
 ---------
 
+#### 8/30/24
+  - Incorporate major [MP-Opt-Model][27] refactor of `mp_idx_manager` and
+    `opt_model` to use the new classes `mp.set_manager`,
+    `mp_set_manager_opt_model`, and their subclasses. See
+    [mp-opt-model/CHANGES.md](mp-opt-model/CHANGES.md) for details.
+
 #### 6/11/24
   - Fix bug where optional `'soln_fname'` input to `run_mp()` (hence also to
     `run_pf()`, `run_cpf()`, and `run_opf()`) was being ignored.
