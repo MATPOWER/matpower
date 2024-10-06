@@ -284,6 +284,7 @@ if ~isempty(oldpaths)
 
     %% remove old paths
     if rm_oldpaths
+        oldpaths = oldpaths(~strcmp(oldpaths, '.')); 
         rmpath(oldpaths{:});
         if verbose
             fprintf(div_line);
