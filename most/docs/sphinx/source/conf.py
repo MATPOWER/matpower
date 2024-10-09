@@ -71,6 +71,7 @@ matlab_short_links = True
 # matlab_auto_link = "basic"
 matlab_auto_link = "all"
 matlab_show_property_default_value = True
+matlab_show_property_specs = True
 # autoclass_content = 'both'         # 'class', 'init', 'both'
 autodoc_member_order = 'bysource'   # 'alphabetical', 'groupwise', 'bysource'
 napoleon_use_param = False

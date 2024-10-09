@@ -159,7 +159,7 @@
 \newcommand{\mostname}[0]{{{\bf M}{\sc atpower} \textbf{O}ptimal \textbf{S}cheduling \textbf{T}ool}}
 \newcommand{\mosturl}[0]{https://github.com/MATPOWER/most}
 \newcommand{\mostlink}[0]{\href{\mosturl}{\most{}}}
-\newcommand{\mostver}[0]{1.3}
+\newcommand{\mostver}[0]{1.3.1-dev}
 \newcommand{\md}[0]{{\most{} Data struct}}
 \newcommand{\powerweb}[0]{{\sc PowerWeb}}
 \newcommand{\pserc}[0]{{\sc PSerc}}
@@ -240,7 +240,7 @@ User's Manual}
 %%% BEFORE PUBLISHING A NEW VERSION:
 %%%   Update the publication year for \bibitem{matpower} and
 %%%   \bibitem{matpower_manual} to the year of the latest release
-\date{May 10, 2024} % comment this line to display the current date
+%\date{May 10, 2024} % comment this line to display the current date
 %\date{December 14, 2011\thanks{Second revision. First revision was December 13, 2011}} % comment this line to display the current date
 
 %%% BEGIN DOCUMENT
@@ -1532,7 +1532,7 @@ name & default & description \\
 \subsubsection{{\tt contab} -- Contingency Table}
 \label{sec:contab}
 
-The optional \code{contab} argument is a contingency table with a master set of contingencies used for security throughout entire horizon. It is a matrix in the form of a \emph{change table} recognized by \code{apply\_changes}, described in Section~\ref{MUM-sec:apply_changes} in the \mum{}. The probabilities defined in this contingency table correspond to the conditional probabilities $\psi_0^{tjk}$ of contingency~$k$ occuring conditioned on being in base scenario~$j$. While the \md{} (\code{md}) itself allows for contingencies to be defined independently for all scenarios and time periods, \code{loadmd} applies a single set of contingencies and conditional probabilities (single \code{contab}) to all.
+The optional \code{contab} argument is a contingency table with a master set of contingencies used for security throughout the entire horizon. It is a matrix in the form of a \emph{change table} recognized by \code{apply\_changes}, described in Section~\ref{MUM-sec:apply_changes} in the \mum{}. The probabilities defined in this contingency table correspond to the conditional probabilities $\psi_0^{tjk}$ of contingency~$k$ occuring conditioned on being in base scenario~$j$. While the \md{} (\code{md}) itself allows for contingencies to be defined independently for all scenarios and time periods, \code{loadmd} applies a single set of contingencies and conditional probabilities (single \code{contab}) to all.
 
 \clearpage
 
@@ -3459,10 +3459,36 @@ The \href{https://matpower.org/docs/MOST-manual-1.3.pdf}{\most{} 1.3 User's Manu
 \end{itemize}
 
 
-% \subsection{Version 1.2 -- released ??? ?, 2022}
-% \label{app:v12}
+\subsection{Version 1.3.1-dev -- released ??? ?, 202?}
+\label{app:v12}
+
+The \href{https://matpower.org/docs/MOST-manual-1.3.1.pdf}{\most{} 1.3.1 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MOST-manual-1.3.1.pdf}}
+
+\subsubsection*{Changes}
+\begin{itemize}
+\item \code{most\_summary()} now skips display of non-existent contingencies.
+\item 
+
+\end{itemize}
+
+\subsubsection*{Bugs Fixed}
+\begin{itemize}
+\item Fix issue \#45 where \code{most()} does not properly handle cases with contingencies defined only in some periods/scenarios.
+\emph{Thanks to Stefano Nicolin.}
+\item Fix issue with \code{most\_summary()} when ramp results are missing.
+\item Tweak tests to work around bug in HiGHS-based \code{linprog} and \code{intlinprog} in Optimization Toolbox R2024a and R2024b.
+\end{itemize}
+
+\subsubsection*{Incompatible Changes}
+\begin{itemize}
+\item 
+\end{itemize}
+
+
+% \subsection{Version 1.4 -- released ??? ?, 202?}
+% \label{app:v14}
 % 
-% The \href{https://matpower.org/docs/MOST-manual-1.2.pdf}{\most{} 1.2 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MOST-manual-1.2.pdf}}
+% The \href{https://matpower.org/docs/MOST-manual-1.4.pdf}{\most{} 1.4 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MOST-manual-1.4.pdf}}
 % 
 % \subsubsection*{Changes}
 % \begin{itemize}
@@ -3495,7 +3521,7 @@ R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez, and R.~J. Thomas,
 \doi{10.1109/TPWRS.2010.2051168}
 
 \bibitem{matpower}
-R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez (2022). \matpower{}\\~
+R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez (2024). \matpower{}\\~
 [Software]. Available: \url{https://matpower.org}\\
 \doi{10.5281/zenodo.3236535}
 

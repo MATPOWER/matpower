@@ -144,9 +144,19 @@ if mo.IncludeFixedReserves == -1
     mo.IncludeFixedReserves = 0;
   end
 end
+if mo.SecurityConstrained   % check that at least some contingency is specified
+  have_contingency = 0;
+  for t = 1:nt
+    for j = 1:mdi.idx.nj(t)
+      if isfield(mdi, 'cont') && isfield(mdi.cont(t,j), 'contab') && ...
+          ~isempty(mdi.cont(t,j).contab)
+        have_contingency = 1;    % found a contingency
+      end
+    end
+  end
+end
 if mo.SecurityConstrained == -1
-  if isfield(mdi, 'cont') && isfield(mdi.cont(1,1), 'contab') && ...
-          ~isempty(mdi.cont(1,1).contab)
+  if have_contingency
     mo.SecurityConstrained = 1;
   else
     mo.SecurityConstrained = 0;
@@ -165,9 +175,8 @@ if mo.IncludeFixedReserves && ~(isfield(mdi, 'FixedReserves') && ...
       isfield(mdi.FixedReserves(1,1,1), 'req'))
   error('most: MDI.FixedReserves(t,j,k) must be specified when MPOPT.most.fixed_res = 1');
 end
-if mo.SecurityConstrained && ~(isfield(mdi, 'cont') && ...
-      isfield(mdi.cont(1,1), 'contab') && ~isempty(mdi.cont(1,1).contab))
-  error('most: MDI.cont(t,j).contab cannot be empty when MPOPT.most.security_constraints = 1');
+if mo.SecurityConstrained && ~have_contingency
+  error('most: MDI.cont(t,j).contab cannot be empty for all t, j when MPOPT.most.security_constraints = 1');
 end
 if mo.IncludeFixedReserves && mo.SecurityConstrained
   warning('most: Using MPOPT.most.fixed_res = 1 and MPOPT.most.security_constraints = 1 together is not recommended.');
@@ -446,35 +455,40 @@ if mpopt.most.build_model
     mdi.StepProb(t) = sum(scenario_probs); % probability of making it to the t-th step
     if mdi.SecurityConstrained
       for j = 1:mdi.idx.nj(t)
-        [tmp, ii] = sort(mdi.cont(t,j).contab(:, CT_LABEL)); %sort in ascending contingency label
-        contab = mdi.cont(t,j).contab(ii, :);
-        rowdecomlist = ones(size(contab,1), 1);
-        for l = 1:size(contab, 1)
-          if contab(l, CT_TABLE) == CT_TGEN  && contab(l, CT_COL) == GEN_STATUS ...
-              && contab(l, CT_CHGTYPE) == CT_REP && contab(l, CT_NEWVAL) == 0 ... % gen turned off
-              && mdi.flow(t,j,1).mpc.gen(contab(l, CT_ROW), GEN_STATUS) <= 0    % but it was off on input
-           rowdecomlist(l) = 0;
-          elseif contab(l, CT_TABLE) == CT_TBRCH && contab(l, CT_COL) == BR_STATUS ...
-              && contab(l, CT_CHGTYPE) == CT_REP && contab(l, CT_NEWVAL) == 0 ... % branch taken out
-              && mdi.flow(t,j,1).mpc.branch(contab(l, CT_ROW), BR_STATUS) <= 0  % but it was off on input
-            rowdecomlist(l) = 0;
+        if isempty(mdi.cont(t,j).contab)
+          mdi.idx.nc(t, j) = 0;
+          mdi.CostWeights(1, j, t) = 1;
+        else
+          [tmp, ii] = sort(mdi.cont(t,j).contab(:, CT_LABEL)); %sort in ascending contingency label
+          contab = mdi.cont(t,j).contab(ii, :);
+          rowdecomlist = ones(size(contab,1), 1);
+          for l = 1:size(contab, 1)
+            if contab(l, CT_TABLE) == CT_TGEN  && contab(l, CT_COL) == GEN_STATUS ...
+                && contab(l, CT_CHGTYPE) == CT_REP && contab(l, CT_NEWVAL) == 0 ... % gen turned off
+                && mdi.flow(t,j,1).mpc.gen(contab(l, CT_ROW), GEN_STATUS) <= 0    % but it was off on input
+             rowdecomlist(l) = 0;
+            elseif contab(l, CT_TABLE) == CT_TBRCH && contab(l, CT_COL) == BR_STATUS ...
+                && contab(l, CT_CHGTYPE) == CT_REP && contab(l, CT_NEWVAL) == 0 ... % branch taken out
+                && mdi.flow(t,j,1).mpc.branch(contab(l, CT_ROW), BR_STATUS) <= 0  % but it was off on input
+              rowdecomlist(l) = 0;
+            end
           end
+          contab = contab(rowdecomlist ~= 0, :);
+          mdi.cont(t, j).contab = contab;
+          clist = unique(contab(:, CT_LABEL));
+          mdi.idx.nc(t, j) = length(clist);
+          k = 2;
+          for label = clist'
+            mdi.flow(t, j, k).mpc = apply_changes(label, mdi.flow(t, j, 1).mpc, contab);
+            ii = find( label == contab(:, CT_LABEL) );
+            mdi.CostWeights(k, j, t) = contab(ii(1), CT_PROB);
+            mdi.idx.nb(t, j, k) = size(mdi.flow(t, j, k).mpc.bus, 1);
+            mdi.idx.ny(t, j, k) = length(find(mdi.flow(t, j, 1).mpc.gencost(:, MODEL) == PW_LINEAR));
+            k = k + 1;
+          end
+          mdi.CostWeights(1, j, t) = 1 - sum(mdi.CostWeights(2:mdi.idx.nc(t,j)+1, j, t));
+          mdi.CostWeights(1:mdi.idx.nc(t,j)+1, j, t) = scenario_probs(j) * mdi.CostWeights(1:mdi.idx.nc(t,j)+1, j, t);
         end
-        contab = contab(rowdecomlist ~= 0, :);
-        mdi.cont(t, j).contab = contab;
-        clist = unique(contab(:, CT_LABEL));
-        mdi.idx.nc(t, j) = length(clist);
-        k = 2;
-        for label = clist'
-          mdi.flow(t, j, k).mpc = apply_changes(label, mdi.flow(t, j, 1).mpc, contab);
-          ii = find( label == contab(:, CT_LABEL) );
-          mdi.CostWeights(k, j, t) = contab(ii(1), CT_PROB);
-          mdi.idx.nb(t, j, k) = size(mdi.flow(t, j, k).mpc.bus, 1);
-          mdi.idx.ny(t, j, k) = length(find(mdi.flow(t, j, 1).mpc.gencost(:, MODEL) == PW_LINEAR));
-          k = k + 1;
-        end
-        mdi.CostWeights(1, j, t) = 1 - sum(mdi.CostWeights(2:mdi.idx.nc(t,j)+1, j, t));
-        mdi.CostWeights(1:mdi.idx.nc(t,j)+1, j, t) = scenario_probs(j) * mdi.CostWeights(1:mdi.idx.nc(t,j)+1, j, t);
       end
     else
       for j = 1:mdi.idx.nj(t)

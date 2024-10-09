@@ -68,28 +68,30 @@ nb = size(mpc.bus, 1);
 nl = size(mpc.branch, 1);
 ng = size(mpc.gen, 1);
 nt = mdo.idx.nt;
-nj_max = max(mdo.idx.nj);
-nc_max = max(max(mdo.idx.nc));
+nj = mdo.idx.nj;
+nc = mdo.idx.nc;
+nj_max = max(nj);
+nc_max = max(max(nc));
 ns = mdo.idx.ns;
 
 %% summarize results
-psi = zeros(nt, nj_max, nc_max+1);
-Pg = zeros(ng, nt, nj_max, nc_max+1);
-Pd = zeros(nb, nt, nj_max, nc_max+1);
-if mdo.idx.ntramp
+psi = NaN(nt, nj_max, nc_max+1);
+Pg = NaN(ng, nt, nj_max, nc_max+1);
+Pd = NaN(nb, nt, nj_max, nc_max+1);
+if mdo.idx.ntramp && isfield(mdo.results, 'Rrp')
     Rup = mdo.results.Rrp;
     Rdn = mdo.results.Rrm;
 else
     Rup = [];
     Rdn = [];
 end
-u = zeros(ng, nt);
-lamP = zeros(nb, nt, nj_max, nc_max+1);
-muF = zeros(nl, nt, nj_max, nc_max+1);
-Pf = zeros(nl, nt, nj_max, nc_max+1);
+u = NaN(ng, nt);
+lamP = NaN(nb, nt, nj_max, nc_max+1);
+muF = NaN(nl, nt, nj_max, nc_max+1);
+Pf = NaN(nl, nt, nj_max, nc_max+1);
 for t = 1:nt
-  for j = 1:mdo.idx.nj(t)
-    for k = 1:mdo.idx.nc(t,j)+1
+  for j = 1:nj(t)
+    for k = 1:nc(t,j)+1
       rr = mdo.flow(t,j,k).mpc;
       psi(t, j, k) = mdo.CostWeightsAdj(k, j, t);
       u(:, t) = rr.gen(:, GEN_STATUS);
@@ -159,19 +161,19 @@ if verbose
     end
     fprintf('\n');
 
-    print_most_summary_section('PG', 'Gen', nt, nj_max, nc_max, Pg);
-    if mdo.idx.ntramp
+    print_most_summary_section('PG', 'Gen', nt, nj_max, nc, Pg);
+    if mdo.idx.ntramp && isfield(mdo.results, 'Rrp')
         print_most_summary_section('RAMP UP', 'Gen', nt, 1, 0, Rup);
         print_most_summary_section('RAMP DOWN', 'Gen', nt, 1, 0, Rdn);
     end
-    print_most_summary_section('FIXED LOAD', 'Bus', nt, nj_max, nc_max, Pd);
+    print_most_summary_section('FIXED LOAD', 'Bus', nt, nj_max, nc, Pd);
     if ns
         print_most_summary_section('ESS E[SoC]', 'ESS', nt, 1, 0, SoC);
     end
     if mdo.DCMODEL
-        print_most_summary_section('LAM_P', 'Bus', nt, nj_max, nc_max, lamP);
-        print_most_summary_section('PF',   'Brch', nt, nj_max, nc_max, Pf);
-        print_most_summary_section('MU_F', 'Brch', nt, nj_max, nc_max, muF);
+        print_most_summary_section('LAM_P', 'Bus', nt, nj_max, nc, lamP);
+        print_most_summary_section('PF',   'Brch', nt, nj_max, nc, Pf);
+        print_most_summary_section('MU_F', 'Brch', nt, nj_max, nc, muF);
     end
 end
 
@@ -180,7 +182,7 @@ if nargout
 end
 
 %%---------------------------------------------------------
-function print_most_summary_section(label, section_type, nt, nj_max, nc_max, data, tol)
+function print_most_summary_section(label, section_type, nt, nj_max, nc, data, tol)
 if nargin < 7
     tol = 1e-4;
 end
@@ -189,6 +191,7 @@ bl = blanks(fix((12-length(label)) / 2));
 fprintf('\n==========%-12s==========\n', sprintf('%s%s', bl, label));
 if any(data(:))
     for j = 1:nj_max
+        nc_max = max(nc(:,j));
         for k = 1:nc_max+1
             if nj_max > 1 || nc_max > 0
                 fprintf('\nSCENARIO %d', j);
