@@ -115,8 +115,10 @@ jobs:
 
     - name: Include MP-Core?
       run: |
-        export HAVE_MP_CORE=`$ML_CMD "fprintf('%d', have_feature('mp_core'))"`
-        export INCLUDE_MP_CORE=${HAVE_MP_CORE: -1}
+        export HAVE_MP_CORE=`$ML_CMD "fprintf('%d\n', have_feature('mp_core'))"`
+        echo "HAVE_MP_CORE=${HAVE_MP_CORE}"
+        export INCLUDE_MP_CORE=$(echo "$HAVE_MP_CORE" | grep -o '[01]' | tail -n 1)
+        echo "INCLUDE_MP_CORE=${INCLUDE_MP_CORE}"
         echo "INCLUDE_MP_CORE=${INCLUDE_MP_CORE}" >> $GITHUB_ENV
 
     - name: Test GLPK availability, print version number
