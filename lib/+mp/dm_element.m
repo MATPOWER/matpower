@@ -170,10 +170,10 @@ classdef (Abstract) dm_element < handle
             % options for the return value:
             %
             %   1. Single char array with one type that applies to all
-            %      connections, cxn_idx_prop() returns *empty*.
+            %      connections, cxn_type_prop() returns *empty*.
             %   2. Cell array with *nc* elements, one for each connection,
-            %      cxn_idx_prop() returns *empty*.
-            %   3. Cell array of valid junction element types, cxn_idx_prop()
+            %      cxn_type_prop() returns *empty*.
+            %   3. Cell array of valid junction element types, cxn_type_prop()
             %      return value *not empty*.
             %
             % See the :ref:`sec_dm_element_cxn` section in the
