@@ -569,7 +569,7 @@ classdef (Abstract) nm_element < handle
             %       this element's first port, or state variables corresponding
             %       to this element's first non-voltage state
             %   idx2 (integer) : same as ``idx1`` for second port or
-            %       non-voltage state, and  so on
+            %       non-voltage state, and so on
             %
             % Output:
             %   CD (sparse matrix) : stacked incidence matrix (``C`` for ports,
