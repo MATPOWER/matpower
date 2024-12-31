@@ -56,6 +56,7 @@ classdef dme_line3p < mp.dm_element
         tbus    % bus index vector for "to" bus (all lines)
         freq    % system frequency, in Hz
         lc      % index into :attr:`lc_tab` for lines that are on
+        lc_y_idx% index into :attr:`ys` and  :attr:`yc` for lines that are on
         len     % length for lines that are on
         lc_tab  % line construction table
         ys      % cell array of 3x3 series admittance matrices for lc rows
@@ -157,13 +158,14 @@ classdef dme_line3p < mp.dm_element
             obj.len = obj.tab.len(obj.on);
 
             %% build Ys and Yc for relevant lines
-            idx = unique(obj.lc);
+            idx = unique(obj.lc);   %% unique codes used by lines that are on
+            tmpmap = zeros(max(idx), 1);
+            tmpmap(idx) = (1:length(idx))';
+            obj.lc_y_idx = tmpmap(obj.lc);  %% index into idx & hence into rows
+                                            %% of ys/yc for lines that are on
             rr = obj.lc_tab.r(idx, :);
             xx = obj.lc_tab.x(idx, :);
             cc = obj.lc_tab.c(idx, :);
-%             rr = obj.lc_tab{idx, 2:7};
-%             xx = obj.lc_tab{idx, 8:13};
-%             cc = obj.lc_tab{idx, 14:19};
             for k = 1:length(idx)
                 R = obj.vec2symmat(rr(k, :));
                 X = obj.vec2symmat(xx(k, :));

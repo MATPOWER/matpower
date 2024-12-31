@@ -41,8 +41,8 @@ classdef nme_line3p < mp.nm_element & mp.form_acp
             base_z = 1000 / dm.base_kva * base_kv .^ 2;
 
             sf = (base_z ./ dme.len) * ones(1, 6);      %% scale factor
-            y_od = dme.ys(dme.lc, :) .* sf;             %% - of off-diagonal
-            y_d  = y_od + dme.yc(dme.lc, :)/2 .* sf;    %% diagonal
+            y_od = dme.ys(dme.lc_y_idx, :) .* sf;           %% - of off-diagonal
+            y_d  = y_od + dme.yc(dme.lc_y_idx, :)/2 .* sf;  %% diagonal
 
             Y_od = obj.vec2symmat_stacked(y_od);        %% - of off-diagonal
             Y_d  = obj.vec2symmat_stacked(y_d);         %% diagonal
