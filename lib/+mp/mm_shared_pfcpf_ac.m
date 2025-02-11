@@ -109,6 +109,12 @@ classdef (Abstract) mm_shared_pfcpf_ac < mp.mm_shared_pfcpf
             [i, j] = find(CCrpv);
             if size(i, 2) > 1, i = i'; j = j'; end
             ij = sortrows([i j]);       %% 1st state comes 1st for each node
+
+            %% check if ij is empty (no generators in slack node)
+            if isempty(ij)
+                error('No generator found in the slack node. Ensure at least one generator is connected to the slack bus.');
+            end
+
             [~, k1] = unique(ij(:, 1), 'first');%% index of 1st entry for each node
             % j1 = ij(k1, 2);     %% indices of states that are 1st at their node
             kn = find(~ismember(1:length(i), k1));  %% indices of entries that are not first state for corresponding node
