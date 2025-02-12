@@ -192,14 +192,18 @@ if strcmp(alg, 'DEFAULT')
         alg = 'CPLEX';
     elseif have_feature('mosek')    %% if not, then MOSEK, if available
         alg = 'MOSEK';
-    elseif isempty(H) || ~any(any(H))   %% if not, and linear objective
-        if have_feature('intlinprog')   %% then Optimization Tbx, if available
-            alg = 'OT';
-        elseif have_feature('glpk')     %% if not, and then GLPK, if available
-            alg = 'GLPK';
-        end
     else
-        error('miqps_master: no solvers available - requires CPLEX, Gurobi, MOSEK, INTLINPROG or GLPK');
+        if isempty(H) || ~any(any(H))   %% if not, and linear objective
+            if have_feature('intlinprog')   %% then Optimization Tbx, if available
+                alg = 'OT';
+            elseif have_feature('glpk')     %% if not, and then GLPK, if available
+                alg = 'GLPK';
+            else
+                error('miqps_master: no solvers available - requires CPLEX, Gurobi, MOSEK, INTLINPROG or GLPK');
+            end
+        else                            %% if not, and quadratic objective
+            error('miqps_master: no solvers available - requires CPLEX, Gurobi, or MOSEK');
+        end
     end
 end
 

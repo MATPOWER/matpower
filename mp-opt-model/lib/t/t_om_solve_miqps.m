@@ -15,14 +15,14 @@ end
 
 algs = {'DEFAULT', 'CPLEX', 'MOSEK', 'GUROBI', 'GLPK', 'OT'};
 names = {'DEFAULT', 'CPLEX', 'MOSEK', 'Gurobi', 'glpk', 'intlin/lin/quadprog'};
-check = {@have_miqp_solver, 'cplex', 'mosek', 'gurobi', 'glpk', 'intlinprog'};
+check = {@have_milp_solver, 'cplex', 'mosek', 'gurobi', 'glpk', 'intlinprog'};
 does_qp = [0 1 1 1 0 0];
 if have_feature('gurobi') || have_feature('cplex') || have_feature('mosek')
     does_qp(1) = 1;
 end
 
-n = 17;
-nmiqp = 10;
+n = 33;
+nmiqp = 20;
 nmiqp_soln = 30;
 diff_tool = 'bbdiff';
 show_diff_on_fail = false;
@@ -87,6 +87,8 @@ for k = 1:length(algs)
             end
             opt.mosek_opt = mosek_options([], mpopt);
         end
+        opt_r = opt;
+        opt_r.relax_integer = 1;
 
 % opt.verbose = 3;
         t = sprintf('%s - 2-d ILP : ', names{k});
@@ -105,6 +107,11 @@ for k = 1:length(algs)
         t_is(x, [4; 2], 12, [t 'x']);
         t_is(f, -14, 12, [t 'f']);
         t_ok(~om.has_parsed_soln(), [t 'has_parsed_soln() is false']);
+        t = sprintf('%s - 2-d ILP (integer relaxed) : ', names{k});
+        [x, f, s, out, lam] = om.solve(opt_r);
+        t_is(s, 1, 12, [t 'success']);
+        t_is(x, [2.441860465; 3.255813953], 8, [t 'x']);
+        t_is(f, -14.651162791, 8, [t 'f']);
 
         t = sprintf('%s - 6-d ILP : ', names{k});
         %% from https://doi.org/10.1109/TASE.2020.2998048
@@ -125,10 +132,19 @@ for k = 1:length(algs)
              norm(x - [0; 0; 3; 1; 0; 2], Inf) < 1e-12 || ...
              norm(x - [0; 0; 3; 0; 2; 1], Inf) < 1e-12, [t 'x']);
         t_is(f, 16, 12, [t 'f']);
+        t = sprintf('%s - 6-d ILP (integer relaxed) : ', names{k});
+        [x, f, s, out, lam] = om.solve(opt_r);
+        t_is(s, 1, 12, [t 'success']);
+        t_ok(norm(x - [0; 0; 2.7; 0; 0; 2.5], Inf) < 1e-12 || ...
+             norm(x - [0; 0; 3.0; 0; 0; 2.2], Inf) < 1e-12, [t 'x']);
+        t_is(f, 15.6, 12, [t 'f']);
 
         if does_qp(k)
             t = sprintf('%s - 4-d MIQP : ', names{k});
             %% from cplexmiqpex.m, CPLEX_Studio_Academic124/cplex/examples/src/matlab/cplexmiqpex.m
+            %% Note: This is a lame example; the integer relaxed problem already
+            %%       has an integer feasible solution, so this is actually just
+            %%       a simple QP. -RDZ 10/29/24
             H = sparse([ 33   6    0    0;
                           6  22   11.5  0;
                           0  11.5 11    0;
@@ -157,6 +173,15 @@ for k = 1:length(algs)
             t_is(lam.mu_u, [0; 272; 0], 6, [t 'lam.mu_u']);
             t_is(lam.lower, [0; 0; 349.5; 4350], 5, [t 'lam.lower']);
             t_is(lam.upper, [0; 0; 0; 0], 7, [t 'lam.upper']);
+            t = sprintf('%s - 4-d MIQP (integer relaxed) : ', names{k});
+            [x, f, s, out, lam] = om.solve(opt_r);
+            t_is(s, 1, 12, [t 'success']);
+            t_is(x, [7; 7; 0; 2], 7, [t 'x']);
+            t_is(f, 1618.5, 4, [t 'f']);
+            t_is(lam.mu_l, [466; 0; 0], 6, [t 'lam.mu_l']);
+            t_is(lam.mu_u, [0; 272; 0], 6, [t 'lam.mu_u']);
+            t_is(lam.lower, [0; 0; 349.5; 4350], 5, [t 'lam.lower']);
+            t_is(lam.upper, [0; 0; 0; 0], 7, [t 'lam.upper']);
 
             t = sprintf('%s - 6-d IQP : ', names{k});
             %% from Bragin, et. al. https://doi.org/10.1007/s10957-014-0561-3
@@ -176,6 +201,11 @@ for k = 1:length(algs)
                  norm(x - [17; 0; 16; 0; 17; 0], Inf) < 1e-7 || ...
                  norm(x - [17; 0; 17; 0; 16; 0], Inf) < 1e-7, [t 'x']);
             t_is(f, 417, 6, [t 'f']);
+            t = sprintf('%s - 6-d IQP (integer relaxed) : ', names{k});
+            [x, f, s, out, lam] = om.solve(opt_r);
+            t_is(s, 1, 12, [t 'success']);
+            t_is(x, [50;0;50;0;50;0]/3, 8, [t 'x']);
+            t_is(f, 1250/3, 6, [t 'f']);
         else
             t_skip(nmiqp, sprintf('%s does not handle MIQP problems', names{k}));
         end
@@ -183,7 +213,7 @@ for k = 1:length(algs)
     end
 end
 
-if have_miqp_solver()
+if have_milp_solver()
     t = 'om.soln.';
     c = [-2; -3];
     A = sparse([195 273; 4 40]);
@@ -276,7 +306,7 @@ end
 
 t_end;
 
-function TorF = have_miqp_solver()
+function TorF = have_milp_solver()
 TorF = have_feature('cplex') || have_feature('glpk') || ...
     have_feature('gurobi') || have_feature('intlinprog') || ...
     have_feature('mosek');

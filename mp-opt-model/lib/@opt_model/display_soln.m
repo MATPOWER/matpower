@@ -60,12 +60,15 @@ else
 end
 nargs = length(args);
 
-if nargs < 3
-    idx = [];
-    if nargs < 2
-        name = [];
-        if nargs < 1
-            set_type = 'all';
+set_type = 'all';
+name = [];
+idx = [];
+if nargs >= 1
+    set_type = args{1};
+    if nargs >= 2
+        name = args{2};
+        if nargs >= 3
+            idx = args{3};
         end
     end
 end

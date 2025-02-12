@@ -2444,6 +2444,7 @@ name & default & description \\
 \end{tabular}	\\
 \code{~~parse\_soln}	& 0	& flag that specifies whether or not to call the \code{parse\_soln} method and place the return values in the \code{soln}
 property of the field type objects \\
+\code{~~relax\_integer}	& 0	& relax integer constraints, if true \\
 \code{~~x0}	& \emph{empty}	& optional initial value of $x$, overrides value stored in model, \emph{(ignored by some solvers)}	\\
 \midrule
 \multicolumn{3}{l}{\emph{Additional Options for Specific Problem Types}} \\
@@ -4669,7 +4670,7 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-4.3.pdf}{\mpom{} 4.3 Use
 
 \subsubsection*{New Features}
 \begin{itemize}
-\item 
+\item New \code{relax\_integer} option for \code{opt\_model.solve()}. Set to true to easily solve the LP or QP relaxation of a mixed integer LP or QP.
 \item New classes:
     \begin{itemize}
     \item \code{mp.set\_manager} encapsulates \code{mp\_idx\_manager} functionality into an individual field object representing a specific set type, rather than in the container class.

@@ -87,6 +87,7 @@ function [x, f, eflag, output, lambda] = solve(om, opt)
 %               value and primal variable relative match required to avoid
 %               mis-match warning message if mixed integer price computation
 %               stage is not skipped
+%           relax_integer (0) - relax integer constraints, if true
 %           skip_prices (0) - flag that specifies whether or not to skip the
 %               price computation stage for mixed integer problems, in which
 %               the problem is re-solved for only the continuous variables,
@@ -135,8 +136,6 @@ end
 %% call appropriate solver
 pt = om.problem_type();
 switch pt
-    case 'MINLP'        %% MINLP - mixed integer non-linear program
-        error('opt_model.solve: not yet implemented for ''MINLP'' problems.')
     case 'LEQ'          %% LEQ   - linear equations
         if isfield(opt, 'leq_opt')
             if isfield(opt.leq_opt, 'solver')
@@ -202,26 +201,34 @@ switch pt
             case 'PNE'  %% PNE - parameterized nonlinear equation
                 [x, f, eflag, output, lambda] = pnes_master(fcn, x0, opt);
         end
-    case 'NLP'          %% NLP   - nonlinear program
-        %% optimization vars, bounds, types
-        [x0, xmin, xmax] = om.params_var();
-        if isfield(opt, 'x0')
-            x0 = opt.x0;
+    case {'MINLP', 'NLP'}
+        mixed_integer = strcmp(pt(1:2), 'MI') && ...
+            (~isfield(opt, 'relax_integer') || ~opt.relax_integer);
+        if mixed_integer    %% MINLP - mixed integer non-linear program
+            error('opt_model.solve: not yet implemented for ''MINLP'' problems.')
+        else                %% NLP   - nonlinear program
+            %% optimization vars, bounds, types
+            [x0, xmin, xmax] = om.params_var();
+            if isfield(opt, 'x0')
+                x0 = opt.x0;
+            end
+        
+            %% run solver
+            [A, l, u] = om.params_lin_constraint();
+            f_fcn = @(x)nlp_costfcn(om, x);
+            gh_fcn = @(x)nlp_consfcn(om, x);
+            hess_fcn = @(x, lambda, cost_mult)nlp_hessfcn(om, x, lambda, cost_mult);
+            [x, f, eflag, output, lambda] = ...
+                nlps_master(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn, opt);
         end
-
-        %% run solver
-        [A, l, u] = om.params_lin_constraint();
-        f_fcn = @(x)nlp_costfcn(om, x);
-        gh_fcn = @(x)nlp_consfcn(om, x);
-        hess_fcn = @(x, lambda, cost_mult)nlp_hessfcn(om, x, lambda, cost_mult);
-        [x, f, eflag, output, lambda] = ...
-            nlps_master(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn, opt);
     otherwise
         %% get parameters
         [HH, CC, C0] = om.params_quad_cost();
         [A, l, u] = om.params_lin_constraint();
+        mixed_integer = strcmp(pt(1:2), 'MI') && ...
+            (~isfield(opt, 'relax_integer') || ~opt.relax_integer);
 
-        if strcmp(pt(1:2), 'MI')    %% MILP, MIQP - mixed integer linear/quadratic program
+        if mixed_integer    %% MILP, MIQP - mixed integer linear/quadratic program
             %% optimization vars, bounds, types
             [x0, xmin, xmax, vtype] = om.params_var();
             if isfield(opt, 'x0')
@@ -231,7 +238,7 @@ switch pt
             %% run solver
             [x, f, eflag, output, lambda] = ...
                 miqps_master(HH, CC, A, l, u, xmin, xmax, x0, vtype, opt);
-        else                        %% LP, QP - linear/quadratic program
+        else                %% LP, QP - linear/quadratic program
             %% optimization vars, bounds, types
             [x0, xmin, xmax] = om.params_var();
             if isfield(opt, 'x0')

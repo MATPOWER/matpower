@@ -5,6 +5,10 @@ Change history for MP-Opt-Model
 since 4.2
 ---------
 
+#### 10/29/24
+  - Add `relax_integer` option for `opt_model.solve()`. Set to true to easily
+    solve the LP or QP relaxation of a mixed integer LP or QP.
+
 #### 8/17/24
   - Add `mp.set_manager_opt_model` base class to handle common `opt_model`
     functionality, such as handling solutions, for the individual field

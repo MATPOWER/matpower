@@ -15,7 +15,7 @@ end
 
 algs = {'DEFAULT', 'CPLEX', 'MOSEK', 'GUROBI', 'GLPK', 'OT'};
 names = {'DEFAULT', 'CPLEX', 'MOSEK', 'Gurobi', 'glpk', 'intlin/lin/quadprog'};
-check = {@have_miqp_solver, 'cplex', 'mosek', 'gurobi', 'glpk', 'intlinprog'};
+check = {@have_milp_solver, 'cplex', 'mosek', 'gurobi', 'glpk', 'intlinprog'};
 does_qp = [0 1 1 1 0 0];
 if have_feature('gurobi') || have_feature('cplex') || have_feature('mosek')
     does_qp(1) = 1;
@@ -213,6 +213,9 @@ for k = 1:length(algs)
         if does_qp(k)
             t = sprintf('%s - 4-d MIQP : ', names{k});
             %% from cplexmiqpex.m, CPLEX_Studio_Academic124/cplex/examples/src/matlab/cplexmiqpex.m
+            %% Note: This is a lame example; the integer relaxed problem already
+            %%       has an integer feasible solution, so this is actually just
+            %%       a simple QP. -RDZ 10/29/24
             H = sparse([ 33   6    0    0;
                           6  22   11.5  0;
                           0  11.5 11    0;
@@ -271,7 +274,7 @@ end
 
 t_end;
 
-function TorF = have_miqp_solver()
+function TorF = have_milp_solver()
 TorF = have_feature('cplex') || have_feature('glpk') || ...
     have_feature('gurobi') || have_feature('intlinprog') || ...
     have_feature('mosek');

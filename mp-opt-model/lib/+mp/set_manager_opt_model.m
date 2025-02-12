@@ -316,15 +316,13 @@ classdef set_manager_opt_model < mp.set_manager
             end
             nargs = length(args);
 
-            if nargs < 2
-                idx = [];
-                if nargs < 1
-                    name = [];
-                else
-                    name = args{1};
+            idx = [];
+            name = [];
+            if nargs >= 1
+                name = args{1};
+                if nargs >= 2
+                    idx = args{2};
                 end
-            else
-                idx = args{2};
             end
 
             if obj.N
