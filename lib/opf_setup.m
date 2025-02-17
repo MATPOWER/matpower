@@ -110,6 +110,7 @@ else    %% AC
   if use_vg     %% adjust bus voltage limits based on generator Vg setpoint
     %% gen connection matrix, element i, j is 1 if, generator j at bus i is ON
     Cg = sparse(mpc.gen(:, GEN_BUS), (1:ng)', mpc.gen(:, GEN_STATUS) > 0, nb, ng);
+    Cg(:, mpc.bus(mpc.gen(:, GEN_BUS), BUS_TYPE) == PQ) = 0;    %% exclude PQ buses
     Vbg = Cg * sparse(1:ng, 1:ng, mpc.gen(:, VG), ng, ng);
     Vmax = max(Vbg, [], 2); %% zero for non-gen buses, else max Vg of gens @ bus
     ib = find(Vmax);                %% buses with online gens

@@ -13,6 +13,10 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 since 8.0
 ---------
 
+#### 2/17/25
+  - Fix [bug #256][38] to make `opf.use_vg` option compatible with generators
+    at PQ buses.
+
 #### 8/30/24
   - Incorporate major [MP-Opt-Model][27] refactor of `mp_idx_manager` and
     `opt_model` to use the new classes `mp.set_manager`,
@@ -3453,3 +3457,4 @@ First Public Release – *Jun 25, 1997*
 [35]: https://github.com/MATPOWER/mx-simulink_matpower
 [36]: https://github.com/MATPOWER/matpower/issues/210
 [37]: https://github.com/MATPOWER/matpower/issues/223
+[38]: https://github.com/MATPOWER/matpower/issues/256
