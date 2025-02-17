@@ -106,7 +106,7 @@ classdef (Abstract) mme_buslink_pf_ac < mp.mme_buslink
                 va_adj(k_va2) =  va2(k_va2);
                 b_va = b_va + Istack * va_adj;
 
-                %% delete redundate (and currently incorrect) constraints
+                %% delete redundant (and currently incorrect) constraints
                 %% corresponding to k_va2 and ports 3 and 4
                 if ~isempty(k_va2)
                     d_va = [nk+k_va2; 2*nk+k_va2];
@@ -131,7 +131,7 @@ classdef (Abstract) mme_buslink_pf_ac < mp.mme_buslink
                 vm_adj(k_vm2) =  vm2(k_vm2);
                 b_vm = b_vm + Istack * vm_adj;
 
-                %% delete redundate (and currently incorrect) constraints
+                %% delete redundant (and currently incorrect) constraints
                 %% corresponding to k_vm2 and ports 3 and 4
                 if ~isempty(k_vm2)
                     d_vm = [nk+k_vm2; 2*nk+k_vm2];
