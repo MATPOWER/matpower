@@ -110,9 +110,9 @@ classdef (Abstract) mm_shared_pfcpf_ac < mp.mm_shared_pfcpf
             if size(i, 2) > 1, i = i'; j = j'; end
             ij = sortrows([i j]);       %% 1st state comes 1st for each node
 
-            %% check if ij is empty (no generators in slack node)
+            %% check for slack node with no generator
             if isempty(ij)
-                error('No generator found in the slack node. Ensure at least one generator is connected to the slack bus.');
+                error('mp.mm_shared_pfcpf_ac: No generator at slack node. At least one generator must be connected to slack node.');
             end
 
             [~, k1] = unique(ij(:, 1), 'first');%% index of 1st entry for each node
