@@ -736,9 +736,10 @@ classdef data_model < mp.element_container
 
             %% gen connection matrix, element i, j is 1 if, generator j at bus i is ON
             Cg = sparse(gbus, (1:ng)', 1, nb, ng);
+            Cg(:, bus_dme.type(gbus) == mp.NODE_TYPE.PQ) = 0;   %% exclude PQ buses
             Vbg = Cg * sparse(1:ng, 1:ng, gen_dme.vm_setpoint, ng, ng);
             vm_ub = max(Vbg, [], 2);    %% zero for non-gen buses, else max vm_setpoint of gens @ bus
-            ib = find(vm_ub);               %% buses with online gens
+            ib = find(vm_ub);               %% non-PQ buses with online gens
             vm_lb = max(2*Cg - Vbg, [], 2); %% same as vm_ub, except min vm_setpoint of gens @ bus
             vm_lb(ib) = 2 - vm_lb(ib);
 
