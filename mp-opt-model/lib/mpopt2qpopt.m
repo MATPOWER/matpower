@@ -122,6 +122,8 @@ switch alg
         qpopt.glpk_opt = glpk_options([], mpopt);
     case {'GUROBI', 700}
         qpopt.grb_opt = gurobi_options([], mpopt);
+    case {'KNITRO'}
+        qpopt.knitro_opt = artelys_knitro_options([], mpopt);
     case {'MOSEK', 600}
         qpopt.mosek_opt = mosek_options([], mpopt);
     case 'OSQP'

@@ -60,6 +60,7 @@ Use these functions to set up input options for individual solvers.
 
 .. toctree::
 
+   functions/artelys_knitro_options
    functions/cplex_options
    functions/glpk_options
    functions/gurobi_options
@@ -81,6 +82,7 @@ Use these functions to check the version of the installed |MPOM|, Gurobi, and OS
 .. toctree::
 
    functions/gurobiver
+   functions/knitrover
    functions/mpomver
    functions/osqpver
 
@@ -157,6 +159,7 @@ LP/QP Solver
    functions/qps_glpk
    functions/qps_gurobi
    functions/qps_ipopt
+   functions/qps_knitro
    functions/qps_mosek
    functions/qps_osqp
    functions/qps_ot

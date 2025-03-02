@@ -16,7 +16,7 @@ function rv = mpomver(varargin)
 % See also mpver.
 
 %   MP-Opt-Model
-%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2025, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.
@@ -26,7 +26,7 @@ function rv = mpomver(varargin)
 v = struct( 'Name',     'MP-Opt-Model', ... 
             'Version',  '4.3-dev', ...
             'Release',  '', ...
-            'Date',     '29-Oct-2024' );
+            'Date',     '01-Mar-2025' );
 if nargout > 0
     if nargin > 0
         rv = v;

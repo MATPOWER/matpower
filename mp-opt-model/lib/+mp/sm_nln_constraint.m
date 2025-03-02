@@ -286,9 +286,8 @@ classdef sm_nln_constraint < mp.set_manager_opt_model
             end
 
             if isempty(idx)
-                dims = size(obj.idx.i1.(name));
-                if prod(dims) ~= 1
-                    error('mp.sm_nln_constraint.params: nonlinear constraint set ''%s'' requires an IDX_LIST arg', name)
+                if ~isscalar(obj.idx.N.(name))
+                    error('mp.sm_nln_constraint.params: nonlinear constraint set ''%s'' requires an IDX_LIST arg', name);
                 end
                 N = obj.idx.N.(name);
                 if nargout > 1

@@ -626,12 +626,11 @@ classdef sm_lin_constraint < mp.set_manager_opt_model
                     tr = 0;
                     N = 1;
                 elseif nargin < 5 || isempty(idx)   %% name, no idx provided
-                    dims = size(obj.idx.i1.(name));
-                    if prod(dims) == 1              %% simple named set
+                    if isscalar(obj.idx.N.(name))   %% simple named set
                         [A, l, u, vs, ~, ~, tr] = obj.params(var, name);
                         N = obj.get_N(name);
                     else
-                        error('mp.sm_lin_constraint.eval: linear constraint set ''%s'' requires an IDX_LIST arg', name)
+                        error('mp.sm_lin_constraint.eval: linear constraint set ''%s'' requires an IDX_LIST arg', name);
                     end
                 else                                %% indexed named set
                     [A, l, u, vs, ~, ~, tr] = obj.params(var, name, idx);

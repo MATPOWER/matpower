@@ -652,6 +652,7 @@ classdef sm_variable < mp.set_manager_opt_model
             % ::
             %
             %   ps = var.parse_soln(soln)
+            %   ps = var.parse_soln(soln, stash)
             %
             % Parse a full solution struct into parts corresponding to
             % individual variable subsets.

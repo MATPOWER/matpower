@@ -1,12 +1,12 @@
-function [x, f, eflag, output, lambda] = qps_gurobi(H, c, A, l, u, xmin, xmax, x0, opt)
-% qps_gurobi - Quadratic Program Solver based on GUROBI.
+function [x, f, eflag, output, lambda] = qps_knitro(H, c, A, l, u, xmin, xmax, x0, opt)
+% qps_knitro - Quadratic Program Solver based on Artelys Knitro.
 % ::
 %
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = ...
-%       QPS_GUROBI(H, C, A, L, U, XMIN, XMAX, X0, OPT)
-%   [X, F, EXITFLAG, OUTPUT, LAMBDA] = QPS_GUROBI(PROBLEM)
+%       QPS_KNITRO(H, C, A, L, U, XMIN, XMAX, X0, OPT)
+%   [X, F, EXITFLAG, OUTPUT, LAMBDA] = QPS_KNITRO(PROBLEM)
 %   A wrapper function providing a standardized interface for using
-%   GUROBI to solve the following QP (quadratic programming)
+%   Artelys Knitro to solve the following QP (quadratic programming)
 %   problem:
 %
 %       min 1/2 X'*H*X + C'*X
@@ -34,8 +34,8 @@ function [x, f, eflag, output, lambda] = qps_gurobi(H, c, A, l, u, xmin, xmax, x
 %               1 = some progress output
 %               2 = verbose progress output
 %               3 = even more verbose progress output
-%           grb_opt - options struct for GUROBI, value in verbose
-%                   overrides these options
+%           knitro_opt - options struct for Artelys Knitro, value in verbose
+%                        overrides these options
 %       PROBLEM : The inputs can alternatively be supplied in a single
 %           PROBLEM struct with fields corresponding to the input arguments
 %           described above: H, c, A, l, u, xmin, xmax, x0, opt
@@ -43,12 +43,11 @@ function [x, f, eflag, output, lambda] = qps_gurobi(H, c, A, l, u, xmin, xmax, x
 %   Outputs:
 %       X : solution vector
 %       F : final objective function value
-%       EXITFLAG : GUROBI exit flag
+%       EXITFLAG : Artelys Knitro exit flag
 %           1 = converged
-%           0 or negative values = negative of GUROBI exit flag
-%           (see GUROBI documentation for details)
-%       OUTPUT : GUROBI output struct
-%           (see GUROBI documentation for details)
+%           (see Artelys Knitro documentation for details)
+%       OUTPUT : Artelys Knitro output struct
+%           (see Artelys Knitro documentation for details)
 %       LAMBDA : struct containing the Langrange and Kuhn-Tucker
 %           multipliers on the constraints, with fields:
 %           mu_l - lower (left-hand) limit on linear constraints
@@ -63,20 +62,20 @@ function [x, f, eflag, output, lambda] = qps_gurobi(H, c, A, l, u, xmin, xmax, x
 %
 %   Calling syntax options:
 %       [x, f, exitflag, output, lambda] = ...
-%           qps_gurobi(H, c, A, l, u, xmin, xmax, x0, opt)
+%           qps_knitro(H, c, A, l, u, xmin, xmax, x0, opt)
 %
-%       x = qps_gurobi(H, c, A, l, u)
-%       x = qps_gurobi(H, c, A, l, u, xmin, xmax)
-%       x = qps_gurobi(H, c, A, l, u, xmin, xmax, x0)
-%       x = qps_gurobi(H, c, A, l, u, xmin, xmax, x0, opt)
-%       x = qps_gurobi(problem), where problem is a struct with fields:
+%       x = qps_knitro(H, c, A, l, u)
+%       x = qps_knitro(H, c, A, l, u, xmin, xmax)
+%       x = qps_knitro(H, c, A, l, u, xmin, xmax, x0)
+%       x = qps_knitro(H, c, A, l, u, xmin, xmax, x0, opt)
+%       x = qps_knitro(problem), where problem is a struct with fields:
 %                       H, c, A, l, u, xmin, xmax, x0, opt
 %                       all fields except 'c', 'A' and 'l' or 'u' are optional
-%       x = qps_gurobi(...)
-%       [x, f] = qps_gurobi(...)
-%       [x, f, exitflag] = qps_gurobi(...)
-%       [x, f, exitflag, output] = qps_gurobi(...)
-%       [x, f, exitflag, output, lambda] = qps_gurobi(...)
+%       x = qps_knitro(...)
+%       [x, f] = qps_knitro(...)
+%       [x, f, exitflag] = qps_knitro(...)
+%       [x, f, exitflag, output] = qps_knitro(...)
+%       [x, f, exitflag, output, lambda] = qps_knitro(...)
 %
 %   Example: (problem from from https://v8doc.sas.com/sashtml/iml/chap8/sect12.htm)
 %       H = [   1003.1  4.3     6.3     5.9;
@@ -91,13 +90,14 @@ function [x, f, eflag, output, lambda] = qps_gurobi(H, c, A, l, u, xmin, xmax, x
 %       xmin = zeros(4,1);
 %       x0 = [1; 0; 0; 1];
 %       opt = struct('verbose', 2);
-%       [x, f, s, out, lambda] = qps_gurobi(H, c, A, l, u, xmin, [], x0, opt);
+%       [x, f, s, out, lambda] = qps_knitro(H, c, A, l, u, xmin, [], x0, opt);
 %
-% See also qps_master, gurobi.
+% See also qps_master, knitro_qp, knitro_lp
 
 %   MP-Opt-Model
-%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
-%   by Ray Zimmerman, PSERC Cornell
+%   Copyright (c) 2010-2025, Power Systems Engineering Research Center (PSERC)
+%   by Wilson Gonzalez Vanegas, Universidad Nacional de Colombia Sede Manizales
+%   and Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
@@ -134,7 +134,7 @@ end
 %% define nx, set default values for missing optional inputs
 if isempty(H) || ~any(any(H))
     if isempty(A) && isempty(xmin) && isempty(xmax)
-        error('qps_gurobi: LP problem must include constraints or variable bounds');
+        error('qps_knitro: LP problem must include constraints or variable bounds');
     else
         if ~isempty(A)
             nx = size(A, 2);
@@ -178,142 +178,57 @@ else
     verbose = 0;
 end
 
-%% set up options struct for Gurobi
-if ~isempty(opt) && isfield(opt, 'grb_opt') && ~isempty(opt.grb_opt)
-    g_opt = gurobi_options(opt.grb_opt);
+%% set up options struct for Artelys Knitro
+if ~isempty(opt) && isfield(opt, 'knitro_opt') && ~isempty(opt.knitro_opt)
+    knitro_opt = artelys_knitro_options(opt.knitro_opt);
 else
-    g_opt = gurobi_options;
+    knitro_opt = knitro_options;
 end
 if verbose > 1
-    g_opt.LogToConsole = 1;
-    g_opt.OutputFlag = 1;
+    knitro_opt.outlev = 3;
     if verbose > 2
-        g_opt.DisplayInterval = 1;
-    else
-        g_opt.DisplayInterval = 100;
+        knitro_opt.outlev = 4;
     end
 else
-    g_opt.LogToConsole = 0;
-    g_opt.OutputFlag = 0;
+     knitro_opt.outlev = 0;
 end
 
 if ~issparse(A)
     A = sparse(A);
 end
-if issparse(c);
+if issparse(c)
     c = full(c);
 end
 
 %% split up linear constraints
-[ieq, igt, ilt, AA, bb] = convert_lin_constraint(A, l, u);
-
-%% grab some dimensions
-neq = length(ieq);                  %% number of equalities
-niq = length(ilt) + length(igt);    %% number of inequalities
-
-%% set up model
-m.A     = AA;
-m.rhs   = bb;
-m.sense = char([ double('=')*ones(1,neq) double('<')*ones(1,niq) ]);
-m.lb = xmin;
-m.ub = xmax;
-m.obj = c';
+[ieq, igt, ilt, Ae, be, Ai, bi] = convert_lin_constraint(A, l, u);
 
 %% call the solver
 if isempty(H) || ~any(any(H))
     lpqp = 'LP';
+    [x, f, eflag, output, Lambda] = knitro_lp(c, Ai, bi, Ae, be, xmin, xmax, x0, [], knitro_opt);
 else
     lpqp = 'QP';
     if ~issparse(H)
         H = sparse(H);
     end
-    m.Q = 0.5 * H;
+    [x, f, eflag, output, Lambda] = knitro_qp(H, c, Ai, bi, Ae, be, xmin, xmax, x0, [], knitro_opt);
 end
+
 if verbose
-    alg_names = {
-        'automatic',
-        'primal simplex',
-        'dual simplex',
-        'interior point',
-        'concurrent',
-        'deterministic concurrent',
-        'deterministic concurrent simplex'
-    };
-    vn = gurobiver;
-    fprintf('Gurobi Version %s -- %s %s solver\n', ...
-        vn, alg_names{g_opt.Method+2}, lpqp);
-end
-results = gurobi(m, g_opt);
-switch results.status
-    case 'LOADED',          %% 1
-        eflag = -1;
-    case 'OPTIMAL',         %% 2, optimal solution found
-        eflag = 1;
-    case 'INFEASIBLE',      %% 3
-        eflag = -3;
-    case 'INF_OR_UNBD',     %% 4
-        eflag = -4;
-    case 'UNBOUNDED',       %% 5
-        eflag = -5;
-    case 'CUTOFF',          %% 6
-        eflag = -6;
-    case 'ITERATION_LIMIT', %% 7
-        eflag = -7;
-    case 'NODE_LIMIT',      %% 8
-        eflag = -8;
-    case 'TIME_LIMIT',      %% 9
-        eflag = -9;
-    case 'SOLUTION_LIMIT',  %% 10
-        eflag = -10;
-    case 'INTERRUPTED',     %% 11
-        eflag = -11;
-    case 'NUMERIC',         %% 12
-        eflag = -12;
-    case 'SUBOPTIMAL',      %% 13
-        eflag = -13;
-    case 'INPROGRESS',      %% 14
-        eflag = -14;
-    otherwise,
-        eflag = 0;
-end
-output = results;
-
-%% check for empty results (in case optimization failed)
-if ~isfield(results, 'x') || isempty(results.x)
-    x = NaN(nx, 1);
-    lam.lower   = NaN(nx, 1);
-    lam.upper   = NaN(nx, 1);
-else
-    x = results.x;
-    lam.lower   = zeros(nx, 1);
-    lam.upper   = zeros(nx, 1);
-end
-if ~isfield(results, 'objval') || isempty(results.objval)
-    f = NaN;
-else
-    f = results.objval;
-end
-if ~isfield(results, 'pi') || isempty(results.pi)
-    pi  = NaN(length(m.rhs), 1);
-else
-    pi  = results.pi;
-end
-if ~isfield(results, 'rc') || isempty(results.rc)
-    rc  = NaN(nx, 1);
-else
-    rc  = results.rc;
+    vn = knitrover;
+    fprintf('Artelys Knitro Version %s -- %s %s solver\n', ...
+        vn, output.algorithm, lpqp);
 end
 
-kl = find(rc > 0);   %% lower bound binding
-ku = find(rc < 0);   %% upper bound binding
-lam.lower(kl)   =  rc(kl);
-lam.upper(ku)   = -rc(ku);
+[mu_l, mu_u] = convert_lin_constraint_multipliers(Lambda.eqlin, Lambda.ineqlin, ieq, igt, ilt);
 
-[mu_l, mu_u] = convert_lin_constraint_multipliers(-pi(1:neq), -pi(neq+(1:niq)), ieq, igt, ilt);
-
+if eflag == 0
+    eflag = 1;       %% success is 1 (not zero), all other values are Knitro return codes
+end
 lambda = struct( ...
     'mu_l', mu_l, ...
     'mu_u', mu_u, ...
-    'lower', lam.lower, ...
-    'upper', lam.upper ...
+    'lower', -1*Lambda.lower, ...
+    'upper', Lambda.upper ...
 );

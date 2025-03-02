@@ -178,7 +178,7 @@ f12 = om.get_soln('lin', 'A12');
 t_is(f12, f(1:2), 14, [t 'A12 * x - u12']);
 
 t = 'om.get_soln(''lin'', ''f'', ''A3'') : ';
-g = om.get_soln('lin', 'Ax_u', 'A3');
+g = om.get_soln('lin', 'f', 'A3');
 t_is(g, f(3), 14, [t 'A3 * x - u3']);
 
 t = 'om.get_soln(''lin'', ''l_Ax'', ''A3'') : ';

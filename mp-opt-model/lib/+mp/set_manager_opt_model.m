@@ -307,7 +307,7 @@ classdef set_manager_opt_model < mp.set_manager
             %
             % See also display_soln.
 
-            if nargin < 1 || ischar(varargin{1})
+            if nargin < 2 || ischar(varargin{1})
                 fid = 1;
                 args = varargin;
             else
@@ -439,10 +439,13 @@ classdef set_manager_opt_model < mp.set_manager
             end
 
             %% set up indexing
-            if isempty(idx)         %% simple named set
+            if isempty(idx)         %% name, no idx provided
                 N = obj.idx.N.(name);
                 i1 = obj.idx.i1.(name);         %% starting row index
                 iN = obj.idx.iN.(name);         %% ending row index
+                if ~isscalar(N)
+                    error('mp.set_manager_opt_model.get_soln_std_args: %s set ''%s'' requires an IDX_LIST arg', class(obj), name);
+                end
             else                    %% indexed named set
                 %% calls to substruct() are relatively expensive, so we pre-build the
                 %% structs for addressing cell and numeric array fields, updating only

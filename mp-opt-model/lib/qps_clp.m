@@ -77,7 +77,6 @@ function [x, f, eflag, output, lambda] = qps_clp(H, c, A, l, u, xmin, xmax, x0, 
 %       [x, f, exitflag, output] = qps_clp(...)
 %       [x, f, exitflag, output, lambda] = qps_clp(...)
 %
-%
 %   Example: (problem from from https://v8doc.sas.com/sashtml/iml/chap8/sect12.htm)
 %       H = [   1003.1  4.3     6.3     5.9;
 %               4.3     2.2     2.1     3.9;

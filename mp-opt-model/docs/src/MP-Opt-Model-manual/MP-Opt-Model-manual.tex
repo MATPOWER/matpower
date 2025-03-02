@@ -250,7 +250,7 @@
 \vfill
 \begin{center}
 {\scriptsize
-\copyright~2020--2024~\PSERC{}\\
+\copyright~2020--2025~\PSERC{}\\
 All Rights Reserved}
 \end{center}
 
@@ -699,7 +699,7 @@ name & default & description \\
 \end{threeparttable}
 \end{table}
 
-The \code{qps\_master} function is simply a master wrapper around corresponding functions specific to each solver, namely, \code{qps\_bpmpd}, \code{qps\_clp}, \code{qps\_cplex}, \code{qps\_glpk}, \code{qps\_gurobi}, \code{qps\_ipopt}, \code{qps\_mips}, \code{qps\_mosek}, and \code{qps\_ot}. Each of these functions has an interface identical to that of \code{qps\_master}, with the exception of the options struct for \code{qps\_mips}, which is a simple \mips{} options struct.
+The \code{qps\_master} function is simply a master wrapper around corresponding functions specific to each solver, namely, \code{qps\_bpmpd}, \code{qps\_clp}, \code{qps\_cplex}, \code{qps\_glpk}, \code{qps\_gurobi}, \code{qps\_ipopt}, \code{qps\_knitro}, \code{qps\_mips}, \code{qps\_mosek}, and \code{qps\_ot}. Each of these functions has an interface identical to that of \code{qps\_master}, with the exception of the options struct for \code{qps\_mips}, which is a simple \mips{} options struct.
 
 \clearpage
 \subsubsection{QP Example}
@@ -3961,6 +3961,7 @@ name & description \\
 \code{qps\_glpk}	& QP/LP solver API implementation for \glpk{}\tnote{\dag}	\\
 \code{qps\_gurobi}	& QP/LP solver API implementation for \gurobi{}\tnote{\dag}	\\
 \code{qps\_ipopt}	& QP/LP solver API implementation for \ipopt{}-based solver\tnote{\dag}	\\
+\code{qps\_knitro}	& QP/LP solver API implementation for \knitro{}-based solver\tnote{\dag}	\\
 \code{qps\_mosek}	& QP/LP solver API implementation for \mosek{} (\code{mosekopt})\tnote{\dag}	\\
 \code{qps\_osqp}	& QP/LP solver API implementation for \osqp{}\tnote{\dag}	\\
 \code{qps\_ot}	& QP/LP solver API implementation for \matlab{} Opt Toolbox's \code{quadprog}, \code{linprog}	\\
@@ -4024,11 +4025,13 @@ name & description \\
 \toprule
 name & description \\
 \midrule
+\code{artelys\_knitro\_options}	& default options for \knitro{} solver\tnote{\dag}	\\
 \code{clp\_options}	& default options for \clp{} solver\tnote{\dag}	\\
 \code{cplex\_options}	& default options for \cplex{} solver\tnote{\dag}	\\
 \code{glpk\_options}	& default options for \glpk{} solver\tnote{\dag}	\\
 \code{gurobi\_options}	& default options for \gurobi{} solver\tnote{\dag}	\\
 \code{gurobiver}	& prints version information for \gurobi{}/Gurobi\_MEX	\\
+\code{knitrover}	& prints version information for \knitro{}	\\
 \code{ipopt\_options}	& default options for \ipopt{} solver\tnote{\dag}	\\
 \code{mosek\_options}	& default options for \mosek{} solver\tnote{\dag}	\\
 \code{mosek\_symbcon}	& symbolic constants to use for \mosek{} solver options\tnote{\dag}	\\
@@ -4324,14 +4327,14 @@ Precompiled MEX binaries for a high-performance version of \ipopt{}, using the \
 
 When installed, \ipopt{} can be used by \mpom{} to solve general LP, QP and NLP problems via \mpom{}'s common QP and NLP solver interfaces \code{qps\_master} and \code{nlps\_master} with the algorithm option set to \codeq{IPOPT}, or by calling \code{qps\_ipopt} or \code{nlps\_ipopt} directly.
 
-\subsection{\knitro{} -- Non-Linear Programming Solver}
+\subsection{\knitro{} -- LP, QP, and Non-Linear Programming Solver}
 \label{app:knitro}
 
 \knitro{}~\cite{knitro} is a general purpose optimization solver specializing in nonlinear problems, available from Artelys. As of version 9, Knitro includes a native \matlab{} interface, \code{knitromatlab}\footnote{Earlier versions required the \matlab{} \ot{} from The MathWorks, which included an interface to the Knitro libraries called \code{ktrlink}, but the libraries themselves still had to be acquired directly from Ziena Optimization, LLC (subsequently acquired by Artelys).}. More information is available at \url{https://www.artelys.com/solvers/knitro/} and \url{https://www.artelys.com/docs/knitro/}.
 
 Although \knitro{} is a commercial package, at the time of this writing there is a free academic license available, with details on their download page.
 
-When installed, Knitro's \matlab{} interface function, \code{knitromatlab} or \code{ktrlink}, can be used by \mpom{} to solve general NLP problems via \mpom{}'s common NLP solver interface \code{nlps\_master} with the algorithm option set to \codeq{KNITRO}, or by calling \code{nlps\_knitro} directly.
+When installed, Knitro's \matlab{} interface function, \code{knitromatlab} or \code{ktrlink}, can be used by \mpom{} to solve general NLP problems via \mpom{}'s common NLP solver interface \code{nlps\_master} with the algorithm option set to \codeq{KNITRO}, or by calling \code{nlps\_knitro} directly. As of \mpom{} version 5.x, it can also solve LP and QP problems via the common LP/QP solver interface \code{qps\_master} with the algorithm option set to \codeq{KNITRO}, or by calling \code{qps\_knitro} directly.
 
 \subsection{\mosek{} -- High-performance LP, QP, MILP and MIQP Solvers}
 \label{app:mosek}
@@ -4423,10 +4426,10 @@ There is no User's Manual yet.
 % \pagebreak
 \subsubsection*{Bugs Fixed}
 \begin{itemize}
-\item Artelys Knitro 12.1 compatibility fix.
+\item \knitro{} 12.1 compatibility fix.
 \item Fix CPLEX 12.10 compatibility issue \#90.
 \item Fix issue with missing objective function value from \code{miqps\_mosek()} and \code{qps\_mosek()} when return status is ``Stalled at or near optimal solution.''
-\item Fix bug orginally in \code{ktropf\_solver()} (code now moved to \code{nlps\_knitro()}) where Artelys Knitro was still using \code{fmincon} options.
+\item Fix bug orginally in \code{ktropf\_solver()} (code now moved to \code{nlps\_knitro()}) where \knitro{} was still using \code{fmincon} options.
 \end{itemize}
 
 \subsubsection*{Incompatible Changes}
@@ -4615,7 +4618,7 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-4.1.pdf}{\mpom{} 4.1 Use
 
 \subsubsection*{Other Changes}
 \begin{itemize}
-\item Update for compatibility with Artelys Knitro 13.1 and later.
+\item Update for compatibility with \knitro{} 13.1 and later.
 \item Add elapsed time in seconds to results of the \code{solve()} method of \code{opt\_model}, returned in \code{om.soln.output.et}.
 \item Add \code{runtime} field to \code{output} argument of \code{qps\_glpk()} and \code{qps\_mosek()}.
 
@@ -4671,6 +4674,9 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-4.3.pdf}{\mpom{} 4.3 Use
 \subsubsection*{New Features}
 \begin{itemize}
 \item New \code{relax\_integer} option for \code{opt\_model.solve()}. Set to true to easily solve the LP or QP relaxation of a mixed integer LP or QP.
+\item Support for \href{https://www.artelys.com/solvers/knitro/}{\knitro{}} solver for LP and QP problems, including functions \code{qps\_knitro()}, \code{knitrover()}, and \code{artelys\_knitro\_options()}.
+\emph{Thanks to Wilson Gonz{\'a}lez Vanegas.}
+
 \item New classes:
     \begin{itemize}
     \item \code{mp.set\_manager} encapsulates \code{mp\_idx\_manager} functionality into an individual field object representing a specific set type, rather than in the container class.
@@ -4683,7 +4689,9 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-4.3.pdf}{\mpom{} 4.3 Use
     \end{itemize}
 \item New functions:
     \begin{itemize}
-    \item \code{foobar()} does whizbang.
+    \item \code{artelys\_knitro\_options()} sets options for \knitro{}.
+    \item \code{knitrover()} displays version of installed \knitro{}.
+    \item \code{qps\_knitro()} provides provides standardized interface for using \knitro{} to solve LP/QP problems.
     \end{itemize}
 \end{itemize}
 

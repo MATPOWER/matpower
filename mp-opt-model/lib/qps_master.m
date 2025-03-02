@@ -57,6 +57,7 @@ function [x, f, eflag, output, lambda] = qps_master(H, c, A, l, u, xmin, xmax, x
 %           cplex_opt   - options struct for CPLEX
 %           glpk_opt    - options struct for GLPK
 %           grb_opt     - options struct for GUROBI
+%           knitro_opt  - options struct for KNITRO
 %           ipopt_opt   - options struct for IPOPT
 %           linprog_opt - options struct for LINPROG
 %           mips_opt    - options struct for QPS_MIPS
@@ -121,8 +122,9 @@ function [x, f, eflag, output, lambda] = qps_master(H, c, A, l, u, xmin, xmax, x
 %       [x, f, s, out, lambda] = qps_master(H, c, A, l, u, xmin, [], x0, opt);
 
 %   MP-Opt-Model
-%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2025, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
+%   and Wilson Gonzalez Vanegas, Universidad Nacional de Colombia Sede Manizales
 %
 %   This file is part of MP-Opt-Model.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
@@ -182,6 +184,8 @@ if ~isempty(opt) && isfield(opt, 'alg') && ~isempty(opt.alg)
                 alg = 'MOSEK';
             case 700
                 alg = 'GUROBI';
+            case 800
+                alg = 'KNITRO';
             otherwise
                 error('qps_master: %d is not a valid algorithm code', alg);
         end
@@ -203,6 +207,8 @@ if strcmp(alg, 'DEFAULT')
         alg = 'MOSEK';
     elseif have_feature('quadprog') && have_feature('matlab')   %% if not, then Opt Tbx, if available in MATLAB
         alg = 'OT';
+    elseif have_feature('knitro')   %% if not, then Artelys Knitro, if available
+        alg = 'KNITRO';
     elseif (isempty(H) || ~any(any(H))) && have_feature('glpk') %% if not, and
         alg = 'GLPK';               %% prob is LP (not QP), then GLPK, if available
     elseif have_feature('bpmpd')    %% if not, then BPMPD_MEX, if available
@@ -266,6 +272,9 @@ switch alg
     case 'OT'                   %% use QUADPROG or LINPROG from Opt Tbx ver 2.x+
         [x, f, eflag, output, lambda] = ...
             qps_ot(H, c, A, l, u, xmin, xmax, x0, opt);
+    case 'KNITRO'
+        [x, f, eflag, output, lambda] = ...
+            qps_knitro(H, c, A, l, u, xmin, xmax, x0, opt);
     otherwise
         fcn = ['qps_' lower(alg)];
         if exist([fcn '.m']) == 2
