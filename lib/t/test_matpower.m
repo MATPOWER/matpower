@@ -143,6 +143,9 @@ end
 if have_feature('ipopt')
     tests{end+1} = 't_opf_dc_ipopt';
 end
+if have_feature('knitro')
+    tests{end+1} = 't_opf_dc_knitro';
+end
 tests{end+1} = 't_opf_dc_mips';
 tests{end+1} = 't_opf_dc_mips_sc';
 if have_feature('mosek')

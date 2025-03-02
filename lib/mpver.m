@@ -36,7 +36,7 @@ function rv = mpver(varargin)
 v{1} = struct(  'Name',     'MATPOWER', ... 
                 'Version',  '8.0.1-dev', ...
                 'Release',  '', ...
-                'Date',     '17-Feb-2025' );
+                'Date',     '01-Mar-2025' );
 if nargout > 0
     if nargin > 0
         rv = v{1};
@@ -114,17 +114,7 @@ else
     else
         fprintf('%-22s -- not installed --\n', 'SynGrid');
     end
-    if have_feature('knitro')
-        s = have_feature('knitro', 'all');
-        if isempty(s.vstr)
-            vn = '<unknown>';
-        else
-            vn = s.vstr;
-        end
-        fprintf('%-22s Version %-10s %-11s\n', 'Artelys Knitro', vn, s.date);
-    else
-        fprintf('%-22s -- not installed --\n', 'Artelys Knitro');
-    end
+    knitrover;
     if have_feature('bpmpd')
         if exist('bpver', 'file') == 2
             bpver;

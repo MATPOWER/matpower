@@ -385,6 +385,7 @@ function opt = mpoption(varargin)
 %          knitro.tol_f            1e-4        termination tol on f
 %          knitro.maxit            0           maximum number of iterations
 %                                                              [  0 => default ]
+%          knitro.opts             <empty>     see KNITRO_OPTIONS for details
 %          knitro.opt_fname        <empty>     name of user-supplied native
 %                                              Knitro options file that overrides
 %                                              all other options
