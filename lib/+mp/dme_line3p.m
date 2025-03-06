@@ -36,15 +36,15 @@ classdef dme_line3p < mp.dm_element
 %   ``id``  *integer*  unique line construction ID, referenced from
 %                      ``lc`` column of main data table
 %   ``r``   *double*   6 resistence parameters for forming symmetric 3x3
-%                      series impedance matrix *(p.u. per mile)*
+%                      series impedance matrix *(Ohms per mile)*
 %   ``x``   *double*   6 reactance parameters for forming symmetric 3x3
-%                      series impedance matrix *(p.u. per mile)*
+%                      series impedance matrix *(Ohms per mile)*
 %   ``c``   *double*   6 susceptance parameters for forming symmetric 3x3
 %                      shunt susceptance matrix *(nF per mile)*
 %   ======  =========  ==================================================
 
 %   MATPOWER
-%   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2025, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
