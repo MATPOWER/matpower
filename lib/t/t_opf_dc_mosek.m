@@ -2,7 +2,7 @@ function t_opf_dc_mosek(quiet)
 % t_opf_dc_mosek - Tests for legacy DC optimal power flow using MOSEK solver.
 
 %   MATPOWER
-%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2025, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -17,63 +17,33 @@ s = have_feature('mosek', 'all');
 
 if s.av
     sc = mosek_symbcon;
-    if s.vnum < 7
-        alg_names = {           %% version 6.x
-            'default',              %%  0 : MSK_OPTIMIZER_FREE
-            'interior point',       %%  1 : MSK_OPTIMIZER_INTPNT
-            '<conic>',              %%  2 : MSK_OPTIMIZER_CONIC
-            '<qcone>',              %%  3 : MSK_OPTIMIZER_QCONE
-            'primal simplex',       %%  4 : MSK_OPTIMIZER_PRIMAL_SIMPLEX
-            'dual simplex',         %%  5 : MSK_OPTIMIZER_DUAL_SIMPLEX
-            'primal dual simplex',  %%  6 : MSK_OPTIMIZER_PRIMAL_DUAL_SIMPLEX
-            'automatic simplex',    %%  7 : MSK_OPTIMIZER_FREE_SIMPLEX
-            '<mixed int>',          %%  8 : MSK_OPTIMIZER_MIXED_INT
-            '<nonconvex>',          %%  9 : MSK_OPTIMIZER_NONCONVEX
-            'concurrent'            %% 10 : MSK_OPTIMIZER_CONCURRENT
-        };
-    elseif s.vnum < 8
-        alg_names = {           %% version 7.x
-            'default',              %%  0 : MSK_OPTIMIZER_FREE
-            'interior point',       %%  1 : MSK_OPTIMIZER_INTPNT
-            '<conic>',              %%  2 : MSK_OPTIMIZER_CONIC
-            'primal simplex',       %%  3 : MSK_OPTIMIZER_PRIMAL_SIMPLEX
-            'dual simplex',         %%  4 : MSK_OPTIMIZER_DUAL_SIMPLEX
-            'primal dual simplex',  %%  5 : MSK_OPTIMIZER_PRIMAL_DUAL_SIMPLEX
-            'automatic simplex',    %%  6 : MSK_OPTIMIZER_FREE_SIMPLEX
-            'network simplex',      %%  7 : MSK_OPTIMIZER_NETWORK_PRIMAL_SIMPLEX
-            '<mixed int conic>',    %%  8 : MSK_OPTIMIZER_MIXED_INT_CONIC
-            '<mixed int>',          %%  9 : MSK_OPTIMIZER_MIXED_INT
-            'concurrent',           %% 10 : MSK_OPTIMIZER_CONCURRENT
-            '<nonconvex>'           %% 11 : MSK_OPTIMIZER_NONCONVEX
-        };
-    else
-        alg_names = {           %% version 8.x
-            '<conic>',              %%  0 : MSK_OPTIMIZER_CONIC
-            'dual simplex',         %%  1 : MSK_OPTIMIZER_DUAL_SIMPLEX
-            'default',              %%  2 : MSK_OPTIMIZER_FREE
-            'automatic simplex',    %%  3 : MSK_OPTIMIZER_FREE_SIMPLEX
-            'interior point',       %%  4 : MSK_OPTIMIZER_INTPNT
-            '<mixed int>',          %%  5 : MSK_OPTIMIZER_MIXED_INT
-            'primal simplex'        %%  6 : MSK_OPTIMIZER_PRIMAL_SIMPLEX
-        };
-    end
-    algs = [                                        %% v6.x v7.x v8.x
-        sc.MSK_OPTIMIZER_FREE;                      %%  0    0    2
-        sc.MSK_OPTIMIZER_INTPNT;                    %%  1    1    4
-        sc.MSK_OPTIMIZER_PRIMAL_SIMPLEX;            %%  4    3    6
-        sc.MSK_OPTIMIZER_DUAL_SIMPLEX;              %%  5    4    1
-        sc.MSK_OPTIMIZER_FREE_SIMPLEX;              %%  7    6    3
-    ];
+
+    alg_name = struct( ...
+        'FREE', 'default', ...                              % v6-11
+        'INTPNT', 'interior point', ...                     % v6-11
+        'CONIC', '<conic>', ...                             % v6-11
+        'QCONE', '<qcone>', ...                             % v6
+        'PRIMAL_SIMPLEX', 'primal simplex', ...             % v6-11
+        'DUAL_SIMPLEX', 'dual simplex', ...                 % v6-11
+        'PRIMAL_DUAL_SIMPLEX', 'primal dual simplex', ...   % v6-7
+        'FREE_SIMPLEX', 'automatic simplex', ...            % v6-11
+        'MIXED_INT',  '<mixed int>', ...                    % v6-11
+        'NONCONVEX',  '<nonconvex>', ...                    % v6-7
+        'CONCURRENT', 'concurrent', ...                     % v6-7
+        'NETWORK_PRIMAL_SIMPLEX', 'network simplex', ...    % v8
+        'NEW_DUAL_SIMPLEX', 'new dual simplex', ...         % v11
+        'NEW_PRIMAL_SIMPLEX', 'new primal simplex' ...      % v11
+    );
+
+    %% versions 6.x-11.x
+    algs = {'FREE', 'INTPNT', 'PRIMAL_SIMPLEX', 'DUAL_SIMPLEX', 'FREE_SIMPLEX'};
     if s.vnum < 8
-        algs(end+1) = ...
-            sc.MSK_OPTIMIZER_PRIMAL_DUAL_SIMPLEX;   %%  6    5    -
-        algs(end+1) = ...
-            sc.MSK_OPTIMIZER_CONCURRENT;            %% 10   10    - 
+        %% versions 6.x, 7.x
+        algs = {algs{:}, 'PRIMAL_DUAL_SIMPLEX', 'CONCURRENT'};
+    elseif s.vnum >= 11 && s.vnum < 12
+        %% version 11.x
+        algs = {algs{:}, 'NEW_PRIMAL_SIMPLEX', 'NEW_DUAL_SIMPLEX'};
     end
-%     if s.vnum >= 7 && s.vnum < 8    %% MOSEK claims OPF is not a network problem
-%         algs(end+1) = ...
-%             sc.MSK_OPTIMIZER_NETWORK_PRIMAL_SIMPLEX;%%  -    7    -
-%     end
 else
     algs = 0;
 end
@@ -104,8 +74,9 @@ mpopt = mpoption(mpopt, 'opf.dc.solver', 'MOSEK');
 %% run DC OPF
 if s.av     %% if have_feature('mosek')
   for k = 1:length(algs)
-    mpopt = mpoption(mpopt, 'mosek.lp_alg', algs(k));
-    t0 = sprintf('DC OPF (MOSEK %s): ', alg_names{algs(k)+1});
+    alg = sc.(['MSK_OPTIMIZER_' algs{k}]);
+    mpopt = mpoption(mpopt, 'mosek.lp_alg', alg);
+    t0 = sprintf('DC OPF (MOSEK %s): ', alg_name.(algs{k}));
 
     %% set up indices
     ib_data     = [1:BUS_AREA BASE_KV:VMIN];

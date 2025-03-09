@@ -13,6 +13,10 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 since 8.0
 ---------
 
+#### 3/8/25
+  - Update `t_opf_dc_mosek()` (and `mosek_options()` in MP-Opt-Model) for
+    MOSEK 11.x.
+
 #### 2/17/25
   - Fix [bug #256][38] to make `opf.use_vg` option compatible with generators
     at PQ buses.
