@@ -70,7 +70,7 @@ function opt = mosek_options(overrides, mpopt)
 % See also mosek_symbcon, mosekopt, mpoption.
 
 %   MP-Opt-Model
-%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2025, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.
@@ -108,22 +108,32 @@ end
 %% solution algorithm
 if have_mpopt
     vnum = have_feature('mosek', 'vnum');
-    valid_alg = {                                   %% v6.x v7.x v8.x
-            sc.MSK_OPTIMIZER_FREE,                  %%  0    0    2
-            sc.MSK_OPTIMIZER_INTPNT,                %%  1    1    4
-            sc.MSK_OPTIMIZER_PRIMAL_SIMPLEX,        %%  4    3    6
-            sc.MSK_OPTIMIZER_DUAL_SIMPLEX,          %%  5    4    1
-            sc.MSK_OPTIMIZER_FREE_SIMPLEX           %%  7    6    3
-    };
-    if vnum < 8
+    %% versions 6.x-11.x
+    valid_alg = {                                   %% v6 v7 v8-v10 v11
+            sc.MSK_OPTIMIZER_FREE;                  %%  0  0   2     2
+            sc.MSK_OPTIMIZER_INTPNT;                %%  1  1   4     4   
+            sc.MSK_OPTIMIZER_PRIMAL_SIMPLEX;        %%  4  3   6     8
+            sc.MSK_OPTIMIZER_DUAL_SIMPLEX;          %%  5  4   1     1
+            sc.MSK_OPTIMIZER_FREE_SIMPLEX;          %%  7  6   3     3
+        };
+    %% versions 6.x, 7.x
+    if vnum < 8 
         valid_alg{end+1} = ...
-            sc.MSK_OPTIMIZER_PRIMAL_DUAL_SIMPLEX;   %%  6    5    -
+            sc.MSK_OPTIMIZER_PRIMAL_DUAL_SIMPLEX;   %%  6  5   -     -
         valid_alg{end+1} = ...
-            sc.MSK_OPTIMIZER_CONCURRENT;            %% 10   10    - 
+            sc.MSK_OPTIMIZER_CONCURRENT;            %% 10 10   -     -
     end
+    %% version 7.x
     if vnum >= 7 && vnum < 8
         valid_alg{end+1} = ...
-            sc.MSK_OPTIMIZER_NETWORK_PRIMAL_SIMPLEX;%%  -    7    -
+            sc.MSK_OPTIMIZER_NETWORK_PRIMAL_SIMPLEX;%%  -  7   -     -
+    end
+    %% version 11.x
+    if vnum >= 11 && vnum < 12
+        valid_alg{end+1} = ...
+            sc.MSK_OPTIMIZER_NEW_DUAL_SIMPLEX;      %%  -  -   -     6
+        valid_alg{end+1} = ...
+            sc.MSK_OPTIMIZER_NEW_PRIMAL_SIMPLEX;    %%  -  -   -     7
     end
 
     alg = mpopt.mosek.lp_alg;

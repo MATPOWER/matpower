@@ -5,6 +5,9 @@ Change history for MP-Opt-Model
 since 4.2
 ---------
 
+#### 3/8/25
+  - Update `mosek_options()` for MOSEK 11.x compatibility.
+
 #### 3/1/25
   - Add support to `qps_master()` for [Artelys Knitro][14] solver for
     LP and QP problems, including functions `qps_knitro()`,
