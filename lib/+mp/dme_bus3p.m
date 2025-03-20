@@ -10,7 +10,7 @@ classdef dme_bus3p < mp.dm_element
 %   Name         Type       Description
 %   ===========  =========  ========================================
 %   ``type``     *integer*  bus type (1 = PQ, 2 = PV, 3 = ref, 4 = isolated)
-%   ``base_kv``  *double*   base voltage *(kV)*
+%   ``base_kv``  *double*   base line-to-line voltage *(kV)*
 %   ``vm1``      *double*   phase 1 voltage magnitude *(p.u.)*
 %   ``vm2``      *double*   phase 2 voltage magnitude *(p.u.)*
 %   ``vm3``      *double*   phase 3 voltage magnitude *(p.u.)*
