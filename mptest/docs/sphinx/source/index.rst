@@ -1,3 +1,5 @@
+.. _mptest_users_manual:
+
 #####################
 MP-Test User's Manual
 #####################
