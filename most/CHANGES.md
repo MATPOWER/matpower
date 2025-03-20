@@ -5,6 +5,11 @@ Change history for MOST
 since 1.3
 ---------
 
+#### 3/19/25
+  - Fix issue caused by tiny non-zero values for commitment variables.
+    Don't count on MP-Opt-Model's `miqps_<solver>()` functions to round
+    integer variable solutions.
+
 #### 10/7/24
   - Tweak tests (again) to avoid warnings and presolve bug with HiGHS-based
     `linprog` and `intlinprog` in Optimization Toolbox R2024b.

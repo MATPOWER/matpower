@@ -2134,7 +2134,7 @@ if mpopt.most.solve_model
     om = mdo.om;
     for t = 1:nt
       if UC
-        mdo.UC.CommitSched(:, t) = om.get_soln('var', 'u', {t});
+        mdo.UC.CommitSched(:, t) = om.get_soln('var', 'u', {t}) > 0.01;
       end
       for j = 1:mdi.idx.nj(t)
         for k = 1:mdi.idx.nc(t,j)+1

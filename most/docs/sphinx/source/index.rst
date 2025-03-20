@@ -1,3 +1,5 @@
+.. _most_users_manual:
+
 ##################
 MOST User's Manual
 ##################

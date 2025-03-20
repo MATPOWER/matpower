@@ -102,6 +102,8 @@ if have_feature('gurobi')
     mpopt = mpoption(mpopt, 'gurobi.threads', 4);
     mpopt = mpoption(mpopt, 'gurobi.opts.MIPGap', 0);
     mpopt = mpoption(mpopt, 'gurobi.opts.MIPGapAbs', 0);
+    %mpopt = mpoption(mpopt, 'gurobi.opts.OptimalityTol', 1e-9);
+    mpopt = mpoption(mpopt, 'gurobi.opts.FeasibilityTol', 1e-7);
 end
 if have_feature('mosek')
     sc = mosek_symbcon;
