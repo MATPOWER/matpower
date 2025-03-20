@@ -1,4 +1,4 @@
-.. _ref_manual:
+.. _matpower_ref_manual:
 
 ###########################
 |MATPOWER| Reference Manual
