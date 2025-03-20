@@ -1,4 +1,4 @@
-.. _dev_manual:
+.. _matpower_dev_manual:
 
 #############################
 |MATPOWER| Developer's Manual

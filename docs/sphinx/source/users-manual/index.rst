@@ -1,3 +1,5 @@
+.. _matpower_users_manual:
+
 ########################
 |MATPOWER| User's Manual
 ########################
