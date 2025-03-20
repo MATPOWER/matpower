@@ -4742,6 +4742,7 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-4.3.pdf}{\mpom{} 4.3 Use
     \item \code{varsets\_x()} -- use \code{mp.sm\_variable.varsets\_x()}
     \end{itemize}
 \item Update \code{mosek\_options()} for MOSEK 11.x compatibility.
+\item Update \code{miqps\_<solver>()} functions to avoid changing MIP solution values in price computation stage. It was rounding integer variables, potentionally causing a small discrepancy between the objective value reported by the solver and the value obtained by computing directly from the returned solution $x$.
 \end{itemize}
 
 \subsubsection*{Incompatible Changes}

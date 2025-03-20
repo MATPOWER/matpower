@@ -301,10 +301,10 @@ if mi && eflag == 1 && (~isfield(opt, 'skip_prices') || ~opt.skip_prices)
         else
             tol = 1e-7;
         end
-        x(k) = round(x(k));
-        xmin(k) = x(k);
-        xmax(k) = x(k);
         x0 = x;
+        x0(k) = round(x0(k));
+        xmin(k) = x0(k);
+        xmax(k) = x0(k);
         opt.glpk_opt.lpsolver = 1;      %% simplex
         opt.glpk_opt.dual = 0;          %% primal simplex
         if have_feature('octave') && have_feature('octave', 'vnum') >= 3.007

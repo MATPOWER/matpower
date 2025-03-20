@@ -449,10 +449,10 @@ if mi && eflag == 1 && (~isfield(p.opt, 'skip_prices') || ~p.opt.skip_prices)
             tol = 1e-7;
         end
         pp = p;
-        x(prob.ints.sub) = round(x(prob.ints.sub));
-        pp.xmin(prob.ints.sub) = x(prob.ints.sub);
-        pp.xmax(prob.ints.sub) = x(prob.ints.sub);
         pp.x0 = x;
+        pp.x0(prob.ints.sub) = round(pp.x0(prob.ints.sub));
+        pp.xmin(prob.ints.sub) = pp.x0(prob.ints.sub);
+        pp.xmax(prob.ints.sub) = pp.x0(prob.ints.sub);
         if qp
             pp.opt.mosek_opt.MSK_IPAR_OPTIMIZER = sc.MSK_OPTIMIZER_FREE;
         else
