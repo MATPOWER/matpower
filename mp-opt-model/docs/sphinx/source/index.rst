@@ -1,3 +1,5 @@
+.. _mpom_users_manual:
+
 ####################
 |MPOM| User's Manual
 ####################
