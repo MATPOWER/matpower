@@ -1,3 +1,5 @@
+.. _mips_users_manual:
+
 ##################
 MIPS User's Manual
 ##################
