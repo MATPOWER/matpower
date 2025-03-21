@@ -14,7 +14,7 @@ jobs:
       matrix:
         platform: [octave]
 #        os: [macos-10.15, macos-11.0, macos-12.0, ubuntu-18.04, ubuntu-20.04, ubuntu-22.04]
-        os: [macos-latest, ubuntu-20.04, ubuntu-22.04]
+        os: [macos-latest, ubuntu-20.04, ubuntu-22.04, ubuntu-24.04, ubuntu-latest]
         include:
         - platform: matlab
           os: ubuntu-latest
@@ -48,22 +48,22 @@ jobs:
 
     - name: Install MP-Test, Set MPTEST_PATH
       run: |
-        git clone --depth=1 https://github.com/MATPOWER/mptest.git $HOME/mptest
+        git clone --depth=1 -b 8.0-release https://github.com/MATPOWER/mptest.git $HOME/mptest
         echo "MPTEST_PATH=$HOME/mptest/lib:$HOME/mptest/lib/t" >> $GITHUB_ENV
 
     - name: Install MIPS, Set MIPS_PATH
       run: |
-        git clone --depth=1 https://github.com/MATPOWER/mips.git $HOME/mips
+        git clone --depth=1 -b 1.5.1-release https://github.com/MATPOWER/mips.git $HOME/mips
         echo "MIPS_PATH=$HOME/mips/lib:$HOME/mips/lib/t:${MPTEST_PATH}" >> $GITHUB_ENV
 
     - name: Install MP-Opt-Model, Set MP_OPT_MODEL_PATH
       run: |
-        git clone --depth=1 https://github.com/MATPOWER/mp-opt-model.git $HOME/mp-opt-model
+        git clone --depth=1 -b 4.2-release https://github.com/MATPOWER/mp-opt-model.git $HOME/mp-opt-model
         echo "MP_OPT_MODEL_PATH=$HOME/mp-opt-model/lib:$HOME/mp-opt-model/lib/t:${MIPS_PATH}" >> $GITHUB_ENV
 
     - name: Install MATPOWER
       run: |
-        git clone --depth=1 https://github.com/MATPOWER/matpower.git $HOME/matpower
+        git clone --depth=1 -b 8.0-release https://github.com/MATPOWER/matpower.git $HOME/matpower
         env $ML_PATHVAR=$HOME/matpower $ML_CMD "install_matpower(0,1,1)"
         ln -s ./startup.m .octaverc
         echo "TEST_PATH=${GITHUB_WORKSPACE}/lib:${GITHUB_WORKSPACE}/lib/t:${MP_OPT_MODEL_PATH}" >> $GITHUB_ENV

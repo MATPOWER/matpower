@@ -135,9 +135,12 @@ if have_feature('intlinprog')
         % (except actually in this case it triggers it rather than working
         %  around it, so we comment it out)
         %mpopt = mpoption(mpopt, 'intlinprog.LPPreprocess', 'none');
-    else        mpopt = mpoption(mpopt, 'intlinprog.LPPreprocess', 'none');
+    elseif have_feature('intlinprog', 'vnum') == 24.001
+        mpopt = mpoption(mpopt, 'intlinprog.LPPreprocess', 'none');
         s2 = warning('query', 'optim:intlinprog:IgnoreOptions');
         warning('off', 'optim:intlinprog:IgnoreOptions');
+    elseif have_feature('intlinprog', 'vnum') == 24.002
+        mpopt = mpoption(mpopt, 'intlinprog.Presolve', 'off');
     end
 end
 if ~verbose
@@ -413,7 +416,7 @@ end
 
 if have_feature('octave')
     warning(s1.state, file_in_path_warn_id);
-elseif have_feature('intlinprog') && have_feature('intlinprog', 'vnum') >= 24 
+elseif have_feature('intlinprog') && have_feature('intlinprog', 'vnum') == 24.001
     warning(s2.state, 'optim:intlinprog:IgnoreOptions');
 end
 
