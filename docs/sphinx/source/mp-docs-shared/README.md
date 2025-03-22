@@ -7,7 +7,7 @@ mp-docs-shared
 an `mp-docs-shared` directory with the contents of this repo in their
 `source` directory. The main [MATPOWER][1] project already includes it as
 a [`git subrepo`][3]. However, building the documentation for individual
-components separetely (e.g. MP-Test, MIPS, MP-Opt-Model, etc.) requires
+components separately (e.g. MP-Test, MIPS, MP-Opt-Model, etc.) requires
 that `mp-docs-shared` be manually included in the `source` directory before
 building.
 ```

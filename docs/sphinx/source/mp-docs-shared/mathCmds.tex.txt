@@ -50,10 +50,10 @@
 \newcommand{\y}{\rvec{y}}
 \newcommand{\z}{\rvec{z}}
 
-\newcommand{\l}{\rvec{l}}
-\newcommand{\u}{\rvec{u}}
-\newcommand{\c}{\rvec{c}}
-\newcommand{\AA}{\rmat{A}}
+\renewcommand{\l}{\rvec{l}}
+\renewcommand{\u}{\rvec{u}}
+\renewcommand{\c}{\rvec{c}}
+\renewcommand{\AA}{\rmat{A}}
 \newcommand{\QQ}{\rmat{Q}}
 \newcommand{\q}{\rvec{q}}
 
