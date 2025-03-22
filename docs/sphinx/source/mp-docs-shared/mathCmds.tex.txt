@@ -50,13 +50,6 @@
 \newcommand{\y}{\rvec{y}}
 \newcommand{\z}{\rvec{z}}
 
-\newcommand{\l}{\rvec{l}}
-\newcommand{\u}{\rvec{u}}
-\newcommand{\c}{\rvec{c}}
-\newcommand{\AA}{\rmat{A}}
-\newcommand{\QQ}{\rmat{Q}}
-\newcommand{\q}{\rvec{q}}
-
 \newcommand{\X}{\cvec{x}}
 \newcommand{\Z}{\cvec{z}}
 \newcommand{\A}{\cmat{A}}
