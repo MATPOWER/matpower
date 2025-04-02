@@ -24,7 +24,7 @@ Areas              3
 Voltage Magnitude   1.000 p.u. @ bus 1          1.000 p.u. @ bus 1   
 Voltage Angle      -8.27 deg   @ bus 30         2.30 deg   @ bus 13  
 Lambda P           51.66 $/MWh @ bus 13        53.05 $/MWh @ bus 15  
-Lambda Q            0.00 $/MWh @ bus 1          0.00 $/MWh @ bus 1   
+Lambda Q            0.00 $/MVArh @ bus 1        0.00 $/MVArh @ bus 1   
 
 ================================================================================
 |     Area Summary                                                             |

@@ -13,6 +13,10 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 since 8.0
 ---------
 
+#### 4/2/25
+  - Fix typo in units of min and max reactive power shadow price in summary
+    section of legacy OPF output.
+
 #### 3/8/25
   - Update `t_opf_dc_mosek()` (and `mosek_options()` in MP-Opt-Model) for
     MOSEK 11.x.

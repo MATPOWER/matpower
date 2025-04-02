@@ -251,7 +251,7 @@ if OUT_SYS_SUM && (success || OUT_FORCE)
         fprintf(fd, '\nLambda P        %8.2f $/MWh @ bus %-4d   %8.2f $/MWh @ bus %-4d', minv, bus(mini, BUS_I), maxv, bus(maxi, BUS_I));
         [minv, mini] = min(bus(:, LAM_Q));
         [maxv, maxi] = max(bus(:, LAM_Q));
-        fprintf(fd, '\nLambda Q        %8.2f $/MWh @ bus %-4d   %8.2f $/MWh @ bus %-4d', minv, bus(mini, BUS_I), maxv, bus(maxi, BUS_I));
+        fprintf(fd, '\nLambda Q        %8.2f $/MVArh @ bus %-4d %8.2f $/MVArh @ bus %-4d', minv, bus(mini, BUS_I), maxv, bus(maxi, BUS_I));
     end
     fprintf(fd, '\n');
 end
