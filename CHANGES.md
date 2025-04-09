@@ -13,6 +13,9 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 since 8.0
 ---------
 
+#### 4/9/25
+  - Fix typos that cause fatal errors with GNU Octave 10.x.
+
 #### 4/2/25
   - Fix typo in units of min and max reactive power shadow price in summary
     section of legacy OPF output.

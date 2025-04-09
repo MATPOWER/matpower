@@ -50,7 +50,7 @@ classdef (Abstract) math_model_cpf < mp.math_model_pf
             ad.adt = adt;
         end
 
-        function add_vars(obj, nm, dm, mpopt)
+        function obj = add_vars(obj, nm, dm, mpopt)
             %
 
             add_vars@mp.math_model_pf(obj, nm, dm, mpopt);

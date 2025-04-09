@@ -22,7 +22,7 @@ classdef mme_bus_opf_acc < mp.mme_bus_opf_ac
 %     end     %% properties
 
     methods
-        function add_constraints(obj, mm, nm, dm, mpopt)
+        function obj = add_constraints(obj, mm, nm, dm, mpopt)
             %
             dme = obj.data_model_element(dm);
             nme = obj.network_model_element(nm);
