@@ -1,3 +1,7 @@
+% The code to handle MathJax is picky about comments. To comment out a line
+% make sure there are no spaces between the % and the \(re)newcommand or
+% separate the \ from the (re)newcommand to avoid a match.
+
 % macros for use in math, both for sphinx latex and HTML MathJax
 \newcommand{\dg}{\sp\dagger}                            % hermitian conjugate
 \newcommand{\trans}[1]{{#1}^{\mathsf{T}}}               % transpose
@@ -5,7 +9,7 @@
 \newcommand{\hc}[1]{{#1}^{\dg}}                         % hermitian conjugate
 \newcommand{\hconj}[1]{{#1}^{+}}                        % hermitian conjugate
 \newcommand{\diag}[1]{\left[^\smallsetminus{#1}_\smallsetminus\right]}  % diagonal
-%\-newcommand{\diag}[1]{\left[{#1}\right]}                % diagonal
+%\newcommand{\diag}[1]{\left[{#1}\right]}                % diagonal
 \newcommand{\diagg}[1]{\left[\smash{#1}\right]}         % diagonal (smashed)
 \newcommand{\cdiag}[1]{\conj{\diag{#1}}}                % conjugate diagonal
 \newcommand{\der}[2]{\frac{\partial{#1}}{\partial{#2}}} % partial derivative
@@ -28,12 +32,12 @@
 \newcommand{\ones}[1]{\rvec{1}_{#1}}
 \newcommand{\onest}[1]{\trans{\rvec{1}}_{#1}}
 \newcommand{\Id}[1]{\diag{\ones{#1}}}
-%\-newcommand{\R}{\mathbf{R}}
+%\newcommand{\R}{\mathbf{R}}
 \newcommand{\R}{\mathbb{R}}         % requires \usepackage{amsfonts|bbold}
-%\-newcommand{\R}{\varmathbb{R}}      % requires \usepackage{txfonts}
-%\-newcommand{\R}{\mathds{R}}         % requires \usepackage{dsfont}
-%\-newcommand{\R}{\mathbbm{R}}        % requires \usepackage{bbm}
-\newcommand{\C}{\mathbb{C}}         % requires \usepackage{amsfonts}
+%\newcommand{\R}{\varmathbb{R}}      % requires \usepackage{txfonts}
+%\newcommand{\R}{\mathds{R}}         % requires \usepackage{dsfont}
+%\newcommand{\R}{\mathbbm{R}}        % requires \usepackage{bbm}
+\newcommand{\C}{\mathbb{C}}         % requires \usepackage{amsfonts} (macro not working w/MathJax)
 
 \newcommand{\av}{\cvec{a}}
 \newcommand{\bv}{\cvec{b}}
@@ -53,9 +57,12 @@
 \renewcommand{\l}{\rvec{l}}
 \renewcommand{\u}{\rvec{u}}
 \renewcommand{\c}{\rvec{c}}
+\newcommand{\Cc}{\rmat{C}}
 \renewcommand{\AA}{\rmat{A}}
 \newcommand{\QQ}{\rmat{Q}}
 \newcommand{\q}{\rvec{q}}
+\newcommand{\Qblk}{\QQ_\textrm{blk}}
+\newcommand{\Xblk}{\rmat{X}_\textrm{blk}}
 
 \newcommand{\X}{\cvec{x}}
 \newcommand{\Z}{\cvec{z}}
@@ -156,11 +163,11 @@
 \newcommand{\gh}{\hat{\g}}
 
 \newcommand{\fmax}{\param{\rvec{f}}_\mathrm{max}}
-% \-newcommand{\gS}{\g^S}
-% \-newcommand{\gI}{\g^I}
+%\newcommand{\gS}{\g^S}
+%\newcommand{\gI}{\g^I}
 \newcommand{\gP}{\g^P}
-% \-newcommand{\gSk}[1]{\g^{S,#1}}
-% \-newcommand{\gIk}[1]{\g^{I,#1}}
+%\newcommand{\gSk}[1]{\g^{S,#1}}
+%\newcommand{\gIk}[1]{\g^{I,#1}}
 \newcommand{\gPk}[1]{\g^{P,#1}}
 
 \newcommand{\fhmax}{\hat{\param{\rvec{f}}}_\mathrm{max}}
@@ -188,28 +195,28 @@
 \newcommand{\Ilinc}{\conj{\Ilin}}
 \newcommand{\dIlin}{\diag{\Ilin}}
 \newcommand{\dIlinc}{\diag{\Ilinc}}
-% \-newcommand{\dIlinc}{\conj{\dIlin}}
+%\newcommand{\dIlinc}{\conj{\dIlin}}
 
 \newcommand{\Ilinh}{\hat{{\cvec{i}}}^{lin}}
 \newcommand{\Ilinhk}{\hat{\cvec{i}}^{lin, k}}
 \newcommand{\Ilinhc}{\conj{\Ilinh}}
 \newcommand{\dIlinh}{\diag{\Ilinh}}
 \newcommand{\dIlinhc}{\diag{\Ilinhc}}
-% \-newcommand{\dIlinc}{\conj{\dIlin}}
+%\newcommand{\dIlinc}{\conj{\dIlin}}
 
 \newcommand{\Slin}{\cvec{s}^{lin}}
 \newcommand{\Slink}{\cvec{s}^{lin, k}}
 \newcommand{\Slinc}{\conj{\Slin}}
 \newcommand{\dSlin}{\diag{\Slin}}
 \newcommand{\dSlinc}{\diag{\Slinc}}
-% \-newcommand{\dSlinc}{\conj{\dSlin}}
+%\newcommand{\dSlinc}{\conj{\dSlin}}
 
 \newcommand{\Slinh}{\hat{\cvec{s}}^{lin}}
 \newcommand{\Slinhk}{\hat{\cvec{s}}^{lin, k}}
 \newcommand{\Slinhc}{\conj{\Slinh}}
 \newcommand{\dSlinh}{\diag{\Slinh}}
 \newcommand{\dSlinhc}{\diag{\Slinhc}}
-% \-newcommand{\dSlinc}{\conj{\dSlin}}
+%\newcommand{\dSlinc}{\conj{\dSlin}}
 
 \newcommand{\Inln}{\cvec{i}^{nln}}
 \newcommand{\Inlnk}{\cvec{i}^{nln, k}}

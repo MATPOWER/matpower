@@ -6,7 +6,7 @@
 [subrepo]
 	remote = git@github.com:MATPOWER/mp-docs-shared
 	branch = master
-	commit = 9ed794be1a04ba9e91732b710e01482b4ad3da21
-	parent = d0d91828c1cd1c170ed2d67f3c2b0af18cd9685e
+	commit = dafad95d825f22a0a194e0ef70b4bfad1dc322f1
+	parent = 2fcca81c237bc749bfd0ca3278a0f1cd0b78058f
 	method = merge
 	cmdver = 0.4.9
