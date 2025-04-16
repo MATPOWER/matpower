@@ -20,7 +20,7 @@ import re
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'MATPOWER Documentation'
-copyright = '1996-2024, Power Systems Engineering Research Center (PSERC)'
+copyright = '2024-2025, Ray Zimmerman, 1996-2024, Power Systems Engineering Research Center (PSERC)'
 author = 'Ray D. Zimmerman, Carlos E. Murillo-Sánchez, Hongye Wang, et. al.'
 
 # The full version, including alpha/beta/rc tags
@@ -219,7 +219,7 @@ mathjax3_config = {
 
 with open('mp-docs-shared/mathCmds.tex.txt', 'r') as f:
     for line in f:
-        macros = re.findall(r'\\(re)?newcommand{\\(.*?)}(\[(\d)\])?{(.+)}', line)
+        macros = re.findall(r'(?<!%)\\(re)?newcommand{\\(.*?)}(\[(\d)\])?{([^%\n]+)}', line)
         for macro in macros:
             if len(macro[2]) == 0:
                 mathjax3_config['tex']['macros'][macro[1]] = macro[4]
