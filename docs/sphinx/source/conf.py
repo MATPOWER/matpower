@@ -20,7 +20,7 @@ import re
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'MATPOWER Documentation'
-copyright = '2024-2025, Ray Zimmerman, 1996-2024, Power Systems Engineering Research Center (PSERC)'
+copyright = '1996-2025, Power Systems Engineering Research Center (PSERC)'
 author = 'Ray D. Zimmerman, Carlos E. Murillo-Sánchez, Hongye Wang, et. al.'
 
 # The full version, including alpha/beta/rc tags
