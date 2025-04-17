@@ -60,7 +60,7 @@ function [success, err_list] = generate_source_symlinks(in, dest, src)
 %           '../../../../../');
 
 %   MATPOWER
-%   Copyright (c) 2023-2024, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2023-2025, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -122,7 +122,11 @@ for k = 1:length(stub_types)
                 if exist(['./' sl_src])
                     delete(['./' sl_src]);
                 end
-                cmd = sprintf('ln -s %s %s', sl_tgt, sl_src);
+                if ispc
+                    cmd = sprintf('mklink "%s" "%s"', fullfile(sl_src), fullfile(sl_tgt));
+                else
+                    cmd = sprintf('ln -s %s %s', sl_tgt, sl_src);
+                end
                 system(cmd);
             else
                 fprintf('    ----> target for %s does NOT exist\n', sl_src);
