@@ -99,6 +99,8 @@ All Legacy PDF Manuals
 
 ------------------------------------
 
+.. _how-to-guides:
+
 .. toctree::
    :maxdepth: 1
    :caption: How To Guides
