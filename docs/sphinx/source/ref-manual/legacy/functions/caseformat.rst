@@ -5,4 +5,4 @@
 caseformat
 ----------
 
-.. autofunction:: caseformat
+.. autoscript:: caseformat

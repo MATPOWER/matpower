@@ -5,4 +5,4 @@
 define_constants
 ----------------
 
-.. autofunction:: define_constants
+.. autoscript:: define_constants
