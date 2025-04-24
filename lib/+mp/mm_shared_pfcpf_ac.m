@@ -53,7 +53,7 @@ classdef (Abstract) mm_shared_pfcpf_ac < mp.mm_shared_pfcpf
         function z_ = update_z(obj, nm, v_, z_, ad, Sinj, idx)
             % update_z - Update/allocate active/reactive injections at slack/PV nodes.
             %
-            % Update/allocate slack know active power injections and slack/PV
+            % Update/allocate slack node active power injections and slack/PV
             % node reactive power injections.
 
             rpv = [ad.ref; ad.pv];      %% slack and PV nodes
