@@ -15,6 +15,7 @@ classdef dme_xfmr3p < mp.dm_element
 %   ``x``         *double*   series reactance *(p.u.)*
 %   ``base_kva``  *double*   transformer kVA base *(kVA)*
 %   ``base_kv``   *double*   transformer kV base *(kV)*
+%   ``tm`     `   *double*   transformer off-nominal turns ratio
 %   ``pl1_fr``    *double*   phase 1 active power injection at "from" end *(kW)*
 %   ``ql1_fr``    *double*   phase 1 reactive power injection at "from" end *(kVAr)*
 %   ``pl2_fr``    *double*   phase 2 active power injection at "from" end *(kW)*
@@ -44,10 +45,10 @@ classdef dme_xfmr3p < mp.dm_element
         x       % series reactance (p.u.) for transformers that are on
         base_kva%
         base_kv %
+        tm      % transformer off-nominal turns ratio for transformers that are on
 %         g_to    %% shunt conductance (p.u.) at "to" end for transformers that are on
 %         b_fr    %% shunt susceptance (p.u.) at "from" end for transformers that are on
 %         b_to    %% shunt susceptance (p.u.) at "to" end for transformers that are on
-%         tm      %% transformer off-nominal turns ratio for transformers that are on
 %         ta      %% xformer phase-shift angle (radians) for transformers that are on
 %         rate_a  %% long term flow limit (p.u.) for transformers that are on
     end     %% properties
@@ -81,7 +82,7 @@ classdef dme_xfmr3p < mp.dm_element
         function names = main_table_var_names(obj)
             %
             names = horzcat( main_table_var_names@mp.dm_element(obj), ...
-                {'bus_fr', 'bus_to', 'r', 'x', 'base_kva', 'base_kv', ...
+                {'bus_fr', 'bus_to', 'r', 'x', 'base_kva', 'base_kv', 'tm', ...
                  'pl1_fr', 'ql1_fr', 'pl2_fr', 'ql2_fr', 'pl3_fr', 'ql3_fr', ...
                  'pl1_to', 'ql1_to', 'pl2_to', 'ql2_to', 'pl3_to', 'ql3_to' ...
                  });
@@ -133,6 +134,7 @@ classdef dme_xfmr3p < mp.dm_element
             obj.x = obj.tab.x(obj.on);
             obj.base_kva = obj.tab.base_kva(obj.on);
             obj.base_kv  = obj.tab.base_kv(obj.on);
+            obj.tm = obj.tab.tm(obj.on);
         end
 
         function obj = pretty_print(obj, dm, section, out_e, mpopt, fd, pp_args)
