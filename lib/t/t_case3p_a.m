@@ -42,9 +42,9 @@ mpc.line3p = [
 ];
 
 %% transformer
-%	xfid	fbus	tbus	status	R	X	basekVA	basekV
+%	xfid	fbus	tbus	status	R	X	basekVA	basekV  ratio
 mpc.xfmr3p = [
-	1	2	3	1	0.01	0.06	6000	12.47;
+	1	2	3	1	0.01	0.06	6000	12.47   1;
 ];
 
 %% load
