@@ -146,10 +146,10 @@ The prototype examples included in |MATPOWER| 8 simply define a few extra fields
 ::
 
     function mpc = t_case3p_a
-    %T_CASE3P_A   Four bus, unbalanced 3-phase test case.
+    % t_case3p_a - Four bus, unbalanced 3-phase test case.
     %
-    % This data comes from 4Bus-YY-UnB.DSS, a modified version (with unbalanced
-    % load) of 4Bus-YY-Bal.DSS [1], the OpenDSS 4 bus IEEE test case with
+    % This data comes from ``4Bus-YY-UnB.DSS``, a modified version (with unbalanced
+    % load) of ``4Bus-YY-Bal.DSS`` [1], the OpenDSS 4 bus IEEE test case with
     % grounded-wye to grounded-wye transformer.
     %
     % [1] https://sourceforge.net/p/electricdss/code/HEAD/tree/trunk/Distrib/IEEETestCases/4Bus-YY-Bal/4Bus-YY-Bal.DSS
@@ -189,9 +189,9 @@ The prototype examples included in |MATPOWER| 8 simply define a few extra fields
     ];
     
     %% transformer
-    %	xfid	fbus	tbus	status	R	X	basekVA	basekV
+    %	xfid	fbus	tbus	status	R	X	basekVA	basekV	ratio
     mpc.xfmr3p = [
-        1	2	3	1	0.01	0.06	6000	12.47;
+        1	2	3	1	0.01	0.06	6000	12.47	1;
     ];
     
     %% load
@@ -266,6 +266,7 @@ Col  Name       Description — *see also* :class:`mp.dme_xfmr3p`
   6  X          reactance (p.u. on transformer base)
   7  basekVA    transformer per-unit power base in kVA
   8  basekV     transformer per-unit voltage base in kV
+  9  ratio      transformer off-nominal turns ratio
 ===  =========  =====================
 
 

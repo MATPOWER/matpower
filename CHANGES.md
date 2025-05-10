@@ -13,6 +13,11 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 since 8.0
 ---------
 
+#### 5/10/25
+  - Add off-nominal tap ratio parameter to prototype three-phase
+    transformer model.
+    *Thanks to Wilson González Vanegas.*
+
 #### 4/9/25
   - Fix typos that cause fatal errors with GNU Octave 10.x.
 

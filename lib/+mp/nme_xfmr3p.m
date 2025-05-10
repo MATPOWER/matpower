@@ -8,8 +8,9 @@ classdef nme_xfmr3p < mp.nm_element & mp.form_acp
 % transformers and inherits from mp.form_acp.
 
 %   MATPOWER
-%   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2025, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
+%   and Wilson Gonzalez Vanegas, Universidad Nacional de Colombia Sede Manizales
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
