@@ -38,6 +38,7 @@ classdef dmce_xfmr3p_mpc2 < mp.dmc_element % & mp.dmce_xfmr3p
             vmap.x{2}       = 6;
             vmap.base_kva{2}= 7;
             vmap.base_kv{2} = 8;
+            vmap.tm{2}      = 9;
             vmap.pl1_fr     = {'num', 0};   %% zeros
             vmap.ql1_fr     = {'num', 0};   %% zeros
             vmap.pl2_fr     = {'num', 0};   %% zeros

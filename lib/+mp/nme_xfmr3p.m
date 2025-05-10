@@ -36,17 +36,24 @@ classdef nme_xfmr3p < mp.nm_element & mp.form_acp
             dme = obj.data_model_element(dm);
             bus_dme = dm.elements.(dme.cxn_type);
             nk = 3*obj.nk;
+            tm = ones(obj.nk, 1);       %% default tap ratio = 1
+            i = find(dme.tm);           %% indices of non-zero tap ratios
+            tm(i) = dme.tm(i);          %% assign non-zero tap ratios
 
             base_kv = bus_dme.tab.base_kv(bus_dme.on(dme.fbus(dme.on)));
             z = dm.base_kva * (dme.r + 1j * dme.x) ./ dme.base_kva .* ...
                 (dme.base_kv ./ ( base_kv / sqrt(3))) .^ 2;
-            y = 1 ./ z;
-            Y = [y;y;y];
+            y = 1 ./ z;                 %% series admitance p.u. @system bases 
+            
+            yff = y ./ (tm .^ 2);   Yff = [yff; yff; yff];
+            ytt = y;                Ytt = [ytt; ytt; ytt];
+            yft = - y ./ tm;        Yft = [yft; yft; yft];
+            ytf = yft;              Ytf = [ytf; ytf; ytf];
 
             obj.Y = sparse( ...
                 [1:nk 1:nk nk+1:2*nk nk+1:2*nk]', ...
                 [1:nk nk+1:2*nk 1:nk nk+1:2*nk]', ...
-                [Y; -Y; -Y; Y], 2*nk, 2*nk );
+                [Yff; Yft; Ytf; Ytt], 2*nk, 2*nk );
         end
     end     %% methods
 end         %% classdef
