@@ -47,6 +47,10 @@ mpc.xfmr3p = [
 	1	2	3	1	0.01	0.06	6000	12.47	1;
 ];
 
+%% shunt
+%	shid	shbus	status	gs1 gs2 gs3 bs1 bs2 bs3
+mpc.shunt3p = [];
+
 %% load
 %	ldid	ldbus	status	Pd1	Pd2	Pd3	ldpf1	ldpf2	ldpf3
 mpc.load3p = [
