@@ -107,7 +107,7 @@ mpc.xfmr3p = [
 ];
 
 %% shunt
-%	shid	shbus	status	gs1 gs2 gs3 bs1 bs2 bs3
+%	shid	shbus	status	gs1	gs2	gs3	bs1	bs2	bs3
 mpc.shunt3p = [];
 
 %% load
