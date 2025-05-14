@@ -11,7 +11,7 @@ classdef dmce_shunt3p_mpc2 < mp.dmc_element
 %   See https://matpower.org for more info.
 
     properties
-        bus     % 
+        bus     %
     end     %% properties
 
     methods

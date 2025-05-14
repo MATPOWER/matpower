@@ -26,15 +26,15 @@ classdef mme_shunt3p < mp.mm_element
 
         function obj = data_model_update_on(obj, mm, nm, dm, mpopt)
             %
-            
-            pp = nm.get_idx('port');            
+
+            pp = nm.get_idx('port');
 
             dme = obj.data_model_element(dm);
             nme = obj.network_model_element(nm);
 
             for p = 1:nme.np
                 %% shunt complex power consumption
-                S = nm.soln.gs_(pp.i1.shunt3p(p):pp.iN.shunt3p(p));                
+                S = nm.soln.gs_(pp.i1.shunt3p(p):pp.iN.shunt3p(p));
 
                 %% update in the data model
                 dme.tab.(sprintf('p%d', p))(dme.on) = real(S) * dm.base_kva;

@@ -15,7 +15,7 @@ classdef dme_xfmr3p < mp.dm_element
 %   ``x``         *double*   series reactance *(p.u.)*
 %   ``base_kva``  *double*   transformer kVA base *(kVA)*
 %   ``base_kv``   *double*   transformer kV base *(kV)*
-%   ``tm`     `   *double*   transformer off-nominal turns ratio
+%   ``tm``        *double*   transformer off-nominal turns ratio
 %   ``pl1_fr``    *double*   phase 1 active power injection at "from" end *(kW)*
 %   ``ql1_fr``    *double*   phase 1 reactive power injection at "from" end *(kVAr)*
 %   ``pl2_fr``    *double*   phase 2 active power injection at "from" end *(kW)*

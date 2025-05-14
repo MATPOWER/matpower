@@ -11,17 +11,17 @@ classdef dme_shunt3p < mp.dm_element
 %   ========  =========  =====================================
 %   ``bus``   *integer*  bus ID (``uid``)
 %   ``gs1``   *double*   phase 1 shunt conductance, specified as
-%                        nominal [#]_ active power demand *(MW)*
+%                        nominal [#]_ active power demand *(kW)*
 %   ``gs2``   *double*   phase 2 shunt conductance, specified as
-%                        nominal [#]_ active power demand *(MW)*
+%                        nominal [1]_ active power demand *(kW)*
 %   ``gs3``   *double*   phase 3 shunt conductance, specified as
-%                        nominal [#]_ active power demand *(MW)*
+%                        nominal [1]_ active power demand *(kW)*
 %   ``bs1``   *double*   phase 1 shunt susceptance, specified as
-%                        nominal [1]_ reactive power injection *(MVAr)*
+%                        nominal [1]_ reactive power injection *(kVAr)*
 %   ``bs2``   *double*   phase 1 shunt susceptance, specified as
-%                        nominal [1]_ reactive power injection *(MVAr)*
+%                        nominal [1]_ reactive power injection *(kVAr)*
 %   ``bs3``   *double*   phase 3 shunt susceptance, specified as
-%                        nominal [1]_ reactive power injection *(MVAr)*
+%                        nominal [1]_ reactive power injection *(kVAr)*
 %   ========  =========  =====================================
 %
 % .. [#] *Nominal* means for a voltage of 1 p.u.
@@ -43,11 +43,11 @@ classdef dme_shunt3p < mp.dm_element
                 % V = 1.0 p.u.) for shunts that are on
         gs3     % phase 3 shunt conductance (p.u. active power demanded at
                 % V = 1.0 p.u.) for shunts that are on
-        bs1     % phase 1 shunt susceptance (p.u. active power demanded at
+        bs1     % phase 1 shunt susceptance (p.u. reactive power injected at
                 % V = 1.0 p.u.) for shunts that are on
-        bs2     % phase 2 shunt susceptance (p.u. active power demanded at
+        bs2     % phase 2 shunt susceptance (p.u. reactive power injected at
                 % V = 1.0 p.u.) for shunts that are on
-        bs3     % phase 3 shunt susceptance (p.u. active power demanded at
+        bs3     % phase 3 shunt susceptance (p.u. reactive power injected at
                 % V = 1.0 p.u.) for shunts that are on
     end     %% properties
 
@@ -109,7 +109,7 @@ classdef dme_shunt3p < mp.dm_element
             %% get bus status info
             bs = dm.elements.bus3p.tab.status;  %% bus status
 
-            %% update status of loads at isolated/offline buses
+            %% update status of shunts at isolated/offline buses
             obj.tab.status = obj.tab.status & bs(obj.bus);
 
             %% call parent to fill in on/off
@@ -137,7 +137,7 @@ classdef dme_shunt3p < mp.dm_element
             %% call parent
             pp_data_sum@mp.dm_element(obj, dm, rows, out_e, mpopt, fd, pp_args);
 
-            %% print generation summary
+            %% print shunt summary
             p = [ obj.tab.p1 obj.tab.p2 obj.tab.p3 ];
             q = [ obj.tab.q1 obj.tab.q2 obj.tab.q3 ];
 
@@ -164,7 +164,7 @@ classdef dme_shunt3p < mp.dm_element
         function h = pp_get_headers_det(obj, dm, out_e, mpopt, pp_args)
             %
             h = [ pp_get_headers_det@mp.dm_element(obj, dm, out_e, mpopt, pp_args) ...
-                {   '                                                                Power consumption', ...
+                {   '                                              Power consumption', ...
                     '   3-ph      3-ph             Phase A Power      Phase B Power      Phase C Power', ...
                     'Shunt ID    Bus ID   Status   (kW)    (kVAr)     (kW)    (kVAr)     (kW)     (kVAr)', ...
                     '---------  --------  ------  -------  -------   -------  -------   -------  -------' } ];
@@ -206,6 +206,6 @@ classdef dme_shunt3p < mp.dm_element
             str = sprintf('%8d %9d %6d %9s %9s %9s %9s %9s %9s', ...
                 obj.tab.uid(k), obj.tab.bus(k), obj.tab.status(k), ...
                                            p1, q1, p2 ,q2, p3, q3);
-        end        
+        end
     end     %% methods
 end         %% classdef

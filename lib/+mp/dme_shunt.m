@@ -80,7 +80,7 @@ classdef dme_shunt < mp.dm_element
 
         function obj = initialize(obj, dm)
             %
-            initialize@mp.dm_element(obj, dm);    %% call parent
+            initialize@mp.dm_element(obj, dm);  %% call parent
 
             %% get bus mapping info
             b2i = dm.elements.bus.ID2i;     %% bus num to idx mapping

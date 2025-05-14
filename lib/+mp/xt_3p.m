@@ -97,6 +97,7 @@ classdef xt_3p < mp.extension
             %   - mp.dme_load3p_opf
             %   - mp.dme_line3p_opf
             %   - mp.dme_xfmr3p_opf
+            %   - mp.dme_shunt3p_opf
             %   - mp.dme_buslink_opf
 
             switch task_tag
