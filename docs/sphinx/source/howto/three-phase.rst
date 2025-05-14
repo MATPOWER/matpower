@@ -194,6 +194,10 @@ The prototype examples included in |MATPOWER| 8 simply define a few extra fields
         1	2	3	1	0.01	0.06	6000	12.47	1;
     ];
     
+    %% shunt
+    %	shid	shbus	status	gs1	gs2	gs3	bs1	bs2	bs3
+    mpc.shunt3p = [];
+    
     %% load
     %	ldid	ldbus	status	Pd1	Pd2	Pd3	ldpf1	ldpf2	ldpf3
     mpc.load3p = [
@@ -212,7 +216,7 @@ The prototype examples included in |MATPOWER| 8 simply define a few extra fields
         1	0.457541	0.15594 	0.153474	0.466617	0.157996	0.461462	1.078	0.501648	0.384909	1.04813	0.423624	1.06502	15.0671	-4.86241	-1.85323	15.875	-3.09098	14.3254
     ];
 
-The data for the individual elements are found in the fields ``bus3p``, ``line3p``, ``xfrm3p``, ``load3p``, and ``gen3p`` fields of ``mpc``. The ``lc`` field contains the per-mile impedance parameters for different line construction configurations referenced by the individual lines.
+The data for the individual elements are found in the fields ``bus3p``, ``line3p``, ``xfrm3p``, ``shunt3p``, ``load3p``, and ``gen3p`` fields of ``mpc``. The ``lc`` field contains the per-mile impedance parameters for different line construction configurations referenced by the individual lines.
 
 Besides the fields for the individual elements, cases with three-phase elements are also expected to include ``freq``, the system frequency in Hertz, and ``base_kVA``, the system per-unit kVA base for three-phase portions of the network.
 
@@ -267,6 +271,24 @@ Col  Name       Description — *see also* :class:`mp.dme_xfmr3p`
   7  basekVA    transformer per-unit power base in kVA
   8  basekV     transformer per-unit voltage base in kV
   9  ratio      transformer off-nominal turns ratio
+===  =========  =====================
+
+
+``shunt3p``
+^^^^^^^^^^^
+
+===  =========  =====================
+Col  Name       Description — *see also* :class:`mp.dme_shunt3p`
+===  =========  =====================
+  1  shid       unique 3-phase load ID (positive integer)
+  2  shbus      bus ID
+  3  status     1 = in-service, 0 = out-of-service
+  4  gs1        phase A nominal active power demand in kW
+  5  gs2        phase B nominal active power demand in kW
+  6  gs3        phase C nominal active power demand in kW
+  7  bs1        phase A nominal reactive power injection in kVAr
+  8  bs2        phase B nominal reactive power injection in kVAr
+  9  bs3        phase C nominal reactive power injection in kVAr
 ===  =========  =====================
 
 

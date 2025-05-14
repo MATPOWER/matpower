@@ -313,6 +313,7 @@ Data model converter element classes belonging to :class:`mp.xt_3p` extension:
       mp/dmce_load3p_mpc2
       mp/dmce_line3p_mpc2
       mp/dmce_xfmr3p_mpc2
+      mp/dmce_shunt3p_mpc2
       mp/dmce_buslink_mpc2
 
 Data model element classes belonging to :class:`mp.xt_3p` extension:
@@ -324,12 +325,14 @@ Data model element classes belonging to :class:`mp.xt_3p` extension:
       mp/dme_load3p
       mp/dme_line3p
       mp/dme_xfmr3p
+      mp/dme_shunt3p
       mp/dme_buslink
       mp/dme_bus3p_opf
       mp/dme_gen3p_opf
       mp/dme_load3p_opf
       mp/dme_line3p_opf
       mp/dme_xfmr3p_opf
+      mp/dme_shunt3p_opf
       mp/dme_buslink_opf
 
 Network model element classes belonging to :class:`mp.xt_3p` extension:
@@ -345,6 +348,7 @@ Network model element classes belonging to :class:`mp.xt_3p` extension:
       mp/nme_load3p
       mp/nme_line3p
       mp/nme_xfmr3p
+      mp/nme_shunt3p
       mp/nme_buslink
       mp/nme_buslink_acc
       mp/nme_buslink_acp
@@ -357,6 +361,7 @@ Mathematical model element classes belonging to :class:`mp.xt_3p` extension:
       mp/mme_gen3p
       mp/mme_line3p
       mp/mme_xfmr3p
+      mp/mme_shunt3p
       mp/mme_buslink
       mp/mme_buslink_pf_ac
       mp/mme_buslink_pf_acc
@@ -366,6 +371,7 @@ Mathematical model element classes belonging to :class:`mp.xt_3p` extension:
       mp/mme_gen3p_opf
       mp/mme_line3p_opf
       mp/mme_xfmr3p_opf
+      mp/mme_shunt3p_opf
       mp/mme_buslink_opf
       mp/mme_buslink_opf_acc
       mp/mme_buslink_opf_acp
