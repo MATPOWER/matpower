@@ -86,6 +86,14 @@ if have_feature('quadprog')
     else
         have_prices = 1;
     end
+    if strcmp(algs{k}, 'interior-point') && strcmp(have_feature('linprog', 'vstr'), '25.1')
+        % HiGHS presolve for interior-point linprog causes failure with
+        % default tolerances in R2025a (see Opt Tbx 25.1 release notes)
+        % mpopt = mpoption(mpopt, 'linprog.OptimalityTolerance', 1e-6);
+        % mpopt = mpoption(mpopt, 'linprog.ConstraintTolerance', 2e-5);
+        % mpopt = mpoption(mpopt, 'linprog.Presolve', 'off');
+        mpopt = mpoption(mpopt, 'linprog.Algorithm', 'interior-point-legacy');
+    end
     t0 = sprintf('DC OPF (OT %s): ', algs{k});
 
     %% set up indices
