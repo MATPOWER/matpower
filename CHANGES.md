@@ -13,6 +13,10 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 since 8.0
 ---------
 
+#### 5/15/25
+  - Add prototype three-phase shunt model.
+    *Thanks to Wilson González Vanegas.*
+
 #### 5/10/25
   - Add off-nominal tap ratio parameter to prototype three-phase
     transformer model.
