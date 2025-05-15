@@ -165,10 +165,10 @@ classdef dme_shunt3p < mp.dm_element
             %
             h = [ pp_get_headers_det@mp.dm_element(obj, dm, out_e, mpopt, pp_args) ...
                 {   '                                              Power consumption', ...
-                    '   3-ph      3-ph             Phase A Power      Phase B Power      Phase C Power', ...
-                    'Shunt ID    Bus ID   Status   (kW)    (kVAr)     (kW)    (kVAr)     (kW)     (kVAr)', ...
-                    '---------  --------  ------  -------  -------   -------  -------   -------  -------' } ];
-            %%       12345678 123456789 -----1 123456.89 123456.89 123456.89 123456.89 123456.89 123456.89
+                    '   3-ph     3-ph             Phase A Power      Phase B Power      Phase C Power', ...
+                    'Shunt ID   Bus ID   Status   (kW)    (kVAr)     (kW)    (kVAr)     (kW)     (kVAr)', ...
+                    '--------  --------  ------  -------  -------   -------  -------   -------  -------' } ];
+            %%       1234567 123456789 -----1 123456.89 12345.78 123456.89 12345.78 123456.89 12345.78
         end
 
         function str = pp_data_row_det(obj, dm, k, out_e, mpopt, fd, pp_args)
@@ -179,9 +179,9 @@ classdef dme_shunt3p < mp.dm_element
                 p1 = '      -  ';
             end
             if obj.tab.status(k) && abs(obj.tab.q1(k)) > 1e-5
-                q1 = sprintf('%9.2f', obj.tab.q1(k));
+                q1 = sprintf('%8.2f', obj.tab.q1(k));
             else
-                q1 = '      -  ';
+                q1 = '     -  ';
             end
             if obj.tab.status(k) && abs(obj.tab.p2(k)) > 1e-5
                 p2 = sprintf('%9.2f', obj.tab.p2(k));
@@ -189,9 +189,9 @@ classdef dme_shunt3p < mp.dm_element
                 p2 = '      -  ';
             end
             if obj.tab.status(k) && abs(obj.tab.q2(k)) > 1e-5
-                q2 = sprintf('%9.2f', obj.tab.q2(k));
+                q2 = sprintf('%8.2f', obj.tab.q2(k));
             else
-                q2 = '      -  ';
+                q2 = '     -  ';
             end
             if obj.tab.status(k) && abs(obj.tab.p3(k)) > 1e-5
                 p3 = sprintf('%9.2f', obj.tab.p3(k));
@@ -199,11 +199,11 @@ classdef dme_shunt3p < mp.dm_element
                 p3 = '      -  ';
             end
             if obj.tab.status(k) && abs(obj.tab.q3(k)) > 1e-5
-                q3 = sprintf('%9.2f', obj.tab.q3(k));
+                q3 = sprintf('%8.2f', obj.tab.q3(k));
             else
-                q3 = '      -  ';
+                q3 = '     -  ';
             end
-            str = sprintf('%8d %9d %6d %9s %9s %9s %9s %9s %9s', ...
+            str = sprintf('%7d %9d %6d %9s %8s %9s %8s %9s %8s', ...
                 obj.tab.uid(k), obj.tab.bus(k), obj.tab.status(k), ...
                                            p1, q1, p2 ,q2, p3, q3);
         end
