@@ -44,17 +44,17 @@ classdef dm_converter_mpc2_legacy < mp.dm_converter_mpc2
                     acc = [nb+(1:nb) 2*nb+ng+(1:ng)];   %% Vm and Qg columns
                     if nlin && size(A, 2) >= 2*nb + 2*ng
                         %% make sure there aren't any constraints on Vm or Qg
-                        if any(any(A(:, acc)))
+                        if nnz(A(:, acc))
                             error('mp.dm_converter_mpc2_legacy.legacy_user_mod_inputs: attempting to solve DC OPF with user constraints on Vm or Qg');
                         end
                         A(:, acc) = [];         %% delete Vm and Qg columns
                     end
                     if nw && size(N, 2) >= 2*nb + 2*ng
                         %% make sure there aren't any costs on Vm or Qg
-                        if any(any(N(:, acc)))
+                        if nnz(N(:, acc))
                             [ii, jj] = find(N(:, acc));
                             ii = unique(ii);    %% indices of w with potential non-zero cost terms from Vm or Qg
-                            if any(Cw(ii)) || (~isempty(H) && any(any(H(:, ii))))
+                            if any(Cw(ii)) || (~isempty(H) && nnz(H(:, ii)))
                                 error('mp.dm_converter_mpc2_legacy.legacy_user_mod_inputs: attempting to solve DC OPF with user costs on Vm or Qg');
                             end
                         end

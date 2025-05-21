@@ -219,7 +219,7 @@ classdef (Abstract) form_ac < mp.form
                 n  = length(v_);    %% number of all port voltages
                 ni = length(vi_);   %% number of selected port voltages
                 invdiagvic = sparse(1:ni, 1:ni, 1./conj(vi_), ni, ni);
-                if any(any(M)) || any(any(N)) || any(s) || any(any(Y))
+                if nnz(M) || nnz(N) || nnz(s) || nnz(Y)
                     %% intermediate terms
                     if isempty(idx)     %% all ports
                         diagSlincJ = sparse(1:n, 1:n, conj(Slin), n, n);
@@ -357,7 +357,7 @@ classdef (Abstract) form_ac < mp.form
                 n  = length(v_);    %% number of all port voltages
                 ni = length(vi_);   %% number of selected port voltages
                 diagvi = sparse(1:ni, 1:ni, vi_, ni, ni);
-                if any(any(Y)) || any(any(L)) || any(i) || any(any(M))
+                if nnz(Y) || nnz(L) || nnz(i) || nnz(M)
                     %% intermediate terms
                     diagv  = sparse(1:n, 1:n, v_, n, n);
                     if isempty(idx)     %% all ports
@@ -466,7 +466,7 @@ classdef (Abstract) form_ac < mp.form
 
             nz = length(z_);
             n  = length(v_);    %% number of all port voltages
-            if any(any(M)) || any(any(N)) || any(s) || any(any(Y))
+            if nnz(M) || nnz(N) || nnz(s) || nnz(Y)
                 %% intermediate terms
                 ni = length(vi_);   %% number of selected port voltages
                 diaginvic = sparse(1:ni, 1:ni, 1 ./ conj(vi_), ni, ni);
@@ -564,7 +564,7 @@ classdef (Abstract) form_ac < mp.form
 
             nz = length(z_);
             n  = length(v_);    %% number of all port voltages
-            if any(any(Y)) || any(any(L)) || any(i) || any(any(M))
+            if nnz(Y) || nnz(L) || nnz(i) || nnz(M)
                 %% intermediate terms
                 ni = length(vi_);   %% number of selected port voltages
                 diagvi = sparse(1:ni, 1:ni, vi_, ni, ni);

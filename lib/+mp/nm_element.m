@@ -743,10 +743,10 @@ classdef (Abstract) nm_element < handle
                         fprintf([fmt '-\n'], pn);
                     else
                         [m, n] = size(obj.(pn));
-                        if ~full(any(any(obj.(pn))))
-                            s = '(all zeros)';
-                        else
+                        if nnz(obj.(pn))
                             s = '';
+                        else
+                            s = '(all zeros)';
                         end
                         fprintf([fmt '%d x %-7d%s\n'], pn, m, n, s);
                     end

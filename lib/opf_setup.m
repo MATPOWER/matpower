@@ -88,18 +88,18 @@ if dc
     acc = [nb+(1:nb) 2*nb+ng+(1:ng)];   %% Vm and Qg columns
     if nlin && size(mpc.A, 2) >= 2*nb + 2*ng
       %% make sure there aren't any constraints on Vm or Qg
-      if any(any(mpc.A(:, acc)))
+      if nnz(mpc.A(:, acc))
         error('opf_setup: attempting to solve DC OPF with user constraints on Vm or Qg');
       end
       mpc.A(:, acc) = [];               %% delete Vm and Qg columns
     end
     if nw && size(mpc.N, 2) >= 2*nb + 2*ng
       %% make sure there aren't any costs on Vm or Qg
-      if any(any(mpc.N(:, acc)))
+      if nnz(mpc.N(:, acc))
         [ii, jj] = find(mpc.N(:, acc));
         ii = unique(ii);    %% indices of w with potential non-zero cost terms from Vm or Qg
         if any(mpc.Cw(ii)) || (isfield(mpc, 'H') && ~isempty(mpc.H) && ...
-                any(any(mpc.H(:, ii))))
+                nnz(mpc.H(:, ii)))
           error('opf_setup: attempting to solve DC OPF with user costs on Vm or Qg');
         end
       end
