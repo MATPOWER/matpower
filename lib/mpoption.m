@@ -46,14 +46,14 @@ function opt = mpoption(varargin)
 %       mpopt = mpoption(mpopt, 'opf.dc.solver', 'CPLEX', 'verbose', 2);
 %
 %   The currently defined options are as follows:
-%   
+%
 %      name                    default     description [options]
 %   ----------------------    ---------   ----------------------------------
 %   Model options:
 %      model                   'AC'        AC vs. DC power flow model
 %          [ 'AC' - use nonlinear AC model & corresponding algorithms/options  ]
 %          [ 'DC' - use linear DC model & corresponding algorithms/options     ]
-%   
+%
 %   Power Flow options:
 %      pf.alg                  'NR'        AC power flow algorithm
 %          [ 'NR'    - Newton's method (formulation depends on values of       ]
@@ -109,7 +109,7 @@ function opt = mpoption(varargin)
 %          [  0 - do NOT enforce limits                                        ]
 %          [  1 - enforce limits, simultaneous bus type conversion             ]
 %          [  2 - enforce limits, one-at-a-time bus type conversion            ]
-%   
+%
 %   Continuation Power Flow options:
 %      cpf.parameterization    3           choice of parameterization
 %          [  1 - natural                                                      ]
@@ -164,7 +164,7 @@ function opt = mpoption(varargin)
 %                                          and/or args, or cell array of such
 %                                          strings and/or structs, see
 %                                          'help cpf_default_callback' for details
-%   
+%
 %   Optimal Power Flow options:
 %      name                    default     description [options]
 %   ----------------------    ---------   ----------------------------------
@@ -254,7 +254,7 @@ function opt = mpoption(varargin)
 %      opf.return_raw_der      0           for AC OPF, return constraint and
 %                                          derivative info in results.raw
 %                                          (in fields g, dg, df, d2f) [ 0 or 1 ]
-%   
+%
 %   Output options:
 %      name                    default     description [options]
 %   ----------------------    ---------   ----------------------------------
@@ -293,7 +293,7 @@ function opt = mpoption(varargin)
 %          [   0 - do not suppress any output specified by other flags         ]
 %          [   1 - suppress all output except system summary section           ]
 %          [       (overrides individual flags, but not out.all = 1)           ]
-%   
+%
 %   Solver specific options:
 %          name                    default     description [options]
 %      -----------------------    ---------   ----------------------------------
@@ -326,7 +326,7 @@ function opt = mpoption(varargin)
 %                                              2-norm of the reduced Newton step
 %                                              exceeds this value*
 %              * See the corresponding Appendix in the manual for details.
-%   
+%
 %      CPLEX:
 %          cplex.lpmethod          0           solution algorithm for LP problems
 %              [   0 - automatic: let CPLEX choose                             ]
@@ -345,7 +345,7 @@ function opt = mpoption(varargin)
 %          cplex.opts              <empty>     see CPLEX_OPTIONS for details
 %          cplex.opt_fname         <empty>     see CPLEX_OPTIONS for details
 %          cplex.opt               0           see CPLEX_OPTIONS for details
-%   
+%
 %      FMINCON:
 %          fmincon.alg             4           algorithm used by fmincon() for OPF
 %                                              for Opt Toolbox 4 and later
@@ -359,7 +359,10 @@ function opt = mpoption(varargin)
 %          fmincon.tol_f           1e-4        termination tol on f
 %          fmincon.max_it          0           maximum number of iterations
 %                                                              [  0 => default ]
-%   
+%
+%      GLPK:
+%          glpk.opts               <empty>     see GLPK_OPTIONS for details
+%
 %      GUROBI:
 %          gurobi.method           0           solution algorithm (Method)
 %              [  -1 - automatic, let Gurobi decide                            ]
@@ -374,12 +377,15 @@ function opt = mpoption(varargin)
 %          gurobi.opts             <empty>     see GUROBI_OPTIONS for details
 %          gurobi.opt_fname        <empty>     see GUROBI_OPTIONS for details
 %          gurobi.opt              0           see GUROBI_OPTIONS for details
-%   
+%
+%      HIGHS:
+%          highs.opts              <empty>     see HIGHS_OPTIONS for details
+%
 %      IPOPT:
 %          ipopt.opts              <empty>     see IPOPT_OPTIONS for details
 %          ipopt.opt_fname         <empty>     see IPOPT_OPTIONS for details
 %          ipopt.opt               0           see IPOPT_OPTIONS for details
-%   
+%
 %      KNITRO:
 %          knitro.tol_x            1e-4        termination tol on x
 %          knitro.tol_f            1e-4        termination tol on f
@@ -394,13 +400,13 @@ function opt = mpoption(varargin)
 %                                              then knitro.opt_fname is auto-
 %                                              generated as:
 %                                              'knitro_user_options_N.txt'
-%   
+%
 %      LINPROG:
 %          linprog                 <empty>     LINPROG options passed to
 %                                              OPTIMOPTIONS or OPTIMSET.
 %                                              see LINPROG in the Optimization
 %                                              Toolbox for details
-%   
+%
 %      MINOPF:
 %          minopf.feastol          0 (1e-3)    primal feasibility tolerance
 %                                              (set to opf.violation by default)
@@ -421,7 +427,7 @@ function opt = mpoption(varargin)
 %          minopf.core             0 (1200*nb + 2*(nb+ng)^2) memory allocation
 %          minopf.supbasic_lim     0 (2*nb + 2*ng) superbasics limit
 %          minopf.mult_price       0 (30)      multiple price
-%   
+%
 %      MOSEK:
 %          mosek.lp_alg            0           solution algorithm
 %                                                  (MSK_IPAR_OPTIMIZER)
@@ -443,16 +449,16 @@ function opt = mpoption(varargin)
 %          mosek.opts              <empty>     see MOSEK_OPTIONS for details
 %          mosek.opt_fname         <empty>     see MOSEK_OPTIONS for details
 %          mosek.opt               0           see MOSEK_OPTIONS for details
-%   
+%
 %      OSQP:
 %          osqp.opts               <empty>     see OSQP_OPTIONS for details
-%   
+%
 %      QUADPROG:
 %          quadprog                <empty>     QUADPROG options passed to
 %                                              OPTIMOPTIONS or OPTIMSET.
 %                                              see QUADPROG in the Optimization
 %                                              Toolbox for details
-%   
+%
 %      TSPOPF:
 %          pdipm.feastol           0           feasibility (equality) tolerance
 %                                              (set to opf.violation by default)
@@ -466,7 +472,7 @@ function opt = mpoption(varargin)
 %                                              iteration with step control
 %          pdipm.sc.smooth_ratio   0.04        piecewise linear curve smoothing
 %                                              ratio
-%   
+%
 %          tralm.feastol           0           feasibility tolerance
 %                                              (set to opf.violation by default)
 %          tralm.primaltol         5e-4        primal variable tolerance
@@ -476,7 +482,7 @@ function opt = mpoption(varargin)
 %          tralm.minor_it          40          maximum number of minor iterations
 %          tralm.smooth_ratio      0.04        piecewise linear curve smoothing
 %                                              ratio
-%   
+%
 %   Experimental Options:
 %      exp.use_legacy_core         0           set to 1 to bypass MP-Core and
 %                                              force use of legacy core code for
@@ -634,6 +640,9 @@ if have_opt0
             end
             if opt0.v <= 22         %% convert version 22 to 23
                 opt0.exp.use_legacy_core = opt_d.exp.use_legacy_core;
+            end
+            if opt0.v <= 24         %% convert version 23,24 to 25
+                opt0.highs = opt_d.highs;
             end
             opt0.v = v;
         end
@@ -1655,7 +1664,7 @@ optt = opt;
 %% globals
 %%-------------------------------------------------------------------
 function v = mpoption_version
-v = 24;     %% version number of MATPOWER options struct
+v = 25;     %% version number of MATPOWER options struct
             %% (must be incremented every time structure is updated)
             %% v1   - first version based on struct (MATPOWER 5.0b1)
             %% v2   - added 'linprog' and 'quadprog' fields
@@ -1693,6 +1702,7 @@ v = 24;     %% version number of MATPOWER options struct
             %%        and force use of legacy core code for runpf(),
             %%        runcpf(), runopf()
             %% v24  - removed deprecated 'opf.init_from_mpc'
+            %% v25  - add 'highs' field
 
 %%-------------------------------------------------------------------
 function db_level = DEBUG
@@ -1701,7 +1711,7 @@ db_level = 0;
 %%-------------------------------------------------------------------
 function pkgs = mpoption_optional_pkgs()
 pkgs = {...
-    'clp', 'cplex', 'fmincon', 'gurobi', 'glpk', 'intlinprog', 'ipopt', ...
-    'knitro', 'linprog', 'minopf', 'most', 'mosek', 'osqp', 'quadprog', ...
-    'sdp_pf', 'sopf', 'tspopf', 'yalmip' ...
+    'clp', 'cplex', 'fmincon', 'gurobi', 'glpk', 'highs', 'intlinprog', ...
+    'ipopt', 'knitro', 'linprog', 'minopf', 'most', 'mosek', 'osqp', ...
+    'quadprog', 'sdp_pf', 'sopf', 'tspopf', 'yalmip' ...
 };

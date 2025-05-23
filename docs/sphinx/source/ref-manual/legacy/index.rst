@@ -283,6 +283,7 @@ Other Functions
    functions/mpoption_info_fmincon
    functions/mpoption_info_glpk
    functions/mpoption_info_gurobi
+   functions/mpoption_info_highs
    functions/mpoption_info_intlinprog
    functions/mpoption_info_ipopt
    functions/mpoption_info_knitro

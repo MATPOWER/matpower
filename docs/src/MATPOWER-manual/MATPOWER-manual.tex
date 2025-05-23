@@ -203,6 +203,7 @@
 \newcommand{\cplex}[0]{{CPLEX}}
 \newcommand{\glpk}[0]{{GLPK}}
 \newcommand{\gurobi}[0]{{Gurobi}}
+\newcommand{\highs}[0]{{HiGHS}}
 \newcommand{\mosek}[0]{{MOSEK}}
 \newcommand{\osqp}[0]{{OSQP}}
 \newcommand{\osqplink}[0]{{\href{https://osqp.org}{\osqp}}}
@@ -313,7 +314,7 @@
             {\large \@date \par}%
 \vfill
 {\scriptsize
-\copyright~2010--2024~\PSERC\\
+\copyright~2010--2025~\PSERC\\
 All Rights Reserved}
         \end{center}
     \end{titlepage}
@@ -6606,6 +6607,7 @@ name & description \\
 \code{mpoption\_info\_fmincon}	& option information for FMINCON	\\
 \code{mpoption\_info\_glpk}	& option information for \glpk{}	\\
 \code{mpoption\_info\_gurobi}	& option information for \gurobi{}	\\
+\code{mpoption\_info\_highs}	& option information for \highs{}	\\
 \code{mpoption\_info\_intlinprog}	& option information for INTLINPROG	\\
 \code{mpoption\_info\_ipopt}	& option information for \ipopt{}	\\
 \code{mpoption\_info\_knitro}	& option information for \knitro{}	\\
@@ -8663,7 +8665,7 @@ The \href{https://matpower.org/docs/MATPOWER-manual-8.0.1-dev.pdf}{\matpower{} 8
 \item
 \item New options:
 \begin{itemize}
-    \item \code{foo.bar}
+    \item \code{highs.opts} overrides default \highs{} options.
 \end{itemize}
 \item New functions/methods:
     \begin{itemize}

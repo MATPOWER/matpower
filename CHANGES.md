@@ -13,6 +13,9 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 since 8.0
 ---------
 
+#### 5/23/25
+  - Add support to `mpoption()` for HiGHS solver options.
+
 #### 5/15/25
   - Add prototype three-phase shunt model.
     *Thanks to Wilson González Vanegas.*
