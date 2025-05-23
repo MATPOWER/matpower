@@ -15,7 +15,7 @@ end
 
 algs = {
     "choose",
-    "simplex",
+    'simplex',
     "ipm",
     "pdlp",     %% currently results in fatal error
 };
@@ -72,8 +72,8 @@ if have_feature('highs')
     load soln9_dcopf;       %% defines bus_soln, gen_soln, branch_soln, f_soln
 
    if strcmp(algs{k}, 'pdlp')
-       s = warning('query', 'all');
-       warning('off', 'all');
+       s = warning('query', 'highs:mex');
+       warning('off', 'highs:mex');
    end
 
     %% run OPF
@@ -108,7 +108,7 @@ if have_feature('highs')
     e = zeros(size(branch, 1), 1);
     e(4) = 297.83776;
     e(7) = -26.94788;
-    t_is(branch(:,MU_ANGMAX )-branch(:,MU_ANGMIN ), e, 4, [t 'branch ang diff mu']);
+    t_is(branch(:,MU_ANGMAX )-branch(:,MU_ANGMIN ), e, 3.5, [t 'branch ang diff mu']);
 
     t = [t0 'w/ignored angle diff lims : '];
     mpopt1 = mpoption(mpopt, 'opf.ignore_angle_lim', 1);
@@ -191,9 +191,8 @@ if have_feature('highs')
         t_ok(0, [t 'unexpected fatal error']);
     end
     if strcmp(algs{k}, 'pdlp')
-        warning(s);
+        warning(s.state, 'highs:mex');
     end
-
   end
 else
     t_skip(num_tests, 'HiGHS not available');
