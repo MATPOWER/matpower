@@ -72,11 +72,13 @@ if have_feature('intlinprog')
     mpopt = mpoption(mpopt, 'intlinprog.TolGapAbs', 0);
     mpopt = mpoption(mpopt, 'intlinprog.TolGapRel', 0);
     mpopt = mpoption(mpopt, 'intlinprog.TolInteger', 1e-6);
-    %% next line is to work around a bug in intlinprog
-    % (Technical Support Case #01841662)
-    % (except actually in this case it triggers it rather than working
-    %  around it, so we comment it out)
-    %mpopt = mpoption(mpopt, 'intlinprog.LPPreprocess', 'none');
+%     if have_feature('intlinprog', 'vnum') < 24
+%         %% next line is to work around a bug in intlinprog < R2024a
+%         % (Technical Support Case #01841662)
+%         % (except actually in this case it triggers it rather than working
+%         %  around it, so we comment it out)
+%         mpopt = mpoption(mpopt, 'intlinprog.LPPreprocess', 'none');
+%     end
 end
 
 casefile = 'ex_case3b';

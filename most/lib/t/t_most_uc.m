@@ -8,7 +8,7 @@ function t_most_uc(quiet, create_plots, create_pdfs, savedir)
 %   E.g. t_most_uc(0, 1, 1, '~/Downloads/uc_plots')
 
 %   MOST
-%   Copyright (c) 2015-2024, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2015-2025, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.
@@ -36,8 +36,8 @@ if create_plots
     pp = 0;     %% plot counter
 end
 
-solvers = {'CPLEX', 'GLPK', 'GUROBI', 'MOSEK', 'OT'};
-fcn = {'cplex', 'glpk', 'gurobi', 'mosek', 'intlinprog'};
+solvers = {'CPLEX', 'GLPK', 'GUROBI', 'MOSEK', 'OT', 'HIGHS'};
+fcn = {'cplex', 'glpk', 'gurobi', 'mosek', 'intlinprog', 'highs'};
 % solvers = {'OT'};
 % fcn = {'intlinprog'};
 % solvers = {'GUROBI'};
@@ -132,16 +132,20 @@ if have_feature('intlinprog')
         %mpopt = mpoption(mpopt, 'intlinprog.RootLPAlgorithm', 'primal-simplex');
         mpopt = mpoption(mpopt, 'intlinprog.RootLPAlgorithm', 'dual-simplex');
         mpopt = mpoption(mpopt, 'intlinprog.TolInteger', 1e-6);
-        %% next line is to work around a bug in intlinprog
+        %% next line is to work around a bug in intlinprog < R2024a
         % (Technical Support Case #01841662)
         % (except actually in this case it triggers it rather than working
         %  around it, so we comment it out)
         %mpopt = mpoption(mpopt, 'intlinprog.LPPreprocess', 'none');
     elseif have_feature('intlinprog', 'vnum') == 24.001
+        %% next line is to work around a bug in intlinprog R2024a
+        % (Technical Support Case #06920417)
         mpopt = mpoption(mpopt, 'intlinprog.LPPreprocess', 'none');
         s2 = warning('query', 'optim:intlinprog:IgnoreOptions');
         warning('off', 'optim:intlinprog:IgnoreOptions');
     elseif have_feature('intlinprog', 'vnum') == 24.002
+        %% next line is to work around a bug in intlinprog R2024b
+        % (Technical Support Case #07325794)
         mpopt = mpoption(mpopt, 'intlinprog.Presolve', 'off');
     end
 end

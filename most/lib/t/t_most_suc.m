@@ -8,7 +8,7 @@ function t_most_suc(quiet, create_plots, create_pdfs, savedir)
 %   E.g. t_most_suc(0, 1, 1, '~/Downloads/suc_plots')
 
 %   MOST
-%   Copyright (c) 2015-2024, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2015-2025, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.
@@ -36,8 +36,8 @@ if create_plots
     pp = 0;     %% plot counter
 end
 
-solvers = {'CPLEX', 'GLPK', 'GUROBI', 'MOSEK', 'OT'};
-fcn = {'cplex', 'glpk', 'gurobi', 'mosek', 'intlinprog'};
+solvers = {'CPLEX', 'GLPK', 'GUROBI', 'MOSEK', 'OT', 'HIGHS'};
+fcn = {'cplex', 'glpk', 'gurobi', 'mosek', 'intlinprog', 'highs'};
 % solvers = {'CPLEX'};
 % fcn = {'cplex'};
 % solvers = {'OT'};
@@ -128,9 +128,13 @@ if have_feature('intlinprog') && have_feature('intlinprog', 'vnum') < 24
     mpopt = mpoption(mpopt, 'intlinprog.TolGapAbs', 0);
     mpopt = mpoption(mpopt, 'intlinprog.TolGapRel', 0);
     mpopt = mpoption(mpopt, 'intlinprog.TolInteger', 1e-6);
-    %% next line is to work around a bug in intlinprog
-    % (Technical Support Case #01841662)
-    mpopt = mpoption(mpopt, 'intlinprog.LPPreprocess', 'none');
+    if have_feature('intlinprog', 'vnum') < 24
+        %% next line is to work around a bug in intlinprog < R2024a
+        % (Technical Support Case #01841662)
+        % (except actually in this case it triggers it rather than working
+        %  around it, so we comment it out)
+        mpopt = mpoption(mpopt, 'intlinprog.LPPreprocess', 'none');
+    end
 end
 if ~verbose
     mpopt = mpoption(mpopt, 'out.all', 0);

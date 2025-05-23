@@ -5,6 +5,9 @@ Change history for MOST
 since 1.3
 ---------
 
+#### 5/23/25
+  - Include HiGHS solver, if available in unit commitment tests.
+
 #### 3/19/25
   - Fix issue caused by tiny non-zero values for commitment variables.
     Don't count on MP-Opt-Model's `miqps_<solver>()` functions to round
