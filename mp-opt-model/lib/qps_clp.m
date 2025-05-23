@@ -77,7 +77,7 @@ function [x, f, eflag, output, lambda] = qps_clp(H, c, A, l, u, xmin, xmax, x0, 
 %       [x, f, exitflag, output] = qps_clp(...)
 %       [x, f, exitflag, output, lambda] = qps_clp(...)
 %
-%   Example: (problem from from https://v8doc.sas.com/sashtml/iml/chap8/sect12.htm)
+%   Example: (problem from https://v8doc.sas.com/sashtml/iml/chap8/sect12.htm)
 %       H = [   1003.1  4.3     6.3     5.9;
 %               4.3     2.2     2.1     3.9;
 %               6.3     2.1     3.5     4.8;
@@ -136,7 +136,7 @@ else                                %% individual args
 end
 
 %% define nx, set default values for missing optional inputs
-if isempty(H) || ~any(any(H))
+if ~nnz(H)
     if isempty(A) && isempty(xmin) && isempty(xmax)
         error('qps_clp: LP problem must include constraints or variable bounds');
     else
@@ -200,7 +200,7 @@ if have_feature('opti_clp')     %% use OPTI Toolbox version's MEX interface
     clp_opt.display = verbose;
 
     [x, f, exitflag, iter, lam] = clp(tril(H), c, A, l, u, xmin, xmax, clp_opt);
-    
+
     output.iter = iter;
 
     %% repackage lambdas
@@ -224,7 +224,7 @@ if have_feature('opti_clp')     %% use OPTI Toolbox version's MEX interface
         mu_u(mu_u < 0) = 0;
         lower(lower < 0) = 0;
         upper(upper < 0) = 0;
-        
+
         lambda = struct( ...
             'mu_l', mu_l, ...
             'mu_u', mu_u, ...
@@ -259,7 +259,7 @@ else
         x = NaN(nx, 1);
         f = NaN;
     else
-        if isempty(H) || ~any(any(H))
+        if ~nnz(H)
             f = c'*x;
         else
             f = 0.5 * x'*H*x + c'*x;

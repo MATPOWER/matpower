@@ -1,5 +1,9 @@
 function [mu_l, mu_u] = convert_lin_constraint_multipliers(lam, mu, ieq, igt, ilt)
 % convert_lin_constraint_multipliers - Convert multipliers for eq/ineq pair to bounded.
+%
+% .. note::
+%    .. deprecated:: 5.0 Please use convert_constraint_multipliers instead.
+%
 % ::
 %
 %   [mu_l, mu_u] = convert_lin_constraint_multipliers(lam, mu, ieq, igt, ilt)
@@ -39,31 +43,11 @@ function [mu_l, mu_u] = convert_lin_constraint_multipliers(lam, mu, ieq, igt, il
 % See also convert_lin_constraint.
 
 %   MP-Opt-Model
-%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2025, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See https://github.com/MATPOWER/mp-opt-model for more info.
 
-m = max([ieq; igt; ilt]);   %% number of original constraints in (1)
-nlt = length(ilt);          %% number of upper bounded inequalities
-
-%% initialize multipliers
-if all(isnan(lam)) && all(isnan(mu))
-    mu_l = NaN(m, 1);
-    mu_u = NaN(m, 1);
-else
-    mu_l = zeros(m, 1);
-    mu_u = zeros(m, 1);
-    
-    %% convert equality constraint multipliers
-    kl = find(lam < 0);
-    ku = find(lam >= 0);
-    mu_l(ieq(kl)) = -lam(kl);
-    mu_u(ieq(ku)) = lam(ku);
-    
-    %% convert inequality constraint multipliers
-    mu_l(igt) = mu(nlt+1:end);
-    mu_u(ilt) = mu(1:nlt);
-end
+[mu_l, mu_u] = convert_constraint_multipliers(lam, mu, ieq, igt, ilt);

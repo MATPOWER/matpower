@@ -75,7 +75,7 @@ function [x, f, eflag, output, lambda] = qps_cplex(H, c, A, l, u, xmin, xmax, x0
 %       [x, f, exitflag, output] = qps_cplex(...)
 %       [x, f, exitflag, output, lambda] = qps_cplex(...)
 %
-%   Example: (problem from from https://v8doc.sas.com/sashtml/iml/chap8/sect12.htm)
+%   Example: (problem from https://v8doc.sas.com/sashtml/iml/chap8/sect12.htm)
 %       H = [   1003.1  4.3     6.3     5.9;
 %               4.3     2.2     2.1     3.9;
 %               6.3     2.1     3.5     4.8;
@@ -134,7 +134,7 @@ else                                %% individual args
 end
 
 %% define nx, set default values for missing optional inputs
-if isempty(H) || ~any(any(H))
+if ~nnz(H)
     if isempty(A) && isempty(xmin) && isempty(xmax)
         error('qps_cplex: LP problem must include constraints or variable bounds');
     else
@@ -224,7 +224,7 @@ if verbose
         'concurrent'
     };
 end
-if isempty(H) || ~any(any(H))
+if ~nnz(H)
     if verbose
         fprintf('CPLEX Version %s -- %s LP solver\n', ...
             vstr, alg_names{cplex_opt.lpmethod+1});
@@ -282,7 +282,7 @@ if vnum < 12.003
 end
 
 %% repackage lambdas
-[mu_l, mu_u] = convert_lin_constraint_multipliers(lam.eqlin, lam.ineqlin, ieq, igt, ilt);
+[mu_l, mu_u] = convert_constraint_multipliers(lam.eqlin, lam.ineqlin, ieq, igt, ilt);
 
 lambda = struct( ...
     'mu_l', mu_l, ...

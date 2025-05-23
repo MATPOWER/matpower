@@ -71,7 +71,7 @@ classdef set_manager_opt_model < mp.set_manager
             % ::
             %
             %   sm.set_params(name, params, vals)
-            %   sm.set_params(name, idx, params, vals)
+            %   sm.set_params(name, idx_list, params, vals)
             %
             % .. note:: This abstract method must be implemented by a
             %   subclass.
@@ -106,10 +106,10 @@ classdef set_manager_opt_model < mp.set_manager
             %
             %   sm.display_soln(var, soln)
             %   sm.display_soln(var, soln, name)
-            %   sm.display_soln(var, soln, name, idx)
+            %   sm.display_soln(var, soln, name, idx_list)
             %   sm.display_soln(var, soln, fid)
             %   sm.display_soln(var, soln, fid, name)
-            %   sm.display_soln(var, soln, fid, name, idx)
+            %   sm.display_soln(var, soln, fid, name, idx_list)
             %
             % Displays the solution values for all elements (default)
             % or an individual named or named/indexed subset.
@@ -134,7 +134,8 @@ classdef set_manager_opt_model < mp.set_manager
             %   fid (fileID) : fileID of open file to write to (default is
             %       1 for standard output)
             %   name (char array) : *(optional)* name of individual subset
-            %   idx (cell array) : *(optional)* indices of individual subset
+            %   idx_list (cell array) : *(optional)* indices of individual
+            %       subset
 
             [fid, name, idx, idxs, hdr1] = obj.display_soln_std_args(varargin{:});
 
@@ -236,7 +237,7 @@ classdef set_manager_opt_model < mp.set_manager
             % Update parameter dimensions for use in subclass set_params method.
             % ::
             %
-            %   sm.set_params_update_dims(dN, name, idx)
+            %   sm.set_params_update_dims(dN, name, idx_list)
             %
             % See also set_params.
 
@@ -284,16 +285,17 @@ classdef set_manager_opt_model < mp.set_manager
             %
             %   [fid, name, idx, idxs, hdr1] = sm.display_soln_std_args()
             %   [...] = sm.display_soln_std_args(name)
-            %   [...] = sm.display_soln_std_args(name, idx)
+            %   [...] = sm.display_soln_std_args(name, idx_list)
             %   [...] = sm.display_soln_std_args(fid)
             %   [...] = sm.display_soln_std_args(fid, name)
-            %   [...] = sm.display_soln_std_args(fid, name, idx)
+            %   [...] = sm.display_soln_std_args(fid, name, idx_list)
             %
             % Inputs:
             %   fid (fileID) : fileID of open file to write to (default is
             %       1 for standard output)
             %   name (char array) : *(optional)* name of individual subset
-            %   idx (cell array) : *(optional)* indices of individual subset
+            %   idx_list (cell array) : *(optional)* indices of individual
+            %       subset
             %
             % Outputs:
             %   fid (fileID) : fileID of open file to write to (default is
@@ -412,7 +414,7 @@ classdef set_manager_opt_model < mp.set_manager
             % Standardize input args for use in subclass get_soln method.
             % ::
             %
-            %   [tags, name, idx, N, i1, iN] = sm.get_soln_std_args(tags, name, idx)
+            %   [tags, name, idx_list, N, i1, iN] = sm.get_soln_std_args(tags, name, idx_list)
             %
             % See also get_soln.
 

@@ -9,7 +9,7 @@ function [x, f, eflag, output, lambda] = miqps_ot(H, c, A, l, u, xmin, xmax, x0,
 %   QUADPROG or LINPROG from the Optimization Toolbox to solve the
 %   following QP (quadratic programming) problem:
 %
-%       min 1/2 X'*H*X + C'*X
+%       min C'*X
 %        X
 %
 %   subject to
@@ -18,7 +18,8 @@ function [x, f, eflag, output, lambda] = miqps_ot(H, c, A, l, u, xmin, xmax, x0,
 %       XMIN <= X <= XMAX   (variable bounds)
 %
 %   Inputs (all optional except H, C, A and L):
-%       H : matrix (possibly sparse) of quadratic cost coefficients
+%       H : dummy matrix (possibly sparse) of quadratic cost coefficients
+%           for QP problems, which INTLINPROG does not handle
 %       C : vector of linear cost coefficients
 %       A, L, U : define the optional linear constraints. Default
 %           values for the elements of L and U are -Inf and Inf,
@@ -66,7 +67,7 @@ function [x, f, eflag, output, lambda] = miqps_ot(H, c, A, l, u, xmin, xmax, x0,
 %           lower - lower bound on optimization variables
 %           upper - upper bound on optimization variables
 %
-%   Note the calling syntax is almost identical to that of QUADPROG
+%   Note the calling syntax is almost identical to that of INTLINPROG
 %   from MathWorks' Optimization Toolbox. The main difference is that
 %   the linear constraints are specified with A, L, U instead of
 %   A, B, Aeq, Beq.
@@ -90,7 +91,7 @@ function [x, f, eflag, output, lambda] = miqps_ot(H, c, A, l, u, xmin, xmax, x0,
 %       [x, f, exitflag, output, lambda] = miqps_ot(...)
 %
 %
-%   Example: (problem from from https://v8doc.sas.com/sashtml/iml/chap8/sect12.htm)
+%   Example: (problem from https://v8doc.sas.com/sashtml/iml/chap8/sect12.htm)
 %       H = [   1003.1  4.3     6.3     5.9;
 %               4.3     2.2     2.1     3.9;
 %               6.3     2.1     3.5     4.8;
@@ -153,7 +154,8 @@ else                                %% individual args
 end
 
 %% define nx, set default values for missing optional inputs
-if isempty(H) || ~any(any(H))
+if ~nnz(H)
+    isLP = 1;   %% it's an LP
     if isempty(A) && isempty(xmin) && isempty(xmax)
         error('miqps_ot: LP problem must include constraints or variable bounds');
     else
@@ -166,6 +168,7 @@ if isempty(H) || ~any(any(H))
         end
     end
 else
+    isLP = 0;   %% nope, it's a QP
     nx = size(H, 1);
 end
 if isempty(c)
@@ -190,11 +193,6 @@ if isempty(xmax)
 end
 if isempty(x0)
     x0 = zeros(nx, 1);
-end
-if isempty(H) || ~any(any(H))
-    isLP = 1;   %% it's an LP
-else
-    isLP = 0;   %% nope, it's a QP
 end
 
 %% default options
@@ -298,7 +296,7 @@ if isempty(lam) || (isempty(lam.eqlin) && isempty(lam.ineqlin) && ...
         'upper', NaN(nx, 1) ...
     );
 else
-    [mu_l, mu_u] = convert_lin_constraint_multipliers(lam.eqlin, lam.ineqlin, ieq, igt, ilt);
+    [mu_l, mu_u] = convert_constraint_multipliers(lam.eqlin, lam.ineqlin, ieq, igt, ilt);
 
     lambda = struct( ...
         'mu_l', mu_l, ...
@@ -324,7 +322,7 @@ if mi && eflag == 1 && (~isfield(opt, 'skip_prices') || ~opt.skip_prices)
         xmin(k) = x0(k);
         xmax(k) = x0(k);
     %     opt.linprog_opt.Algorithm = 'dual-simplex';     %% dual-simplex
-    
+
         [x_, f_, eflag_, output_, lambda] = qps_ot(H, c, A, l, u, xmin, xmax, x0, opt);
     %     output
     %     output.message

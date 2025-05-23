@@ -144,9 +144,9 @@ end
 
 %--------------------------  Default Options Struct  --------------------------
 % as returned by ...
-%   >> opt = cplexoptimset('cplex') 
-%   
-%   opt = 
+%   >> opt = cplexoptimset('cplex')
+%
+%   opt =
 %       advance:        1
 %       barrier:        [1x1 struct]
 %           algorithm:      0

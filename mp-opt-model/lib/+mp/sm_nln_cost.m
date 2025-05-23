@@ -235,7 +235,7 @@ classdef sm_nln_cost < mp.set_manager_opt_model
             % ::
             %
             %   nlc.set_params(name, params, vals)
-            %   nlc.set_params(name, idx, params, vals)
+            %   nlc.set_params(name, idx_list, params, vals)
             %
             % This method can be used to modify parameters for an existing
             % subset of general nonlinear costs.
@@ -360,7 +360,7 @@ classdef sm_nln_cost < mp.set_manager_opt_model
             % For a given value of the variable vector :math:`\x`, this method
             % evaluates the general nonlinear cost function and optionally
             % its derivatives for an individual subset, if name or name and
-            % index list are provided, otherise, for the full set of costs.
+            % index list are provided, otherwise, for the full set of costs.
             %
             % Inputs:
             %   var (mp.sm_variable) : corresponding mp.sm_variable object
@@ -490,10 +490,10 @@ classdef sm_nln_cost < mp.set_manager_opt_model
             %
             %   nlc.display_soln(var, soln)
             %   nlc.display_soln(var, soln, name)
-            %   nlc.display_soln(var, soln, name, idx)
+            %   nlc.display_soln(var, soln, name, idx_list)
             %   nlc.display_soln(var, soln, fid)
             %   nlc.display_soln(var, soln, fid, name)
-            %   nlc.display_soln(var, soln, fid, name, idx)
+            %   nlc.display_soln(var, soln, fid, name, idx_list)
             %
             % Displays the solution values for all general nonlinear costs
             % (default) or an individual named or named/indexed subset.
@@ -518,7 +518,8 @@ classdef sm_nln_cost < mp.set_manager_opt_model
             %   fid (fileID) : fileID of open file to write to (default is
             %       1 for standard output)
             %   name (char array) : *(optional)* name of individual subset
-            %   idx (cell array) : *(optional)* indices of individual subset
+            %   idx_list (cell array) : *(optional)* indices of individual
+            %       subset
 
             [fid, name, idx, idxs, hdr1] = obj.display_soln_std_args(varargin{:});
 
@@ -559,9 +560,9 @@ classdef sm_nln_cost < mp.set_manager_opt_model
             % ::
             %
             %   vals = nlc.get_soln(var, soln, name)
-            %   vals = nlc.get_soln(var, soln, name, idx)
+            %   vals = nlc.get_soln(var, soln, name, idx_list)
             %   vals = nlc.get_soln(var, soln, tags, name)
-            %   vals = nlc.get_soln(var, soln, tags, name, idx)
+            %   vals = nlc.get_soln(var, soln, tags, name, idx_list)
             %
             % Returns named/indexed nonlinear cost results for a solved
             % model, evaluated at the solution found.
@@ -593,7 +594,7 @@ classdef sm_nln_cost < mp.set_manager_opt_model
             %           - ``'d2f'`` - cost Hessian
             %             :math:`f_{\x\x} = \der{}{\x}(\trans{f_\x})`
             %   name (char array) : name of the subset
-            %   idx (cell array) : *(optional)* indices of the subset
+            %   idx_list (cell array) : *(optional)* indices of the subset
             %
             % Outputs:
             %     : Variable number of outputs corresponding to ``tags`` input.

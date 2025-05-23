@@ -2,7 +2,7 @@ function varargout = eval_quad_cost(om, varargin)
 % eval_quad_cost - Evaluates individual or full set of quadratic costs.
 %
 % .. note::
-%    .. deprecated:: 4.3 Please use mp.sm_quad_cost.eval instead, as
+%    .. deprecated:: 5.0 Please use mp.sm_quad_cost.eval instead, as
 %       in ``om.qdc.eval(...)``.
 %
 % ::

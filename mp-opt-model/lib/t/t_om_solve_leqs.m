@@ -130,7 +130,7 @@ for k = 1:length(cfg)
     x = om.solve(opt);
     t_is(x, x1, 14, [t 'x']);
     t_ok(~om.has_parsed_soln(), [t 'has_parsed_soln() is false']);
-    
+
     t = sprintf('%s - sparse (nearly-singular) A matrix : ', name);
     om = opt_model;
     om.add_var('x', n3, zeros(n3, 1));
@@ -147,7 +147,7 @@ for k = 1:length(cfg)
     t_is(f, A3*x-b3, 14, [t 'f']);
     t_is(e, 0, 14, [t 'exitflag = 0']);
     t_ok(~om.has_parsed_soln(), [t 'has_parsed_soln() is false']);
-    
+
     t = sprintf('%s - sparse A matrix : ', name);
     om = opt_model;
     om.add_var('x', n2, zeros(n2, 1));

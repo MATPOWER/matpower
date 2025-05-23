@@ -20,6 +20,9 @@ function ps = parse_soln(om, stash)
 %           .lin
 %               .mu_l
 %               .mu_u
+%           .qcn
+%               .mu_l
+%               .mu_u
 %           .nle
 %               .lam
 %           .nli
@@ -35,8 +38,9 @@ function ps = parse_soln(om, stash)
 % See also get_soln.
 
 %   MP-Opt-Model
-%   Copyright (c) 2020-2024, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2020-2025, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
+%   and Wilson Gonzalez Vanegas, Universidad Nacional de Colombia Sede Manizales
 %
 %   This file is part of MP-Opt-Model.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
@@ -57,6 +61,12 @@ ps = struct('var', om.var.parse_soln(om.soln, stash));
 ps_lin = om.lin.parse_soln(om.soln, stash);
 if ~isempty(ps_lin)
     ps.lin = ps_lin;
+end
+
+%% qcn
+ps_qcn = om.qcn.parse_soln(om.soln, stash);
+if ~isempty(ps_qcn)
+    ps.qcn = ps_qcn;
 end
 
 %% nle

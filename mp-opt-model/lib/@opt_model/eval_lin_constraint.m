@@ -2,7 +2,7 @@ function varargout = eval_lin_constraint(om, varargin)
 % eval_lin_constraint - Builds and returns full set of linear constraints.
 %
 % .. note::
-%    .. deprecated:: 4.3 Please use mp.sm_lin_constraint.eval instead, as
+%    .. deprecated:: 5.0 Please use mp.sm_lin_constraint.eval instead, as
 %       in ``om.lin.eval(...)``.
 %
 % ::

@@ -88,7 +88,7 @@ function [x, f, eflag, output, lambda] = miqps_cplex(H, c, A, l, u, xmin, xmax, 
 %       [x, f, exitflag, output, lambda] = miqps_cplex(...)
 %
 %
-%   Example: (problem from from https://v8doc.sas.com/sashtml/iml/chap8/sect12.htm)
+%   Example: (problem from https://v8doc.sas.com/sashtml/iml/chap8/sect12.htm)
 %       H = [   1003.1  4.3     6.3     5.9;
 %               4.3     2.2     2.1     3.9;
 %               6.3     2.1     3.5     4.8;
@@ -151,7 +151,7 @@ else                                %% individual args
 end
 
 %% define nx, set default values for missing optional inputs
-if isempty(H) || ~any(any(H))
+if ~nnz(H)
     if isempty(A) && isempty(xmin) && isempty(xmax)
         error('miqps_cplex: LP problem must include constraints or variable bounds');
     else
@@ -253,7 +253,7 @@ else
 end
 
 if mi
-    if isempty(H) || ~any(any(H))
+    if ~nnz(H)
         if verbose
             fprintf('CPLEX Version %s -- %s MILP solver\n', ...
                 vstr, alg_names{cplex_opt.lpmethod+1});
@@ -275,7 +275,7 @@ if mi
     end
     lam = [];
 else
-    if isempty(H) || ~any(any(H))
+    if ~nnz(H)
         if verbose
             fprintf('CPLEX Version %s -- %s LP solver\n', ...
                 vstr, alg_names{cplex_opt.lpmethod+1});
@@ -337,7 +337,7 @@ if vnum < 12.003
     lam.ineqlin = -lam.ineqlin;
 end
 
-[mu_l, mu_u] = convert_lin_constraint_multipliers(lam.eqlin, lam.ineqlin, ieq, igt, ilt);
+[mu_l, mu_u] = convert_constraint_multipliers(lam.eqlin, lam.ineqlin, ieq, igt, ilt);
 
 lambda = struct( ...
     'mu_l', mu_l, ...
@@ -364,7 +364,7 @@ if mi && eflag == 1 && (~isfield(opt, 'skip_prices') || ~opt.skip_prices)
         xmax(k) = x0(k);
         opt.cplex_opt.lpmethod = 2;     %% dual simplex
         opt.cplex_opt.qpmethod = 1;     %% primal simplex
-    
+
         [x_, f_, eflag_, output_, lambda] = qps_cplex(H, c, A, l, u, xmin, xmax, x0, opt);
         if eflag ~= eflag_
             error('miqps_cplex: EXITFLAG from price computation stage = %d', eflag_);

@@ -21,11 +21,12 @@ function [x, f, eflag, output, lambda] = solve(om, opt)
 %                   problem types are listed in parens next to each
 %               'DEFAULT' : automatic, depending on problem type, uses the
 %                       the first available of:
-%                   LP - Gurobi, CPLEX, MOSEK, linprog (if MATLAB), GLPK,
+%                   LP - Gurobi, CPLEX, MOSEK, linprog (if MATLAB), HIGHS, GLPK,
 %                           BPMPD, MIPS
-%                   QP - Gurobi, CPLEX, MOSEK, quadprog (if MATLAB), BPMPD,
-%                           MIPS
-%                   MILP - Gurobi, CPLEX, MOSEK, Opt Tbx (intlingprog), GLPK
+%                   QP - Gurobi, CPLEX, MOSEK, quadprog (if MATLAB), HIGHS,
+%                           BPMPD, MIPS
+%                   MILP - Gurobi, CPLEX, MOSEK, Opt Tbx (intlingprog), HIGHS,
+%                           GLPK
 %                   MIQP - Gurobi, CPLEX, MOSEK
 %                   NLP - MIPS
 %                   MINLP - Artelys Knitro (not yet implemented)
@@ -40,6 +41,7 @@ function [x, f, eflag, output, lambda] = solve(om, opt)
 %               'GLPK'    : (LP, MILP) GLPK
 %               'GS'      : (NLEQ) Gauss-Seidel
 %               'GUROBI'  : (LP, QP, MILP, MIQP) Gurobi
+%               'HIGHS'   : (LP, QP, MILP) HiGHS, https://highs.dev
 %               'IPOPT'   : (LP, QP, NLP) IPOPT, requires MEX interface to IPOPT solver
 %                           https://github.com/coin-or/Ipopt
 %               'KNITRO'  : (NLP, MINLP) Artelys Knitro, requires Artelys Knitro solver
@@ -68,6 +70,7 @@ function [x, f, eflag, output, lambda] = solve(om, opt)
 %           grb_opt     - options struct for GUROBI
 %           gs_opt      - options struct for Gauss-Seidel method,
 %                           nleqs_gauss_seidel()
+%           highs_opt   - options struct for HIGHS
 %           intlinprog_opt - options struct for INTLINPROG
 %           ipopt_opt   - options struct for IPOPT
 %           knitro_opt  - options struct for Artelys Knitro
@@ -158,7 +161,7 @@ switch pt
             leq_opt = struct();
             leq_thresh = 0;
         end
-        
+
         [A, b] = om.params_lin_constraint();
         if leq_thresh           %% check for failure
             %% set up to trap non-singular matrix warnings
@@ -189,12 +192,7 @@ switch pt
             x0 = om.params_var();
         end
 
-        if om.getN('lin')
-            [A, b] = om.params_lin_constraint();
-            fcn = @(x)nleq_fcn_(om, x, A, b);
-        else
-            fcn = @(x)om.eval_nln_constraint(x, 1);
-        end
+        fcn = @(x)nleq_fcn_(om, x);
         switch pt
             case 'NLEQ' %% NLEQ - nonlinear equation
                 [x, f, eflag, output, lambda] = nleqs_master(fcn, x0, opt);
@@ -212,7 +210,7 @@ switch pt
             if isfield(opt, 'x0')
                 x0 = opt.x0;
             end
-        
+
             %% run solver
             [A, l, u] = om.params_lin_constraint();
             f_fcn = @(x)nlp_costfcn(om, x);
@@ -224,11 +222,12 @@ switch pt
     otherwise
         %% get parameters
         [HH, CC, C0] = om.params_quad_cost();
+        [Q, B, ll, uu] = om.qcn.params(om.var);
         [A, l, u] = om.params_lin_constraint();
         mixed_integer = strcmp(pt(1:2), 'MI') && ...
             (~isfield(opt, 'relax_integer') || ~opt.relax_integer);
 
-        if mixed_integer    %% MILP, MIQP - mixed integer linear/quadratic program
+        if mixed_integer
             %% optimization vars, bounds, types
             [x0, xmin, xmax, vtype] = om.params_var();
             if isfield(opt, 'x0')
@@ -236,8 +235,14 @@ switch pt
             end
 
             %% run solver
-            [x, f, eflag, output, lambda] = ...
-                miqps_master(HH, CC, A, l, u, xmin, xmax, x0, vtype, opt);
+            if isempty(Q)          %% MILP, MIQP - mixed integer linear/quadratic program
+                [x, f, eflag, output, lambda] = ...
+                    miqps_master(HH, CC, A, l, u, xmin, xmax, x0, vtype, opt);
+            else                   %% MIQCQP - mixed integer quadratically constrained quadratic program
+                % To be implemented ...
+                % [x, f, eflag, output, lambda] = ...
+                %    miqcqps_master(HH, CC, Q, B, k, ll, uu, A, l, u, xmin, xmax, x0, vtype, opt);
+            end
         else                %% LP, QP - linear/quadratic program
             %% optimization vars, bounds, types
             [x0, xmin, xmax] = om.params_var();
@@ -246,8 +251,13 @@ switch pt
             end
 
             %% run solver
-            [x, f, eflag, output, lambda] = ...
-                qps_master(HH, CC, A, l, u, xmin, xmax, x0, opt);
+            if isempty(Q)          %% LP, QP - linear/quadratic program
+                [x, f, eflag, output, lambda] = ...
+                    qps_master(HH, CC, A, l, u, xmin, xmax, x0, opt);
+            else                   %% QCQP - quadratically constrained quadratic program
+                [x, f, eflag, output, lambda] = ...
+                    qcqps_master(HH, CC, Q, B, ll, uu, A, l, u, xmin, xmax, x0, opt);
+            end
         end
         f = f + C0;
 end
@@ -270,11 +280,27 @@ end
 om.soln.output.et = toc(t0);    %% stop timer
 
 %% system of nonlinear and linear equations
-function [f, J] = nleq_fcn_(om, x, A, b)
-if nargout > 1
-    [ff, JJ] = om.eval_nln_constraint(x, 1);
-    J = [JJ; A];
-else
-    ff = om.eval_nln_constraint(x, 1);
+function [f, J] = nleq_fcn_(om, x)
+flin = []; Jlin = [];
+fqcn = []; Jqcn = [];
+fnln = []; Jnln = [];
+if om.getN('lin')
+    [flin, ~, Jlin] = om.lin.eval(om.var, x);
 end
-f = [ff; A*x - b];
+if nargout > 1
+    if om.getN('qcn')
+        [fqcn, Jqcn] = om.qcn.eval(om.var, x);
+    end
+    if om.getN('nle')
+        [fnln, Jnln] = om.nle.eval(om.var, x);
+    end
+    J = [Jnln; Jqcn; Jlin];
+else
+    if om.getN('qcn')
+        fqcn = om.qcn.eval(om.var, x);
+    end
+    if om.getN('nle')
+        fnln = om.nle.eval(om.var, x);
+    end
+end
+f = [fnln; fqcn; flin];

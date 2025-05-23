@@ -225,7 +225,7 @@ classdef sm_lin_constraint < mp.set_manager_opt_model
             % :math:`\AA, \l, \u`, where the linear constraint is of the form
             % in :eq:`eq_lin_form`.
             %
-            % If a name or name and index list are provided then it simply
+            % If a name or name and index list are provided, then it simply
             % returns the parameters for the corresponding set. It can also
             % optionally return the variable sets used by this constraint set
             % (the size of :math:`\AA` will be consistent with this variable
@@ -427,7 +427,7 @@ classdef sm_lin_constraint < mp.set_manager_opt_model
             % ::
             %
             %   lin.set_params(var, name, params, vals)
-            %   lin.set_params(var, name, idx, params, vals)
+            %   lin.set_params(var, name, idx_list, params, vals)
             %
             % This method can be used to modify parameters for an existing
             % subset of linear constraints.
@@ -598,7 +598,7 @@ classdef sm_lin_constraint < mp.set_manager_opt_model
             %
             % For a given value of the variable vector :math:`\x`, this method
             % evaluates the linear constraints for an individual subset, if
-            % name or name and index list are provided, otherise, for the full
+            % name or name and index list are provided, otherwise, for the full
             % set of constraints.
             %
             % Returns :math:`\AA \x - \u`, and optionally :math:`\l - \AA \x`
@@ -620,7 +620,7 @@ classdef sm_lin_constraint < mp.set_manager_opt_model
             % See also add, params.
 
             if obj.N
-                %% collect cost parameters
+                %% collect constraint parameters
                 if nargin < 4                       %% full set
                     [A, l, u, vs] = obj.params(var);
                     tr = 0;
@@ -670,10 +670,10 @@ classdef sm_lin_constraint < mp.set_manager_opt_model
             %
             %   lin.display_soln(var, soln)
             %   lin.display_soln(var, soln, name)
-            %   lin.display_soln(var, soln, name, idx)
+            %   lin.display_soln(var, soln, name, idx_list)
             %   lin.display_soln(var, soln, fid)
             %   lin.display_soln(var, soln, fid, name)
-            %   lin.display_soln(var, soln, fid, name, idx)
+            %   lin.display_soln(var, soln, fid, name, idx_list)
             %
             % Displays the solution values for all linear constraints (default)
             % or an individual named or named/indexed subset.
@@ -698,9 +698,11 @@ classdef sm_lin_constraint < mp.set_manager_opt_model
             %   fid (fileID) : fileID of open file to write to (default is
             %       1 for standard output)
             %   name (char array) : *(optional)* name of individual subset
-            %   idx (cell array) : *(optional)* indices of individual subset
+            %   idx_list (cell array) : *(optional)* indices of individual
+            %       subset
 
-            [fid, name, idx, idxs, hdr1] = obj.display_soln_std_args(varargin{:});
+            [fid, name, idx, idxs, hdr1] = ...
+                obj.display_soln_std_args(varargin{:});
 
             if obj.N
                 [A, vl, vu] = obj.params(var);
@@ -770,9 +772,9 @@ classdef sm_lin_constraint < mp.set_manager_opt_model
             % ::
             %
             %   vals = lin.get_soln(var, soln, name)
-            %   vals = lin.get_soln(var, soln, name, idx)
+            %   vals = lin.get_soln(var, soln, name, idx_list)
             %   vals = lin.get_soln(var, soln, tags, name)
-            %   vals = lin.get_soln(var, soln, tags, name, idx)
+            %   vals = lin.get_soln(var, soln, tags, name, idx_list)
             %
             % Returns named/indexed linear constraint results for a solved
             % model, evaluated at the solution found.
@@ -806,7 +808,7 @@ classdef sm_lin_constraint < mp.set_manager_opt_model
             %           - ``'mu_l'`` - shadow price on :math:`\l - \AA \x`
             %           - ``'mu_u'`` - shadow price on :math:`\AA \x - \u`
             %   name (char array) : name of the subset
-            %   idx (cell array) : *(optional)* indices of the subset
+            %   idx_list (cell array) : *(optional)* indices of the subset
             %
             % Outputs:
             %     : Variable number of outputs corresponding to ``tags`` input.

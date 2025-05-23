@@ -2,7 +2,7 @@ function kk = varsets_idx(om, vs)
 % varsets_idx - Returns a vector of indices into X specified by VARSETS
 %
 % .. note::
-%    .. deprecated:: 4.3 Please use mp.sm_variable.varsets_idx instead, as
+%    .. deprecated:: 5.0 Please use mp.sm_variable.varsets_idx instead, as
 %       in ``om.var.varsets_idx(...)``.
 %
 % ::

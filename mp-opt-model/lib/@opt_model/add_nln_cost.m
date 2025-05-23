@@ -2,7 +2,7 @@ function om = add_nln_cost(om, name, idx, varargin)
 % add_nln_cost - Adds a set of general nonlinear costs to the model.
 %
 % .. note::
-%    .. deprecated:: 4.3 Please use mp.sm_nln_cost.add instead, as
+%    .. deprecated:: 5.0 Please use mp.sm_nln_cost.add instead, as
 %       in ``om.nlc.add(...)``.
 %
 % ::

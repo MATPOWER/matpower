@@ -6,7 +6,7 @@ function [x, f, eflag, output, lambda] = miqps_glpk(H, c, A, l, u, xmin, xmax, x
 %       MIQPS_GLPK(H, C, A, L, U, XMIN, XMAX, X0, VTYPE, OPT)
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = MIQPS_GLPK(PROBLEM)
 %   A wrapper function providing a standardized interface for using
-%   GLKP to solve the following MILP (mixed integer linear programming)
+%   GLPK to solve the following MILP (mixed integer linear programming)
 %   problem:
 %
 %       min C'*X
@@ -86,7 +86,7 @@ function [x, f, eflag, output, lambda] = miqps_glpk(H, c, A, l, u, xmin, xmax, x
 %       [x, f, exitflag, output, lambda] = miqps_glpk(...)
 %
 %
-%   Example: (problem from from https://v8doc.sas.com/sashtml/iml/chap8/sect12.htm)
+%   Example: (problem from https://v8doc.sas.com/sashtml/iml/chap8/sect12.htm)
 %       H = [   1003.1  4.3     6.3     5.9;
 %               4.3     2.2     2.1     3.9;
 %               6.3     2.1     3.5     4.8;
@@ -110,11 +110,6 @@ function [x, f, eflag, output, lambda] = miqps_glpk(H, c, A, l, u, xmin, xmax, x
 %   This file is part of MP-Opt-Model.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See https://github.com/MATPOWER/mp-opt-model for more info.
-
-%% check for Optimization Toolbox
-% if ~have_feature('quadprog')
-%     error('miqps_glpk: requires the MEX interface to GLPK');
-% end
 
 %%----- input argument handling  -----
 %% gather inputs
@@ -149,7 +144,7 @@ else                                %% individual args
 end
 
 %% define nx, set default values for missing optional inputs
-if isempty(H) || ~any(any(H))
+if ~nnz(H)
     if isempty(A) && isempty(xmin) && isempty(xmax)
         error('miqps_glpk: LP problem must include constraints or variable bounds');
     else
@@ -279,7 +274,7 @@ else
     lam.lower(lam.lower < 0) = 0;
     lam.upper(lam.upper < 0) = 0;
 
-    [mu_l, mu_u] = convert_lin_constraint_multipliers( ...
+    [mu_l, mu_u] = convert_constraint_multipliers( ...
         -extra.lambda(1:neq), -extra.lambda(neq+(1:niq)), ieq, igt, ilt);
 
     lambda = struct( ...
@@ -311,7 +306,7 @@ if mi && eflag == 1 && (~isfield(opt, 'skip_prices') || ~opt.skip_prices)
             % opt.glpk_opt.dual = 1;      %% primal simplex
             opt.glpk_opt.dual = 2;      %% dual simplex
         end
-    
+
         [x_, f_, eflag_, output_, lambda] = qps_glpk(H, c, A, l, u, xmin, xmax, x0, opt);
         if eflag ~= eflag_
             error('miqps_glpk: EXITFLAG from price computation stage = %d', eflag_);

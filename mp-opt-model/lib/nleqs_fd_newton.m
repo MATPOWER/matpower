@@ -182,7 +182,7 @@ f = fcn(x);
 
 %% check tolerance
 for j = 1:nj
-    normf(j) = norm(f(i1(j):iN(j)), inf);
+    normf(j) = norm(f(i1(j):iN(j)), Inf);
 end
 if verbose > 1
     fprintf('\n iteration ');
@@ -251,7 +251,7 @@ while (~eflag && i < max_it)
 
         %% check for convergence
         for jj = 1:nj
-            normf(jj) = norm(f(i1(jj):iN(jj)), inf);
+            normf(jj) = norm(f(i1(jj):iN(jj)), Inf);
         end
         if verbose > 1
             n1 = length(labels{j});

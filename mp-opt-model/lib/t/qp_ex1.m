@@ -4,18 +4,18 @@ function qp_ex1
 % Example of solving the following QP problem, first using opt_model and
 % opt_model.solve, then directly using qps_master.
 %
-% .. math:: \min_{\x} \frac{1}{2} \trans{\x} \param{\rmat{Q}} \x
+% .. math:: \min_{\x} \frac{1}{2} \trans{\x} \QQ \x
 %
 % subject to
 %
-% .. math:: \param{\rvec{l}} \le \param{\rmat{A}} \x \le \param{\rvec{u}}
+% .. math:: \l \le \AA \x \le \u
 % .. math:: \param{\x}_\mathrm{min} \le \x \le \param{\x}_\mathrm{max}
 %
 % where
 %
 % .. math::
 %
-%   \param{\rmat{Q}} = \left[\begin{array}{cccc}
+%   \QQ = \left[\begin{array}{cccc}
 %            8 &  1 & -3 & -4 \\
 %            1 &  4 & -2 & -1 \\
 %           -3 & -2 &  5 &  4 \\
@@ -24,12 +24,12 @@ function qp_ex1
 %
 % .. math::
 %
-%   \param{\rvec{l}} = \left[\begin{array}{c} 4 \\ -\infty \end{array}\right],
-%   \param{\rmat{A}} = \left[\begin{array}{cccc}
+%   \l = \left[\begin{array}{c} 4 \\ -\infty \end{array}\right],
+%   \AA = \left[\begin{array}{cccc}
 %            6 & 1 & 5 & -4 \\
 %            4 & 9 & 0 &  0
 %       \end{array}\right],
-%   \param{\rvec{u}} = \left[\begin{array}{c} 4 \\ 2 \end{array}\right]
+%   \u = \left[\begin{array}{c} 4 \\ 2 \end{array}\right]
 %
 % .. math::
 %

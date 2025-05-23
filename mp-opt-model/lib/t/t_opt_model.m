@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 699;
+num_tests = 802;
 
 t_begin(num_tests, quiet);
 
@@ -415,6 +415,58 @@ lNS = lNS + 1; lN = lN + 1;
 t_ok(om.getN('lin') == lN, sprintf('%s : lin.N  = %d', t, lN));
 t_ok(om.get('lin', 'NS') == lNS, sprintf('%s : lin.NS = %d', t, lNS));
 
+%%-----  om.qcn.add (quadratic constraints) -----
+t = 'om.qcn.add';
+qN = 0;
+qNS = 0;
+t_ok(om.getN('qcn') == qN, sprintf('%s : qcn.N  = %d', t, qN));
+t_ok(om.get('qcn', 'NS') == qNS, sprintf('%s : qcn.NS = %d', t, qNS));
+
+t = 'om.qcn.add(om.var,''Pmis'', Q, B, lq, uq, {''Va'', ''Pg''})';
+Q1 = repmat({sparse([1:6 1:6], [1:3 1:3 4:6 4:6], [ones(1,6) -ones(1,6)], 7, 7)}, 3, 1);
+B1 = sparse([1:3 1:3 1:3]', [1:3 4:6 7 7 7]', [1 1 1 -1 -1 -1 2 3 4]', 3, 7);
+lq1 = -(1:3)'; uq1 = (1:3)';
+om.qcn.add(om.var, 'Pmis', Q1, B1, lq1, uq1, {'Va', 'Pg'});
+qNS = qNS + 1; qN = qN + 3;
+t_ok(om.getN('qcn') == qN, sprintf('%s : qcn.N  = %d', t, qN));
+t_ok(om.get('qcn', 'NS') == qNS, sprintf('%s : qcn.NS = %d', t, qNS));
+
+t = 'om.qcn.add(om.var,''Qmis'', Q, B, lq, uq)';
+Q2 = repmat({sparse([1:6 1:6], [1:3 1:3 4:6 4:6], [ones(1,6) -ones(1,6)], vN, vN)}, 3, 1);
+B2 = sparse([1:3 1:3 1:3]', [1:3 4:6 7 7 7]', [1 1 1 -1 -1 -1 2 3 4]', 3, vN);
+om.qcn.add(om.var, 'Qmis', Q2, B2, lq1, uq1);
+qNS = qNS + 1; qN = qN + 3;
+t_ok(om.getN('qcn') == qN, sprintf('%s : qcn.N  = %d', t, qN));
+t_ok(om.get('qcn', 'NS') == qNS, sprintf('%s : qcn.NS = %d', t, qNS));
+
+t = 'om.init_indexed_name(''qcn'', ''myqcn'', {2, 2})';
+om.init_indexed_name('qcn', 'myqcn', {2,2});
+t_ok(om.getN('qcn') == qN, sprintf('%s : qcn.N  = %d', t, qN));
+t_ok(om.get('qcn', 'NS') == qNS, sprintf('%s : qcn.NS = %d', t, qNS));
+
+for i = 1:2
+    for j = 1:2
+        t = sprintf('om.qcn.add(om.var, ''myqcn'', {%d,%d}, B, lq, uq, vs)', i,j);
+        Q3 = repmat({sparse([1:(i+j) (i+j)+1], [1:(i+j) (i+j)+1], [ones(1,i+j) -1] , 3+2+(i==2 && j==1), 3+2+(i==2 && j==1))}, i+j, 1);
+        B3 = sparse([1:(i+j) 1:(i+j)]', [1:(i+j) 5*ones(1,i+j)]', ...
+            [ones(i+j,1);-ones(i+j,1)], i+j, 3+2+(i==2 && j==1));
+        lq3 = -1; uq3 = [];
+        vs = struct('name', {'Pg', 'x'}, 'idx', {{}, {i,j}});
+        om.qcn.add(om.var, 'myqcn', {i,j}, Q3, B3, lq3, uq3, vs);
+        qNS = qNS + 1; qN = qN + i+j;
+        t_ok(om.getN('qcn') == qN, sprintf('%s : qcn.N  = %d', t, qN));
+        t_ok(om.get('qcn', 'NS') == qNS, sprintf('%s : qcn.NS = %d', t, qNS));
+    end
+end
+
+t = 'om.qcn.add(om.var, ''onerow'', Q, B, lq, uq)';
+Q4 = {sparse([1 2 3], [1 2 3], [-3 -2 -1], vN, vN)};
+B4 = sparse([1 1 1], [1:3], [-1 -2 -3], 1, vN);
+om.qcn.add(om.var, 'onerow', Q4, B4, 0, Inf);
+qNS = qNS + 1; qN = qN + 1;
+t_ok(om.getN('qcn') == qN, sprintf('%s : qcn.N  = %d', t, qN));
+t_ok(om.get('qcn', 'NS') == qNS, sprintf('%s : qcn.NS = %d', t, qNS));
+
 %%-----  add_nln_constraint (equality)  -----
 t = 'add_nln_constraint (equality)';
 neN = 0;
@@ -619,6 +671,164 @@ for i = 1:2
         t_ok(all(isinf(Ax_u)) & all(Ax_u < 0), [t ' : Ax_u']);
         t_is(l_Ax, l3-A3*xx, 14, [t ' : l_Ax']);
         t_is(A, A3, 14, [t ' : A']);
+    end
+end
+
+%%-----  om.qcn.params (quadratic constraints)  -----
+t = 'om.qcn.params(om.var, ''Pmis'')';
+[Qblk, B, lq, uq, vs] = om.qcn.params(om.var, 'Pmis', [], 1);
+t_is(Qblk, blkdiag(Q1{:}), 14, [t, ' : Qblk']);
+t_is(B, B1, 14, [t, ' : B']);
+t_is(lq, lq1, 14, [t, ' : lq']);
+t_is(uq, uq1, 14, [t, ' : uq']);
+vs1 = struct('name', {'Va', 'Pg'}, 'idx', {{}, {}});
+t_ok(isequal(vs, vs1), [t, ' : vs']);
+
+t = 'om.qcn.params(om.var, ''Qmis'')';
+[Qblk, B, lq, uq, vs] = om.qcn.params(om.var, 'Qmis', [], 1);
+t_is(Qblk, blkdiag(Q2{:}), 14, [t, ' : Qblk']);
+t_is(B, B2, 14, [t, ' : B']);
+t_is(lq, lq1, 14, [t, ' : lq']);
+t_is(uq, uq1, 14, [t, ' : uq']);
+t_ok(isequal(vs, {}), [t, ' : vs']);
+
+for i = 1:2
+    for j = 1:2
+        t = sprintf('om.qcn.params(om.var, ''myqcn'', {%d,%d})', i,j);
+        Q3 = repmat({sparse([1:(i+j) (i+j)+1], [1:(i+j) (i+j)+1], [ones(1,i+j) -1], 3+2+(i==2 && j==1), 3+2+(i==2 && j==1))}, i+j, 1);
+        B3 = sparse([1:(i+j) 1:(i+j)]', [1:(i+j) 5*ones(1,i+j)]', ...
+            [ones(i+j,1);-ones(i+j,1)], i+j, 3+2+(i==2 && j==1));
+        lq3 = -ones(i+j, 1);
+        vvs = struct('name', {'Pg', 'x'}, 'idx', {{}, {i,j}});
+        [Qblk, B, lq, uq, vs] = om.qcn.params(om.var, 'myqcn', {i,j}, 1);
+        t_is(Qblk, blkdiag(Q3{:}), 14, [t, ' : Qblk']);
+        t_is(B, B3, 14, [t, ' : B']);
+        t_is(lq, lq3, 14, [t, ' : lq']);
+        t_ok(all(isinf(uq)) & all(uq > 0), [t, ' : uq']);
+        t_ok(isequal(vs, vvs), [t, ' : vs']);
+    end
+end
+
+t = 'om.qcn.params(om.var, ''onerow'')';
+[Qblk, B, lq, uq, vs] = om.qcn.params(om.var, 'onerow', [], 1);
+t_is(Qblk, blkdiag(Q4{:}), 14, [t, ' : Qblk']);
+t_is(B, B4, 14, [t, ' : B']);
+t_is(lq, 0, 14, [t, ' : lq']);
+t_ok(all(isinf(uq)) & all(uq > 0), [t, ' : uq']);
+t_ok(isequal(vs, {}), [t, ' : vs']);
+
+t = 'om.qcn.params(om.var)';
+[Q, B, lq, uq] = om.qcn.params(om.var);
+t_ok(iscell(Q), [t ' : iscell(Q)']);
+t_ok(issparse(Q{1}), [t ' : issparse(Q{i})']);
+t_is(size(Q), [qN 1], 14, [t ' : size(Q)']);
+t_is(size(Q{1}), [vN vN], 14, [t ' : size(Q{i})']);
+t_is(size(B), [qN, vN], 14, [t ' : size(B)']);
+t_is(length(lq), qN, 14, [t ' : length(lq)']);
+t_is(length(uq), qN, 14, [t ' : length(uq)']);
+vv = om.get_idx('var'); qqcn = om.get_idx('qcn');    %% To be moved to get_idx tests (see line  )
+Q2 = {sparse([1:6 1:6], [1:3 1:3 4:6 4:6], [ones(1,6) -ones(1,6)], vN, vN)};
+Q2_Qmis = repmat(Q2, qqcn.N.Qmis, 1);
+Q2_Qmis_blk = blkdiag(Q2_Qmis{:});
+Q_Qmis = Q(qqcn.i1.Qmis:qqcn.iN.Qmis);
+Q_Qmis_blk = blkdiag(Q_Qmis{:});
+t_is(full(Q_Qmis_blk), full(Q2_Qmis_blk), 14, [t ' : Q{<Qmis>(:,:)}'])
+Q3_myqcn21 = sparse((1:6), (1:6), [1 1 1 -1 0 0]);
+Q3_myqcn21_Pg = repmat({Q3_myqcn21(1:vv.N.Pg, 1:vv.N.Pg)}, qqcn.N.myqcn(2,1), 1);
+Q3_myqcn21_Pg_blk = blkdiag(Q3_myqcn21_Pg{:});
+Q_myqcn21 = Q(qqcn.i1.myqcn(2,1):qqcn.iN.myqcn(2,1));
+Q_myqnc21_Pg = cellfun(@(x)(x(vv.i1.Pg:vv.iN.Pg, vv.i1.Pg:vv.iN.Pg)), Q_myqcn21, 'UniformOutput', false);
+Q_myqnc21_Pg_blk = blkdiag(Q_myqnc21_Pg{:});
+t_is(full(Q_myqnc21_Pg_blk), full(Q3_myqcn21_Pg_blk), 14, [t ' : Q{<myqcn(2,1)>(Pg,Pg)}'])
+Q3_myqcn21_x21 = repmat({Q3_myqcn21(vv.N.Pg+1:vv.N.Pg+vv.N.x(2,1), vv.N.Pg+1:vv.N.Pg+vv.N.x(2,1))}, qqcn.N.myqcn(2,1), 1);
+Q3_myqcn21_x21_blk = blkdiag(Q3_myqcn21_x21{:});
+Q_myqnc21_x21 = cellfun(@(x)(x(vv.i1.x(2,1):vv.iN.x(2,1), vv.i1.x(2,1):vv.iN.x(2,1))), Q_myqcn21, 'UniformOutput', false);
+Q_myqnc21_x21_blk = blkdiag(Q_myqnc21_x21{:});
+t_is(full(Q_myqnc21_x21_blk), full(Q3_myqcn21_x21_blk), 14, [t ' : Q{<myqcn(2,1)>(x(2,1),x(2,1))}'])
+B2 = sparse([1:3 1:3 1:3]', [1:3 4:6 7 7 7]', [1 1 1 -1 -1 -1 2 3 4]', 3, vN);
+t_is(full(B(qqcn.i1.Qmis:qqcn.iN.Qmis, :)), full(B2), 14, [t ' : B(<Qmis>,:)']);
+t_is(full(B(qqcn.i1.myqcn(2,1):qqcn.iN.myqcn(2,1), vv.i1.Pg:vv.iN.Pg)), Q3_myqcn21(1:vv.N.Pg,1:vv.N.Pg), 14, [t ' : B(<myqcn(2,1)>,<Pg>)']);
+t_is(full(B(qqcn.i1.myqcn(2,1):qqcn.iN.myqcn(2,1), vv.i1.x(2,1):vv.iN.x(2,1))), [0 -1 0;0 -1 0;0 -1 0], 14, [t ' : B(<myqcn(2,1)>,<x(2,1)>)']);
+
+%%-----  om.qcn.eval (quadratic constraints)  -----
+t = '[g_u, J, g, l_g] = om.qcn.eval(om.var, x)';
+x = (1:om.var.N)';
+Nq = om.qcn.N;
+xx = mat2cell(repmat(sparse(x'), Nq, 1), ones(Nq,1));
+blkx = blkdiag(xx{:});
+Qblk = blkdiag(Q{:});
+[g_u, J, g, l_g] = om.qcn.eval(om.var, x);
+Jqcn = zeros(Nq, vN);
+for q = 1:Nq
+    Jqcn(q,:) = x'*Q{q};
+end
+t_is(J, Jqcn+B, 14, [t ' : J']);
+t_is(g_u, 0.5*diag(blkx*Qblk*blkx')+B*x-uq, 14, [t ' : g_u']);
+t_is(g, 0.5*diag(blkx*Qblk*blkx')+B*x, 14, [t ' : g']);
+t_is(l_g, lq-(0.5*diag(blkx*Qblk*blkx')+B*x), 14, [t ' : l_g']);
+
+t = 'g_u = om.qcn.eval(om.var, x, ''Pmis'')';
+vs = om.varsets_cell2struct({'Va', 'Pg'});
+X = om.varsets_x(x, vs, 'vector');
+Nq = om.qcn.idx.N.Pmis;
+xx = mat2cell(repmat(sparse(X'), Nq, 1), ones(Nq,1));
+g_u = om.qcn.eval(om.var, x, 'Pmis');
+blkx = blkdiag(xx{:});
+Qblk = blkdiag(Q1{:});
+t_is(g_u, 0.5*diag(blkx*Qblk*blkx')+B1*X-uq1, 14, [t ' : g_u']);
+
+t = '[g_u, J] = om.qcn.eval(om.var, x, ''Pmis'')';
+[g_u, J] = om.qcn.eval(om.var, x, 'Pmis');
+t_is(g_u, 0.5*diag(blkx*Qblk*blkx')+B1*X-uq1, 14, [t ' : g_u']);
+Jqcn = zeros(Nq, length(X));
+for q = 1:Nq
+    Jqcn(q,:) = X'*Q1{q};
+end
+t_is(J, Jqcn+B1, 14, [t ' : J']);
+
+t = '[g_u, J, g] = om.qcn.eval(om.var, x, ''Pmis'')';
+[g_u, J, g] = om.qcn.eval(om.var, x, 'Pmis');
+t_is(g_u, 0.5*diag(blkx*Qblk*blkx')+B1*X-uq1, 14, [t ' : g_u']);
+Jqcn = zeros(Nq, length(X));
+for q = 1:Nq
+    Jqcn(q,:) = X'*Q1{q};
+end
+t_is(J, Jqcn+B1, 14, [t ' : J']);
+t_is(g, 0.5*diag(blkx*Qblk*blkx')+B1*X, 14, [t ' : g']);
+
+t = '[g_u, J, g, l_g] = om.qcn.eval(om.var, x, ''Pmis'')';
+[g_u, J, g, l_g] = om.qcn.eval(om.var, x, 'Pmis');
+t_is(g_u, 0.5*diag(blkx*Qblk*blkx')+B1*X-uq1, 14, [t ' : g_u']);
+Jqcn = zeros(Nq, length(X));
+for q = 1:Nq
+    Jqcn(q,:) = X'*Q1{q};
+end
+t_is(J, Jqcn+B1, 14, [t ' : J']);
+t_is(g, 0.5*diag(blkx*Qblk*blkx')+B1*X, 14, [t ' : g']);
+t_is(l_g, lq1-(0.5*diag(blkx*Qblk*blkx')+B1*X), 14, [t ' : l_g']);
+
+for i = 1:2
+    for j = 1:2
+        t = sprintf('om.qcn.eval(om.var, ''myqcn'', {%d,%d})', i,j);
+        Q3 = repmat({sparse([1:(i+j) (i+j)+1], [1:(i+j) (i+j)+1], [ones(1,i+j) -1] , 3+2+(i==2 && j==1), 3+2+(i==2 && j==1))}, i+j, 1);
+        B3 = sparse([1:(i+j) 1:(i+j)]', [1:(i+j) 5*ones(1,i+j)]', ...
+            [ones(i+j,1);-ones(i+j,1)], i+j, 3+2+(i==2 && j==1));
+        lq3 = -1;
+        vs = struct('name', {'Pg', 'x'}, 'idx', {{}, {i,j}});
+        X = om.varsets_x(x, vs, 'vector');
+        Nq = om.qcn.idx.N.myqcn(i,j);
+        xx = mat2cell(repmat(sparse(X'), Nq, 1), ones(Nq,1));
+        blkx = blkdiag(xx{:});
+        Qblk = blkdiag(Q3{:});
+        [g_u, J, g, l_g] = om.qcn.eval(om.var, x, 'myqcn', {i,j});
+        t_ok(all(isinf(g_u)) & all(g_u < 0), [t ' : g_u']);        
+        Jqcn = zeros(Nq, length(X));
+        for q = 1:Nq
+            Jqcn(q,:) = X'*Q3{q};
+        end
+        t_is(J, Jqcn+B3, 14, [t ' : J']);
+        t_is(g, 0.5*diag(blkx*Qblk*blkx')+B3*X, 14, [t ' : g']);
+        t_is(l_g, lq3-(0.5*diag(blkx*Qblk*blkx')+B3*X), 14, [t ' : l_g']);
     end
 end
 
@@ -1381,6 +1591,82 @@ if have_feature('isequaln')
     s.lin.N = s.lin.N + dN;
     om.set_params('lin', 'mylin', {2,2}, 'all', val);
     t_ok(isequaln(struct(om), s), [t 'mylin{2,2}, all']);
+    
+    t = 'om.qcn.set_params(om.var,''qcn'', name, ...) : ';
+    [m, n] = size(s.qcn.data.Q.Qmis);
+    [mi, ni] = size(s.qcn.data.Q.Qmis{1});
+    val = repmat(s.qcn.data.Q.Qmis(1), m+1, n);
+    try
+        om.qcn.set_params(om.var, 'Qmis', 'Q', val);
+    catch me
+        TorF = strfind(me.message, 'dimension change for ''Qmis'' not allowed except for ''all''');
+        t_ok(TorF, [t 'Qmis, Q (wrong cell size)']);
+        if ~TorF
+            me.message
+        end
+    end
+
+    val = repmat({sparse(mi, ni)}, m, n);
+    s.qcn.data.Q.Qmis = val;
+    s.qcn.cache = [];   % remove cache, as set_params() does
+    om.qcn.set_params(om.var, 'Qmis', 'Q', val);
+    t_ok(isequaln(struct(om), s), [t 'Qmis, Q']);
+
+    val = {'Pg', 'Va'};
+    s.qcn.data.vs.Pmis = om.varsets_cell2struct(val);
+    om.qcn.set_params(om.var, 'Pmis', 'vs', val);
+    t_ok(isequaln(struct(om), s), [t 'Pmis, vs']);
+
+    [Q, B, lq, uq, vs] = om.qcn.params(om.var, 'Pmis');
+    val = {Q(2:3), B(2:3,:), lq(2:3), uq(2:3), vs};
+    s.qcn.data.Q.Pmis = val{1};
+    s.qcn.data.B.Pmis = val{2};
+    s.qcn.data.l.Pmis = val{3};
+    s.qcn.data.u.Pmis = val{4};
+    dN = -1;
+    s.qcn.idx.N.Pmis    = s.qcn.idx.N.Pmis + dN;
+    s.qcn.idx.iN.Pmis   = s.qcn.idx.iN.Pmis + dN;
+    s.qcn.idx.iN.Qmis   = s.qcn.idx.iN.Qmis + dN;
+    s.qcn.idx.iN.myqcn  = s.qcn.idx.iN.myqcn + dN;
+    s.qcn.idx.iN.onerow = s.qcn.idx.iN.onerow + dN;
+    s.qcn.idx.i1.Qmis   = s.qcn.idx.i1.Qmis + dN;
+    s.qcn.idx.i1.myqcn  = s.qcn.idx.i1.myqcn + dN;
+    s.qcn.idx.i1.onerow = s.qcn.idx.i1.onerow + dN;
+    s.qcn.N = s.qcn.N + dN;
+    om.qcn.set_params(om.var, 'Pmis', 'all', val);
+    t_ok(isequaln(struct(om), s), [t 'Pmis, all']);
+
+    t = 'om.qcn.set_params(om.var, name, idx, ...) : ';
+    val = {-Inf(3,1), ones(3,1)};
+    s.qcn.data.u.myqcn{2,1} = val{1};
+    s.qcn.data.l.myqcn{2,1} = val{2};
+    om.qcn.set_params(om.var, 'myqcn', {2,1}, {'u', 'l'}, val);
+    t_ok(isequaln(struct(om), s), [t 'myqcn{2,1}, {uq,lq}']);
+
+    [Q, B, lq, uq, vs] = om.qcn.params(om.var, 'myqcn', {2,2});
+    val = {Q(2:3), B(2:3,:), lq(2:3), uq(2:3)};
+    try
+        om.qcn.set_params(om.var, 'myqcn', {2,2}, 'all', val);
+    catch me
+        TorF = strfind(me.message, 'for ''myqcn(2,2)'' number of columns of ''Q'' (5) must be consistent with ''vs'' (170)');
+        t_ok(TorF, [t 'Qmis, Q (wrong cell size)']);
+        if ~TorF
+            me.message
+        end
+    end
+    val = {Q(2:3), B(2:3,:), lq(2:3), uq(2:3), vs};
+    s.qcn.data.Q.myqc{2,2} = val{1};
+    s.qcn.data.B.myqcn{2,2} = val{2};
+    s.qcn.data.l.myqcn{2,2} = val{3};
+    s.qcn.data.u.myqcn{2,2} = val{4};
+    dN = -2;
+    s.qcn.idx.N.myqcn(2,2)  = s.qcn.idx.N.myqcn(2,2) + dN;
+    s.qcn.idx.iN.myqcn(2,2)  = s.qcn.idx.iN.myqcn(2,2) + dN;
+    s.qcn.idx.iN.onerow = s.qcn.idx.iN.onerow + dN;
+    s.qcn.idx.i1.onerow = s.qcn.idx.i1.onerow + dN;
+    s.qcn.N = s.qcn.N + dN;
+    om.qcn.set_params(om.var, 'myqcn', {2,2}, 'all', val);
+    t_ok(isequaln(struct(om), s), [t 'myqcn{2,2}, all']);
 
     t = 'om.set_params(''nle'', name, ...) : ';
     [N, fcn, hess, vs, include] = om.params_nln_constraint(1, 'Pmise');
@@ -1830,7 +2116,7 @@ else
     rr = r + kbar;                  %% apply non-dead zone shift
     M = sparse(iND, iND, mm(iND), nw, nw);  %% dead zone or scale
     diagrr = sparse(1:nw, 1:nw, rr, nw, nw);
-    
+
     %% linear rows multiplied by rr(i), quadratic rows by rr(i)^2
     w = M * (LL + QQ * diagrr) * rr;
 

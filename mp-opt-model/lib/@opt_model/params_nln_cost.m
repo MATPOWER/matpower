@@ -2,7 +2,7 @@ function varargout = params_nln_cost(om, varargin)
 % params_nln_cost - Returns cost parameters for general nonlinear costs.
 %
 % .. note::
-%    .. deprecated:: 4.3 Please use mp.sm_nln_cost.params instead, as
+%    .. deprecated:: 5.0 Please use mp.sm_nln_cost.params instead, as
 %       in ``om.nlc.params(...)``.
 %
 % ::

@@ -80,7 +80,7 @@ function [x, f, eflag, output, lambda] = qps_bpmpd(H, c, A, l, u, xmin, xmax, x0
 %       [x, f, exitflag, output] = qps_bpmpd(...)
 %       [x, f, exitflag, output, lambda] = qps_bpmpd(...)
 %
-%   Example: (problem from from https://v8doc.sas.com/sashtml/iml/chap8/sect12.htm)
+%   Example: (problem from https://v8doc.sas.com/sashtml/iml/chap8/sect12.htm)
 %       H = [   1003.1  4.3     6.3     5.9;
 %               4.3     2.2     2.1     3.9;
 %               6.3     2.1     3.5     4.8;
@@ -141,7 +141,7 @@ else                                %% individual args
 end
 
 %% define nx, set default values for missing optional inputs
-if isempty(H) || ~any(any(H))
+if ~nnz(H)
     if isempty(A) && isempty(xmin) && isempty(xmax)
         error('qps_bpmpd: LP problem must include constraints or variable bounds');
     else
@@ -399,19 +399,19 @@ if eflag > 0
         end
         if any( ub_violation > err_tol )
             err_cnt = err_cnt + 1;
-            errs{err_cnt} = ... 
+            errs{err_cnt} = ...
                 sprintf('variable upper bound violated by %g', ...
                     max(ub_violation));
         end
         if any( eq_violation > err_tol )
             err_cnt = err_cnt + 1;
-            errs{err_cnt} = ... 
+            errs{err_cnt} = ...
                 sprintf('equality constraint violated by %g', ...
                     max(eq_violation));
         end
         if any( ineq_violation > err_tol )
             err_cnt = err_cnt + 1;
-            errs{err_cnt} = ... 
+            errs{err_cnt} = ...
                 sprintf('inequality constraint violated by %g', ...
                     max(ineq_violation));
         end

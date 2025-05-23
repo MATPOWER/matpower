@@ -2,6 +2,7 @@ function qpopt = mpopt2qpopt(mpopt, model, alg)
 % mpopt2qpopt - Create/modify qps_master/miqps_master options struct from ``mpopt``.
 % ::
 %
+%   QPOPT = MPOPT2QPOPT(MPOPT)
 %   QPOPT = MPOPT2QPOPT(MPOPT, MODEL)
 %   QPOPT = MPOPT2QPOPT(MPOPT, MODEL, ALG)
 %
@@ -14,14 +15,15 @@ function qpopt = mpopt2qpopt(mpopt, model, alg)
 %               for selection of solver in case ALG is 'DEFAULT' (solver
 %               precedence for each model type list in parentheses):
 %           'LP'   - linear program with all continuous variables
-%                   (GUROBI, CPLEX, MOSEK, OT (if MATLAB), GLPK, BPMPD, MIPS)
+%                    (GUROBI, CPLEX, MOSEK, OT (if MATLAB), HIGHS, GLPK, BPMPD,
+%                    MIPS)
 %           'QP'   - quadratic program with all continuous variables
-%                   (GUROBI, CPLEX, MOSEK, OT (if large-scale alg available),
-%                    BPMPD, MIPS)
+%                    (GUROBI, CPLEX, MOSEK, OT (if large-scale alg available),
+%                    HIGHS, BPMPD, MIPS)
 %           'MILP' - LP with mixed integer/continuous variables
-%                   (GUROBI, CPLEX, MOSEK, OT, GLPK)
+%                    (GUROBI, CPLEX, MOSEK, OT, HIGHS, GLPK)
 %           'MIQP' - (default) QP with mixed integer/continuous variables
-%                   (GUROBI, CPLEX, MOSEK)
+%                    (GUROBI, CPLEX, MOSEK)
 %       ALG ('opf.dc') : (optional) 'opf.dc', 'most', or any valid value of
 %               OPT.alg for QPS_MASTER or MIQPS_MASTER. The first two
 %               options indicate that it should be taken from
@@ -34,7 +36,7 @@ function qpopt = mpopt2qpopt(mpopt, model, alg)
 % See also qps_master, miqps_master, mpoption.
 
 %   MP-Opt-Model
-%   Copyright (c) 2015-2024, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2015-2025, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.
@@ -82,6 +84,8 @@ switch alg
                 have_feature('intlinprog') && strcmp(model, 'MILP')
             alg = 'OT';         %% if not, then newer Optimization Tbx, if
                                 %% available and applicable
+        elseif have_feature('highs') && ~strcmp(model, 'MIQP')
+            alg = 'HIGHS';      %% if not, then HIGHS, if available
         elseif have_feature('glpk') && model(end-1) == 'L'  %% LP or MILP
             alg = 'GLPK';       %% if not, then GLPK, if available & applicable
         elseif have_feature('linprog') && strcmp(model, 'LP') && have_feature('matlab')
@@ -122,7 +126,9 @@ switch alg
         qpopt.glpk_opt = glpk_options([], mpopt);
     case {'GUROBI', 700}
         qpopt.grb_opt = gurobi_options([], mpopt);
-    case {'KNITRO'}
+    case 'HIGHS'
+        qpopt.highs_opt = highs_options([], mpopt);
+    case 'KNITRO'
         qpopt.knitro_opt = artelys_knitro_options([], mpopt);
     case {'MOSEK', 600}
         qpopt.mosek_opt = mosek_options([], mpopt);

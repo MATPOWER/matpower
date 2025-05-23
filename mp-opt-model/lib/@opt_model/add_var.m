@@ -2,7 +2,7 @@ function om = add_var(om, name, idx, varargin)
 % add_var - Adds a set of variables to the model.
 %
 % .. note::
-%    .. deprecated:: 4.3 Please use mp.sm_variable.add instead, as
+%    .. deprecated:: 5.0 Please use mp.sm_variable.add instead, as
 %       in ``om.var.add(...)``.
 %
 % ::
@@ -18,7 +18,7 @@ function om = add_var(om, name, idx, varargin)
 %   OM.ADD_VAR(NAME, IDX_LIST, N, V0, VL)
 %   OM.ADD_VAR(NAME, IDX_LIST, N, V0)
 %   OM.ADD_VAR(NAME, IDX_LIST, N)
-%   
+%
 %   Adds a set of variables to the model, where N is the number of
 %   variables in the set, V0 is the initial value of those variables,
 %   VL and VU are the lower and upper bounds on the variables and VT

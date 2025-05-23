@@ -1,5 +1,5 @@
 function [h, g, dh, dg] = nlp_consfcn(om, x, dhs, dgs)
-% nlp_consfcn - Evaluates nonlinear constraints and their Jacobian.
+% nlp_consfcn - Evaluates nonlinear constraints and their Jacobian for NLP solver.
 % ::
 %
 %   [H, G] = NLP_CONSFCN(OM, X)

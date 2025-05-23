@@ -230,7 +230,7 @@ if plt.level && (k >= 0 || isempty(s.warmstart))
         if plot_idx_default
             cx.cbs.default.plot_idx_default = plot_idx_default;
         end
-        
+
         %% initialize continuation curve plot (dummy correction pt)
         axis([xmin xmax ymin ymax]);
         plot(xx(:,1), yy(:,1), '-', 'Color', [0.25 0.25 1]);

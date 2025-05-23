@@ -12,7 +12,6 @@
 
    The new web-based version of the |MPOM| User's Manual is not yet available. Please, continue to use the PDF version of the |MPOMman| for now, along with the new reference documentation below.
 
-
 Reference
 =========
 

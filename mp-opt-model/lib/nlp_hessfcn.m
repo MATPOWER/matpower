@@ -1,5 +1,5 @@
 function Lxx = nlp_hessfcn(om, x, lambda, cost_mult, Hs)
-% nlp_hessfcn - Evaluates Hessian of Lagrangian.
+% nlp_hessfcn - Evaluates Hessian of Lagrangian for NLP solver.
 % ::
 %
 %   LXX = NLP_HESSFCN(OM, X, LAMBDA, COST_MULT)

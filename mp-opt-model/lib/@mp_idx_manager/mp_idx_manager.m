@@ -225,21 +225,21 @@ classdef mp_idx_manager < handle
         end
 
         obj = add_named_set(obj, set_type, name, idx, N, varargin)
-        
+
         label = describe_idx(obj, set_type, idxs)
-        
+
         varargout = get_idx(obj, varargin)
-        
+
         rv = get_userdata(obj, name)
-        
+
         val = get(obj, varargin)
-        
+
         N = getN(obj, set_type, name, idx)
-        
+
         obj = init_indexed_name(obj, set_type, name, dim_list)
-        
+
         s = set_type_idx_map(obj, set_type, idxs, group_by_name)
-        
+
         str = valid_named_set_type(obj, set_type)
     end     %% methods
 end         %% classdef

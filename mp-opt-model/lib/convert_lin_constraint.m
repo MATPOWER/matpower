@@ -1,5 +1,5 @@
 function [ieq, igt, ilt, Ae, be, Ai, bi] = convert_lin_constraint(A, l, u)
-% convert_lin_constraint - Convert from bounded to equality/inequality pair.
+% convert_lin_constraint - Convert linear constraints from bounded to equality/inequality pair.
 % ::
 %
 %   [ieq, igt, ilt, Ae, be, Ai, bi] = convert_lin_constraint(A, l, u)
@@ -29,9 +29,9 @@ function [ieq, igt, ilt, Ae, be, Ai, bi] = convert_lin_constraint(A, l, u)
 %   b = [be; bi]
 %
 % Inputs:
-%   A (double) : m x n, (possibly sparse) constraint matrix
-%   l (double): m x 1, constraint lower bound vector
-%   u (double): m x 1, constraint upper bound vector
+%   A (double) : :math:`m \times n`, (possibly sparse) constraint matrix
+%   l (double) : :math:`m \times 1`, constraint lower bound vector
+%   u (double) : :math:`m \times 1`, constraint upper bound vector
 %
 % Outputs:
 %   ieq (integer) : vector of indices of equality constraints
@@ -44,7 +44,7 @@ function [ieq, igt, ilt, Ae, be, Ai, bi] = convert_lin_constraint(A, l, u)
 %   A (double) : (possibly sparse) stacked constraint matrix
 %   b (double) : stacked RHS
 %
-% See also convert_lin_constraint_multipliers.
+% See also convert_constraint_multipliers.
 
 %   MP-Opt-Model
 %   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)

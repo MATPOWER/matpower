@@ -77,7 +77,7 @@ function [x, f, eflag, output, lambda] = qps_knitro(H, c, A, l, u, xmin, xmax, x
 %       [x, f, exitflag, output] = qps_knitro(...)
 %       [x, f, exitflag, output, lambda] = qps_knitro(...)
 %
-%   Example: (problem from from https://v8doc.sas.com/sashtml/iml/chap8/sect12.htm)
+%   Example: (problem from https://v8doc.sas.com/sashtml/iml/chap8/sect12.htm)
 %       H = [   1003.1  4.3     6.3     5.9;
 %               4.3     2.2     2.1     3.9;
 %               6.3     2.1     3.5     4.8;
@@ -132,7 +132,7 @@ else                                %% individual args
 end
 
 %% define nx, set default values for missing optional inputs
-if isempty(H) || ~any(any(H))
+if ~nnz(H)
     if isempty(A) && isempty(xmin) && isempty(xmax)
         error('qps_knitro: LP problem must include constraints or variable bounds');
     else
@@ -204,7 +204,7 @@ end
 [ieq, igt, ilt, Ae, be, Ai, bi] = convert_lin_constraint(A, l, u);
 
 %% call the solver
-if isempty(H) || ~any(any(H))
+if ~nnz(H)
     lpqp = 'LP';
     [x, f, eflag, output, Lambda] = knitro_lp(c, Ai, bi, Ae, be, xmin, xmax, x0, [], knitro_opt);
 else
@@ -221,7 +221,7 @@ if verbose
         vn, output.algorithm, lpqp);
 end
 
-[mu_l, mu_u] = convert_lin_constraint_multipliers(Lambda.eqlin, Lambda.ineqlin, ieq, igt, ilt);
+[mu_l, mu_u] = convert_constraint_multipliers(Lambda.eqlin, Lambda.ineqlin, ieq, igt, ilt);
 
 if eflag == 0
     eflag = 1;       %% success is 1 (not zero), all other values are Knitro return codes

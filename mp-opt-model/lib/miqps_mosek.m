@@ -91,7 +91,7 @@ function [x, f, eflag, output, lambda] = miqps_mosek(H, c, A, l, u, xmin, xmax, 
 %       [x, f, exitflag, output] = miqps_mosek(...)
 %       [x, f, exitflag, output, lambda] = miqps_mosek(...)
 %
-%   Example: (problem from from https://v8doc.sas.com/sashtml/iml/chap8/sect12.htm)
+%   Example: (problem from https://v8doc.sas.com/sashtml/iml/chap8/sect12.htm)
 %       H = [   1003.1  4.3     6.3     5.9;
 %               4.3     2.2     2.1     3.9;
 %               6.3     2.1     3.5     4.8;
@@ -145,7 +145,7 @@ else                                %% individual args
 end
 
 %% define nx, set default values for H and c
-if ~isfield(p, 'H') || isempty(p.H) || ~any(any(p.H))
+if ~isfield(p, 'H') || ~nnz(p.H)
     if (~isfield(p, 'A') || isempty(p.A)) && ...
             (~isfield(p, 'xmin') || isempty(p.xmin)) && ...
             (~isfield(p, 'xmax') || isempty(p.xmax))

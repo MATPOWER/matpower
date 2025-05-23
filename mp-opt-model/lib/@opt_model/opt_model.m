@@ -237,12 +237,13 @@ classdef opt_model < mp_idx_manager
     properties
         var             %% variables
         lin             %% linear constraints
+        qcn             %% quadratic constraints
         nle             %% nonlinear equality constraints
         nli             %% nonlinear inequality constraints
         qdc             %% quadratic costs
         nlc             %% general nonlinear costs
         prob_type = ''; %% problem type
-        
+
         %% results of solve()
         soln = struct( ...
             'eflag', [], ...    %% exit flag
@@ -277,11 +278,12 @@ classdef opt_model < mp_idx_manager
         end
 
         function om = def_set_types(om)
-            % Define set types ``var``, ``lin``, ``nle``, ``nli``, ``qdc``, ``nlc``.
+            % Define set types ``var``, ``lin``, ``qcn``, ``nle``, ``nli``, ``qdc``, ``nlc``.
 
             om.set_types = struct(...
                     'var', mp.sm_variable('VARIABLES'), ...
                     'lin', mp.sm_lin_constraint('LINEAR CONSTRAINTS'), ...
+                    'qcn', mp.sm_quad_constraint('QUADRATIC CONSTRAINTS'), ...
                     'nle', mp.sm_nln_constraint('NONLIN EQ CONSTRAINTS'), ...
                     'nli', mp.sm_nln_constraint('NONLIN INEQ CONSTRAINTS'), ...
                     'qdc', mp.sm_quad_cost('QUADRATIC COSTS'), ...

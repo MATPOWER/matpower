@@ -90,8 +90,7 @@ function [x, f, eflag, output, lambda] = miqps_gurobi(H, c, A, l, u, xmin, xmax,
 %       [x, f, exitflag, output] = miqps_gurobi(...)
 %       [x, f, exitflag, output, lambda] = miqps_gurobi(...)
 %
-%
-%   Example: (problem from from https://v8doc.sas.com/sashtml/iml/chap8/sect12.htm)
+%   Example: (problem from https://v8doc.sas.com/sashtml/iml/chap8/sect12.htm)
 %       H = [   1003.1  4.3     6.3     5.9;
 %               4.3     2.2     2.1     3.9;
 %               6.3     2.1     3.5     4.8;
@@ -149,7 +148,7 @@ else                                %% individual args
 end
 
 %% define nx, set default values for missing optional inputs
-if isempty(H) || ~any(any(H))
+if ~nnz(H)
     if isempty(A) && isempty(xmin) && isempty(xmax)
         error('miqps_gurobi: LP problem must include constraints or variable bounds');
     else
@@ -246,7 +245,7 @@ else
 end
 
 %% call the solver
-if isempty(H) || ~any(any(H))
+if ~nnz(H)
     lpqp = 'LP';
 else
     lpqp = 'QP';
@@ -341,7 +340,7 @@ else
     lam.upper(ku)   = -rc(ku);
 end
 
-[mu_l, mu_u] = convert_lin_constraint_multipliers(-pi(1:neq), -pi(neq+(1:niq)), ieq, igt, ilt);
+[mu_l, mu_u] = convert_constraint_multipliers(-pi(1:neq), -pi(neq+(1:niq)), ieq, igt, ilt);
 
 lambda = struct( ...
     'mu_l', mu_l, ...
@@ -370,13 +369,13 @@ if mi && eflag == 1 && (~isfield(opt, 'skip_prices') || ~opt.skip_prices)
         else
             tol = 1e-7;
         end
-    
+
         x0 = x;
         x0(k) = round(x0(k));
         xmin(k) = x0(k);
         xmax(k) = x0(k);
     %     opt.grb_opt.Method = 0;     %% primal simplex
-    
+
         [x_, f_, eflag_, output_, lambda] = qps_gurobi(H, c, A, l, u, xmin, xmax, x0, opt);
         if eflag ~= eflag_
             error('miqps_gurobi: EXITFLAG from price computation stage = %d', eflag_);

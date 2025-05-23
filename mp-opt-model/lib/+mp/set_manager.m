@@ -193,7 +193,7 @@ classdef set_manager < handle
             % ::
             %
             %   sm.add(name, N, ...)
-            %   sm.add(name, idx, N, ...)
+            %   sm.add(name, idx_list, N, ...)
             %
             % This base class method handles the indexing part. Subclasses are
             % expected to override it to handle any data that goes with each
@@ -346,7 +346,7 @@ classdef set_manager < handle
                         vsidx = obj.order(k).idx;
                         str = '%d'; for m = 2:length(vsidx), str = [str ',%d']; end
                         s = substruct('.', name, '()', vsidx);
-                        nname = sprintf(['%s(' str, ')'], name, vsidx{:});
+                        nname = sprintf(['%s{' str, '}'], name, vsidx{:});
                         fprintf(fmt, k, nname, ...
                                 subsref(idx.i1, s), subsref(idx.iN, s), subsref(idx.N, s));
                     end
@@ -490,7 +490,7 @@ classdef set_manager < handle
             %     s = lin.set_type_idx_map([], 1));
             %
             % See also describe_idx, mp_idx_manager.
-    
+
             %% default args
             if nargin < 3
                 group_by_name = 0;
@@ -498,9 +498,9 @@ classdef set_manager < handle
                     idxs = [];
                 end
             end
-    
+
             NS = obj.NS;
-    
+
             %% special case : everything and grouped by name
             if group_by_name && isempty(idxs)
                 %% pre-allocate return struct

@@ -31,8 +31,8 @@ function [x, f, eflag, output, lambda] = qps_master(H, c, A, l, u, xmin, xmax, x
 %           alg ('DEFAULT') : determines which solver to use, can be either
 %                   a string (new-style) or a numerical alg code (old-style)
 %               'DEFAULT' : (or 0) automatic, first available of Gurobi,
-%                       CPLEX, MOSEK, Opt Tbx (if MATLAB), GLPK (LPs only),
-%                       BPMPD, MIPS
+%                       CPLEX, MOSEK, Opt Tbx (if MATLAB), HIGHS, GLPK (LPs
+%                       only), BPMPD, MIPS
 %               'MIPS'    : (or 200) MIPS, MATPOWER Interior Point Solver
 %                        pure MATLAB implementation of a primal-dual
 %                        interior point method, if mips_opt.step_control = 1
@@ -43,6 +43,7 @@ function [x, f, eflag, output, lambda] = qps_master(H, c, A, l, u, xmin, xmax, x
 %               'CPLEX'   : (or 500) CPLEX
 %               'GLPK'    : GLPK, (LP problems only, i.e. empty H matrix)
 %               'GUROBI'  : (or 700) Gurobi
+%               'HIGHS'   : HiGHS, https://highs.dev
 %               'IPOPT'   : (or 400) IPOPT, requires MEX interface to IPOPT
 %                           solver, https://github.com/coin-or/Ipopt
 %               'MOSEK'   : (or 600) MOSEK
@@ -57,8 +58,9 @@ function [x, f, eflag, output, lambda] = qps_master(H, c, A, l, u, xmin, xmax, x
 %           cplex_opt   - options struct for CPLEX
 %           glpk_opt    - options struct for GLPK
 %           grb_opt     - options struct for GUROBI
-%           knitro_opt  - options struct for KNITRO
+%           highs_opt   - options struct for HIGHS
 %           ipopt_opt   - options struct for IPOPT
+%           knitro_opt  - options struct for KNITRO
 %           linprog_opt - options struct for LINPROG
 %           mips_opt    - options struct for QPS_MIPS
 %           mosek_opt   - options struct for MOSEK
@@ -106,7 +108,7 @@ function [x, f, eflag, output, lambda] = qps_master(H, c, A, l, u, xmin, xmax, x
 %       [x, f, exitflag, output] = qps_master(...)
 %       [x, f, exitflag, output, lambda] = qps_master(...)
 %
-%   Example: (problem from from https://v8doc.sas.com/sashtml/iml/chap8/sect12.htm)
+%   Example: (problem from https://v8doc.sas.com/sashtml/iml/chap8/sect12.htm)
 %       H = [   1003.1  4.3     6.3     5.9;
 %               4.3     2.2     2.1     3.9;
 %               6.3     2.1     3.5     4.8;
@@ -207,9 +209,11 @@ if strcmp(alg, 'DEFAULT')
         alg = 'MOSEK';
     elseif have_feature('quadprog') && have_feature('matlab')   %% if not, then Opt Tbx, if available in MATLAB
         alg = 'OT';
+    elseif have_feature('highs')    %% if not, then HiGHS, if available
+        alg = 'HIGHS';
     elseif have_feature('knitro')   %% if not, then Artelys Knitro, if available
         alg = 'KNITRO';
-    elseif (isempty(H) || ~any(any(H))) && have_feature('glpk') %% if not, and
+    elseif ~nnz(H) && have_feature('glpk')  %% if not, and
         alg = 'GLPK';               %% prob is LP (not QP), then GLPK, if available
     elseif have_feature('bpmpd')    %% if not, then BPMPD_MEX, if available
         alg = 'BPMPD';
@@ -248,6 +252,9 @@ switch alg
     case 'GUROBI'
         [x, f, eflag, output, lambda] = ...
             qps_gurobi(H, c, A, l, u, xmin, xmax, x0, opt);
+    case 'HIGHS'
+        [x, f, eflag, output, lambda] = ...
+            qps_highs(H, c, A, l, u, xmin, xmax, x0, opt);
     case 'IPOPT'
         [x, f, eflag, output, lambda] = ...
             qps_ipopt(H, c, A, l, u, xmin, xmax, x0, opt);
@@ -259,7 +266,7 @@ switch alg
             mips_opt = [];
         end
         mips_opt.verbose = verbose;
-        
+
         %% call solver
         [x, f, eflag, output, lambda] = ...
             qps_mips(H, c, A, l, u, xmin, xmax, x0, mips_opt);

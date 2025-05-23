@@ -14,6 +14,7 @@ function varargout = get_soln(om, set_type, varargin)
 %       SET_TYPE - one of the following, specifying the type of set:
 %           'var' - variables
 %           'lin' - linear constraints
+%           'qcn' - quadratic constraints
 %           'nle' - nonlinear equality constraints
 %           'nli' - nonlinear inequality constraints
 %           'nlc' - nonlinear costs
@@ -29,6 +30,13 @@ function varargout = get_soln(om, set_type, varargin)
 %                   values, {A*x - u, l - A*x}
 %               'Ax_u' - upper constraint value, A*x - u
 %               'l_Ax' - lower constraint value, l - A*x
+%               'mu_l' - shadow price on constraint lower bound
+%               'mu_u' - shadow price on constraint upper bound
+%           'qcn' - default is {'g', 'mu_l', 'mu_u'}
+%               'g' - 1 x 2 cell array of upper and lower constraint
+%                   values, {g(x) - u, l - g(x)}
+%               'g_u' - upper constraint value, g(x) - u
+%               'l_g' - lower constraint value, l - g(x)
 %               'mu_l' - shadow price on constraint lower bound
 %               'mu_u' - shadow price on constraint upper bound
 %           'nle' - default is {'g', 'lam', 'dg'}
@@ -81,7 +89,17 @@ switch set_type
         [varargout{1:nargout}] = om.(set_type).get_soln(om.var, om.soln, varargin{:});
     case 'lin'
         if strcmp(om.problem_type(), 'LEQ')
-            %% tag must be 'f' 
+            %% tag must be 'f'
+            if length(varargin) >= 2 && ischar(varargin{2})
+                varargin{1} = {'f'};
+            else
+                varargin = {'f', varargin{:}};
+            end
+        end
+        [varargout{1:nargout}] = om.lin.get_soln(om.var, om.soln, varargin{:});
+    case 'qcn'
+        if strcmp(om.problem_type(), 'NLEQ')
+            %% tag must be 'f'
             if length(varargin) >= 2 && ischar(varargin{2})
                 varargin{1} = {'f'};
             else

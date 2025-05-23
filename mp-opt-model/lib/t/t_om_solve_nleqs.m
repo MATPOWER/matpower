@@ -136,7 +136,7 @@ for k = 1:length(cfg)
             otherwise
                 t_skip(12, sprintf('not implemented for solver ''%s''', alg));
         end
-        
+
         t = sprintf('%s - 2-d function2 (struct) : ', name);
         x0 = [1;2];
         om = opt_model;

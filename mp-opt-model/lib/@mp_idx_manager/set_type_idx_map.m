@@ -2,7 +2,7 @@ function s = set_type_idx_map(obj, set_type, idxs, group_by_name)
 % set_type_idx_map - Maps index for set type back to named set & index within set
 %
 % .. note::
-%    .. deprecated:: 4.3 Please use mp.set_manager.set_type_idx_map instead.
+%    .. deprecated:: 5.0 Please use mp.set_manager.set_type_idx_map instead.
 %
 % ::
 %

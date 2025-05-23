@@ -121,14 +121,14 @@ end
 fields = fieldnames(s);
 for f = 1:length(fields)
     ff = fields{f};
-    
+
     %% form full field name
     if isempty(parentstr)
         str = ff;
     else
         str = [parentstr '.' ff];
     end
-    
+
     %% field doesn't exist in valid_fields
     if ~isfield(valid_fields, ff)
         if check > 0        %% throw an error
@@ -137,11 +137,11 @@ for f = 1:length(fields)
             continue;
         end
     end
-    
+
     ck = check;
     cm = copy_mode;
     vf = valid_fields;
-    
+
     %% look for an exception that matches this field
     if isempty(exceptions)
         k = [];

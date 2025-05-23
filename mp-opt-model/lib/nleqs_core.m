@@ -126,7 +126,7 @@ else
 end
 
 %% check tolerance
-normf = norm(f, inf);
+normf = norm(f, Inf);
 if verbose > 1
     fprintf('\n it    max residual        max ∆x');
     fprintf('\n----  --------------  --------------');
@@ -166,8 +166,8 @@ while (~eflag && i < max_it)
     end
 
     %% check for convergence
-    normf  = norm(f, inf);
-    normdx = norm(x-xp, inf);
+    normf  = norm(f, Inf);
+    normdx = norm(x-xp, Inf);
     if verbose > 1
         fprintf('\n%3d     %10.3e      %10.3e', i, normf, normdx);
     end

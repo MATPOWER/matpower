@@ -78,7 +78,7 @@ lower bounds on all of the variables.
 ```
   min  1/2 [y; z]' * Q * [y; z]
   y,z
-  
+
 subject to:
   A1 * [y; z] =  b1
        A2 * y <= u2

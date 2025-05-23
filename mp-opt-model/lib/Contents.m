@@ -7,7 +7,7 @@
 %   solving your model. It also includes a unified interface for calling
 %   numerous LP, QP, mixed-integer and nonlinear solvers, with the ability
 %   to switch solvers by simply changing an input option.
-% 
+%
 %   It is based on code that was originally developed by Ray D. Zimmerman
 %   of Cornell University as part of MATPOWER.
 %

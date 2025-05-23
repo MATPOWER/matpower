@@ -135,7 +135,7 @@ if rollback == 0
             i = i + 1;
         end
     end
-    
+
     %% and if no zeros were detected
     if i == 1
         %% search for intervals for non-rollback events

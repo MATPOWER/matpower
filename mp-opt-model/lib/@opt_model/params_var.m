@@ -2,7 +2,7 @@ function varargout = params_var(om, varargin)
 % params_var - Returns initial value, lower bound and upper bound for opt variables.
 %
 % .. note::
-%    .. deprecated:: 4.3 Please use mp.sm_variable.params instead, as
+%    .. deprecated:: 5.0 Please use mp.sm_variable.params instead, as
 %       in ``om.var.params(...)``.
 %
 % ::
@@ -23,7 +23,7 @@ function varargout = params_var(om, varargin)
 %       [x0, xmin, xmax] = om.params_var();
 %       [Pg0, Pmin, Pmax] = om.params_var('Pg');
 %       [zij0, zijmin, zijmax, ztype] = om.params_var('z', {i, j});
-%   
+%
 % See also opt_model, add_var.
 
 %   MP-Opt-Model

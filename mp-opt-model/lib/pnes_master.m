@@ -256,7 +256,7 @@ if opt.nose_tol == 0
     opt.nose_tol = opt.default_event_tol;
 end
 if opt.max_it == 0      %% zero means use the default
-    opt.max_it == dopts.max_it; 
+    opt.max_it == dopts.max_it;
 end
 
 %% initialize

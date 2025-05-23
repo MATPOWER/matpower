@@ -62,7 +62,7 @@ function opt = artelys_knitro_options(overrides, mpopt)
 %       opt.ftol     = 1e-9;
 %       opt.maxit    = 3000;
 %
-%   For details on the available options, see the "Knitro user options" 
+%   For details on the available options, see the "Knitro user options"
 %   section of the "Artelys Knitro User's Manual" at:
 %
 %       https://www.artelys.com/app/docs/knitro/index.html

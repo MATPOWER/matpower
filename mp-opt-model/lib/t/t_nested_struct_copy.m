@@ -199,7 +199,7 @@ t_ok(isequal(DS, E), t);
 % DS
 % DS.b
 % DS.c
-% 
+%
 % E
 % E.b
 % E.c

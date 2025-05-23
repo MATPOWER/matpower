@@ -234,7 +234,7 @@ classdef sm_variable < mp.set_manager_opt_model
                             if have_vt
                                 N = obj.idx.N.(name);
                                 vt0 = obj.data.vt.(name);
-                                if isscalar(vt0) && N > 1 
+                                if isscalar(vt0) && N > 1
                                     vt = [ vt char(vt0 * ones(1, N)) ];
                                 else
                                     vt = [ vt vt0 ];
@@ -256,7 +256,7 @@ classdef sm_variable < mp.set_manager_opt_model
                                 sn = sc; sn(2).type = '()';
                                 N = subsref(obj.idx.N, sn);
                                 vt0 = subsref(obj.data.vt, sc);
-                                if isscalar(vt0) && N > 1 
+                                if isscalar(vt0) && N > 1
                                     vt = [ vt char(vt0 * ones(1, N)) ];
                                 else
                                     if ~isempty(vt0)
@@ -284,7 +284,7 @@ classdef sm_variable < mp.set_manager_opt_model
                         if have_vt
                             N = obj.idx.N.(name);
                             vt0 = obj.data.vt.(name);
-                            if isscalar(vt0) && N > 1 
+                            if isscalar(vt0) && N > 1
                                 vt = char(vt0 * ones(1, N));
                             else
                                 vt = vt0;
@@ -305,7 +305,7 @@ classdef sm_variable < mp.set_manager_opt_model
                             sn = sc; sn(2).type = '()';
                             N = subsref(obj.idx.N, sn);
                             vt0 = subsref(obj.data.vt, sc);
-                            if isscalar(vt0) && N > 1 
+                            if isscalar(vt0) && N > 1
                                 vt = char(vt0 * ones(1, N));
                             else
                                 vt = vt0;
@@ -328,7 +328,7 @@ classdef sm_variable < mp.set_manager_opt_model
             % ::
             %
             %   var.set_params(name, params, vals)
-            %   var.set_params(name, idx, params, vals)
+            %   var.set_params(name, idx_list, params, vals)
             %
             % This method can be used to modify parameters for an existing
             % subset of variables.
@@ -478,10 +478,10 @@ classdef sm_variable < mp.set_manager_opt_model
             %
             %   var.display_soln(soln)
             %   var.display_soln(soln, name)
-            %   var.display_soln(soln, name, idx)
+            %   var.display_soln(soln, name, idx_list)
             %   var.display_soln(soln, fid)
             %   var.display_soln(soln, fid, name)
-            %   var.display_soln(soln, fid, name, idx)
+            %   var.display_soln(soln, fid, name, idx_list)
             %
             % Displays the solution values for all variables (default) or an
             % individual named or named/indexed subset.
@@ -505,7 +505,7 @@ classdef sm_variable < mp.set_manager_opt_model
             %   fid (fileID) : fileID of open file to write to (default is
             %       1 for standard output)
             %   name (char array) : *(optional)* name of individual subset
-            %   idx (cell array) : *(optional)* indices of individual subset
+            %   idx_list (cell array) : *(optional)* indices of individual subset
 
             [fid, name, idx, idxs, hdr1] = obj.display_soln_std_args(varargin{:});
 
@@ -577,9 +577,9 @@ classdef sm_variable < mp.set_manager_opt_model
             % ::
             %
             %   vals = var.get_soln(soln, name)
-            %   vals = var.get_soln(soln, name, idx)
+            %   vals = var.get_soln(soln, name, idx_list)
             %   vals = var.get_soln(soln, tags, name)
-            %   vals = var.get_soln(soln, tags, name, idx)
+            %   vals = var.get_soln(soln, tags, name, idx_list)
             %
             % Returns named/indexed variable results for a solved model,
             % evaluated at the solution found.
@@ -608,7 +608,7 @@ classdef sm_variable < mp.set_manager_opt_model
             %           - ``'mu_l'`` - shadow price on variable lower bound
             %           - ``'mu_u'`` - shadow price on variable upper bound
             %   name (char array) : name of the subset
-            %   idx (cell array) : *(optional)* indices of the subset
+            %   idx_list (cell array) : *(optional)* indices of the subset
             %
             % Outputs:
             %     : Variable number of outputs corresponding to ``tags`` input.

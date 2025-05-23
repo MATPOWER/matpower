@@ -32,7 +32,7 @@ else
 end
 
 %% display details of each set type
-set_types = {'var', 'nle', 'nli', 'lin', 'qdc', 'nlc', more_set_types{:}};
+set_types = {'var', 'nle', 'nli', 'lin', 'qcn', 'qdc', 'nlc', more_set_types{:}};
 fprintf('\n');
 for k = 1:length(set_types)
     om.(set_types{k}).display(set_types{k});

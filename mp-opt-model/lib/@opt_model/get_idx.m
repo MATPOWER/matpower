@@ -8,6 +8,7 @@ function varargout = get_idx(om, varargin)
 %   [VV, LL, NNE, NNI] = OM.GET_IDX()
 %   [VV, LL, NNE, NNI, QQ] = OM.GET_IDX()
 %   [VV, LL, NNE, NNI, QQ, NNC] = OM.GET_IDX()
+%   [VV, LL, NNE, NNI, QQ, NNC, QQCN] = OM.GET_IDX()
 %
 %   Returns a structure for each with the beginning and ending
 %   index value and the number of elements for each named block.
@@ -27,6 +28,7 @@ function varargout = get_idx(om, varargin)
 %   given by the SET_TYPE inputs, with the following valid options:
 %       SET_TYPE = 'var'   => variable set
 %       SET_TYPE = 'lin'   => linear constraint set
+%       SET_TYPE = 'qcn'   => quadratic constraint set
 %       SET_TYPE = 'nle'   => nonlinear equality constraint set
 %       SET_TYPE = 'nli'   => nonlinear inequality constraint set
 %       SET_TYPE = 'qdc'   => quadratic cost set
@@ -64,7 +66,7 @@ function varargout = get_idx(om, varargin)
 % add_quad_cost, add_nln_cost.
 
 %   MP-Opt-Model
-%   Copyright (c) 2008-2024, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2025, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.
@@ -83,6 +85,9 @@ if nargin == 1
                     varargout{5} = om.qdc.idx;
                     if nargout > 5
                         varargout{6} = om.nlc.idx;
+                        if nargout > 6
+                            varargout{7} = om.qcn.idx;
+                        end
                     end
                 end
             end

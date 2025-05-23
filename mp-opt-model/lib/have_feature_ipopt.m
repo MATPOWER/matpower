@@ -20,7 +20,7 @@ TorF = e_ipopt == 3 || e_ipopt == 2;
 vstr = '';
 rdate = '';
 if TorF
-    try 
+    try
         if have_feature('evalc')
             str = evalc('qps_ipopt([],[1; 1],[1 1],[2],[2],[1; 1],[1; 1],[1; 1],struct(''verbose'', 2))');
             pat = 'Ipopt version ([^\s,]+)';

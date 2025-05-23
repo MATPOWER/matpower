@@ -2,7 +2,7 @@ function d2G = eval_nln_constraint_hess(om, x, lam, iseq)
 % eval_nln_constraint_hess - Builds and returns Hessian of nonlinear constraints.
 %
 % .. note::
-%    .. deprecated:: 4.3 Please use mp.sm_nln_constraint.eval_hess instead, as
+%    .. deprecated:: 5.0 Please use mp.sm_nln_constraint.eval_hess instead, as
 %       in ``om.nle.eval_hess(...)`` or ``om.nli.eval_hess(...)``.
 %
 % ::

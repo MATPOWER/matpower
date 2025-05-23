@@ -2,7 +2,7 @@ function varargout = params_nln_constraint(om, iseq, varargin)
 % params_nln_constraint - Returns parameters for general nonlinear constraints.
 %
 % .. note::
-%    .. deprecated:: 4.3 Please use mp.sm_nln_constraint.params instead, as
+%    .. deprecated:: 5.0 Please use mp.sm_nln_constraint.params instead, as
 %       in ``om.nle.params(...)`` or ``om.nli.params(...)``.
 %
 % ::

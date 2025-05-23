@@ -18,11 +18,11 @@ import re
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'MP-Opt-Model'
-copyright = '2020-2024, Power Systems Engineering Research Center (PSERC)'
+copyright = '2020-2025, Power Systems Engineering Research Center (PSERC)'
 author = 'Ray D. Zimmerman'
 
 # The full version, including alpha/beta/rc tags
-release = '4.2'
+release = '5.0-dev'
 
 
 # -- General configuration ---------------------------------------------------
@@ -112,7 +112,7 @@ mathjax3_config = {
 
 with open('mp-docs-shared/mathCmds.tex.txt', 'r') as f:
     for line in f:
-        macros = re.findall(r'\\(re)?newcommand{\\(.*?)}(\[(\d)\])?{(.+)}', line)
+        macros = re.findall(r'(?<!%)\\(re)?newcommand{\\(.*?)}(\[(\d)\])?{([^%\n]+)}', line)
         for macro in macros:
             if len(macro[2]) == 0:
                 mathjax3_config['tex']['macros'][macro[1]] = macro[4]

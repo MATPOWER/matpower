@@ -2,7 +2,7 @@ function om = init_indexed_name(om, set_type, name, dim_list)
 % init_indexed_name - Initializes the dimensions for an indexed named set.
 %
 % .. note::
-%    .. deprecated:: 4.3 Please use mp.set_manager.init_indexed_name instead,
+%    .. deprecated:: 5.0 Please use mp.set_manager.init_indexed_name instead,
 %       as in ``om.lin.init_indexed_name(...)``,
 %       ``om.nle.init_indexed_name(...)``, ``om.nli.init_indexed_name(...)``,
 %       ``om.nlc.init_indexed_name(...)``, ``om.qdc.init_indexed_name(...)``,

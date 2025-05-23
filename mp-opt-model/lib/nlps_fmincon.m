@@ -128,18 +128,18 @@ function [x, f, eflag, output, lambda] = nlps_fmincon(f_fcn, x0, A, l, u, xmin, 
 %               d2f = -[0 1 0; 1 0 1; 0 1 0];   %% actually not used since
 %           end                                 %% 'hess_fcn' is provided
 %       end
-%       
+%
 %       function [h, g, dh, dg] = gh2(x)
 %       h = [ 1 -1 1; 1 1 1] * x.^2 + [-2; -10];
 %       dh = 2 * [x(1) x(1); -x(2) x(2); x(3) x(3)];
 %       g = []; dg = [];
-%       
+%
 %       function Lxx = hess2(x, lam, cost_mult)
 %       if nargin < 3, cost_mult = 1; end
 %       mu = lam.ineqnonlin;
 %       Lxx = cost_mult * [0 -1 0; -1 0 -1; 0 -1 0] + ...
 %               [2*[1 1]*mu 0 0; 0 2*[-1 1]*mu 0; 0 0 2*[1 1]*mu];
-%       
+%
 %       problem = struct( ...
 %           'f_fcn',    @(x)f2(x), ...
 %           'gh_fcn',   @(x)gh2(x), ...
@@ -334,7 +334,7 @@ Lambda.lower(ku) = -Lambda.upper(ku);
 Lambda.upper(ku) = 0;
 
 %% package up results
-[mu_l, mu_u] = convert_lin_constraint_multipliers(Lambda.eqlin, Lambda.ineqlin, ieq, igt, ilt);
+[mu_l, mu_u] = convert_constraint_multipliers(Lambda.eqlin, Lambda.ineqlin, ieq, igt, ilt);
 
 lambda = struct( ...
     'lower', Lambda.lower, ...

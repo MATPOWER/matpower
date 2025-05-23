@@ -130,7 +130,7 @@ else                                %% individual args
 end
 
 %% define nx, set default values for missing optional inputs
-if isempty(H) || ~any(any(H))
+if ~nnz(H)
     if isempty(A) && isempty(xmin) && isempty(xmax)
         error('qps_glpk: LP problem must include constraints or variable bounds');
     else
@@ -241,7 +241,7 @@ else
     lam.lower(lam.lower < 0) = 0;
     lam.upper(lam.upper < 0) = 0;
 
-    [mu_l, mu_u] = convert_lin_constraint_multipliers( ...
+    [mu_l, mu_u] = convert_constraint_multipliers( ...
         -extra.lambda(1:neq), -extra.lambda(neq+(1:niq)), ieq, igt, ilt);
 
     lambda = struct( ...

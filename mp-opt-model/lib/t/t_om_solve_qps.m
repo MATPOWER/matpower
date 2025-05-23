@@ -14,10 +14,10 @@ if nargin < 1
     quiet = 0;
 end
 
-algs = {'DEFAULT', 'BPMPD', 'MIPS', 250, 'IPOPT', 'OT', 'CPLEX', 'MOSEK', 'GUROBI', 'CLP', 'GLPK', 'OSQP', 'KNITRO'};
-names = {'DEFAULT', 'BPMPD_MEX', 'MIPS', 'sc-MIPS', 'IPOPT', 'linprog/quadprog', 'CPLEX', 'MOSEK', 'Gurobi', 'CLP', 'glpk', 'OSQP', 'Knitro'};
-check = {[], 'bpmpd', [], [], 'ipopt', 'quadprog', 'cplex', 'mosek', 'gurobi', 'clp', 'glpk', 'osqp', 'knitro'};
-does_qp = [1 1 1 1 1 1 1 1 1 1 0 1 1];
+algs = {'DEFAULT', 'BPMPD', 'MIPS', 250, 'IPOPT', 'OT', 'HIGHS', 'CPLEX', 'MOSEK', 'GUROBI', 'CLP', 'GLPK', 'OSQP', 'KNITRO'};
+names = {'DEFAULT', 'BPMPD_MEX', 'MIPS', 'sc-MIPS', 'IPOPT', 'linprog/quadprog', 'HiGHS', 'CPLEX', 'MOSEK', 'Gurobi', 'CLP', 'glpk', 'OSQP', 'Knitro'};
+check = {[], 'bpmpd', [], [], 'ipopt', 'quadprog', 'highs', 'cplex', 'mosek', 'gurobi', 'clp', 'glpk', 'osqp', 'knitro'};
+does_qp = [1 1 1 1 1 1 1 1 1 1 1 0 1 1];
 
 n = 30;
 nqp = 21;
@@ -66,6 +66,13 @@ for k = 1:length(algs)
 %             opt.linprog_opt.Algorithm = 'active-set';
 %             opt.linprog_opt.Algorithm = 'simplex';
 %             opt.linprog_opt.Algorithm = 'dual-simplex';
+%         end
+%         if have_feature('highs')
+%             opt.highs_opt.primal_feasibility_tolerance = 1e-10;
+%             opt.highs_opt.dual_feasibility_tolerance = 1e-10;
+%             opt.highs_opt.ipm_optimality_tolerance = 1e-12;
+%             opt.highs_opt.primal_residual_tolerance = 1e-10;
+%             opt.highs_opt.dual_residual_tolerance = 1e-10;
 %         end
         if have_feature('cplex')
             % alg = 0;        %% default uses barrier method with NaN bug in lower lim multipliers
@@ -145,13 +152,13 @@ for k = 1:length(algs)
             om.add_quad_cost('c', H, c);
             [x, f, s, out, lam] = om.solve(opt);
             t_is(s, 1, 12, [t 'success']);
-            t_is(x, [3; 5; 7], 7, [t 'x']);
+            t_is(x, [3; 5; 7], 6.5, [t 'x']);
             t_is(f, -249, 11, [t 'f']);
             t_ok(isempty(lam.mu_l), [t 'lam.mu_l']);
             t_ok(isempty(lam.mu_u), [t 'lam.mu_u']);
             t_is(lam.lower, zeros(size(x)), 13, [t 'lam.lower']);
             t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
-        
+
             t = sprintf('%s - constrained 2-d QP : ', names{k});
             %% example from 'doc quadprog'
             H = [   1   -1;

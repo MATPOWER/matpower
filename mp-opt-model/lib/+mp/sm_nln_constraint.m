@@ -359,7 +359,7 @@ classdef sm_nln_constraint < mp.set_manager_opt_model
             % ::
             %
             %   nln.set_params(var, name, params, vals)
-            %   nln.set_params(var, name, idx, params, vals)
+            %   nln.set_params(var, name, idx_list, params, vals)
             %
             % This method can be used to modify parameters for an existing
             % subset of nonlinear constraints.
@@ -489,7 +489,7 @@ classdef sm_nln_constraint < mp.set_manager_opt_model
             % For a given value of the variable vector :math:`\x`, this method
             % evaluates the nonlinear constraint function and optionally its
             % derivatives for an individual subset, if name or name and index
-            % list are provided, otherise, for the full set of constraints.
+            % list are provided, otherwise, for the full set of constraints.
             %
             % Inputs:
             %   var (mp.sm_variable) : corresponding mp.sm_variable object
@@ -718,10 +718,10 @@ classdef sm_nln_constraint < mp.set_manager_opt_model
             %
             %   nln.display_soln(var, soln, iseq)
             %   nln.display_soln(var, soln, iseq, name)
-            %   nln.display_soln(var, soln, iseq, name, idx)
+            %   nln.display_soln(var, soln, iseq, name, idx_list)
             %   nln.display_soln(var, soln, iseq, fid)
             %   nln.display_soln(var, soln, iseq, fid, name)
-            %   nln.display_soln(var, soln, iseq, fid, name, idx)
+            %   nln.display_soln(var, soln, iseq, fid, name, idx_list)
             %
             % Displays the solution values for all nonlinear constraints
             % (default) or an individual named or named/indexed subset.
@@ -748,7 +748,8 @@ classdef sm_nln_constraint < mp.set_manager_opt_model
             %   fid (fileID) : fileID of open file to write to (default is
             %       1 for standard output)
             %   name (char array) : *(optional)* name of individual subset
-            %   idx (cell array) : *(optional)* indices of individual subset
+            %   idx_list (cell array) : *(optional)* indices of individual
+            %       subset
 
             [fid, name, idx, idxs, hdr1] = obj.display_soln_std_args(varargin{:});
 
@@ -821,9 +822,9 @@ classdef sm_nln_constraint < mp.set_manager_opt_model
             % ::
             %
             %   vals = nln.get_soln(var, soln, iseq, name)
-            %   vals = nln.get_soln(var, soln, iseq, name, idx)
+            %   vals = nln.get_soln(var, soln, iseq, name, idx_list)
             %   vals = nln.get_soln(var, soln, iseq, tags, name)
-            %   vals = nln.get_soln(var, soln, iseq, tags, name, idx)
+            %   vals = nln.get_soln(var, soln, iseq, tags, name, idx_list)
             %
             % Returns named/indexed nonlinear constraint results for a solved
             % model, evaluated at the solution found.
@@ -857,7 +858,7 @@ classdef sm_nln_constraint < mp.set_manager_opt_model
             %           - ``'dg'`` or ``'dh'`` - constraint Jacobian
             %             :math:`\g_\x = \der{\g}{\x}`
             %   name (char array) : name of the subset
-            %   idx (cell array) : *(optional)* indices of the subset
+            %   idx_list (cell array) : *(optional)* indices of the subset
             %
             % Outputs:
             %     : Variable number of outputs corresponding to ``tags`` input.

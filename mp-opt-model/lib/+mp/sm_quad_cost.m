@@ -8,18 +8,18 @@ classdef sm_quad_cost < mp.set_manager_opt_model
 % MP Set Manager class for quadratic costs. The costs take one of two forms,
 % either a scalar cost function of the form
 %
-% .. math:: f(\x) = \frac{1}{2}\trans{\x} \QQ \x + \trans{\c} \x + k
+% .. math:: f(\x) = \frac{1}{2}\trans{\x} \QQ \x + \trans{\c} \x + \param{k}
 %   :label: eq_qdc_form_1
 %
 % or a vector cost function of the form
 %
-% .. math:: \rvec{f}(\x) = \frac{1}{2} \diag{\q} \x^2 + \diag{\c} \x + \kk
+% .. math:: \rvec{f}(\x) = \frac{1}{2} \diag{\q} \x^2 + \diag{\c} \x + \k
 %   :label: eq_qdc_form_2
 %
 % where :math:`\x` is an :math:`n_x \times 1` vector, and the corresponding
 % coefficient parameters are conformable.
 %
-% Manages cost parameters :math:`\QQ, \c, k` or :math:`\q, \c, \kk`,
+% Manages cost parameters :math:`\QQ, \c, \param{k}` or :math:`\q, \c, \k`,
 % along with indexing.
 %
 % By convention, ``qdc`` is the variable name used for mp.sm_quad_cost objects.
@@ -30,7 +30,7 @@ classdef sm_quad_cost < mp.set_manager_opt_model
 % mp.sm_quad_cost Methods:
 %   * sm_quad_cost - constructor
 %   * add - add a subset of quadratic costs
-%   * params - build and return cost parameters :math:`\QQ, \c, k` or :math:`\q, \c, \kk`
+%   * params - build and return cost parameters :math:`\QQ, \c, \param{k}` or :math:`\q, \c, \k`
 %   * set_params - modify quadratic cost parameter data
 %   * eval - evaluate individual or full set of quadratic costs
 %   * display_soln - display solution values for quadratic costs
@@ -84,7 +84,7 @@ classdef sm_quad_cost < mp.set_manager_opt_model
             % where :math:`\x` is an :math:`n_x \times 1` vector made up of the
             % variables specified in the optional ``vs`` *(in the order
             % given)*. This allows the :math:`\QQ`, :math:`\q`, :math:`\c`,
-            % and/or :math:`\kk` parameters to be defined in terms of only the
+            % and/or :math:`\k` parameters to be defined in terms of only the
             % relevant variables without the need to manually create a lot of
             % properly located zero rows/columns.
             %
@@ -99,7 +99,8 @@ classdef sm_quad_cost < mp.set_manager_opt_model
             %   c (double) : *(optional, default = all zeros)* linear cost
             %       coefficient, :math:`n_x \times 1` vector :math:`\c`
             %   k (double) : *(optional, default = 0)* constant cost term,
-            %       scalar :math:`k`, or :math:`n_x \times 1` vector :math:`\kk`
+            %       scalar :math:`\param{k}`, or :math:`n_x \times 1` vector
+            %       :math:`\k`
             %   vs (cell or struct array) : *(optional, default* ``{}`` *)*
             %       variable set defining vector :math:`\x` for this
             %       cost subset; can be either a cell array of names of
@@ -211,7 +212,7 @@ classdef sm_quad_cost < mp.set_manager_opt_model
         end
 
         function [Q, c, K, vs] = params(obj, var, name, idx)
-            % Build and return quadratic cost parameters :math:`\QQ, \c, k` or :math:`\q, \c, \kk`.
+            % Build and return quadratic cost parameters :math:`\QQ, \c, \param{k}` or :math:`\q, \c, \k`.
             % ::
             %
             %   [Q, c] = qdc.params(var)
@@ -224,14 +225,14 @@ classdef sm_quad_cost < mp.set_manager_opt_model
             % for the aggregate quadratic cost from all quadratic cost sets
             % added using add(). The values of these parameters are cached
             % for subsequent calls. The parameters are :math:`\QQ, \c`, and
-            % optionally :math:`k` for the scalar cost form in
+            % optionally :math:`\param{k}` for the scalar cost form in
             % :eq:`eq_qdc_form_1`, or :math:`\q, \c`, and optionally
-            % :math:`\kk` for the vector cost form in :eq:`eq_qdc_form_2`.
+            % :math:`\k` for the vector cost form in :eq:`eq_qdc_form_2`.
             %
-            % If a name or name and index list are provided then it simply
+            % If a name or name and index list are provided, then it simply
             % returns the parameters for the corresponding set. It can also
             % optionally return the variable sets used by this cost set
-            % (the dimensions of :math:`\QQ, \q, \c, \kk` will be consistent
+            % (the dimensions of :math:`\QQ, \q, \c, \k` will be consistent
             % with this variable set).
             %
             % Inputs:
@@ -243,8 +244,8 @@ classdef sm_quad_cost < mp.set_manager_opt_model
             %   Q (double) : quadratic cost coefficient matrix :math:`\QQ` or
             %       vector :math:`\q`
             %   c (double) : linear cost coefficient vector :math:`\c`
-            %   k (double) : constant cost term, scalar :math:`k`, or vector
-            %       :math:`\kk`
+            %   k (double) : constant cost term, scalar :math:`\param{k}`, or vector
+            %       :math:`\k`
             %   vs (struct array) : variable set, ``name``, ``idx`` pairs
             %       specifying the set of variables defining vector :math:`\x`
             %       for this constraint subset; order of ``vs`` determines
@@ -415,7 +416,7 @@ classdef sm_quad_cost < mp.set_manager_opt_model
             % ::
             %
             %   qdc.set_params(name, params, vals)
-            %   qdc.set_params(name, idx, params, vals)
+            %   qdc.set_params(name, idx_list, params, vals)
             %
             % This method can be used to modify parameters for an existing
             % subset of quadratic costs.
@@ -580,7 +581,7 @@ classdef sm_quad_cost < mp.set_manager_opt_model
             % For a given value of the variable vector :math:`\x`, this method
             % evaluates the quadratic cost function and optionally its
             % derivatives for an individual subset, if name or name and
-            % index list are provided, otherise, for the full set of costs.
+            % index list are provided, otherwise, for the full set of costs.
             %
             % Inputs:
             %   var (mp.sm_variable) : corresponding mp.sm_variable object
@@ -716,10 +717,10 @@ classdef sm_quad_cost < mp.set_manager_opt_model
             %
             %   qdc.display_soln(var, soln)
             %   qdc.display_soln(var, soln, name)
-            %   qdc.display_soln(var, soln, name, idx)
+            %   qdc.display_soln(var, soln, name, idx_list)
             %   qdc.display_soln(var, soln, fid)
             %   qdc.display_soln(var, soln, fid, name)
-            %   qdc.display_soln(var, soln, fid, name, idx)
+            %   qdc.display_soln(var, soln, fid, name, idx_list)
             %
             % Displays the solution values for all quadratic costs (default)
             % or an individual named or named/indexed subset.
@@ -744,7 +745,8 @@ classdef sm_quad_cost < mp.set_manager_opt_model
             %   fid (fileID) : fileID of open file to write to (default is
             %       1 for standard output)
             %   name (char array) : *(optional)* name of individual subset
-            %   idx (cell array) : *(optional)* indices of individual subset
+            %   idx_list (cell array) : *(optional)* indices of individual
+            %       subset
 
             [fid, name, idx, idxs, hdr1] = obj.display_soln_std_args(varargin{:});
 
@@ -763,14 +765,22 @@ classdef sm_quad_cost < mp.set_manager_opt_model
                     len = length(c_total);
                     if len == 1
                         c_constant = kk;
-                        c_linear = cc' * xx;
+                        if isempty(cc)
+                            c_linear = 0;
+                        else
+                            c_linear = cc' * xx;
+                        end
                         if abs(sum(xx)) > 1e-9
                             c_average = c_total / sum(xx);
                         else
                             c_average = NaN;
                         end
                     else
-                        c_linear = cc .* xx;
+                        if isempty(cc)
+                            c_linear = 0;
+                        else
+                            c_linear = cc .* xx;
+                        end
                         c_average = c_total ./ xx;
                         c_average(isinf(c_average)) = NaN;
                         if isscalar(kk)
@@ -828,9 +838,9 @@ classdef sm_quad_cost < mp.set_manager_opt_model
             % ::
             %
             %   vals = qdc.get_soln(var, soln, name)
-            %   vals = qdc.get_soln(var, soln, name, idx)
+            %   vals = qdc.get_soln(var, soln, name, idx_list)
             %   vals = qdc.get_soln(var, soln, tags, name)
-            %   vals = qdc.get_soln(var, soln, tags, name, idx)
+            %   vals = qdc.get_soln(var, soln, tags, name, idx_list)
             %
             % Returns named/indexed quadratic cost results for a solved
             % model, evaluated at the solution found.
@@ -868,7 +878,7 @@ classdef sm_quad_cost < mp.set_manager_opt_model
             %             vector of cost second derivatives for
             %             :eq:`eq_qdc_form_2`
             %   name (char array) : name of the subset
-            %   idx (cell array) : *(optional)* indices of the subset
+            %   idx_list (cell array) : *(optional)* indices of the subset
             %
             % Outputs:
             %     : Variable number of outputs corresponding to ``tags`` input.

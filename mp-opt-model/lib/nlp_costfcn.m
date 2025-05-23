@@ -1,5 +1,5 @@
 function [f, df, d2f] = nlp_costfcn(om, x)
-% nlp_costfcn - Evaluates objective function, gradient and Hessian.
+% nlp_costfcn - Evaluates objective function, gradient and Hessian for NLP solver.
 % ::
 %
 %   [F, DF, D2F] = NLP_COSTFCN(OM, X)

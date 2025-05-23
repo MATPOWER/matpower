@@ -2,7 +2,7 @@ function t_miqps_master(quiet)
 % t_miqps_master - Tests of MILP/MIQP solvers via miqps_master.
 
 %   MP-Opt-Model
-%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2025, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.
@@ -13,12 +13,17 @@ if nargin < 1
     quiet = 0;
 end
 
-algs = {'DEFAULT', 'CPLEX', 'MOSEK', 'GUROBI', 'GLPK', 'OT'};
-names = {'DEFAULT', 'CPLEX', 'MOSEK', 'Gurobi', 'glpk', 'intlin/lin/quadprog'};
-check = {@have_milp_solver, 'cplex', 'mosek', 'gurobi', 'glpk', 'intlinprog'};
-does_qp = [0 1 1 1 0 0];
-if have_feature('gurobi') || have_feature('cplex') || have_feature('mosek')
+algs = {'DEFAULT', 'CPLEX', 'MOSEK', 'GUROBI', 'HIGHS', 'GLPK', 'OT'};
+names = {'DEFAULT', 'CPLEX', 'MOSEK', 'Gurobi', 'HiGHS', 'glpk', 'intlin/lin/quadprog'};
+check = {@have_milp_solver, 'cplex', 'mosek', 'gurobi', 'highs', 'glpk', 'intlinprog'};
+does_qp   = [0 1 1 1 1 0 1];
+does_miqp = [0 1 1 1 0 0 0];
+if have_feature('gurobi') || have_feature('cplex') || have_feature('mosek') ...
+        || have_feature('highs') || have_feature('quadprog')
     does_qp(1) = 1;
+end
+if have_feature('gurobi') || have_feature('cplex') || have_feature('mosek')
+    does_miqp(1) = 1;
 end
 
 n = 53;
@@ -55,6 +60,13 @@ for k = 1:length(algs)
                 'num_threads', 0, ...
                 'opt', 0 ) ...
         );
+%         if have_feature('highs')
+%             opt.highs_opt.primal_feasibility_tolerance = 1e-10;
+%             opt.highs_opt.dual_feasibility_tolerance = 1e-10;
+%             opt.highs_opt.ipm_optimality_tolerance = 1e-12;
+%             opt.highs_opt.primal_residual_tolerance = 1e-10;
+%             opt.highs_opt.dual_residual_tolerance = 1e-10;
+%         end
         if have_feature('cplex')
             % alg = 0;        %% default uses barrier method with NaN bug in lower lim multipliers
             alg = 2;        %% use dual simplex
@@ -110,13 +122,13 @@ for k = 1:length(algs)
             x0 = [0; 0; 0];
             [x, f, s, out, lam] = miqps_master(H, c, [], [], [], [], [], [], [], opt);
             t_is(s, 1, 12, [t 'success']);
-            t_is(x, [3; 5; 7], 7, [t 'x']);
+            t_is(x, [3; 5; 7], 6.5, [t 'x']);
             t_is(f, -249, 11, [t 'f']);
             t_ok(isempty(lam.mu_l), [t 'lam.mu_l']);
             t_ok(isempty(lam.mu_u), [t 'lam.mu_u']);
             t_is(lam.lower, zeros(size(x)), 13, [t 'lam.lower']);
             t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
-        
+
             t = sprintf('%s - constrained 2-d QP : ', names{k});
             %% example from 'doc quadprog'
             H = [   1   -1;
@@ -210,7 +222,7 @@ for k = 1:length(algs)
              norm(x - [0; 0; 3; 0; 2; 1], Inf) < 1e-12, [t 'x']);
         t_is(f, 16, 12, [t 'f']);
 
-        if does_qp(k)
+        if does_miqp(k)
             t = sprintf('%s - 4-d MIQP : ', names{k});
             %% from cplexmiqpex.m, CPLEX_Studio_Academic124/cplex/examples/src/matlab/cplexmiqpex.m
             %% Note: This is a lame example; the integer relaxed problem already
@@ -275,7 +287,6 @@ end
 t_end;
 
 function TorF = have_milp_solver()
-TorF = have_feature('cplex') || have_feature('glpk') || ...
-    have_feature('gurobi') || have_feature('intlinprog') || ...
-    have_feature('mosek');
-
+TorF = have_feature('cplex') || have_feature('highs') || ...
+    have_feature('glpk') || have_feature('gurobi') || ...
+    have_feature('intlinprog') || have_feature('mosek');

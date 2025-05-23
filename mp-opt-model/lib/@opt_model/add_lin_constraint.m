@@ -2,7 +2,7 @@ function om = add_lin_constraint(om, name, idx, varargin)
 % add_lin_constraint - Adds a set of linear constraints to the model.
 %
 % .. note::
-%    .. deprecated:: 4.3 Please use mp.sm_lin_constraint.add instead, as
+%    .. deprecated:: 5.0 Please use mp.sm_lin_constraint.add instead, as
 %       in ``om.lin.add(...)``.
 %
 % ::

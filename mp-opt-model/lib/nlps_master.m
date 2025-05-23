@@ -130,18 +130,18 @@ function [x, f, eflag, output, lambda] = nlps_master(f_fcn, x0, A, l, u, xmin, x
 %               d2f = -[0 1 0; 1 0 1; 0 1 0];   %% actually not used since
 %           end                                 %% 'hess_fcn' is provided
 %       end
-%       
+%
 %       function [h, g, dh, dg] = gh2(x)
 %       h = [ 1 -1 1; 1 1 1] * x.^2 + [-2; -10];
 %       dh = 2 * [x(1) x(1); -x(2) x(2); x(3) x(3)];
 %       g = []; dg = [];
-%       
+%
 %       function Lxx = hess2(x, lam, cost_mult)
 %       if nargin < 3, cost_mult = 1; end
 %       mu = lam.ineqnonlin;
 %       Lxx = cost_mult * [0 -1 0; -1 0 -1; 0 -1 0] + ...
 %               [2*[1 1]*mu 0 0; 0 2*[-1 1]*mu 0; 0 0 2*[1 1]*mu];
-%       
+%
 %       problem = struct( ...
 %           'f_fcn',    @(x)f2(x), ...
 %           'gh_fcn',   @(x)gh2(x), ...
@@ -227,7 +227,7 @@ switch alg
             mips_opt = [];
         end
         mips_opt.verbose = verbose;
-        
+
         %% call solver
         [x, f, eflag, output, lambda] = ...
             mips(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn, mips_opt);

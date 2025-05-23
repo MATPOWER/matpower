@@ -115,7 +115,7 @@ for k = 1:length(cfg)
             otherwise
                 t_skip(10, sprintf('not implemented for solver ''%s''', alg));
         end
-        
+
         t = sprintf('%s - 2-d function2 (struct) : ', name);
         p = struct('fcn', @f2, 'x0', [1;2], 'opt', opt);
         [x, f, e] = nleqs_master(p);

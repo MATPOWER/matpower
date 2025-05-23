@@ -2,7 +2,7 @@ function vs = varsets_cell2struct(om, vs)
 % varsets_cell2struct - Converts VARSETS from cell array to struct array.
 %
 % .. note::
-%    .. deprecated:: 4.3 Please use mp.sm_variable.varsets_cell2struct instead.
+%    .. deprecated:: 5.0 Please use mp.sm_variable.varsets_cell2struct instead.
 %
 % ::
 %

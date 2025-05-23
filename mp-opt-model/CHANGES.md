@@ -5,6 +5,35 @@ Change history for MP-Opt-Model
 since 4.2
 ---------
 
+#### 5/23/25
+  - Add support to `qps_master()` and `miqps_master()` for the open-source
+    [HiGHS][15] solver for LP, QP and MILP problems, including functions
+    `miqps_highs()`, `qps_highs()`, `have_feature_highs()`, `highsver()`, and
+    `highs_options()`. Uses the [HiGHSMEX][15] interface for HiGHS.
+
+#### 5/7/25
+  - Fix crash in `mp.sm_quad_cost.display_soln()` when linear
+    coefficient is empty.
+
+#### 4/30/25
+  - Add support for quadratic constraint and QCQP (quadratically-
+    constrained quadratic programming) problems.
+    *Thanks to Wilson Gonzalez Vanegas.*
+    - Add new top-level wrapper function `qcqps_master()` to provide
+      a standard unified interface quadratically-constrained quadratic
+      programming (QCQP) problems, with the ability to provide solver-
+      specific input options.
+    - Add `qcqps_gurobi()`, `qcqps_knitro()`, `qcqps_nlps()` with
+      interface that matches `qcqps_master()` to handle implementation
+      for Gurobi, Artelys Knitro, `fmincon`, IPOPT, and MIPS  solvers.
+    - Add `mpopt2qcqpopt()` to set up an options struct for
+      `qcqps_master()` based on a MATPOWER options struct.
+    - Add `mp.sm_quad_constraint` class to handle quadratic
+      constraints in `opt_model`.
+    - Add `qcn` property to `opt_model` for quadratic constraints
+      and automatic detection of a new `QCQP` problem type that is
+      sent to `qcqps_master()` to solve.
+
 #### 3/19/25
   - Update `miqps_<solver>()` functions to avoid changing MIP solution
     values in price computation stage. It was rounding integer variables,
@@ -23,7 +52,7 @@ since 4.2
 
 #### 2/28/25
   - Throw error if `opt_model.parse_soln()` is called for an unsolved
-    model. 
+    model.
 
 #### 10/29/24
   - Add `relax_integer` option for `opt_model.solve()`. Set to true to easily
@@ -120,7 +149,7 @@ Version 4.2 - *May 10, 2024*
     Enrico Bertolazzi's [mexIPOPT][12], which include MEX files that have
     been renamed to architecture-specific names along with an `ipopt.m`
     wrapper function to call the appropriate one.
-    *Thanks to Carlos Murillo-Sánchez.*  
+    *Thanks to Carlos Murillo-Sánchez.* 
     _**Note:** While MP-Opt-Model no longer requires this, my recommendation
      is still to simply rename the MEX file to `ipopt.<mexext>`, with the
      appropriate architecture-specific extension, and delete the
@@ -222,7 +251,7 @@ Version 4.0 - *Oct 18, 2021*
   - Add several enhancements to `mp_idx_manager/set_type_idx_map()`.
     - Speed improvements
     - Add idxs = [] option to specify "all"
-    - Add optional `group_by_name` input argument. 
+    - Add optional `group_by_name` input argument.
 
 #### 5/3/21
   - Add support for new class of problems - parameterized nonlinear
@@ -592,3 +621,5 @@ Version 0.7.0 - *Jun 20, 2019*
 [12]: https://github.com/ebertolazzi/mexIPOPT
 [13]: https://matpower.org/doc/mpom/
 [14]: https://www.artelys.com/solvers/knitro/
+[15]: https://highs.dev
+[16]: https://github.com/savyasachi/HiGHSMEX

@@ -111,13 +111,13 @@ if have_mpopt
     %% versions 6.x-11.x
     valid_alg = {                                   %% v6 v7 v8-v10 v11
             sc.MSK_OPTIMIZER_FREE;                  %%  0  0   2     2
-            sc.MSK_OPTIMIZER_INTPNT;                %%  1  1   4     4   
+            sc.MSK_OPTIMIZER_INTPNT;                %%  1  1   4     4
             sc.MSK_OPTIMIZER_PRIMAL_SIMPLEX;        %%  4  3   6     8
             sc.MSK_OPTIMIZER_DUAL_SIMPLEX;          %%  5  4   1     1
             sc.MSK_OPTIMIZER_FREE_SIMPLEX;          %%  7  6   3     3
         };
     %% versions 6.x, 7.x
-    if vnum < 8 
+    if vnum < 8
         valid_alg{end+1} = ...
             sc.MSK_OPTIMIZER_PRIMAL_DUAL_SIMPLEX;   %%  6  5   -     -
         valid_alg{end+1} = ...
