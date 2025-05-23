@@ -36,7 +36,7 @@ function rv = mpver(varargin)
 v{1} = struct(  'Name',     'MATPOWER', ... 
                 'Version',  '8.0.1-dev', ...
                 'Release',  '', ...
-                'Date',     '15-May-2025' );
+                'Date',     '23-May-2025' );
 if nargout > 0
     if nargin > 0
         rv = v{1};
@@ -153,6 +153,7 @@ else
         fprintf('%-22s -- not installed --\n', 'GLPK');
     end
     gurobiver;
+    highsver;
     if have_feature('ipopt')
         s = have_feature('ipopt', 'all');
         if isempty(s.vstr)

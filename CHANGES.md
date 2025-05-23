@@ -15,6 +15,7 @@ since 8.0
 
 #### 5/23/25
   - Add support to `mpoption()` for HiGHS solver options.
+  - Include HiGHS solver, if available in DC OPF tests.
 
 #### 5/15/25
   - Add prototype three-phase shunt model.

@@ -15,7 +15,7 @@ function success = test_matpower(verbose, exit_on_fail)
 % See also t_run_tests.
 
 %   MATPOWER
-%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2025, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -139,6 +139,9 @@ if have_feature('glpk')
 end
 if have_feature('gurobi')
     tests{end+1} = 't_opf_dc_gurobi';
+end
+if have_feature('highs')
+    tests{end+1} = 't_opf_dc_highs';
 end
 if have_feature('ipopt')
     tests{end+1} = 't_opf_dc_ipopt';

@@ -340,6 +340,7 @@ Legacy |MATPOWER| Tests
    functions/t_opf_dc_default
    functions/t_opf_dc_glpk
    functions/t_opf_dc_gurobi
+   functions/t_opf_dc_highs
    functions/t_opf_dc_ipopt
    functions/t_opf_dc_mips
    functions/t_opf_dc_mips_sc
