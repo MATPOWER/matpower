@@ -204,10 +204,34 @@ if strcmp(alg, 'DEFAULT')
             elseif have_feature('glpk')     %% if not, and then GLPK, if available
                 alg = 'GLPK';
             else
-                error('miqps_master: no solvers available - requires CPLEX, Gurobi, MOSEK, INTLINPROG or GLPK');
+                if isempty(vtype) || all(vtype == 'C')  %% LP
+                    if have_feature('knitro')   %% if not, then Artelys Knitro, if available
+                        alg = 'KNITRO';
+                    elseif have_feature('bpmpd')%% if not, then BPMPD_MEX, if available
+                        alg = 'BPMPD';
+                    else                        %% otherwise MIPS
+                        alg = 'MIPS';
+                    end
+                else
+                    error('miqps_master: no MILP solvers available - requires CPLEX, Gurobi, MOSEK, INTLINPROG, HIGHS, or GLPK');
+                end
             end
-        else                            %% if not, and quadratic objective
-            error('miqps_master: no solvers available - requires CPLEX, Gurobi, or MOSEK');
+        else                        %% if not, and quadratic objective
+            if isempty(vtype) || all(vtype == 'C')  %% QP
+                if have_feature('quadprog') && have_feature('matlab')   %% if not, then Opt Tbx, if available in MATLAB
+                    alg = 'OT';
+                elseif have_feature('highs')    %% if not, then HiGHS, if available
+                    alg = 'HIGHS';
+                elseif have_feature('knitro')   %% if not, then Artelys Knitro, if available
+                    alg = 'KNITRO';
+                elseif have_feature('bpmpd')    %% if not, then BPMPD_MEX, if available
+                    alg = 'BPMPD';
+                else                            %% otherwise MIPS
+                    alg = 'MIPS';
+                end
+            else                            %% MIQP
+                error('miqps_master: no MIQP solvers available - requires CPLEX, Gurobi, or MOSEK');
+            end
         end
     end
 end

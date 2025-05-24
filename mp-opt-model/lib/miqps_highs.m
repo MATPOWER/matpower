@@ -245,6 +245,7 @@ if verbose > 1
 else
     highs_opt.output_flag = false;
 end
+highs_opt = highsoptset(highs_opt);
 
 %% get solver type
 if isfield(highs_opt, 'solver')

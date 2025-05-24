@@ -6,10 +6,14 @@ since 4.2
 ---------
 
 #### 5/23/25
-  - Add support to `qps_master()` and `miqps_master()` for the open-source
-    [HiGHS][15] solver for LP, QP and MILP problems, including functions
-    `miqps_highs()`, `qps_highs()`, `have_feature_highs()`, `highsver()`, and
-    `highs_options()`. Uses the [HiGHSMEX][15] interface for HiGHS.
+  - Add support to `qps_master()` and `miqps_master()` for the
+    open-source [HiGHS][15] solver for LP, QP and MILP problems,
+    including functions `miqps_highs()`, `qps_highs()`,
+    `have_feature_highs()`, `highsver()`, and `highs_options()`. Uses
+    the [HiGHSMEX][15] interface for HiGHS.
+  - Fix that using `miqps_master()` with `'DEFAULT'` solver to solve an
+    LP/QP problem without a MILP/MIQP solver available incorrectly
+    threw a fatal error stating there was no solver available.
 
 #### 5/7/25
   - Fix crash in `mp.sm_quad_cost.display_soln()` when linear

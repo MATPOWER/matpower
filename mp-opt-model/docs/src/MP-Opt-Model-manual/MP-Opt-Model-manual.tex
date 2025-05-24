@@ -5085,8 +5085,7 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-5.0.pdf}{\mpom{} 5.0 Use
 
 \subsubsection*{Bugs Fixed}
 \begin{itemize}
-\item
-    \emph{Thanks to Fulano.}
+\item Using \code{miqps\_master()} with \codeq{DEFAULT} solver to solve an LP/QP problem without a MILP/MIQP solver available incorrectly threw a fatal error stating there was no solver available.
 \end{itemize}
 
 \subsubsection*{Other Changes}
