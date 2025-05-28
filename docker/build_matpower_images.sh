@@ -40,6 +40,9 @@ docker build --build-arg MP_SRC=github --build-arg BRANCH=8.0 --build-arg BASE_T
 docker build --build-arg MP_SRC=github --build-arg BRANCH=7.0 --build-arg WARN=1 -f docker/Dockerfile -t matpower/matpower:7.0c .
 docker build --build-arg MP_SRC=github --build-arg BRANCH=7.1 --build-arg PATCH_MOST_TEST=1 -f docker/Dockerfile -t matpower/matpower:7.1c .
 docker build --build-arg MP_SRC=github --build-arg BRANCH=8.0b1 --build-arg PATCH_MOST_TEST=1 -f docker/Dockerfile -t matpower/matpower:8.0b1c .
+
+## Do not rebuild 8.0 with Octave 10.x or later. It has some typos that cause crashes
+## in 10.x and later, but not 9.4.x and earlier
 docker build --build-arg MP_SRC=github --build-arg BRANCH=8.0 --build-arg PATCH_MOST_TEST=1 -f docker/Dockerfile -t matpower/matpower:8.0c .
 # docker build --build-arg MP_SRC=github --build-arg BRANCH=7.1 --build-arg PATCH_MOST_TEST=1 -f docker/Dockerfile -t matpower/matpower:latest .
 docker tag matpower/matpower:8.0c matpower/matpower:latest

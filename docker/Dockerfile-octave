@@ -9,7 +9,7 @@
 # Xiangmin Jiao <xmjiao@gmail.com>
 # Ray Zimmerman <rz10@cornell.edu>
 
-ARG VER=9.2.0
+ARG VER=10.1.0
 ARG SKIP_IPOPT=0
 ARG SKIP_OSQP=0
 FROM gnuoctave/octave:${VER} AS base

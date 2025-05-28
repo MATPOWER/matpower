@@ -25,8 +25,11 @@ docker build --build-arg VER=8.3.0 --platform=linux/amd64 -f docker/Dockerfile-o
 docker build --build-arg VER=8.4.0 --platform=linux/amd64 -f docker/Dockerfile-octave -t matpower/octave:8.4.0 .
 docker build --build-arg VER=9.1.0 --platform=linux/amd64 -f docker/Dockerfile-octave -t matpower/octave:9.1.0 .
 docker build --build-arg VER=9.2.0 --platform=linux/amd64 -f docker/Dockerfile-octave -t matpower/octave:9.2.0 .
+docker build --build-arg VER=9.3.0 --platform=linux/amd64 -f docker/Dockerfile-octave -t matpower/octave:9.3.0 .
+docker build --build-arg VER=9.4.0 --platform=linux/amd64 -f docker/Dockerfile-octave -t matpower/octave:9.4.0 .
+docker build --build-arg VER=10.1.0 --platform=linux/amd64 -f docker/Dockerfile-octave -t matpower/octave:10.1.0 .
 # docker build -f docker/Dockerfile-octave -t matpower/octave:latest .
-docker tag matpower/octave:9.2.0 matpower/octave:latest
+docker tag matpower/octave:10.1.0 matpower/octave:latest
 
 # for debugging, may want to try:
 #   DOCKER_BUILDKIT=0 docker build ...
