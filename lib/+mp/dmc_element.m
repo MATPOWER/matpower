@@ -137,7 +137,7 @@ classdef (Abstract) dmc_element < handle
             %       (e.g. |MATPOWER| case struct for mp.dm_converter_mpc2)
             %
             % Output:
-            %   TorF (boolean) : true if field exists
+            %   TorF (logical) : true if field exists
             %
             % Check if value returned by data_field() exists as a field in ``d``.
 

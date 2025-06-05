@@ -325,7 +325,7 @@ classdef (Abstract) nm_element < handle
             %   nv_ = nme.get_nv_(sysx)
             %
             % Input:
-            %   sysx (boolean) : if true the state ``x_`` refers to the full
+            %   sysx (logical) : if true the state ``x_`` refers to the full
             %       *(possibly complex)* system state *(all node voltages and
             %       system non-voltage states)*, otherwise it is the state
             %       vector for this specific element type *(port voltages and
@@ -354,7 +354,7 @@ classdef (Abstract) nm_element < handle
             %
             % Inputs:
             %   x_ (double) : *possibly complex* state vector
-            %   sysx (boolean) : if true the state ``x_`` refers to the full
+            %   sysx (logical) : if true the state ``x_`` refers to the full
             %       *(possibly complex)* system state *(all node voltages and
             %       system non-voltage states)*, otherwise it is the state
             %       vector for this specific element type *(port voltages and

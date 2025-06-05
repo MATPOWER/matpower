@@ -265,7 +265,7 @@ classdef (Abstract) net_model < mp.nm_element & mp.element_container & mp_idx_ma
             %
             % Inputs:
             %   name (char array) : name of the parameter of interest
-            %   vnotz (boolean) : true if columns of parameter correspond to
+            %   vnotz (logical) : true if columns of parameter correspond to
             %       voltage variables, false otherwise
             %
             % Output:
@@ -595,7 +595,7 @@ classdef (Abstract) net_model < mp.nm_element & mp.element_container & mp_idx_ma
             %       to the all elements for the specified set type (i.e. node,
             %       port, or state)
             %   dm (mp.data_model) : data model object
-            %   group_by_name (boolean) : if true, results are consolidated,
+            %   group_by_name (logical) : if true, results are consolidated,
             %       with a single entry in ``s`` for each unique name/idx pair,
             %       where the ``i`` and ``j`` fields are vectors
             %
@@ -1031,7 +1031,7 @@ classdef (Abstract) net_model < mp.nm_element & mp.element_container & mp_idx_ma
             %   nm (mp.net_model) : network model object
             %   dm (mp.data_model) : data model object
             %   idx (integer) : index *(not used in base method)*
-            %   skip_ensure_ref (boolean) : unless true, if there is no
+            %   skip_ensure_ref (logical) : unless true, if there is no
             %       reference node, the first PV node will be converted to a
             %       new reference
             %

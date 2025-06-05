@@ -34,7 +34,7 @@ function succ = install_matpower(modify, save_it, verbose, rm_oldpaths)
 % *All inputs and outputs are optional.*
 %
 % Inputs:
-%   modify (boolean) : select how to set path
+%   modify (logical) : select how to set path
 %
 %       - 0 *(default)* - generate relevant :func:`addpath` commands, but
 %         don't execute them; |MATPOWER| is not installed
@@ -61,15 +61,15 @@ function succ = install_matpower(modify, save_it, verbose, rm_oldpaths)
 %             modified and saved with :func:`savepath`; |MATPOWER| is
 %             available in this and all future sessions
 %           - *otherwise* : the path will be modified but not saved
-%   verbose (boolean) : prints the relevant :func:`addpath` commands if true
+%   verbose (logical) : prints the relevant :func:`addpath` commands if true
 %       *(default)*, silent otherwise
-%   rm_oldpaths (boolean) : remove existing installation
+%   rm_oldpaths (logical) : remove existing installation
 %
 %       - 0 *(default)* - do **not** remove existing |MATPOWER| from path
 %       - 1 - remove existing |MATPOWER| paths first
 %
 % Output:
-%     success (boolean) : 1 if all commands succeeded, 0 otherwise
+%     success (logical) : 1 if all commands succeeded, 0 otherwise
 %
 % Examples::
 %

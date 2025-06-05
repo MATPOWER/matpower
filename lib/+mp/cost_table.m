@@ -131,7 +131,7 @@ classdef cost_table < mp_table_subclass
             %       for all rows
             %   pu_base (double) : base used to scale quantities to per unit
             %   ng (integer) : number of units, default is # of rows in cost
-            %   dc (boolean) : true if DC formulation (ng variables),
+            %   dc (logical) : true if DC formulation (ng variables),
             %       otherwise AC formulation (2*ng variables), default is 1
             %
             % Outputs:

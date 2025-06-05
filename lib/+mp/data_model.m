@@ -489,7 +489,7 @@ classdef data_model < mp.element_container
             %
             % Inputs:
             %   label (char array) : label for the section header
-            %   blank_line (boolean) : include a blank line before the section
+            %   blank_line (logical) : include a blank line before the section
             %       label if true
             %
             % Output:
@@ -542,7 +542,7 @@ classdef data_model < mp.element_container
             %   mpopt (struct) : |MATPOWER| options struct
             %
             % Output:
-            %   TorF (boolean) : true if section exists
+            %   TorF (logical) : true if section exists
             %
             % See also pretty_print.
 

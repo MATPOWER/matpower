@@ -1246,7 +1246,7 @@ for lm = fieldnames(lims).'
     %% idxfull is full list of candidate index values for given constraint
     idxfull = softlims_default_idx(mat, lim, col);
 
-    %% idxmask is a boolean vector the size of s.idx, where
+    %% idxmask is a logical vector the size of s.idx, where
     %% idxmask(i) is 1 if s.idx(i) is in idxfull and 0 otherwise
     idxmask = ismember(s.idx, idxfull);
     s.idx = s.idx(idxmask); %% remove possibly irrelevant entries entered by user

@@ -15,7 +15,7 @@ classdef (Abstract) dm_element < handle
 %   ==============  ============  ==========================================
 %   ``uid``         *integer*     unique ID
 %   ``name``        *char array*  element name
-%   ``status``      *boolean*     true = online, false = offline
+%   ``status``      *logical*     true = online, false = offline
 %   ``source_uid``  *undefined*   intended for any info required to link
 %                                 back to element instance in source data
 %   ==============  ============  ==========================================
@@ -243,7 +243,7 @@ classdef (Abstract) dm_element < handle
             %   TorF = dme.table_exists()
             %
             % Output:
-            %   TorF (boolean) : true if main data table is not empty
+            %   TorF (logical) : true if main data table is not empty
 
             TorF = ~isempty(obj.tab);
         end
@@ -575,7 +575,7 @@ classdef (Abstract) dm_element < handle
             %       ``'sum'``, ``'ext'``, or ``'det'``, for **counts**,
             %       **summary**, **extremes**, or **details** sections,
             %       respectively
-            %   out_e (boolean) : output control flag for this element/section
+            %   out_e (logical) : output control flag for this element/section
             %   mpopt (struct) : |MATPOWER| options struct
             %   fd (integer) : *(optional, default = 1)* file identifier to
             %       use for printing, (1 for standard output, 2 for standard
@@ -622,7 +622,7 @@ classdef (Abstract) dm_element < handle
             %    : see pretty_print() for details
             %
             % Output:
-            %   TorF (boolean) : true if output includes specified section
+            %   TorF (logical) : true if output includes specified section
             %
             % Implementation handled by section-specific *pp_have_section*
             % methods or :meth:`pp_have_section_other() <mp.dme_shared_opf.pp_have_section_other>`.

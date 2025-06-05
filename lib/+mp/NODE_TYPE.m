@@ -57,7 +57,7 @@ classdef (Sealed) NODE_TYPE
             %   val (integer) : node type value to check for validity
             %
             % Output:
-            %   TorF (boolean) : true if ``val`` is a valid node type
+            %   TorF (logical) : true if ``val`` is a valid node type
 
             TorF = val == mp.NODE_TYPE.PQ  | val == mp.NODE_TYPE.PV | ...
                    val == mp.NODE_TYPE.REF | val == mp.NODE_TYPE.NONE;
