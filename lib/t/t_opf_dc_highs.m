@@ -47,7 +47,11 @@ end
 
 mpopt = mpoption('out.all', 0, 'verbose', verbose);
 mpopt = mpoption(mpopt, 'opf.dc.solver', 'HIGHS');
-mpopt = mpoption(mpopt, 'highs.opts.pdlp_d_gap_tol', 1e-9);
+if have_feature('highs', 'vnum') < 1.011
+    mpopt = mpoption(mpopt, 'highs.opts.pdlp_d_gap_tol', 1e-9);
+else
+    mpopt = mpoption(mpopt, 'highs.opts.pdlp_optimality_tolerance', 1e-10);
+end
 
 %% run DC OPF
 if have_feature('highs')
