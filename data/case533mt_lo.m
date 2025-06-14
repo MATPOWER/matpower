@@ -15,6 +15,12 @@ function mpc = case533mt_lo
 %       "Network reconfiguration for renewable generation maximization",
 %       Master's thesis, Lund University, 2023
 %       URL: http://lup.lub.lu.se/student-papers/record/9124806
+%
+%   Modifications:
+%     v2 - 2025-06-14 (WGV)
+%         - Set the tap parameter of branch # 1 and 2 to 1.0 to model
+%           transformers with nominal turns ratio. This configuration 
+%           benefits the convert_1p_to_3p function.
 
 %   MATPOWER
 %   Copyright (c) 2023 by Gabriel Malmer and Lovisa Thorin
@@ -587,8 +593,8 @@ mpc.gen = [
 
 %	fbus tbus   r           x           b	rateA	    rateB rateC	ratio angle	status angmin angmax ratedCurr
 mpc.branch = [   %% (r, x and ratedCurr specified in p.u. here)
-    1	2	    0.000289183	0.000475417	0	53.00075471	0	0	0	0	1	-360	360	3.180045283;
-    1	3	    0.000328467	0.000662892	0	54.55960044	0	0	0	0	1	-360	360	3.273576026;
+    1	2	    0.000289183	0.000475417	0	53.00075471	0	0	1	0	1	-360	360	3.180045283;
+    1	3	    0.000328467	0.000662892	0	54.55960044	0	0	1	0	1	-360	360	3.273576026;
     4	1	    0.000961394	0.001996898	0	50.66248612	0	0	0	0	1	-360	360	3.039749167;
     5	2	    0.247364266	0.139251062	0	5.40399852	0	0	0	0	1	-360	360	0.324239911;
     5	6	    0.027863723	0.004373436	0	1.662768775	0	0	0	0	1	-360	360	0.099766127;

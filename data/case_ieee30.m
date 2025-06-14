@@ -9,6 +9,12 @@ function mpc = case_ieee30
 %       https://labs.ece.uw.edu/pstca/
 % 
 %  08/20/93 UW ARCHIVE           100.0  1961 W IEEE 30 Bus Test Case
+%
+%   Modifications:
+%     v2 - 2025-06-14 (WGV)
+%         - Set tap parameter of branches # 13, 14, and 16 to 1.0 to model
+%           transformers with nominal turns ratio. This configuration
+%           benefits the convert_1p_to_3p function.
 
 %   MATPOWER
 
@@ -80,10 +86,10 @@ mpc.branch = [
 	6	8	0.012	0.042	0.009	0	0	0	0	0	1	-360	360;
 	6	9	0	0.208	0	0	0	0	0.978	0	1	-360	360;
 	6	10	0	0.556	0	0	0	0	0.969	0	1	-360	360;
-	9	11	0	0.208	0	0	0	0	0	0	1	-360	360;
-	9	10	0	0.11	0	0	0	0	0	0	1	-360	360;
+	9	11	0	0.208	0	0	0	0	1	0	1	-360	360;
+	9	10	0	0.11	0	0	0	0	1	0	1	-360	360;
 	4	12	0	0.256	0	0	0	0	0.932	0	1	-360	360;
-	12	13	0	0.14	0	0	0	0	0	0	1	-360	360;
+	12	13	0	0.14	0	0	0	0	1	0	1	-360	360;
 	12	14	0.1231	0.2559	0	0	0	0	0	0	1	-360	360;
 	12	15	0.0662	0.1304	0	0	0	0	0	0	1	-360	360;
 	12	16	0.0945	0.1987	0	0	0	0	0	0	1	-360	360;

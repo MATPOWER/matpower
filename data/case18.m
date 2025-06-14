@@ -20,6 +20,10 @@ function mpc = case18
 %         - Gen Qmin, Qmax, Pmax magnitudes set to 100 (instead of 999)
 %         - Branch flow limits disabled, i.e. set to 0 (instead of 999)
 %         - Add gen cost.
+%     v3 - 2025-06-14 (WGV)
+%         - Set the tap parameter of branch # 16 to 1.0 to model a transformer 
+%           with nominal turns ratio. This configuration benefits the 
+%           convert_1p_to_3p function.
 
 %% MATPOWER Case Format : Version 2
 mpc.version = '2';
@@ -78,7 +82,7 @@ mpc.branch = [
 % original had 2 parallel lines from 25-26
 %	25	26	0.02208	0.0272	0.000059	0	0	0	0	0	1	-360	360;
 %	25	26	0.02208	0.0272	0.000059	0	0	0	0	0	1	-360	360;
-	50	1	0.00312	0.06753	0	0	0	0	0	0	1	-360	360;
+	50	1	0.00312	0.06753	0	0	0	0	1	0	1	-360	360;
 	50	51	0.0005	0.00344	0	0	0	0	0	0	1	-360	360;
 ];
 
