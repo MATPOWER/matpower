@@ -107,7 +107,7 @@ if strcmp(mpc_ver, '1')
     shift = MU_PMAX - PMIN - 1;
     tmp = num2cell([MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN] - shift);
     [MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN] = deal(tmp{:});
-    
+
     %% remove extra columns of branch
     if size(branch, 2) >= MU_ST
         branch = branch(:, [1:BR_STATUS, PF:MU_ST]);
@@ -151,7 +151,7 @@ else                                %% M-file
     if fd == -1
         error(['savecase: ', msg]);
     end
-    
+
     %% function header, etc.
     if strcmp(mpc_ver, '1')
         if exist('areas', 'var') && exist('gencost', 'var') && ~isempty(gencost)
@@ -179,7 +179,7 @@ else                                %% M-file
     fprintf(fd, '\n%%%%-----  Power Flow Data  -----%%%%\n');
     fprintf(fd, '%%%% system MVA base\n');
     fprintf(fd, '%sbaseMVA = %.9g;\n', prefix, baseMVA);
-    
+
     %% bus data
     ncols = size(bus, 2);
     fprintf(fd, '\n%%%% bus data\n');
@@ -187,14 +187,17 @@ else                                %% M-file
     if ncols >= MU_VMIN             %% opf SOLVED, save with lambda's & mu's
         fprintf(fd, '\tlam_P\tlam_Q\tmu_Vmax\tmu_Vmin');
     end
-    fprintf(fd, '\n%sbus = [\n', prefix);
-    if ncols < MU_VMIN              %% opf NOT SOLVED, save without lambda's & mu's
-        fprintf(fd, '\t%d\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%d\t%.9g\t%.9g\t%.9g\t%d\t%.9g\t%.9g;\n', bus(:, 1:VMIN).');
-    else                            %% opf SOLVED, save with lambda's & mu's
-        fprintf(fd, '\t%d\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%d\t%.9g\t%.9g\t%.9g\t%d\t%.9g\t%.9g\t%.4f\t%.4f\t%.4f\t%.4f;\n', bus(:, 1:MU_VMIN).');
+    fprintf(fd, '\n%sbus = [', prefix);
+    if ~isempty(bus)
+        fprintf(fd, '\n');
+        if ncols < MU_VMIN              %% opf NOT SOLVED, save without lambda's & mu's
+            fprintf(fd, '\t%d\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%d\t%.9g\t%.9g\t%.9g\t%d\t%.9g\t%.9g;\n', bus(:, 1:VMIN).');
+        else                            %% opf SOLVED, save with lambda's & mu's
+            fprintf(fd, '\t%d\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%d\t%.9g\t%.9g\t%.9g\t%d\t%.9g\t%.9g\t%.4f\t%.4f\t%.4f\t%.4f;\n', bus(:, 1:MU_VMIN).');
+        end
     end
     fprintf(fd, '];\n');
-    
+
     %% generator data
     ncols = size(gen, 2);
     fprintf(fd, '\n%%%% generator data\n');
@@ -205,22 +208,25 @@ else                                %% M-file
     if ncols >= MU_QMIN             %% opf SOLVED, save with mu's
         fprintf(fd, '\tmu_Pmax\tmu_Pmin\tmu_Qmax\tmu_Qmin');
     end
-    fprintf(fd, '\n%sgen = [\n', prefix);
-    if ncols < MU_QMIN              %% opf NOT SOLVED, save without mu's
-        if strcmp(mpc_ver, '1')
-            fprintf(fd, '\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%d\t%.9g\t%.9g;\n', gen(:, 1:PMIN).');
+    fprintf(fd, '\n%sgen = [', prefix);
+    if ~isempty(gen)
+        fprintf(fd, '\n');
+        if ncols < MU_QMIN              %% opf NOT SOLVED, save without mu's
+            if strcmp(mpc_ver, '1')
+                fprintf(fd, '\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%d\t%.9g\t%.9g;\n', gen(:, 1:PMIN).');
+            else
+                fprintf(fd, '\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g;\n', gen(:, 1:APF).');
+            end
         else
-            fprintf(fd, '\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g;\n', gen(:, 1:APF).');
-        end
-    else
-        if strcmp(mpc_ver, '1')
-            fprintf(fd, '\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%d\t%.9g\t%.9g\t%.4f\t%.4f\t%.4f\t%.4f;\n', gen(:, 1:MU_QMIN).');
-        else
-            fprintf(fd, '\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.4f\t%.4f\t%.4f\t%.4f;\n', gen(:, 1:MU_QMIN).');
+            if strcmp(mpc_ver, '1')
+                fprintf(fd, '\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%d\t%.9g\t%.9g\t%.4f\t%.4f\t%.4f\t%.4f;\n', gen(:, 1:MU_QMIN).');
+            else
+                fprintf(fd, '\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.4f\t%.4f\t%.4f\t%.4f;\n', gen(:, 1:MU_QMIN).');
+            end
         end
     end
     fprintf(fd, '];\n');
-    
+
     %% branch data
     ncols = size(branch, 2);
     fprintf(fd, '\n%%%% branch data\n');
@@ -237,28 +243,31 @@ else                                %% M-file
             fprintf(fd, '\tmu_angmin\tmu_angmax');
         end
     end
-    fprintf(fd, '\n%sbranch = [\n', prefix);
-    if ncols < QT                   %% power flow NOT SOLVED, save without line flows or mu's
-        if strcmp(mpc_ver, '1')
-            fprintf(fd, '\t%d\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%d;\n', branch(:, 1:BR_STATUS).');
-        else
-            fprintf(fd, '\t%d\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%d\t%.9g\t%.9g;\n', branch(:, 1:ANGMAX).');
-        end
-    elseif ncols < MU_ST            %% power flow SOLVED, save with line flows but without mu's
-        if strcmp(mpc_ver, '1')
-            fprintf(fd, '\t%d\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%d\t%.4f\t%.4f\t%.4f\t%.4f;\n', branch(:, 1:QT).');
-        else
-            fprintf(fd, '\t%d\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%d\t%.9g\t%.9g\t%.4f\t%.4f\t%.4f\t%.4f;\n', branch(:, 1:QT).');
-       end
-    else                            %% opf SOLVED, save with lineflows & mu's
-        if strcmp(mpc_ver, '1')
-            fprintf(fd, '\t%d\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%d\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f;\n', branch(:, 1:MU_ST).');
-        else
-            fprintf(fd, '\t%d\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%d\t%.9g\t%.9g\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f;\n', branch(:, 1:MU_ANGMAX).');
+    fprintf(fd, '\n%sbranch = [', prefix);
+    if ~isempty(branch)
+        fprintf(fd, '\n');
+        if ncols < QT                   %% power flow NOT SOLVED, save without line flows or mu's
+            if strcmp(mpc_ver, '1')
+                fprintf(fd, '\t%d\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%d;\n', branch(:, 1:BR_STATUS).');
+            else
+                fprintf(fd, '\t%d\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%d\t%.9g\t%.9g;\n', branch(:, 1:ANGMAX).');
+            end
+        elseif ncols < MU_ST            %% power flow SOLVED, save with line flows but without mu's
+            if strcmp(mpc_ver, '1')
+                fprintf(fd, '\t%d\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%d\t%.4f\t%.4f\t%.4f\t%.4f;\n', branch(:, 1:QT).');
+            else
+                fprintf(fd, '\t%d\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%d\t%.9g\t%.9g\t%.4f\t%.4f\t%.4f\t%.4f;\n', branch(:, 1:QT).');
+           end
+        else                            %% opf SOLVED, save with lineflows & mu's
+            if strcmp(mpc_ver, '1')
+                fprintf(fd, '\t%d\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%d\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f;\n', branch(:, 1:MU_ST).');
+            else
+                fprintf(fd, '\t%d\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%d\t%.9g\t%.9g\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f;\n', branch(:, 1:MU_ANGMAX).');
+            end
         end
     end
     fprintf(fd, '];\n');
-    
+
     %% OPF data
     if (exist('areas', 'var') && ~isempty(areas)) || ...
         (exist('gencost', 'var') && ~isempty(gencost))
@@ -296,7 +305,7 @@ else                                %% M-file
         end
         fprintf(fd, '];\n');
     end
-    
+
     if ~strcmp(mpc_ver, '1')
         %% generalized OPF user data
         if (isfield(mpc, 'A') && ~isempty(mpc.A)) || ...
@@ -373,7 +382,7 @@ else                                %% M-file
             if size(mpc.gen, 1) ~= ng
                 warning('savecase: gentype field does not have the expected dimensions (length = %d, expected %d)', ng, size(mpc.gen, 1));
             end
-            
+
             fprintf(fd, '\n%%%% generator unit type (see GENTYPES)\n');
             fprintf(fd, '%sgentype = {\n', prefix);
             for k = 1:ng
@@ -388,7 +397,7 @@ else                                %% M-file
             if size(mpc.gen, 1) ~= ng
                 warning('savecase: genfuel field does not have the expected dimensions (length = %d, expected %d)', ng, size(mpc.gen, 1));
             end
-            
+
             fprintf(fd, '\n%%%% generator fuel type (see GENFUELS)\n');
             fprintf(fd, '%sgenfuel = {\n', prefix);
             for k = 1:ng
@@ -403,13 +412,104 @@ else                                %% M-file
             if size(mpc.bus, 1) ~= nb
                 warning('savecase: bus_name field does not have the expected dimensions (length = %d, expected %d)', nb, size(mpc.bus, 1));
             end
-            
+
             fprintf(fd, '\n%%%% bus names\n');
             fprintf(fd, '%sbus_name = {\n', prefix);
             for k = 1:nb
                 fprintf(fd, '\t''%s'';\n', strrep(mpc.bus_name{k}, '''', ''''''));
             end
             fprintf(fd, '};\n');
+        end
+
+        %%-----  prototype 3-phase data  -----
+        %% freq, basekVA
+        if isfield(mpc, 'basekVA') && ~isempty(mpc.basekVA)
+            fprintf(fd, '\n%%%%-----  3 Phase Model Data  -----%%%%\n');
+            fprintf(fd, '%%%% system data\n');
+            fprintf(fd, '%sfreq = %.9g;      %%%% frequency, Hz\n', prefix, mpc.freq);
+            fprintf(fd, '%sbasekVA = %.9g; %%%% system kVA base\n', prefix, mpc.basekVA);
+
+            %% bus3p
+            fprintf(fd, '\n%%%% 3-phase bus data\n');
+            fprintf(fd, '%%\tbusid\ttype\tbasekV\tVm1\tVm2\tVm3\tVa1\tVa2\tVa3');
+            fprintf(fd, '\n%sbus3p = [', prefix);
+            if isfield(mpc, 'bus3p') && ~isempty(mpc.bus3p)
+                fprintf(fd, '\n');
+                fprintf(fd, '\t%d\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g;\n', mpc.bus3p.');
+            end
+            fprintf(fd, '];\n');
+
+            %% buslink
+            fprintf(fd, '\n%%%% buslink data\n');
+            fprintf(fd, '%%\tlinkid\tbusid\tbus3pid\tstatus');
+            fprintf(fd, '\n%sbuslink = [', prefix);
+            if isfield(mpc, 'buslink') && ~isempty(mpc.buslink)
+                fprintf(fd, '\n');
+                fprintf(fd, '\t%d\t%d\t%d\t%d;\n', mpc.buslink.');
+            end
+            fprintf(fd, '];\n');
+
+            %% line3p
+            fprintf(fd, '\n%%%% 3-phase line data\n');
+            fprintf(fd, '%%\tbrid\tfbus\ttbus\tstatus\tlcid\tlen');
+            fprintf(fd, '\n%sline3p = [', prefix);
+            if isfield(mpc, 'line3p') && ~isempty(mpc.line3p)
+                fprintf(fd, '\n');
+                line3p = mpc.line3p;
+                line3p(:, end) = 5280 * line3p(:, end);
+                fprintf(fd, '\t%d\t%d\t%d\t%d\t%d\t%.9g/5280;\n', line3p.');
+            end
+            fprintf(fd, '];\n');
+
+            %% xfmr3p
+            fprintf(fd, '\n%%%% 3-phase transformer data\n');
+            fprintf(fd, '%%\txfid\tfbus\ttbus\tstatus\tR\tX\tbasekVA\tbasekV\tratio');
+            fprintf(fd, '\n%sxfmr3p = [', prefix);
+            if isfield(mpc, 'xfmr3p') && ~isempty(mpc.xfmr3p)
+                fprintf(fd, '\n');
+                fprintf(fd, '\t%d\t%d\t%d\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g;\n', mpc.xfmr3p.');
+            end
+            fprintf(fd, '];\n');
+
+            %% shunt3p
+            fprintf(fd, '\n%%%% 3-phase shunt data\n');
+            fprintf(fd, '%%\tshid\tshbus\tstatus\tgs1\tgs2\tgs3\tbs1\tbs2\tbs3');
+            fprintf(fd, '\n%sshunt3p = [', prefix);
+            if isfield(mpc, 'shunt3p') && ~isempty(mpc.shunt3p)
+                fprintf(fd, '\n');
+                fprintf(fd, '\t%d\t%d\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g;\n', mpc.shunt3p.');
+            end
+            fprintf(fd, '];\n');
+
+            %% load3p
+            fprintf(fd, '\n%%%% 3-phase load data\n');
+            fprintf(fd, '%%\tldid\tldbus\tstatus\tPd1\tPd2\tPd3\tldpf1\tldpf2\tldpf3');
+            fprintf(fd, '\n%sload3p = [', prefix);
+            if isfield(mpc, 'load3p') && ~isempty(mpc.load3p)
+                fprintf(fd, '\n');
+                fprintf(fd, '\t%d\t%d\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g;\n', mpc.load3p.');
+            end
+            fprintf(fd, '];\n');
+
+            %% gen3p
+            fprintf(fd, '\n%%%% 3-phase generator data\n');
+            fprintf(fd, '%%\tgenid\tgbus\tstatus\tVg1\tVg2\tVg3\tPg1\tPg2\tPg3\tQg1\tQg2\tQg3');
+            fprintf(fd, '\n%sgen3p = [', prefix);
+            if isfield(mpc, 'gen3p') && ~isempty(mpc.gen3p)
+                fprintf(fd, '\n');
+                fprintf(fd, '\t%d\t%d\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g;\n', mpc.gen3p.');
+            end
+            fprintf(fd, '];\n');
+
+            %% lc
+            fprintf(fd, '\n%%%% line construction data\n');
+            fprintf(fd, '%%\tlcid\tR11\tR21\tR31\tR22\tR32\tR33\tX11\tX21\tX31\tX22\tX32\tX33\tC11\tC21\tC31\tC22\tC32\tC33');
+            fprintf(fd, '\n%slc = [', prefix);
+            if isfield(mpc, 'lc') && ~isempty(mpc.lc)
+                fprintf(fd, '\n');
+                fprintf(fd, '\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g;\n', mpc.lc.');
+            end
+            fprintf(fd, '];\n');
         end
 
         %% execute userfcn callbacks for 'savecase' stage

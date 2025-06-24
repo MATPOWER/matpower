@@ -57,13 +57,12 @@ mpc.gencost = [
 	2	3000	0	3	0.1225	1	335;
 ];
 
-
 %%-----  3 Phase Model Data  -----%%
 %% system data
 mpc.freq = 60;      %% frequency, Hz
 mpc.basekVA = 1000; %% system kVA base
 
-%% bus data
+%% 3-phase bus data
 %	busid	type	basekV	Vm1	Vm2	Vm3	Va1	Va2	Va3
 mpc.bus3p = [
 	1	1	12.47	1	1	1	0	-120	120;
@@ -88,7 +87,7 @@ mpc.buslink = [
 	3	8	9	1;
 ];
 
-%% branch data
+%% 3-phase line data
 %	brid	fbus	tbus	status	lcid	len
 mpc.line3p = [
 	1	1	2	1	1	2000/5280;
@@ -99,7 +98,7 @@ mpc.line3p = [
 	6	11	12	1	1	2500/5280;
 ];
 
-%% transformer
+%% 3-phase transformer data
 %	xfid	fbus	tbus	status	R	X	basekVA	basekV	ratio
 mpc.xfmr3p = [
 	1	2	3	1	0.01	0.06	6000	12.47	1;
@@ -107,11 +106,11 @@ mpc.xfmr3p = [
 	3	10	11	1	0.01	0.06	6000	12.47	1;
 ];
 
-%% shunt
+%% 3-phase shunt data
 %	shid	shbus	status	gs1	gs2	gs3	bs1	bs2	bs3
 mpc.shunt3p = [];
 
-%% load
+%% 3-phase load data
 %	ldid	ldbus	status	Pd1	Pd2	Pd3	ldpf1	ldpf2	ldpf3
 mpc.load3p = [
 	1	4	1	1275	1800	2375	0.85	0.9	0.95;
@@ -119,14 +118,14 @@ mpc.load3p = [
 	3	12	1	1275	1800	2375	0.85	0.9	0.95;
 ];
 
-%% gen
+%% 3-phase generator data
 %	genid	gbus	status	Vg1	Vg2	Vg3	Pg1	Pg2	Pg3	Qg1	Qg2	Qg3
 mpc.gen3p = [
 % 	1	1	1	1	1	1	2000	2000	2000	0	0	0;
 ];
 
-%% line construction
+%% line construction data
 %	lcid	R11	R21	R31	R22	R32	R33	X11	X21	X31	X22	X32	X33	C11	C21	C31	C22	C32	C33
 mpc.lc = [
-	1	0.457541	0.15594 	0.153474	0.466617	0.157996	0.461462	1.078	0.501648	0.384909	1.04813	0.423624	1.06502	15.0671	-4.86241	-1.85323	15.875	-3.09098	14.3254
+	1	0.457541	0.15594	0.153474	0.466617	0.157996	0.461462	1.078	0.501648	0.384909	1.04813	0.423624	1.06502	15.0671	-4.86241	-1.85323	15.875	-3.09098	14.3254;
 ];

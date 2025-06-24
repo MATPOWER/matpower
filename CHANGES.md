@@ -13,6 +13,9 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 since 8.0
 ---------
 
+#### 5/24/25
+  - Add support to `savecase()` for three-phase prototype data.
+
 #### 5/23/25
   - Add support to `mpoption()` for HiGHS solver options.
   - Include HiGHS solver, if available in DC OPF tests.
