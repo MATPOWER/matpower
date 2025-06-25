@@ -60,13 +60,6 @@ function mpc3p = convert_1p_to_3p(mpc, basekVA, basekV, freq, ishybrid)
     %   Covered by the 3-clause BSD License (see LICENSE file for details).
     %   See https://matpower.org for more info.
 
-    %% check MATPOWER version
-    supported_ver = {'8.0.1-dev'};
-    v = mpver;
-    if ~ismember(v,supported_ver)
-        warning('convert_1p_to_3p: Using version %s of MATPOWER might result in errors. Continuing the conversion based on version 8.0.1-dev. \n', v);
-    end
-
     %% check inputs
     if nargin >= 1
         mpc = loadcase(mpc);
