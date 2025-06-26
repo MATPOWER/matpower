@@ -91,7 +91,7 @@ n_pf = 4 + 4 * length(casefiles)*length(cfg);
 n_cpf = 4 * length(casefiles)*length(cfg_cpf);
 n_opf = 4 * length(cfg_opf);
 
-t_begin(n_pf + n_cpf + n_opf, quiet);
+t_begin(n_pf + n_cpf + n_opf + 1, quiet);
 
 mpopt0 = mpoption('out.all', 0, 'verbose', 0, 'mips.comptol', 1e-9);
 
@@ -219,6 +219,24 @@ for k = 1:length(cfg_opf)
     t_is(va, [eva; eva+3.656255521718970; eva+1.039772166853819], 7, [t 'va']);
     t_is(vm, [evm; evm; evm], 7, [t 'vm']);
     t_is(pl, [epl; epl; epl], 5, [t 'pl']);
+end
+
+%%-----  savecase  -----
+t = 'savecase';
+casefile = casefiles{8};
+mpc0 = loadcase(casefile);
+fn = sprintf('test_case3p_h_%d.m', fix(1e9*rand));
+savecase(fn, mpc0);
+[GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
+    MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
+    QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
+mpc = loadcase(fn);
+Vg2 = mpc0.gen(2, VG);
+mpc0.gen(2, VG) = mpc.gen(2, VG);
+if t_ok(isequal(mpc0, mpc) && abs(Vg2 - mpc.gen(2, VG)) < 1e-8, t)
+    delete(fn);
+else
+    fprintf('  compare these 2 files:\n    %s\n    %s\n', which(casefile), which(fn));
 end
 
 warning('on', 'update_z:multiple_nodes');
