@@ -1,5 +1,5 @@
 function t_convert_1p_to_3p(quiet)
-% t_mpc2mpc3p - test of convert_1p_to_3p transformation function over many  
+% t_mpc2mpc3p - test of convert_1p_to_3p transformation function over many
 %   of the cases included in the MATPOWER suite.
 
 %   MATPOWER
@@ -13,7 +13,7 @@ function t_convert_1p_to_3p(quiet)
 if nargin < 1
     quiet = 0;
 end
- 
+
 cases = {'4_dist','4gs','5','6ww','9','10ba','12da','15da','15nbr','16ci',...
          '17me','18','18nbr','22','24_ieee_rts','28da','30','_ieee30', ...
          '33bw','33mg','34sa','38si','39','51ga','51he','60nordic','69',...
@@ -49,7 +49,7 @@ for c = 1:length(cases)
     % 1) Check for convergence of mpc3p
     t = sprintf('3-phase %s - convergence - ', C);
     t_ok(soln3p.eflag==1, [t sprintf('%d iter', soln3p.output.iterations)])
-    
+
     if soln3p.eflag
         t = sprintf('%s - 3-phase balanced results: ', C);
         % 2) Check for balanced results
@@ -66,7 +66,7 @@ for c = 1:length(cases)
         t_is(sum([line3p.ql1_fr line3p.ql2_fr line3p.ql3_fr],2)/3, line3p.ql1_fr, 6, [t 'lines (reactive power at from end)']);
         t_is(sum([line3p.ql1_to line3p.ql2_to line3p.ql3_to],2)/3, line3p.ql1_to, 6, [t 'lines (reactive power at to end)']);
         if ~isempty(mpc3p.xfmr3p)
-            xfmr3p = res3p.dm.elements.xfmr3p.tab;            
+            xfmr3p = res3p.dm.elements.xfmr3p.tab;
             t_is(sum([xfmr3p.pl1_fr xfmr3p.pl2_fr xfmr3p.pl3_fr],2)/3, xfmr3p.pl1_fr, 6, [t 'transformers (active power at from end)']);
             t_is(sum([xfmr3p.pl1_to xfmr3p.pl2_to xfmr3p.pl3_to],2)/3, xfmr3p.pl1_to, 6, [t 'transformers (active power at to end)']);
             t_is(sum([xfmr3p.ql1_fr xfmr3p.ql2_fr xfmr3p.ql3_fr],2)/3, xfmr3p.ql1_fr, 6, [t 'transformers (reactive power at from end)']);
@@ -92,7 +92,7 @@ for c = 1:length(cases)
         t_is(bus3p.va1, bus.va, 6, [t 'buses (voltage angles)'])
         gen = res1p.dm.elements.gen.tab;
         t_is(3*gen3p.pg1/1e3, gen.pg, 6, [t 'generators (active power)']);
-        t_is(3*gen3p.qg1/1e3, gen.qg, 6, [t 'generators (reactive power)']);        
+        t_is(3*gen3p.qg1/1e3, gen.qg, 6, [t 'generators (reactive power)']);
         id_line1p = find(branch.tm == 0);
         t_is(3*line3p.pl1_fr/1e3, branch.pl_fr(id_line1p), 6, [t 'lines (active power at from end)']);
         t_is(3*line3p.pl1_to/1e3, branch.pl_to(id_line1p), 6, [t 'lines (active power at to end)']);
@@ -104,7 +104,7 @@ for c = 1:length(cases)
             t_is(3*xfmr3p.pl1_to/1e3, branch.pl_to(id_xfmr1p), 6, [t 'transformers (active power at to end)']);
             t_is(3*xfmr3p.ql1_fr/1e3, branch.ql_fr(id_xfmr1p), 6, [t 'transformers (reactive power at from end)']);
             t_is(3*xfmr3p.ql1_to/1e3, branch.ql_to(id_xfmr1p), 6, [t 'transformers (reactive power at to end)']);
-        end        
+        end
         if ~skip_shunt_flag
             shunt = res1p.dm.elements.shunt.tab;
             t_is(3*shunt3p.p1/1e3, shunt.p, 6, [t 'shunts (active power consumption)']);
@@ -171,16 +171,16 @@ function mpc2 = check_mpc(mpc, case_name)
     %% 1) Look for several generators connected at the same bus and ... (applies for case5 and case24_ieee_rts)
     id_bus_gen = mpc.gen(:,GEN_BUS);
     unique_id_bus_gen = unique(id_bus_gen);
-    if length(unique_id_bus_gen) < length(id_bus_gen) 
+    if length(unique_id_bus_gen) < length(id_bus_gen)
         for b = unique_id_bus_gen'
             id_b = find(id_bus_gen==b);
-            if length(id_b) > 1     %% ... eliminate their reactive limits to avoid differences in reactive power allocation                
+            if length(id_b) > 1     %% ... eliminate their reactive limits to avoid differences in reactive power allocation
                 mpc2.gen(id_b, QMAX) = Inf(length(id_b),1);
                 mpc2.gen(id_b, QMIN) = -Inf(length(id_b),1);
-            end            
+            end
         end
         warning(['t_convert_1p_to_3p: %s: Removing reactive power limits of generators connected to the same bus. This gens are: (%s).'], case_name, strjoin(cellstr(num2str(unique_id_bus_gen(:))), ', '));
-    end    
+    end
 
     %% 2) Look for general branches and ... ()
     general_branch_nom = mpc2.branch(:,BR_B) ~= 0 & mpc2.branch(:,TAP) ~= 0;

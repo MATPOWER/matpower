@@ -2,7 +2,7 @@ function mpc3p = convert_1p_to_3p(mpc, basekVA, basekV, freq, ishybrid)
     % convert_1p_to_3p - converts a single-phase MATPOWER case to an equivalent
     %   balanced three-phase case
     %   ::
-    %   
+    %
     %   MPC3P = CONVERT_1P_TO_3P(MPC, BASEKVA)
     %   MPC3P = CONVERT_1P_TO_3P(MPC, BASEKVA, BASEKV)
     %   MPC3P = CONVERT_1P_TO_3P(MPC, BASEKVA, BASEKV, FREQ)
@@ -10,7 +10,7 @@ function mpc3p = convert_1p_to_3p(mpc, basekVA, basekV, freq, ishybrid)
     %
     %   The conversion is performed taking into account the data format prototype
     %   for unbalanced three-phase elements included in MATPOWER 8.0., as
-    %   well as subsequent additions regarding three-phase shunt elements and tap 
+    %   well as subsequent additions regarding three-phase shunt elements and tap
     %   parameters for three-phase transformers.
     %
     %   This function is useful for creating new test cases for unbalanced
@@ -23,7 +23,7 @@ function mpc3p = convert_1p_to_3p(mpc, basekVA, basekV, freq, ishybrid)
     %             a valid MATPOWER case or a string with the name of an mpc
     %       basekVA: a positive scalar denoting the base power in kVA for
     %                convertion to per-unit values of the three-phase system
-    %       basekV : a vector denoting the base voltages in kV of all buses 
+    %       basekV : a vector denoting the base voltages in kV of all buses
     %                for convertion to per-unit values of the three-phase system
     %       freq : a positive scalar denoting the frequency in Hz of the system
     %       ishybrid : when set to 1, it returns the original mpc with
@@ -35,11 +35,11 @@ function mpc3p = convert_1p_to_3p(mpc, basekVA, basekV, freq, ishybrid)
     %   Outputs:
     %       mpc3p (struct) : a struct with/without the fields of the single-phase
     %                        case depending on the values of ishybrid, plus
-    %                        the additional fields for the equivalent 
+    %                        the additional fields for the equivalent
     %                        three-phase network. The resulting case ensures
     %                        a sequential numbering of the three-phase nodes
     %                        via the ext2int MATPOWER function.
-    %    
+    %
     %   If a power flow is run over the mpc3p provided by this function, the
     %   results are the three-phase balanced equivalent of the results of
     %   the single-phase original case.
@@ -65,8 +65,8 @@ function mpc3p = convert_1p_to_3p(mpc, basekVA, basekV, freq, ishybrid)
         mpc = loadcase(mpc);
     else
         error('convert_1p_to_3p: A MATPOWER case must be provided \n')
-    end    
-      
+    end
+
     BASE_KV = 10;            % Define index for base voltage in bus matrix
     change_base_kV  = 0;     % do not change base voltage by default
     change_base_kVA = 0;     % do not change base power by default
@@ -103,8 +103,8 @@ function mpc3p = convert_1p_to_3p(mpc, basekVA, basekV, freq, ishybrid)
         mpc = loadcase(mpc);
     else
         error('convert_1p_to_3p: Input ''mpc'' must be a struct or a string \n')
-    end    
-    
+    end
+
     if ~isscalar(basekVA) || basekVA < 0
         error('convert_1p_to_3p: Input ''basekVA'' must be a positive scalar \n')
     end
@@ -129,7 +129,7 @@ function mpc3p = convert_1p_to_3p(mpc, basekVA, basekV, freq, ishybrid)
         QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
 
     %% classify branches into lines, transformers and general branches
-    branch_is_xfmr = mpc.branch(:,TAP) ~= 0;     
+    branch_is_xfmr = mpc.branch(:,TAP) ~= 0;
     line_has_series = ((mpc.branch(:,BR_R)) ~= 0 | (mpc.branch(:,BR_X)) ~= 0) & ~branch_is_xfmr;
     line_has_shunt = mpc.branch(:,BR_B) ~= 0 & ~branch_is_xfmr;
     branch_is_line = line_has_series | line_has_shunt;
@@ -144,28 +144,28 @@ function mpc3p = convert_1p_to_3p(mpc, basekVA, basekV, freq, ishybrid)
     if any(branch_is_general)
         error('convert_1p_to_3p: General branches with R or X, and B with an ideal tranformer are not supported. Please provide lines and transformers as individual elements in the branch matrix of the MATPOWER case.')
     end
-    
+
     %% check for presence of phase shifters
     if any(mpc.branch(:, SHIFT))
         error('convert_1p_to_3p: Phase shifting transformer are not included yet in supported versions of the MATPOWER API for three-phase networks');
-    end    
+    end
 
     %% apply a reordering of bus indexing
     mpc = ext2int(mpc);     % facilitates work
 
     %% --- (1) bus3p: create data for three-phase buses
-    nb = size(mpc.bus,1);                                   % number of single-phase buses    
+    nb = size(mpc.bus,1);                                   % number of single-phase buses
     bus3p = zeros(nb, 9);                                   % columns of bus3p are: busid (1), type (2), basekV (3), Vm1 (4), Vm2 (5), Vm3 (6), Va1 (7), Va2 (8), and Va3 (9)
     bus3p(:,1) = mpc.bus(:,BUS_I);                          % bus id
     bus3p(:,2) = mpc.bus(:,BUS_TYPE);                       % bus type
-    if change_base_kV                                      
+    if change_base_kV
         bus3p(mpc.bus(:,BUS_I),3) = basekV;                 % base voltage
         bus3p(mpc.bus(:,BUS_I),4) = ...                     % voltage magnitude for phase a [p.u]
             mpc.bus(:,VM) .* (basekV_old ./ basekV);
     else
         bus3p(mpc.bus(:,BUS_I),3) = mpc.bus(:,BASE_KV);     % base voltage
         bus3p(mpc.bus(:,BUS_I),4) = mpc.bus(:,VM);          % voltage magnitude for phase a [p.u]
-    end    
+    end
     bus3p(mpc.bus(:,BUS_I),5) = bus3p(mpc.bus(:,BUS_I),4);  % voltage magnitude for phase b [p.u]
     bus3p(mpc.bus(:,BUS_I),6) = bus3p(mpc.bus(:,BUS_I),4);  % voltage magnitude for phase c [p.u]
     bus3p(mpc.bus(:,BUS_I),7) = mpc.bus(:,VA);              % voltage angle for phase a [degrees]
@@ -185,13 +185,13 @@ function mpc3p = convert_1p_to_3p(mpc, basekVA, basekV, freq, ishybrid)
         x = mpc.branch(branch_is_xfmr, BR_X);
         if change_base_kV || change_base_kVA
             xfmr3p(:,5) = z_base_change(r, basekV_old(tbus_xfmr3p), basekVA_old, ...   % resistance of the three-phase transformers (p.u)
-                                basekV(tbus_xfmr3p), basekVA);     
+                                basekV(tbus_xfmr3p), basekVA);
             xfmr3p(:,6) = z_base_change(x, basekV_old(tbus_xfmr3p), basekVA_old, ...   % reactance of the three-phase transformers (p.u)
                                 basekV(tbus_xfmr3p), basekVA);
         else
             xfmr3p(:,5) = r;                                                           % resistance of the three-phase transformers (p.u)
             xfmr3p(:,6) = x;                                                           % reactance of the three-phase transformers (p.u)
-        end        
+        end
         xfmr3p(:,7) = basekVA / 3;                          % base aparent power of the three-phase transformers
         xfmr3p(:,8) = basekV(fbus_xfmr3p) / sqrt(3);        % base voltage of the transformers
         xfmr3p(:,9) = mpc.branch(branch_is_xfmr, TAP);
@@ -213,15 +213,15 @@ function mpc3p = convert_1p_to_3p(mpc, basekVA, basekV, freq, ishybrid)
         shunt3p(:,[7 8 9]) = repmat((1/3)*bs*1000, 1, 3);     % shunt susceptances specified as nominal (@ vm = 1.0 p.u.) active power demand for all three phases [kVAr]
     else
         shunt3p = [];
-    end    
-    
+    end
+
     %% --- (4) lc: create line constructions for building three-phase lines
-    nl = sum(branch_is_line);                                      % number of three-phase lines    
+    nl = sum(branch_is_line);                                      % number of three-phase lines
     fbus_branch = mpc.branch(:, F_BUS);
     tbus_branch = mpc.branch(:, T_BUS);
 
     % check for inconsistent base voltages at from/to ends of lines
-    diff_ft_basekV = diff([basekV_old(fbus_branch) basekV_old(tbus_branch)],1,2);    
+    diff_ft_basekV = diff([basekV_old(fbus_branch) basekV_old(tbus_branch)],1,2);
     diff_ft_basekV = diff_ft_basekV~=0 & branch_is_line;
     if any(diff_ft_basekV)
         id_diff = find(diff_ft_basekV);
@@ -230,21 +230,21 @@ function mpc3p = convert_1p_to_3p(mpc, basekVA, basekV, freq, ishybrid)
 
     fbus_line3p = mpc.branch(branch_is_line, F_BUS);                % get buses at from end of three-phase lines
     tbus_line3p = mpc.branch(branch_is_line, T_BUS);                % get buses at to end of three-phase lines
-    baseY = mpc.baseMVA ./ (basekV_old(fbus_line3p)/sqrt(3)).^2;    % base admitance of lines using old bases (Ohm^-1)   
+    baseY = mpc.baseMVA ./ (basekV_old(fbus_line3p)/sqrt(3)).^2;    % base admitance of lines using old bases (Ohm^-1)
     baseZ = 1./baseY;
     b = mpc.branch(branch_is_line, BR_B);
     r = mpc.branch(branch_is_line, BR_R);
     x = mpc.branch(branch_is_line, BR_X);
     R_lc = r .* baseZ * 3;                                          % resistance in Ohm for line construction
     X_lc = x .* baseZ * 3;                                          % reactance in Ohm for line construction
-    C_lc = b .* baseY / 3 ./ (2*pi*freq*1e-9);                      % capacitance in nF for line construction    
+    C_lc = b .* baseY / 3 ./ (2*pi*freq*1e-9);                      % capacitance in nF for line construction
     line_construction = zeros(nl, 19);                              % columns of lc are: lcid (1), R11 (2), R21 (3), R31 (4), R22 (5), R32 (6), R33 (7), X11 (8), X21 (9), X31 (10), X22 (11), X32 (12), X33 (13), C11 (14), C21 (15), C31 (16), C22 (17), C32 (18), C33 (19)
     line_construction(:,1) = (1:nl);                                % line construction IDs (a lc for each line)
     line_construction(:,[2 5 7]) = repmat(R_lc, 1, 3);              % balanced diagonal matrix of resistances (Ohm/mile)
     line_construction(:,[8 11 13]) = repmat(X_lc, 1, 3);            % balanced diagonal matrix of reactances (Ohm/mile)
     line_construction(:,[14 17 19]) = repmat(C_lc, 1, 3);           % balanced diagonal matrix of capacitances (nF/mile)
 
-    %% --- (5) line3p: create data for three-phase lines    
+    %% --- (5) line3p: create data for three-phase lines
     line3p = ones(nl, 6);                                   % columns of line3p are: brid (1), fbus (2), tbus (3), status (4), lcid (5), len (6)
     line3p(:,1) = (1:nl);                                   % IDs of three-phase lines
     line3p(:,2) = fbus_line3p;                              % from bus ID of three-phase lines
@@ -287,7 +287,7 @@ function mpc3p = convert_1p_to_3p(mpc, basekVA, basekV, freq, ishybrid)
         gen3p(:,[4 5 6]) = repmat(Vg, 1, 3);                            % voltage set point of three-phase generators
     else
         gen3p(:,[4 5 6]) = repmat(vg, 1, 3);                            % voltage set point of three-phase generators
-    end    
+    end
     gen3p(:,[7 8 9]) = repmat(1/3 * mpc.gen(:,PG) * 1000, 1 , 3);       % active power injection for all phases [kW]
     gen3p(:,[10 11 12]) = 0;                                            % reactive power injection for all phases [kVAr]
 
