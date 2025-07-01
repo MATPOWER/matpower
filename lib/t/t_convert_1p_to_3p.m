@@ -1,5 +1,5 @@
 function t_convert_1p_to_3p(quiet)
-% t_mpc2mpc3p - test of convert_1p_to_3p transformation function over many
+% t_mpc2mpc3p - test of mp.case_utils.convert_1p_to_3p transformation function over many
 %   of the cases included in the MATPOWER suite.
 
 %   MATPOWER
@@ -40,7 +40,7 @@ for c = 1:length(cases)
     C = ['case' cases{c}];
     mpc = ext2int(loadcase(C));
     mpc = check_mpc(mpc, C);
-    mpc3p = convert_1p_to_3p(mpc);
+    mpc3p = mp.case_utils.convert_1p_to_3p(mpc);
 
     res1p = run_pf(mpc,mpopt);
     res3p = run_pf(mpc3p, mpopt, 'mpx', mp.xt_3p);
@@ -126,8 +126,8 @@ for i = unique(basekV_old)'
     basekV_new(idvm) = i * (vmin+(vmax-vmin)*rand);
 end
 basekVA_new = 1000 * mpc.baseMVA * 1.5;
-mpc3p_a = convert_1p_to_3p(mpc);
-mpc3p_b = convert_1p_to_3p(mpc, basekVA_new, basekV_new);
+mpc3p_a = mp.case_utils.convert_1p_to_3p(mpc);
+mpc3p_b = mp.case_utils.convert_1p_to_3p(mpc, basekVA_new, basekV_new);
 
 mpopt = mpoption('pf.tol', 1e-10, 'pf.nr.max_it', 1000, 'verbose', 0,'out.all', 0);
 res3p_a = run_pf(mpc3p_a,mpopt,'mpx',mp.xt_3p);
