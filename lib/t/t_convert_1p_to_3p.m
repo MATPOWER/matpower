@@ -39,7 +39,7 @@ for c = 1:length(cases)
     skip_shunt_flag = 0;
     C = ['case' cases{c}];
     mpc = ext2int(loadcase(C));
-    mpc = check_mpc(mpc, C);
+    mpc = mp.case_utils.remove_gen_q_lims(mpc, C);
     mpc3p = mp.case_utils.convert_1p_to_3p(mpc);
     mpc = mp.case_utils.relocate_branch_shunts(mpc);
 
@@ -118,7 +118,7 @@ end
 
 %% 4) Check for equal results with different bases
 C = 'case141';
-mpc = check_mpc(loadcase(C));
+mpc = mp.case_utils.remove_gen_q_lims(loadcase(C), C);
 basekV_old = mpc.bus(:, 10);
 basekV_new = basekV_old;
 vmin = 0.98; vmax = 1.02;
@@ -155,32 +155,3 @@ t_is([line3p_a.pl1_to line3p_a.pl2_to line3p_a.pl3_to], [line3p_b.pl1_to line3p_
 t_is([line3p_a.ql1_to line3p_a.ql2_to line3p_a.ql3_to], [line3p_b.ql1_to line3p_b.ql2_to line3p_b.ql3_to], 5, [t 'line reactive power injection at to end'])
 
 t_end;
-
-end
-
-function mpc2 = check_mpc(mpc, case_name)
-    [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
-        VA, BASE_KV, ZONE, VMAX, VMIN] = idx_bus;
-    [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
-        TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
-        ANGMIN, ANGMAX] = idx_brch;
-    [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
-        MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
-        QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
-
-    mpc2 = mpc;
-
-    %% 1) Look for several generators connected at the same bus and ... (applies for case5 and case24_ieee_rts)
-    id_bus_gen = mpc.gen(:,GEN_BUS);
-    unique_id_bus_gen = unique(id_bus_gen);
-    if length(unique_id_bus_gen) < length(id_bus_gen)
-        for b = unique_id_bus_gen'
-            id_b = find(id_bus_gen==b);
-            if length(id_b) > 1     %% ... eliminate their reactive limits to avoid differences in reactive power allocation
-                mpc2.gen(id_b, QMAX) = Inf(length(id_b),1);
-                mpc2.gen(id_b, QMIN) = -Inf(length(id_b),1);
-            end
-        end
-        warning(['t_convert_1p_to_3p: %s: Removing reactive power limits of generators connected to the same bus. This gens are: (%s).'], case_name, strjoin(cellstr(num2str(unique_id_bus_gen(:))), ', '));
-    end
-end

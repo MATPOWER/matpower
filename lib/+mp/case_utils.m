@@ -317,6 +317,31 @@ classdef case_utils
             z_new = z_old * (basekVA_new / basekVA_old) .* (basekV_old.^2) ./ (basekV_new.^2);
         end
 
+        function mpc2 = remove_gen_q_lims(mpc, case_name)
+            %% define constants
+            [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
+                MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
+                QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
+
+            mpc2 = mpc;
+            %% Look for several generators connected at the same bus and ...
+            %% (applies for case5 and case24_ieee_rts)
+            id_bus_gen = mpc.gen(:,GEN_BUS);
+            unique_id_bus_gen = unique(id_bus_gen);
+            if length(unique_id_bus_gen) < length(id_bus_gen)
+                for b = unique_id_bus_gen'
+                    id_b = find(id_bus_gen==b);
+                    if length(id_b) > 1
+                        %% ... eliminate their reactive limits to avoid
+                        %% differences in reactive power allocation
+                        mpc2.gen(id_b, QMAX) = Inf(length(id_b),1);
+                        mpc2.gen(id_b, QMIN) = -Inf(length(id_b),1);
+                    end
+                end
+                warning(['mp.case_utils.remove_gen_q_lims: %s: Removing reactive power limits of the following co-located generators: %s'], case_name, strjoin(cellstr(num2str(unique_id_bus_gen(:))), ', '));
+            end
+        end
+
         function mpc2 = relocate_branch_shunts(mpc)
             %% define constants
             [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
