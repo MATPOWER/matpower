@@ -41,6 +41,7 @@ for c = 1:length(cases)
     mpc = ext2int(loadcase(C));
     mpc = check_mpc(mpc, C);
     mpc3p = mp.case_utils.convert_1p_to_3p(mpc);
+    mpc = mp.case_utils.relocate_branch_shunts(mpc);
 
     res1p = run_pf(mpc,mpopt);
     res3p = run_pf(mpc3p, mpopt, 'mpx', mp.xt_3p);
@@ -85,7 +86,7 @@ for c = 1:length(cases)
         end
 
 
-        t = sprintf('%s - comparison againts 1-phase: ', C);
+        t = sprintf('%s - comparison against 1-phase: ', C);
         % 3) Check for equivalent results with respect to single-phase case
         bus = res1p.dm.elements.bus.tab;
         t_is(bus3p.vm1, bus.vm, 6, [t 'buses (voltage magnitudes)'])
@@ -128,6 +129,7 @@ end
 basekVA_new = 1000 * mpc.baseMVA * 1.5;
 mpc3p_a = mp.case_utils.convert_1p_to_3p(mpc);
 mpc3p_b = mp.case_utils.convert_1p_to_3p(mpc, basekVA_new, basekV_new);
+mpc = mp.case_utils.relocate_branch_shunts(mpc);
 
 mpopt = mpoption('pf.tol', 1e-10, 'pf.nr.max_it', 1000, 'verbose', 0,'out.all', 0);
 res3p_a = run_pf(mpc3p_a,mpopt,'mpx',mp.xt_3p);
@@ -180,21 +182,5 @@ function mpc2 = check_mpc(mpc, case_name)
             end
         end
         warning(['t_convert_1p_to_3p: %s: Removing reactive power limits of generators connected to the same bus. This gens are: (%s).'], case_name, strjoin(cellstr(num2str(unique_id_bus_gen(:))), ', '));
-    end
-
-    %% 2) Look for general branches and ... ()
-    general_branch_nom = mpc2.branch(:,BR_B) ~= 0 & mpc2.branch(:,TAP) ~= 0;
-    if any(general_branch_nom)
-        id_general_branch_nom = find(general_branch_nom);
-        for b = id_general_branch_nom'
-            branch = mpc2.branch(b,:);
-            fbus = branch(F_BUS);
-            tbus = branch(T_BUS);
-            mpc2.bus(tbus,BS) = mpc2.bus(tbus,BS) + mpc2.baseMVA*(branch(BR_B)/2);                      % ... move right shunt element to receiving bus and ...
-            mpc2.bus(fbus,BS) = mpc2.bus(fbus,BS) + mpc2.baseMVA*(branch(BR_B)/2)*(1/(branch(TAP)^2));  % ... move left shunt element to primary side of ideal transformer and ...
-            branch(BR_B) = 0;                                                                           % ... zero-out branch shunt elements.
-            mpc2.branch(b,:) = branch;
-        end
-        warning('t_convert_1p_to_3p: %s: Relocating branch shunt elements from pi-circuit model to sending/receiving buses in the following branches: %s', case_name, strjoin(cellstr(num2str(id_general_branch_nom(:))), ', '));
     end
 end

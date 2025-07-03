@@ -127,6 +127,9 @@ classdef case_utils
                 MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
                 QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
 
+            %% relocate branch shunt elements to from/to buses for transformers
+            mpc = mp.case_utils.relocate_branch_shunts(mpc);
+
             %% classify branches into lines, transformers and general branches
             branch_is_xfmr = mpc.branch(:,TAP) ~= 0;
             line_has_series = ((mpc.branch(:,BR_R)) ~= 0 | (mpc.branch(:,BR_X)) ~= 0) & ~branch_is_xfmr;
@@ -312,6 +315,40 @@ classdef case_utils
 
         function z_new = z_base_change(z_old, basekV_old, basekVA_old, basekV_new, basekVA_new)
             z_new = z_old * (basekVA_new / basekVA_old) .* (basekV_old.^2) ./ (basekV_new.^2);
+        end
+
+        function mpc2 = relocate_branch_shunts(mpc)
+            %% define constants
+            [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
+                VA, BASE_KV, ZONE, VMAX, VMIN] = idx_bus;
+            [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
+                TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
+                ANGMIN, ANGMAX] = idx_brch;
+
+            mpc2 = mpc;
+            %% Look for general branches and ...
+            general_branch_nom = mpc2.branch(:,BR_B) ~= 0 & mpc2.branch(:,TAP) ~= 0;
+            if any(general_branch_nom)
+                id_general_branch_nom = find(general_branch_nom);
+                for b = id_general_branch_nom'
+                    branch = mpc2.branch(b,:);
+                    fbus = branch(F_BUS);
+                    tbus = branch(T_BUS);
+                    % ... move right shunt element to receiving bus and ...
+                    mpc2.bus(tbus,BS) = mpc2.bus(tbus,BS) + mpc2.baseMVA*(branch(BR_B)/2);
+                    % ... move left shunt element to primary side of ideal transformer and ...
+                    mpc2.bus(fbus,BS) = mpc2.bus(fbus,BS) + mpc2.baseMVA*(branch(BR_B)/2)*(1/(branch(TAP)^2));
+                    % ... zero-out branch shunt elements.
+                    branch(BR_B) = 0;
+                    mpc2.branch(b,:) = branch;
+                end
+                if nargin > 1
+                    name = sprintf(' %s :', case_name);
+                else
+                    name = '';
+                end
+                warning('mp.case_utils.relocate_branch_shunts: Relocating branch shunt elements from pi-circuit model to sending/receiving buses in the following branches: %s', strjoin(cellstr(num2str(id_general_branch_nom(:))), ', '));
+            end
         end
     end     %% methods (Static)
 end
