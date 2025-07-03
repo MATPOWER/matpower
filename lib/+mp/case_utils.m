@@ -67,10 +67,16 @@ classdef case_utils
 
             %% check inputs
             if nargin >= 1
-                mpc = loadcase(mpc);
+                mpc = loadcase(mpc);    % ensures mpc is a struct
             else
                 error('convert_1p_to_3p: A MATPOWER case must be provided \n')
             end
+            if ~all(ismember({'baseMVA', 'bus', 'branch', 'gen'}, fieldnames(mpc)))
+                error('mp.case_utils.convert_1p_to_3p: Not a valid MATPOWER case. Check for missing fields \n')
+            end
+            
+            %% apply a reordering of bus indexing
+            mpc = ext2int(mpc);     % facilitates work
 
             BASE_KV = 10;            % Define index for base voltage in bus matrix
             change_base_kV  = 0;     % do not change base voltage by default
@@ -96,18 +102,6 @@ classdef case_utils
                         basekVA_old = 1000 * mpc.baseMVA;      % old base power
                     end
                 end
-            end
-
-            if isstruct(mpc)
-                flds = {'baseMVA', 'bus', 'branch', 'gen'};
-                membs = ismember(fieldnames(mpc), flds);
-                if sum(membs) ~= length(flds)
-                    error('mp.case_utils.convert_1p_to_3p: Not a valid MATPOWER case. Check for missing fields \n')
-                end
-            elseif isstring(mpc) || ischar(mpc)
-                mpc = loadcase(mpc);
-            else
-                error('mp.case_utils.convert_1p_to_3p: Input ''mpc'' must be a struct or a string \n')
             end
 
             if ~isscalar(basekVA) || basekVA < 0
@@ -154,9 +148,6 @@ classdef case_utils
             if any(mpc.branch(:, SHIFT))
                 error('mp.case_utils.convert_1p_to_3p: Phase shifting transformer are not included yet in supported versions of the MATPOWER API for three-phase networks');
             end
-
-            %% apply a reordering of bus indexing
-            mpc = ext2int(mpc);     % facilitates work
 
             %% --- (1) bus3p: create data for three-phase buses
             nb = size(mpc.bus,1);                                   % number of single-phase buses
