@@ -33,6 +33,18 @@ nt = ntsucces+ntbus+ntgen+ntbranch+ntxfmr+ntshunt;
 
 t_begin(nt*length(cases)+ntbase, quiet);
 
+if quiet    %% disable warning messages
+    warn_id1 = 'MATPOWER:mp_case_utils_reactive_only_loads';
+    warn_id2 = 'MATPOWER:mp_case_utils_remove_gen_q_lims';
+    warn_id3 = 'MATPOWER:mp_case_utils_relocate_branch_shunts';
+    s1 = warning('query', warn_id1);
+    s2 = warning('query', warn_id2);
+    s3 = warning('query', warn_id3);
+    warning('off', warn_id1);
+    warning('off', warn_id2);
+    warning('off', warn_id3);
+end
+
 mpopt = mpoption('verbose',0,'out.all',0,'pf.tol',1e-10,'pf.nr.max_it',20);
 for c = 1:length(cases)
     skip_xfmr_flag = 0;
@@ -153,5 +165,11 @@ t_is([line3p_a.pl1_fr line3p_a.pl2_fr line3p_a.pl3_fr], [line3p_b.pl1_fr line3p_
 t_is([line3p_a.ql1_fr line3p_a.ql2_fr line3p_a.ql3_fr], [line3p_b.ql1_fr line3p_b.ql2_fr line3p_b.ql3_fr], 5, [t 'line reactive power injection at from end'])
 t_is([line3p_a.pl1_to line3p_a.pl2_to line3p_a.pl3_to], [line3p_b.pl1_to line3p_b.pl2_to line3p_b.pl3_to], 5, [t 'line active power injection at to end'])
 t_is([line3p_a.ql1_to line3p_a.ql2_to line3p_a.ql3_to], [line3p_b.ql1_to line3p_b.ql2_to line3p_b.ql3_to], 5, [t 'line reactive power injection at to end'])
+
+if quiet    %% re-enable warning messages
+    warning(s1.state, warn_id1);
+    warning(s2.state, warn_id2);
+    warning(s3.state, warn_id3);
+end
 
 t_end;

@@ -272,7 +272,9 @@ classdef case_utils
                                  repmat(sqrt(2)/2*ones(nl_Q_only,1), 1, 3)              % for fictitious active power demand, the angle is 45°, thus ldpf = sqrt(2)/2
                                  -1*ones(nl_Q_only,3)];                                 % the power factor is -1 for the negative of the fictitious demand
             if nl_Q_only
-                warning('mp.case_utils.convert_1p_to_3p: Reactive power-only loads were detected. To ensure exact modeling, additional negative active power loads were introduced at buses: %s.', strjoin(cellstr(num2str(mpc.bus(id_Q_only, BUS_I))), ', '))
+                warning('MATPOWER:mp_case_utils_reactive_only_loads', ...
+                    'mp.case_utils.convert_1p_to_3p: Reactive power-only loads were detected. To ensure exact modeling, additional negative active power loads were introduced at buses: %s.', ...
+                    strjoin(cellstr(num2str(mpc.bus(id_Q_only, BUS_I))), ', '));
             end
 
             %% --- (7) gen3p: create data for three-phase generators (wye-connected gens, at the moment)
@@ -338,7 +340,10 @@ classdef case_utils
                         mpc2.gen(id_b, QMIN) = -Inf(length(id_b),1);
                     end
                 end
-                warning(['mp.case_utils.remove_gen_q_lims: %s: Removing reactive power limits of the following co-located generators: %s'], case_name, strjoin(cellstr(num2str(unique_id_bus_gen(:))), ', '));
+                warning('MATPOWER:mp_case_utils_remove_gen_q_lims', ...
+                    ['mp.case_utils.remove_gen_q_lims: %s: Removing reactive power limits of the following co-located generators: %s'], ...
+                    case_name, ...
+                    strjoin(cellstr(num2str(unique_id_bus_gen(:))), ', '));
             end
         end
 
@@ -372,7 +377,9 @@ classdef case_utils
                 else
                     name = '';
                 end
-                warning('mp.case_utils.relocate_branch_shunts: Relocating branch shunt elements from pi-circuit model to sending/receiving buses in the following branches: %s', strjoin(cellstr(num2str(id_general_branch_nom(:))), ', '));
+                warning('MATPOWER:mp_case_utils_relocate_branch_shunts', ...
+                    'mp.case_utils.relocate_branch_shunts: Relocating branch shunt elements from pi-circuit model to sending/receiving buses in the following branches: %s', ...
+                    strjoin(cellstr(num2str(id_general_branch_nom(:))), ', '));
             end
         end
     end     %% methods (Static)
