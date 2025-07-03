@@ -4046,6 +4046,8 @@ Since the IEEE CDF format does not contain all of the data needed to run an opti
   mpc3p = mp.case_utils.convert_1p_to_3p(mpc, basekVA, basekV)
   mpc3p = mp.case_utils.convert_1p_to_3p(mpc, basekVA, basekV, freq)
   mpc3p = mp.case_utils.convert_1p_to_3p(mpc, basekVA, basekV, freq, ishybrid)
+  mpc3p = mp.case_utils.convert_1p_to_3p(fname, mpc)
+  mpc3p = mp.case_utils.convert_1p_to_3p(fname, mpc, ...)
 \end{Code}
 
 The \code{mp.case\_utils.convert\_1p\_to\_3p} function converts a \matpower{} case from the standard single-phase model to an equivalent balanced three-phase case. The conversion is based on the data format for the prototype unbalanced three-phase elements included in \matpower{} 8.1.

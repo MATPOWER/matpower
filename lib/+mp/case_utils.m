@@ -7,6 +7,7 @@ classdef case_utils
 % ::
 %
 %   mpc3p = mp.case_utils.convert_1p_to_3p(mpc)
+%   mpc3p = mp.case_utils.convert_1p_to_3p(fname, mpc)
 %
 % mp.case_utils Methods:
 %   * convert_1p_to_3p - convert single-phase to equivalent balanced three-phase |MATPOWER| case
@@ -25,7 +26,7 @@ classdef case_utils
 %   See https://matpower.org for more info.
 
     methods (Static)
-        function mpc3p = convert_1p_to_3p(mpc, basekVA, basekV, freq, ishybrid)
+        function mpc3p = convert_1p_to_3p(varargin)
             % Convert single-phase to equivalent balanced three-phase |MATPOWER| case.
             % ::
             %
@@ -34,6 +35,8 @@ classdef case_utils
             %   mpc3p = mp.case_utils.convert_1p_to_3p(mpc, basekVA, basekV)
             %   mpc3p = mp.case_utils.convert_1p_to_3p(mpc, basekVA, basekV, freq)
             %   mpc3p = mp.case_utils.convert_1p_to_3p(mpc, basekVA, basekV, freq, ishybrid)
+            %   mpc3p = mp.case_utils.convert_1p_to_3p(fname, mpc)
+            %   mpc3p = mp.case_utils.convert_1p_to_3p(fname, mpc, ...)
             %
             % This function converts a |MATPOWER| case from the standard
             % single-phase model to an equivalent balanced three-phase case.
@@ -47,6 +50,8 @@ classdef case_utils
             % transformers, etc.
             %
             % Inputs:
+            %   fname (char array) : *(optional)* name of the file to which
+            %       the new case will be saved
             %   mpc (struct or char array) : a |MATPOWER| case name or case
             %       struct
             %   basekVA (double) : *(optional, default = 1000*baseMVA)* a
@@ -81,6 +86,18 @@ classdef case_utils
             %
             % See also t_convert_1p_to_3p.
 
+            %% parse inputs
+            args = cell(1, 5);
+            if nargin > 1 && ischar(varargin{1}) && ...
+                    (ischar(varargin{2}) || isstruct(varargin{2}))
+                fname = varargin{1};
+                args(1:length(varargin)-1) = varargin(2:end);
+            else
+                fname = '';
+                args(1:length(varargin)) = varargin;
+            end
+            [mpc, basekVA, basekV, freq, ishybrid] = deal(args{:});
+
             %% check inputs
             if nargin >= 1
                 mpc = loadcase(mpc);    % ensures mpc is a struct
@@ -97,27 +114,26 @@ classdef case_utils
             BASE_KV = 10;            % Define index for base voltage in bus matrix
             change_base_kV  = 0;     % do not change base voltage by default
             change_base_kVA = 0;     % do not change base power by default
-            if nargin < 5
+            if isempty(ishybrid)
                 ishybrid = 0;
-                if nargin < 4
-                    freq = 60;
-                    if nargin < 3
-                        basekV = mpc.bus(:, BASE_KV);
-                        if nargin < 2
-                            basekVA = 1000 * mpc.baseMVA;
-                            basekV_old = mpc.bus(:,BASE_KV);   % old base voltages
-                        else
-                            change_base_kVA = 1;               % change base power
-                            basekVA_old = 1000 * mpc.baseMVA;  % old base power
-                            basekV_old = mpc.bus(:,BASE_KV);   % old base voltages
-                        end
-                    else
-                        change_base_kV = 1;                    % change base voltage
-                        change_base_kVA = 1;                   % change base power
-                        basekV_old = mpc.bus(:,BASE_KV);       % old base voltages
-                        basekVA_old = 1000 * mpc.baseMVA;      % old base power
-                    end
-                end
+            end
+            if isempty(freq)
+                freq = 60;
+            end
+            if isempty(basekV)
+                basekV = mpc.bus(:, BASE_KV);
+                basekV_old = mpc.bus(:,BASE_KV);    % old base voltages
+            else
+                change_base_kV = 1;                 % change base voltage
+                change_base_kVA = 1;                % change base power
+                basekV_old = mpc.bus(:,BASE_KV);    % old base voltages
+                basekVA_old = 1000 * mpc.baseMVA;   % old base power
+            end
+            if isempty(basekVA)
+                basekVA = 1000 * mpc.baseMVA;
+            else
+                change_base_kVA = 1;                % change base power
+                basekVA_old = 1000 * mpc.baseMVA;   % old base power
             end
 
             if ~isscalar(basekVA) || basekVA < 0
@@ -329,6 +345,10 @@ classdef case_utils
             mpc3p.gen3p   = gen3p;
             mpc3p.lc      = line_construction;
             mpc3p.buslink = [];
+
+            if ~isempty(fname)
+                savecase(fname, mpc3p);
+            end
         end
 
         function z_new = z_base_change(z_old, basekV_old, basekVA_old, basekV_new, basekVA_new)

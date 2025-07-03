@@ -31,12 +31,17 @@ ntbranch = 8;
 ntxfmr = 8;
 ntshunt = 4;
 ntbase = 9;
+ntsave = 1;
+warnings_off = quiet;
+warnings_off = true;
+diff_tool = 'bbdiff';
+show_diff_on_fail = false;
 
 nt = ntsucces+ntbus+ntgen+ntbranch+ntxfmr+ntshunt;
 
-t_begin(nt*length(cases)+ntbase, quiet);
+t_begin(nt*length(cases)+ntbase+ntsave, quiet);
 
-if quiet    %% disable warning messages
+if warnings_off     %% disable warning messages
     warn_id1 = 'MATPOWER:mp_case_utils_reactive_only_loads';
     warn_id2 = 'MATPOWER:mp_case_utils_remove_gen_q_lims';
     warn_id3 = 'MATPOWER:mp_case_utils_relocate_branch_shunts';
@@ -46,6 +51,15 @@ if quiet    %% disable warning messages
     warning('off', warn_id1);
     warning('off', warn_id2);
     warning('off', warn_id3);
+end
+if have_feature('octave')
+    if have_feature('octave', 'vnum') >= 4
+        file_in_path_warn_id = 'Octave:data-file-in-path';
+    else
+        file_in_path_warn_id = 'Octave:load-file-in-path';
+    end
+    s4 = warning('query', file_in_path_warn_id);
+    warning('off', file_in_path_warn_id);
 end
 
 mpopt = mpoption('verbose',0,'out.all',0,'pf.tol',1e-10,'pf.nr.max_it',20);
@@ -172,10 +186,30 @@ t_is([line3p_a.ql1_fr line3p_a.ql2_fr line3p_a.ql3_fr], [line3p_b.ql1_fr line3p_
 t_is([line3p_a.pl1_to line3p_a.pl2_to line3p_a.pl3_to], [line3p_b.pl1_to line3p_b.pl2_to line3p_b.pl3_to], 5, [t 'line active power injection at to end'])
 t_is([line3p_a.ql1_to line3p_a.ql2_to line3p_a.ql3_to], [line3p_b.ql1_to line3p_b.ql2_to line3p_b.ql3_to], 5, [t 'line reactive power injection at to end'])
 
-if quiet    %% re-enable warning messages
+t = 'save converted case: case24_ieee_rts';
+C = 'case24_ieee_rts';
+fname_e = 't_case24_ieee_rts_3p.m';
+fname_g = sprintf('t_case24_ieee_rts_3p_%d.m', fix(1e9*rand));
+mp.case_utils.convert_1p_to_3p(fname_g, C);
+% equivalent to:
+% savecase(fname_g, mp.case_utils.convert_1p_to_3p(C));
+reps = {{'_(\d{6,9})', '', 1}};
+if ~t_file_match(fname_g, fname_e, t, reps, 1);
+    fprintf('  compare these 2 files:\n    %s\n    %s\n', fname_g, fname_e);
+    if show_diff_on_fail
+        cmd = sprintf('%s %s %s', diff_tool, fname_g, fname_e);
+        [status, result] = system(cmd);
+        keyboard
+    end
+end
+
+if warnings_off     %% re-enable warning messages
     warning(s1.state, warn_id1);
     warning(s2.state, warn_id2);
     warning(s3.state, warn_id3);
+end
+if have_feature('octave')
+    warning(s4.state, file_in_path_warn_id);
 end
 
 t_end;
