@@ -4038,6 +4038,20 @@ The \code{cdf2mpc} function converts an IEEE Common Data Format (CDF) data file 
 
 Since the IEEE CDF format does not contain all of the data needed to run an optimal power flow, some data, such as voltage limits, generator limits and generator costs are created by \code{cdf2mpc}. See \code{help cdf2mpc} for details.
 
+\subsubsection{\tt mp.case\_utils.convert\_1p\_to\_3p}
+
+\begin{Code}
+  mpc3p = mp.case_utils.convert_1p_to_3p(mpc)
+  mpc3p = mp.case_utils.convert_1p_to_3p(mpc, basekVA)
+  mpc3p = mp.case_utils.convert_1p_to_3p(mpc, basekVA, basekV)
+  mpc3p = mp.case_utils.convert_1p_to_3p(mpc, basekVA, basekV, freq)
+  mpc3p = mp.case_utils.convert_1p_to_3p(mpc, basekVA, basekV, freq, ishybrid)
+\end{Code}
+
+The \code{mp.case\_utils.convert\_1p\_to\_3p} function converts a \matpower{} case from the standard single-phase model to an equivalent balanced three-phase case. The conversion is based on the data format for the prototype unbalanced three-phase elements included in \matpower{} 8.1.
+
+This function is useful for creating new test cases for unbalanced networks. The core idea is to generate an equivalent balanced three-phase network, which can then be converted into an unbalanced one by manually adjusting loads, lines, transformers, etc.
+
 \subsubsection{\tt psse2mpc}
 
 \begin{Code}
@@ -4052,7 +4066,7 @@ Since the IEEE CDF format does not contain all of the data needed to run an opti
 
 The \code{psse2mpc} function converts a PSS/E RAW data file into a \matpower{} case struct. Given an optional file name \code{mpc\_name}, it can save the converted case to a \matpower{} case file. Warnings generated during the conversion process can be optionally returned in the \code{warnings} argument. By default, \code{psse2mpc} attempts to determine the revision of the PSS/E RAW file from the contents, but the user can specify an explicit revision number to use in the optional \code{rev} argument.
 
-\pagebreak
+%\pagebreak
 \subsubsection{\tt save2psse}
 
 \begin{Code}
@@ -6064,13 +6078,14 @@ name & description \\
 \caption{Input/Output Functions}
 \label{tab:io}
 \footnotesize
-\begin{tabular}{p{0.15\textwidth}p{0.75\textwidth}}
+\begin{tabular}{p{0.33\textwidth}p{0.6\textwidth}}
 \toprule
 name & description \\
 \midrule
 \code{cdf2mpc}	& converts power flow data from IEEE Common Data Format (CDF) to \matpower{} format	\\
 \code{loadcase}	& loads data from a \matpower{} case file or struct into data matrices or a case struct	\\
 \code{mpoption}	& sets and retrieves \matpower{} options	\\
+\code{mp.case\_utils.convert\_1p\_to\_3p}	& converts \matpower{} case to 3-phase balanced equivalent	\\
 \code{printpf}	& pretty prints power flow and OPF results	\\
 \code{psse2mpc}	& converts power flow data from PSS/E RAW format to \matpower{} format	\\
 \code{save2psse}	& exports \matpower{} case to PSS/E RAW format	\\

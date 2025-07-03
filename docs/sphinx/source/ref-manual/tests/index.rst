@@ -24,6 +24,7 @@ Tests
    t_pretty_print
    t_mpxt_legacy_dcline
    t_mpxt_reserves
+   t_convert_1p_to_3p
 
 
 |MATPOWER| Test Data

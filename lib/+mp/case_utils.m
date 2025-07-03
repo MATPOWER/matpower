@@ -1,5 +1,19 @@
 classdef case_utils
-% case_utils - Utilities for modifying/converting MATPOWER cases.
+% mp.case_utils - Utilities for modifying/converting |MATPOWER| cases.
+%
+% The primary purpose of this class is to convert a single-phase |MATPOWER|
+% case to an equivalent balanced three-phase case using
+% mp.case_utils.convert_1p_to_3p method.
+% ::
+%
+%   mpc3p = mp.case_utils.convert_1p_to_3p(mpc)
+%
+% mp.case_utils Methods:
+%   * convert_1p_to_3p - convert single-phase to equivalent balanced three-phase |MATPOWER| case
+%   * z_base_change - compute a new per-unit impedance base
+%   * to_consecutive_bus_numbers - convert a *(single-phase)* case to consecutive bus numbers
+%   * remove_gen_q_lims - remove generator reactive power limits for co-located generators
+%   * relocate_branch_shunts - move branch shunts to terminal buses for branches with off-nominal taps
 
 %   MATPOWER
 %   Copyright (c) 2019-2025, Power Systems Engineering Research Center (PSERC)
@@ -12,58 +26,60 @@ classdef case_utils
 
     methods (Static)
         function mpc3p = convert_1p_to_3p(mpc, basekVA, basekV, freq, ishybrid)
-            % convert_1p_to_3p - converts a single-phase MATPOWER case to an equivalent
-            %   balanced three-phase case
-            %   ::
+            % Convert single-phase to equivalent balanced three-phase |MATPOWER| case.
+            % ::
             %
-            %   MPC3P = CONVERT_1P_TO_3P(MPC, BASEKVA)
-            %   MPC3P = CONVERT_1P_TO_3P(MPC, BASEKVA, BASEKV)
-            %   MPC3P = CONVERT_1P_TO_3P(MPC, BASEKVA, BASEKV, FREQ)
-            %   MPC3P = CONVERT_1P_TO_3P(MPC, BASEKVA, BASEKV, FREQ, ISHYBRID)
+            %   mpc3p = mp.case_utils.convert_1p_to_3p(mpc)
+            %   mpc3p = mp.case_utils.convert_1p_to_3p(mpc, basekVA)
+            %   mpc3p = mp.case_utils.convert_1p_to_3p(mpc, basekVA, basekV)
+            %   mpc3p = mp.case_utils.convert_1p_to_3p(mpc, basekVA, basekV, freq)
+            %   mpc3p = mp.case_utils.convert_1p_to_3p(mpc, basekVA, basekV, freq, ishybrid)
             %
-            %   The conversion is performed taking into account the data format prototype
-            %   for unbalanced three-phase elements included in MATPOWER 8.0., as
-            %   well as subsequent additions regarding three-phase shunt elements and tap
-            %   parameters for three-phase transformers.
+            % This function converts a |MATPOWER| case from the standard
+            % single-phase model to an equivalent balanced three-phase case.
+            % The conversion is based on the data format for the prototype
+            % unbalanced three-phase elements included in |MATPOWER| 8.1.
             %
-            %   This function is useful for creating new test cases for unbalanced
-            %   networks. The core idea is to generate an equivalent balanced three-phase
-            %   network, which users can then convert into an unbalanced one by manually
-            %   adjusting loads, lines, transformers, among other elements.
+            % This function is useful for creating new test cases for
+            % unbalanced networks. The core idea is to generate an equivalent
+            % balanced three-phase network, which can then be converted into
+            % an unbalanced one by manually adjusting loads, lines,
+            % transformers, etc.
             %
-            %   Inputs (all optional except MPC):
-            %       mpc : a MATPOWER case. It can be a struct with all the fields of
-            %             a valid MATPOWER case or a string with the name of an mpc
-            %       basekVA: a positive scalar denoting the base power in kVA for
-            %                convertion to per-unit values of the three-phase system
-            %       basekV : a vector denoting the base voltages in kV of all buses
-            %                for convertion to per-unit values of the three-phase system
-            %       freq : a positive scalar denoting the frequency in Hz of the system
-            %       ishybrid : when set to 1, it returns the original mpc with
-            %                  additional fields for the three-phase equivalent of
-            %                  the network. The default is 0, which returns empty
-            %                  fields for the single-phase network. The buslink
-            %                  field is always empty.
+            % Inputs:
+            %   mpc (struct or char array) : a |MATPOWER| case name or case
+            %       struct
+            %   basekVA (double) : *(optional, default = 1000*baseMVA)* a
+            %       positive scalar denoting the base power in kVA for
+            %       convertion to per-unit values of the three-phase system
+            %   basekV (double): a vector denoting the base voltages in kV of
+            %       all buses for convertion to per-unit values of the
+            %       three-phase system
+            %   freq (double) : a positive scalar denoting the frequency in
+            %       Hz of the system
+            %   ishybrid (logical) : *(optional, default = 0)* when true, it
+            %       returns the original ``mpc`` with additional fields for
+            %       the three-phase equivalent of the network; when false
+            %       it returns empty fields for the single-phase network
+            %       elements. The ``buslink`` field is always empty.
             %
-            %   Outputs:
-            %       mpc3p (struct) : a struct with/without the fields of the single-phase
-            %                        case depending on the values of ishybrid, plus
-            %                        the additional fields for the equivalent
-            %                        three-phase network. The resulting case ensures
-            %                        a sequential numbering of the three-phase nodes
-            %                        via the ext2int MATPOWER function.
+            % Output:
+            %     mpc3p (struct) : a |MATPOWER| case struct of the equivalent
+            %       balanced three-phase network, with or without the fields
+            %       of the original single-phase case, depending on the value
+            %       of ``ishybrid``.
             %
-            %   If a power flow is run over the mpc3p provided by this function, the
-            %   results are the three-phase balanced equivalent of the results of
-            %   the single-phase original case.
+            % If a power flow is run for the ``mpc3p`` returned by this
+            % function, the results are the three-phase balanced equivalent
+            % of the results of the original single-phase case.
             %
-            %   Example:
+            % Example::
             %
-            %     run_pf('case10ba')
-            %     mpc3p = convert_1p_to_3p('case10ba');
-            %     run_pf(mpc3p, mpoption, 'mpx', mp.xt_3p)
+            %   run_pf('case10ba');
+            %   mpc3p = mp.case_utils.convert_1p_to_3p('case10ba');
+            %   run_pf(mpc3p, mpoption, 'mpx', mp.xt_3p);
             %
-            % See also t_convert_1p_to_3p
+            % See also t_convert_1p_to_3p.
 
             %% check inputs
             if nargin >= 1
@@ -316,10 +332,38 @@ classdef case_utils
         end
 
         function z_new = z_base_change(z_old, basekV_old, basekVA_old, basekV_new, basekVA_new)
+            % Compute a new per-unit impedance base.
+            % ::
+            %
+            %   z_new = mp.case_utils.z_base_change(z_old, basekV_old, basekVA_old, basekV_new, basekVA_new)
+            %
+            % Inputs:
+            %   z_old (double) : original per-unit impedance base
+            %   basekV_old (double) : original per-unit voltage base
+            %   basekVA_old (double) : original per-unit power base
+            %   basekV_new (double) : new per-unit voltage base
+            %   basekVA_new (double) : new per-unit power base
+            %
+            % Output:
+            %   z_new (double) : new per-unit impedance base
+
             z_new = z_old * (basekVA_new / basekVA_old) .* (basekV_old.^2) ./ (basekV_new.^2);
         end
 
         function [mpc, i2e] = to_consecutive_bus_numbers(mpc)
+            % Convert a *(single-phase)* case to consecutive bus numbers.
+            % ::
+            %
+            %   mpc = mp.case_utils.remove_gen_q_lims(mpc0)
+            %
+            % Input:
+            %   mpc0 (struct) : (single-phase) |MATPOWER| case struct
+            %
+            % Outputs:
+            %   mpc (struct) : updated |MATPOWER| case struct
+            %   i2e (integer) : mapping of internal (new, consecutive) to
+            %       external (original possibly non-consecutive) bus numbers
+
             mpc = ext2int(mpc);
             if nargout > 1
                 i2e = mpc.order.bus.i2e;
@@ -327,6 +371,25 @@ classdef case_utils
         end
 
         function mpc2 = remove_gen_q_lims(mpc, case_name)
+            % Remove generator reactive power limits for co-located generators.
+            % ::
+            %
+            %   mpc = mp.case_utils.remove_gen_q_lims(mpc0)
+            %
+            % The single-phase power flow uses reactive power limits, which
+            % are not (yet) included in the three-phase prototype models, to
+            % distribute reactive power dispatch for generators co-located at
+            % the same bus. This function removes those limits on the single
+            % phase case to allow for matching power flow results between a
+            % single-phase case and the three-phase case returned by
+            % mp.case_utils.convert_1p_to_3p.
+            %
+            % Input:
+            %   mpc0 (struct) : (single-phase) |MATPOWER| case struct
+            %
+            % Output:
+            %   mpc (struct) : updated |MATPOWER| case struct
+
             %% define constants
             [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
                 MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
@@ -355,7 +418,19 @@ classdef case_utils
         end
 
         function mpc2 = relocate_branch_shunts(mpc)
-            %% requires case with consecutive bus numbering
+            % Move branch shunts to terminal buses for branches with off-nominal taps.
+            % ::
+            %
+            %   mpc = mp.case_utils.relocate_branch_shunts(mpc0)
+            %
+            % Requires a case with consecutive bus numbering, such as
+            % guaranteed by converting a case via ext2int.
+            %
+            % Input:
+            %   mpc0 (struct) : (single-phase) |MATPOWER| case struct
+            %
+            % Output:
+            %   mpc (struct) : updated |MATPOWER| case struct
 
             %% define constants
             [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...

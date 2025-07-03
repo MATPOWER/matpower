@@ -254,6 +254,7 @@ Miscellaneous Classes
 
    mp_table
    mp_table_subclass
+   mp/case_utils
    mp/cost_table
    mp/cost_table_utils
    mp/element_container

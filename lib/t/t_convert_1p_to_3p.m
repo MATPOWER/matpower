@@ -1,6 +1,9 @@
 function t_convert_1p_to_3p(quiet)
-% t_mpc2mpc3p - test of mp.case_utils.convert_1p_to_3p transformation function over many
-%   of the cases included in the MATPOWER suite.
+% t_convert_1p_to_3p - Tests of mp.case_utils.convert_1p_to_3p.
+%
+% Tests the conversion for many of the cases included with |MATPOWER|,
+% ensuring that the power flow results of the original single-phase case
+% and the resulting balanced, three-phase case match.
 
 %   MATPOWER
 %   Copyright (c) 2019-2025, Power Systems Engineering Research Center (PSERC)
