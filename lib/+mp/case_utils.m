@@ -76,7 +76,7 @@ classdef case_utils
             end
             
             %% apply a reordering of bus indexing
-            mpc = ext2int(mpc);     % facilitates work
+            [mpc, i2e] = mp.case_utils.to_consecutive_bus_numbers(mpc);
 
             BASE_KV = 10;            % Define index for base voltage in bus matrix
             change_base_kV  = 0;     % do not change base voltage by default
@@ -155,7 +155,7 @@ classdef case_utils
             %% --- (1) bus3p: create data for three-phase buses
             nb = size(mpc.bus,1);                                   % number of single-phase buses
             bus3p = zeros(nb, 9);                                   % columns of bus3p are: busid (1), type (2), basekV (3), Vm1 (4), Vm2 (5), Vm3 (6), Va1 (7), Va2 (8), and Va3 (9)
-            bus3p(:,1) = mpc.bus(:,BUS_I);                          % bus id
+            bus3p(:,1) = i2e(mpc.bus(:,BUS_I));                     % bus id
             bus3p(:,2) = mpc.bus(:,BUS_TYPE);                       % bus type
             if change_base_kV
                 bus3p(mpc.bus(:,BUS_I),3) = basekV;                 % base voltage
@@ -178,8 +178,8 @@ classdef case_utils
                 tbus_xfmr3p = mpc.branch(branch_is_xfmr, T_BUS);    % get buses at the to end of transformers
                 xfmr3p = ones(nx,9);                                % columns of xfmr3p are: xfid (1), fbus (2), tbus (3), status (4), R (5), X (6), basekVA (7), basekV (8), tap (9)
                 xfmr3p(:,1) = (1:nx);                               % IDs of three-phase transformers
-                xfmr3p(:,2) = fbus_xfmr3p;                          % from bus ID of three-phase transformers
-                xfmr3p(:,3) = tbus_xfmr3p;                          % to bus ID of three-phase transformers
+                xfmr3p(:,2) = i2e(fbus_xfmr3p);                     % from bus ID of three-phase transformers
+                xfmr3p(:,3) = i2e(tbus_xfmr3p);                     % to bus ID of three-phase transformers
                 r = mpc.branch(branch_is_xfmr, BR_R);
                 x = mpc.branch(branch_is_xfmr, BR_X);
                 if change_base_kV || change_base_kVA
@@ -205,7 +205,7 @@ classdef case_utils
                 id_shunt = find(bus_has_shunt);                     % buses with shunts
                 shunt3p = ones(ns,9);                               % columns of shunt3p are: shid (1), shbus (2), status (3), gs1 (4), gs2 (5), gs3 (6), bs1 (7), bs2 (8), bs3 (9)
                 shunt3p(:,1) = (1:ns);                              % IDs of three-phase shunt
-                shunt3p(:,2) = id_shunt;                            % bus id of three-phase shunt
+                shunt3p(:,2) = i2e(id_shunt);                       % bus id of three-phase shunt
                 gs = mpc.bus(id_shunt, GS);
                 bs = mpc.bus(id_shunt, BS);
                 shunt3p(:,[4 5 6]) = repmat((1/3)*gs*1000, 1, 3);     % shunt conductances specified as nominal (@ vm = 1.0 p.u.) active power demand for all three phases [kW]
@@ -246,8 +246,8 @@ classdef case_utils
             %% --- (5) line3p: create data for three-phase lines
             line3p = ones(nl, 6);                                   % columns of line3p are: brid (1), fbus (2), tbus (3), status (4), lcid (5), len (6)
             line3p(:,1) = (1:nl);                                   % IDs of three-phase lines
-            line3p(:,2) = fbus_line3p;                              % from bus ID of three-phase lines
-            line3p(:,3) = tbus_line3p;                              % to bus ID of three-phase lines
+            line3p(:,2) = i2e(fbus_line3p);                         % from bus ID of three-phase lines
+            line3p(:,3) = i2e(tbus_line3p);                         % to bus ID of three-phase lines
             line3p(:,5) = (1:nl);                                   % line construction IDs, each three-phase line has its own lc with length 1 mile
 
             %% --- (6) load3p: create data for three-phase loads (wye-connected loads, at the moment)
@@ -262,9 +262,9 @@ classdef case_utils
             ldpf = signPD .* signQD .* cos(atan(qd ./ pd));                             % load power factor
             load3p = ones(nl+2*nl_Q_only, 9);                                           % columns of load3p are: ldid (1), ldbus (2), status (3), Pd1 (4) Pd2 (5), Pd3 (6), ldpf1 (7), ldpf2 (8), ldpf3 (9)
             load3p(:,1) = (1:size(load3p,1));                                           % IDs of thre-phase loads
-            load3p(:,2) = [mpc.bus(id_load, BUS_I)                                      % bus id of three-phase loads
-                           mpc.bus(id_Q_only, BUS_I)
-                           mpc.bus(id_Q_only, BUS_I)];
+            load3p(:,2) = i2e([mpc.bus(id_load, BUS_I)                                  % bus id of three-phase loads
+                               mpc.bus(id_Q_only, BUS_I)
+                               mpc.bus(id_Q_only, BUS_I)]);
             load3p(:,[4 5 6]) = [repmat((1/3)*mpc.bus(id_load, PD)*1000, 1, 3)          % active power demand for all three phases [kW]
                                  repmat((1/3)*mpc.bus(id_Q_only, QD)*1000, 1, 3)        % dding a fictitious active power demand that is equal to the actual reactive power demand
                                  -1*repmat((1/3)*mpc.bus(id_Q_only, QD)*1000, 1, 3)];   % adding the negative of the fictitious active power demand for exact modeling
@@ -281,7 +281,7 @@ classdef case_utils
             ng = size(mpc.gen, 1);                                              % number of generators
             gen3p = ones(ng, 12);                                               % columns of gen3p are: genid (1), gbus (2), status (3), Vg1 (4), Vg2 (5), Vg3 (6), Pg1 (7), Pg2 (8), Pg3 (9), Qg1 (10), Qg2 (11), Qg3 (12)
             gen3p(:,1) = (1:ng);                                                % IDs of three-phase generators
-            gen3p(:,2) = mpc.gen(:,GEN_BUS);                                    % bus id of three-phase generators
+            gen3p(:,2) = i2e(mpc.gen(:,GEN_BUS));                               % bus id of three-phase generators
             vg = mpc.gen(:,VG);
             if change_base_kV
                 Vg = vg .* (basekV_old(gen3p(:,2)) ./ basekV(gen3p(:,2)));
@@ -319,6 +319,13 @@ classdef case_utils
             z_new = z_old * (basekVA_new / basekVA_old) .* (basekV_old.^2) ./ (basekV_new.^2);
         end
 
+        function [mpc, i2e] = to_consecutive_bus_numbers(mpc)
+            mpc = ext2int(mpc);
+            if nargout > 1
+                i2e = mpc.order.bus.i2e;
+            end
+        end
+
         function mpc2 = remove_gen_q_lims(mpc, case_name)
             %% define constants
             [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
@@ -336,8 +343,8 @@ classdef case_utils
                     if length(id_b) > 1
                         %% ... eliminate their reactive limits to avoid
                         %% differences in reactive power allocation
-                        mpc2.gen(id_b, QMAX) = Inf(length(id_b),1);
-                        mpc2.gen(id_b, QMIN) = -Inf(length(id_b),1);
+                        mpc2.gen(id_b, QMAX) = Inf;
+                        mpc2.gen(id_b, QMIN) = -Inf;
                     end
                 end
                 warning('MATPOWER:mp_case_utils_remove_gen_q_lims', ...
@@ -348,6 +355,8 @@ classdef case_utils
         end
 
         function mpc2 = relocate_branch_shunts(mpc)
+            %% requires case with consecutive bus numbering
+
             %% define constants
             [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
                 VA, BASE_KV, ZONE, VMAX, VMIN] = idx_bus;

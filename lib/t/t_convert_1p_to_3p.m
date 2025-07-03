@@ -50,9 +50,10 @@ for c = 1:length(cases)
     skip_xfmr_flag = 0;
     skip_shunt_flag = 0;
     C = ['case' cases{c}];
-    mpc = ext2int(loadcase(C));
-    mpc = mp.case_utils.remove_gen_q_lims(mpc, C);
+    mpc = loadcase(C);
     mpc3p = mp.case_utils.convert_1p_to_3p(mpc);
+    mpc = mp.case_utils.remove_gen_q_lims(mpc, C);
+    mpc = mp.case_utils.to_consecutive_bus_numbers(mpc);
     mpc = mp.case_utils.relocate_branch_shunts(mpc);
 
     res1p = run_pf(mpc,mpopt);
@@ -130,7 +131,7 @@ end
 
 %% 4) Check for equal results with different bases
 C = 'case141';
-mpc = mp.case_utils.remove_gen_q_lims(loadcase(C), C);
+mpc = loadcase(C);
 basekV_old = mpc.bus(:, 10);
 basekV_new = basekV_old;
 vmin = 0.98; vmax = 1.02;
@@ -141,6 +142,8 @@ end
 basekVA_new = 1000 * mpc.baseMVA * 1.5;
 mpc3p_a = mp.case_utils.convert_1p_to_3p(mpc);
 mpc3p_b = mp.case_utils.convert_1p_to_3p(mpc, basekVA_new, basekV_new);
+mpc = mp.case_utils.remove_gen_q_lims(mpc, C);
+mpc = mp.case_utils.to_consecutive_bus_numbers(mpc);
 mpc = mp.case_utils.relocate_branch_shunts(mpc);
 
 mpopt = mpoption('pf.tol', 1e-10, 'pf.nr.max_it', 1000, 'verbose', 0,'out.all', 0);
