@@ -89,6 +89,7 @@ if have_feature('mp_core')
     tests{end+1} = 't_run_mp';
     tests{end+1} = 't_run_opf_default';
     tests{end+1} = 't_run_mp_3p';
+    tests{end+1} = 't_convert_1p_to_3p';
     tests{end+1} = 't_pretty_print';
     tests{end+1} = 't_mpxt_reserves';
     tests{end+1} = 't_mpxt_legacy_dcline';
