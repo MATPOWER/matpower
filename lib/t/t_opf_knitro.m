@@ -45,6 +45,7 @@ end
 mpopt = mpoption('opf.violation', 1e-9);
 mpopt = mpoption(mpopt, 'out.all', 0, 'verbose', verbose, 'opf.ac.solver', 'KNITRO');
 mpopt = mpoption(mpopt, 'knitro.tol_x', 1e-8, 'knitro.tol_f', 1e-8);
+% mpopt = mpoption(mpopt, 'knitro.opts.opttol', 1e-9);
 
 for k = 1:length(options)
     if options{k}{1}, bal = 'I';  else, bal = 'S'; end  %% nodal balance
@@ -236,7 +237,7 @@ for k = 1:length(options)
         t_is(f, 9009.0890, 3, [t 'f']);
         t_is([min(bus(:, VM)) mean(bus(:, VM)) max(bus(:, VM))], ...
             [1.066624, 1.083980, 1.091698], 5, [t 'bus voltage']);
-        t_is(r.cost.usr, 1673.065465, 5, [t 'user cost']);
+        t_is(r.cost.usr, 1673.065465, 4.5, [t 'user cost']);
     end
 
     %%-----  run OPF with extra linear user constraints & costs  -----

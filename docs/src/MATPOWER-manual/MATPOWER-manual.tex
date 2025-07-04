@@ -7525,11 +7525,11 @@ It can also be used to solve general LP, QP and NLP problems via \mpom{}'s commo
 \subsection{\knitro{} -- Non-Linear Programming Solver}
 \label{app:knitro}
 
-\knitro{}~\cite{knitro} is a general purpose optimization solver specializing in nonlinear problems, available from Artelys. As of version 9, Knitro includes a native \matlab{} interface, \code{knitromatlab}\footnote{Earlier versions required the \matlab{} \ot{} from The MathWorks, which included an interface to the Knitro libraries called \code{ktrlink}, but the libraries themselves still had to be acquired directly from Ziena Optimization, LLC (subsequently acquired by Artelys).}. More information is available at \url{https://www.artelys.com/solvers/knitro/} and \url{https://www.artelys.com/docs/knitro/}.
+\knitro{}~\cite{knitro} is a general purpose optimization solver specializing in nonlinear problems, available from Artelys. More information is available at \url{https://www.artelys.com/solvers/knitro/} and \url{https://www.artelys.com/docs/knitro/}.
 
 Although \knitro{} is a commercial package, at the time of this writing there is a free academic license available, with details on their download page.
 
-When installed, Knitro's \matlab{} interface function, \code{knitromatlab} or \code{ktrlink}, can be used by \matpower{} to solve AC OPF problems by simply setting the \code{opf.ac.solver} option to \codeq{KNITRO}. See Table~\ref{tab:knitrooptions} for a summary of Knitro-related \matpower{} options. The \code{knitromatlab} function uses callbacks to \matlab{} functions to evaluate the objective function and its gradient, the constraint values and Jacobian, and the Hessian of the Lagrangian.
+When installed, Knitro's \matlab{} interface functions can be used by \matpower{} to solve AC OPF problems by simply setting the \code{opf.ac.solver} option to \codeq{KNITRO}. See Table~\ref{tab:knitrooptions} for a summary of Knitro-related \matpower{} options. The \code{knitromatlab} function uses callbacks to \matlab{} functions to evaluate the objective function and its gradient, the constraint values and Jacobian, and the Hessian of the Lagrangian.
 
 Knitro options can be controlled directly by creating a standard Knitro options file in your working directory and specifying it via the \code{knitro.opt\_fname} (or, for backward compatibility, naming it \code{knitro\_user\_options\_$n$.txt} and setting \matpower{}'s \code{knitro.opt} option to $n$, where $n$ is some positive integer value). See the \knitro{} user manuals at \url{https://www.artelys.com/docs/knitro/} for details on the available options.
 
