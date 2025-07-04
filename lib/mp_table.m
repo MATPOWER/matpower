@@ -16,7 +16,7 @@ classdef mp_table
 %
 %   Since the dot syntax ``T.<var_name>`` is used to access table variables,
 %   you must use a functional syntax ``<method>(T,...)``, as opposed to
-%   the object-oriented ``T.<method>(...)``, to call mp_table methods.
+%   the object-oriented ``T.<method>(...)``, to call :class:`mp_table` methods.
 %
 % mp_table Methods:
 %   * mp_table - construct object
