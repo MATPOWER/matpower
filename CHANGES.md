@@ -20,6 +20,9 @@ since 8.0
     illustrate use of these new single-phase to three-phase conversion
     capabilities.
     *Thanks to Wilson González Vanegas.*
+  - Add a new distribution system case.
+    *Thanks to Paul S. Moses.*
+    - `case1197` – 1197-bus radial distribution case
 
 #### 6/24/25
   - Add support to `savecase()` for three-phase prototype data.

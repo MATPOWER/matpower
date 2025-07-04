@@ -6696,7 +6696,7 @@ name & description \\
 %\renewcommand{\arraystretch}{1.2}
 \centering
 \begin{threeparttable}
-\caption{Small Distribution System Test Cases\tnote{*}}
+\caption{Distribution System Test Cases\tnote{*}}
 \label{tab:distcasefiles}
 \footnotesize
 \begin{tabular}{ll}
@@ -6729,6 +6729,7 @@ name & description \\
 \code{case118zh}\tnote{\ddag}	& 118-bus radial distribution system from Zhang, Fu and Zhang	\\
 \code{case136ma}\tnote{\ddag}	& 136-bus radial distribution system from Mantovani, Casari and Romero	\\
 \code{case141}\tnote{\dag}	& 141-bus radial distribution system from Khodr, Olsina, De Jesus and Yusta	\\
+\code{case1197}\tnote{\S}	& 1197-bus radial distribution system from Moses, et. al.	\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -6736,6 +6737,7 @@ name & description \\
  \item [*] All have radial topology, except \code{case16ci} and \code{case70da}.
   \item [\dag] Contributed by Mirko Todorovski.
   \item [\ddag] Contributed by Houssem Bouchekara, et. al.~\cite{bouchekara2019, latreche2020}
+  \item [\S] Contributed by Paul S. Moses, et. al.~\cite{masoum2011, grainger1985}
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -8696,7 +8698,13 @@ The \href{https://matpower.org/docs/MATPOWER-manual-8.1-dev.pdf}{\matpower{} 8.1
 
 \subsubsection*{New Case Files}
 \begin{itemize}
-\item 
+\item One new distribution system case. \emph{Thanks to Paul S. Moses.}
+    \begin{itemize}
+        \setlength{\itemsep}{6pt}
+        \setlength{\parskip}{-6pt}
+%        \setlength{\parsep}{-3pt}
+        \item \code{case1197} -- 1197-bus radial distribution system case~\cite{masoum2011, grainger1985}.
+    \end{itemize}
 \end{itemize}
 
 \subsubsection*{New Documentation}
@@ -9004,6 +9012,14 @@ H.~R.~E.~H.~Bouchekara, Y.~Latreche, K.~Naidu, H.~Mokhlis, W.~M.~Dahalan, M.~S.~
 
 \bibitem{latreche2020}
 Y.~Latreche, H.~R.~E.~H.~Bouchekara, K.~Naidu, H.~Mokhlis, W.~M.~Dahalan, \emph{Comprehensive Review of Radial Distribution Test Systems}, 2020. TechRxiv. Preprint. \doi{10.36227/techrxiv.12578648.v1}
+
+\bibitem{masoum2011}
+A.~S.~Masoum, S.~Deilami, P.~S.~Moses, M.~A.~S.~Masoum, A.~Abu-Siada, ``Smart load management of plug-in electric vehicles in distribution and residential networks with charging stations for peak shaving and loss minimisation considering voltage regulation,'' \emph{IET Generation, Transmission \& Distribution}, 2011 Aug 1;5(8):877-88.
+\doi{10.1049/iet-gtd.2010.0574}
+
+\bibitem{grainger1985}
+J.~J.~Grainger, S.~Civanlar, ``Volt/var control on distribution systems with lateral branches using shunt capacitors and voltage regulators. Part III: The numerical result,'' \emph{Power Apparatus and Systems, IEEE Transactions on}, vol.~104, pp.~3291--3297, 1985.
+\doi{10.1109/TPAS.1985.318842}
 
 \bibitem{birchfield2017}
 A.B.~Birchfield, T.~Xu, K.M.~Gegner, K.S.~Shetye, T.J.~Overbye,
