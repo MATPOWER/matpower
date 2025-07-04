@@ -123,7 +123,7 @@ function [x, f, eflag, output, lambda] = solve(om, opt)
 % pnes_master, mp_linsolve.
 
 %   MP-Opt-Model
-%   Copyright (c) 2020-2024, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2020-2025, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

@@ -106,6 +106,7 @@ for k = 1:length(algs)
         end
         if have_feature('knitro')
             opt.knitro_opt = artelys_knitro_options([],  mpopt);
+            opt.knitro_opt.opttol = 1e-8;
         end
 
         t = sprintf('%s - 3-d LP : ', names{k});

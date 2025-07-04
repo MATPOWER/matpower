@@ -58,7 +58,6 @@ function varargout = have_fcn(varargin)
 %       knitro      - Artelys Knitro, NLP solver
 %                     (https://www.artelys.com/solvers/knitro/)
 %         knitromatlab - Artelys Knitro, version 9.0.0+
-%         ktrlink      - KNITRO, version < 9.0.0 (requires Opt Tbx)
 %       linprog     - LINPROG, LP solver from Optimization Toolbox
 %         linprog_ds - LINPROG with dual-simplex solver
 %                       from Optimization Toolbox 7.1 (R2014b) +

@@ -7,12 +7,11 @@ Reference
 |MPOM| Classes
 --------------
 
-Use :class:`opt_model` to build and solve your mathematical programming and optimization models.
+Use :class:`mp.opt_model` to build and solve your mathematical programming and optimization models.
 
 .. toctree::
 
-   classes/opt_model
-   classes/mp_idx_manager
+   classes/mp/opt_model
    classes/mp/set_manager
    classes/mp/set_manager_opt_model
    classes/mp/sm_variable
@@ -21,6 +20,14 @@ Use :class:`opt_model` to build and solve your mathematical programming and opti
    classes/mp/sm_nln_cost
    classes/mp/sm_quad_cost
    classes/mp/sm_quad_constraint
+
+Deprecated:
+
+.. toctree::
+
+   classes/opt_model
+   classes/mp_idx_manager
+   classes/mp/sm_quad_cost_legacy
 
 
 |MPOM| Functions
@@ -55,6 +62,7 @@ Use these functions to convert constraints or to copy data from one struct to an
    functions/convert_lin_constraint
    functions/convert_quad_constraint
    functions/nested_struct_copy
+   functions/mp/struct2object
 
 
 Options Handling Functions
@@ -190,10 +198,12 @@ QCQP Solver
 |MPOM| Examples
 ---------------
 
-These are examples of using |MPOM| to solve a NLP.
+These are examples of using |MPOM| to build and solve various types of problems.
 
 .. toctree::
 
+   functions/lp_ex1
+   functions/milp_ex1
    functions/nleqs_master_ex1
    functions/nleqs_master_ex2
    functions/nlps_master_ex1
@@ -201,6 +211,15 @@ These are examples of using |MPOM| to solve a NLP.
    functions/pne_ex1
    functions/qcqp_ex1
    functions/qp_ex1
+
+The following Live Scripts, also found in the ``lib/t`` directory, help to
+illustrate MP-Opt-Model usage.
+
+- `milp_example1.mlx`_ - *Good introduction to build and solve a model with MP-Opt-Model.*
+- `qcqp_example1.mlx`_ - *Example of quadratic constraints and QCQP.*
+
+.. _milp_example1.mlx: https://github.com/MATPOWER/mp-opt-model/blob/master/lib/t/milp_example1.mlx
+.. _qcqp_example1.mlx: https://github.com/MATPOWER/mp-opt-model/blob/master/lib/t/qcqp_example1.mlx
 
 
 |MPOM| Tests
@@ -211,21 +230,38 @@ These functions test that |MPOM| is installed and functioning as expected.
 .. toctree::
 
    functions/test_mp_opt_model
-   functions/t_miqps_master
    functions/t_nested_struct_copy
    functions/t_nleqs_master
-   functions/t_nlps_master
-   functions/t_om_solve_leqs
-   functions/t_om_solve_miqps
-   functions/t_om_solve_nleqs
-   functions/t_om_solve_nlps
-   functions/t_om_solve_pne
-   functions/t_om_solve_qcqps
-   functions/t_om_solve_qps
-   functions/t_opt_model
    functions/t_pnes_master
-   functions/t_qcqps_master
    functions/t_qps_master
+   functions/t_qcqps_master
+   functions/t_miqps_master
+   functions/t_nlps_master
+   functions/t_mp_opt_model
+   functions/t_mm_solve_leqs
+   functions/t_mm_solve_nleqs
+   functions/t_mm_solve_pne
+   functions/t_mm_solve_qps
+   functions/t_mm_solve_qcqps
+   functions/t_mm_solve_miqps
+   functions/t_mm_solve_nlps
+
+Legacy Tests
+^^^^^^^^^^^^
+
+Tests of deprecated functionality.
+
+.. toctree::
+
+   functions/t_have_fcn
+   functions/t_opt_model
+   functions/t_om_solve_leqs
+   functions/t_om_solve_nleqs
+   functions/t_om_solve_pne
+   functions/t_om_solve_qps
+   functions/t_om_solve_qcqps
+   functions/t_om_solve_miqps
+   functions/t_om_solve_nlps
 
 
 Private Functions
@@ -254,7 +290,6 @@ rather are used to extend the capabilities of :func:`have_feature`.
    functions/have_feature_isequaln
    functions/have_feature_knitro
    functions/have_feature_knitromatlab
-   functions/have_feature_ktrlink
    functions/have_feature_linprog_ds
    functions/have_feature_linprog
    functions/have_feature_mosek

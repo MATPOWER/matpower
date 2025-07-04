@@ -8,18 +8,18 @@ classdef sm_quad_cost < mp.set_manager_opt_model
 % MP Set Manager class for quadratic costs. The costs take one of two forms,
 % either a scalar cost function of the form
 %
-% .. math:: f(\x) = \frac{1}{2}\trans{\x} \QQ \x + \trans{\c} \x + \param{k}
+% .. math:: f(\x) = \frac{1}{2}\trans{\x} \Hh \x + \trans{\c} \x + \param{k}
 %   :label: eq_qdc_form_1
 %
 % or a vector cost function of the form
 %
-% .. math:: \rvec{f}(\x) = \frac{1}{2} \diag{\q} \x^2 + \diag{\c} \x + \k
+% .. math:: \rvec{f}(\x) = \frac{1}{2} \diag{\param{\h}} \x^2 + \diag{\c} \x + \k
 %   :label: eq_qdc_form_2
 %
 % where :math:`\x` is an :math:`n_x \times 1` vector, and the corresponding
 % coefficient parameters are conformable.
 %
-% Manages cost parameters :math:`\QQ, \c, \param{k}` or :math:`\q, \c, \k`,
+% Manages cost parameters :math:`\Hh, \c, \param{k}` or :math:`\param{\h}, \c, \k`,
 % along with indexing.
 %
 % By convention, ``qdc`` is the variable name used for mp.sm_quad_cost objects.
@@ -30,7 +30,7 @@ classdef sm_quad_cost < mp.set_manager_opt_model
 % mp.sm_quad_cost Methods:
 %   * sm_quad_cost - constructor
 %   * add - add a subset of quadratic costs
-%   * params - build and return cost parameters :math:`\QQ, \c, \param{k}` or :math:`\q, \c, \k`
+%   * params - build and return cost parameters :math:`\Hh, \c, \param{k}` or :math:`\param{\h}, \c, \k`
 %   * set_params - modify quadratic cost parameter data
 %   * eval - evaluate individual or full set of quadratic costs
 %   * display_soln - display solution values for quadratic costs
@@ -60,30 +60,55 @@ classdef sm_quad_cost < mp.set_manager_opt_model
 
             es = struct();  %% empty struct
             obj@mp.set_manager_opt_model(varargin{:});
-            obj.data = struct( ...
-                'Q', es, ...
-                'c', es, ...
-                'k', es, ...
-                'vs', es );
+            if isempty(fieldnames(obj.data))
+                obj.data = struct( ...
+                    'H', es, ...
+                    'c', es, ...
+                    'k', es, ...
+                    'vs', es );
+            end
+        end
+
+        function new_obj = copy(obj, varargin)
+            % Duplicate the object.
+            % ::
+            %
+            %   new_sm = sm.copy()
+            %   new_sm = sm.copy(new_class)
+            %
+            % Input:
+            %   new_class (char array) : *(default = same class)* name of class
+            %       to use for new object
+            %
+            % Make a shallow copy of the object by copying each of the
+            % top-level properties. Parent method makes the copy, then
+            % the ``H`` parameter is renamed to ``Q`` if the new class is
+            % mp.sm_quad_cost_legacy.
+
+            new_obj = copy@mp.set_manager_opt_model(obj, varargin{:});
+            if isa(new_obj, 'mp.sm_quad_cost_legacy')
+                new_obj.data.Q = new_obj.data.H;
+                new_obj.data = rmfield(new_obj.data, 'H');
+            end
         end
 
         function obj = add(obj, var, name, idx, varargin)
             % Add a subset of quadratic costs.
             % ::
             %
-            %   qdc.add(var, name, Q, c);
-            %   qdc.add(var, name, Q, c, k);
-            %   qdc.add(var, name, Q, c, k, vs);
+            %   qdc.add(var, name, H, c);
+            %   qdc.add(var, name, H, c, k);
+            %   qdc.add(var, name, H, c, k, vs);
             %
-            %   qdc.add(var, name, idx_list, Q, c);
-            %   qdc.add(var, name, idx_list, Q, c, k);
-            %   qdc.add(var, name, idx_list, Q, c, k, vs);
+            %   qdc.add(var, name, idx_list, H, c);
+            %   qdc.add(var, name, idx_list, H, c, k);
+            %   qdc.add(var, name, idx_list, H, c, k, vs);
             %
             % Add a named, and possibly indexed, subset of quadratic costs
             % of form :eq:`eq_qdc_form_1` or :eq:`eq_qdc_form_2` to the set
             % where :math:`\x` is an :math:`n_x \times 1` vector made up of the
             % variables specified in the optional ``vs`` *(in the order
-            % given)*. This allows the :math:`\QQ`, :math:`\q`, :math:`\c`,
+            % given)*. This allows the :math:`\Hh`, :math:`\param{\h}`, :math:`\c`,
             % and/or :math:`\k` parameters to be defined in terms of only the
             % relevant variables without the need to manually create a lot of
             % properly located zero rows/columns.
@@ -93,14 +118,15 @@ classdef sm_quad_cost < mp.set_manager_opt_model
             %   name (char array) : name of subset/block of costs to add
             %   idx_list (cell array) : *(optional)* index list for subset/block
             %       of costs to add (for an indexed subset)
-            %   Q (double) : *(optional, default = all zeros)* quadratic cost
-            %       coefficient, :math:`n_x \times n_x` matrix :math:`\QQ`, or
-            %       :math:`n_x \times 1` vector :math:`\q`
+            %   H (double) : *(optional, default = all zeros)* quadratic cost
+            %       coefficient, :math:`n_x \times n_x` matrix :math:`\Hh`, or
+            %       :math:`n_x \times 1` vector :math:`\param{\h}`
             %   c (double) : *(optional, default = all zeros)* linear cost
             %       coefficient, :math:`n_x \times 1` vector :math:`\c`
             %   k (double) : *(optional, default = 0)* constant cost term,
             %       scalar :math:`\param{k}`, or :math:`n_x \times 1` vector
-            %       :math:`\k`
+            %       :math:`\k`; scalar `k` is expanded to a vector if `H` is
+            %       a vector
             %   vs (cell or struct array) : *(optional, default* ``{}`` *)*
             %       variable set defining vector :math:`\x` for this
             %       cost subset; can be either a cell array of names of
@@ -111,13 +137,13 @@ classdef sm_quad_cost < mp.set_manager_opt_model
             %
             % Examples::
             %
-            %   qdc.add(var, 'quad_cost1', Q1, c1, 0);
+            %   qdc.add(var, 'quad_cost1', H1, c1, 0);
             %   qdc.add(var, 'lin_cost2',  [], c2, k2, {'Vm', 'Pg', 'z'});
             %
             %   qdc.init_indexed_name('c', {2, 3});
             %   for i = 1:2
             %     for j = 1:3
-            %       qdc.add(var, 'c', {i, j}, Q{i,j}, ...);
+            %       qdc.add(var, 'c', {i, j}, H{i,j}, ...);
             %     end
             %   end
             %
@@ -125,17 +151,17 @@ classdef sm_quad_cost < mp.set_manager_opt_model
 
             %% set up default args
             if iscell(idx)          %% indexed named set
-                Q = varargin{1};
+                H = varargin{1};
                 args = varargin(2:end);
             else                    %% simple named set
-                Q = idx;
+                H = idx;
                 idx = {};
                 args = varargin;
             end
             nargs = length(args);
 
             %% prepare data
-            c = []; k = 0; vs = {};
+            c = []; k = []; vs = {};
             if nargs >= 1
                 c = args{1};
                 if nargs >= 2
@@ -145,42 +171,64 @@ classdef sm_quad_cost < mp.set_manager_opt_model
                     end
                 end
             end
+            if isempty(k)
+                if isempty(H)
+                    k = zeros(size(c));
+                else
+                    k = 0;
+                end
+            end
 
             %% convert varsets from cell to struct array if necessary
             vs = mp.sm_variable.varsets_cell2struct(vs);
             nv = var.varsets_len(vs);   %% number of variables
 
             %% check sizes
-            [MQ, NQ] = size(Q);
+            [MH, NH] = size(H);
             [Mc, Nc] = size(c);
-            if MQ
-                if NQ ~= MQ && NQ ~= 1
-                    error('mp.sm_quad_cost.add: Q (%d x %d) must be square or a column vector (or empty)', MQ, NQ);
+            [Mk, Nk] = size(k);
+            if MH
+                if NH ~= MH && NH ~= 1
+                    error('mp.sm_quad_cost.add: H (%d x %d) must be square or a column vector (or empty)', MH, NH);
                 end
             end
             if Mc && Nc ~= 1
                 error('mp.sm_quad_cost.add: c (%d x %d) must be a column vector (or empty)', Mc, Nc);
             end
-            if MQ
-                if Mc && Mc ~= MQ
-                    error('mp.sm_quad_cost.add: dimensions of Q (%d x %d) and c (%d x %d) are not compatible', MQ, NQ, Mc, Nc);
+            if MH
+                if Mc && Mc ~= MH
+                    error('mp.sm_quad_cost.add: dimensions of H (%d x %d) and c (%d x %d) are not compatible', MH, NH, Mc, Nc);
                 end
-                nx = MQ;
+                nx = MH;
             else
                 if nv && ~Mc
-                    error('mp.sm_quad_cost.add: Q and c cannot both be empty');
+                    error('mp.sm_quad_cost.add: H and c cannot both be empty');
                 end
                 nx = Mc;
             end
             if nx ~= nv
-                error('mp.sm_quad_cost.add: dimensions of Q (%d x %d) and c (%d x %d) do not match\nnumber of variables (%d)\n', MQ, NQ, Mc, Nc, nv);
+                error('mp.sm_quad_cost.add: dimensions of H (%d x %d) and c (%d x %d) do not match\nnumber of variables (%d)\n', MH, NH, Mc, Nc, nv);
             end
 
             %% size of named cost set
-            if NQ == 1 || isempty(Q)    %% if Q is a column vector or empty
-                N = nx;                 %%   cost is element-wise, i.e. a vector
-            else                        %% otherwise Q is a square matrix
-                N = 1;                  %%   cost is scalar
+            if isempty(H)
+                if Mk == 0 || Mk == Mc
+                    N = nx;     %% cost is element-wise, i.e. a vector
+                elseif isscalar(k)
+                    N = 1;      %% cost is scalar
+                else
+                    error('mp.sm_quad_cost.add: k must be a scalar or (%d x 1) vector', nx);
+                end
+            elseif NH == 1
+                N = nx;     %% cost is element-wise, i.e. a vector
+                if isscalar(k)
+                    k = k * ones(N, 1); %% expand k to vector if necessary
+                end
+            else
+                N = 1;      %% cost is scalar
+                if ~isscalar(k)
+                    error('mp.sm_quad_cost.add: k must be a scalar when H is a matrix');
+                end
             end
 
             %% call parent to handle standard indexing
@@ -192,7 +240,7 @@ classdef sm_quad_cost < mp.set_manager_opt_model
 
             %% assign data
             if isempty(idx)
-                obj.data.Q.(name)  = Q;
+                obj.data.H.(name)  = H;
                 obj.data.c.(name)  = c;
                 obj.data.k.(name)  = k;
                 obj.data.vs.(name) = vs;
@@ -201,7 +249,7 @@ classdef sm_quad_cost < mp.set_manager_opt_model
                 %% struct for addressing cell array fields
                 %% sc = substruct('.', name, '{}', idx);
                 sc = struct('type', {'.', '{}'}, 'subs', {name, idx});  %% cell array field
-                obj.data.Q  = subsasgn(obj.data.Q, sc, Q);
+                obj.data.H  = subsasgn(obj.data.H, sc, H);
                 obj.data.c  = subsasgn(obj.data.c, sc, c);
                 obj.data.k  = subsasgn(obj.data.k, sc, k);
                 obj.data.vs = subsasgn(obj.data.vs, sc, vs);
@@ -211,28 +259,28 @@ classdef sm_quad_cost < mp.set_manager_opt_model
             end
         end
 
-        function [Q, c, K, vs] = params(obj, var, name, idx)
-            % Build and return quadratic cost parameters :math:`\QQ, \c, \param{k}` or :math:`\q, \c, \k`.
+        function [H, c, K, vs] = params(obj, var, name, idx)
+            % Build and return quadratic cost parameters :math:`\Hh, \c, \param{k}` or :math:`\param{\h}, \c, \k`.
             % ::
             %
-            %   [Q, c] = qdc.params(var)
-            %   [Q, c] = qdc.params(var, name)
-            %   [Q, c] = qdc.params(var, name, idx_list)
-            %   [Q, c, k] = qdc.params(...)
-            %   [Q, c, k, vs] = qdc.params(...)
+            %   [H, c] = qdc.params(var)
+            %   [H, c] = qdc.params(var, name)
+            %   [H, c] = qdc.params(var, name, idx_list)
+            %   [H, c, k] = qdc.params(...)
+            %   [H, c, k, vs] = qdc.params(...)
             %
             % With no input parameters, it assembles and returns the parameters
             % for the aggregate quadratic cost from all quadratic cost sets
             % added using add(). The values of these parameters are cached
-            % for subsequent calls. The parameters are :math:`\QQ, \c`, and
+            % for subsequent calls. The parameters are :math:`\Hh, \c`, and
             % optionally :math:`\param{k}` for the scalar cost form in
-            % :eq:`eq_qdc_form_1`, or :math:`\q, \c`, and optionally
+            % :eq:`eq_qdc_form_1`, or :math:`\param{\h}, \c`, and optionally
             % :math:`\k` for the vector cost form in :eq:`eq_qdc_form_2`.
             %
             % If a name or name and index list are provided, then it simply
             % returns the parameters for the corresponding set. It can also
             % optionally return the variable sets used by this cost set
-            % (the dimensions of :math:`\QQ, \q, \c, \k` will be consistent
+            % (the dimensions of :math:`\Hh, \param{\h}, \c, \k` will be consistent
             % with this variable set).
             %
             % Inputs:
@@ -241,8 +289,8 @@ classdef sm_quad_cost < mp.set_manager_opt_model
             %   idx_list (cell array) : *(optional)* index list for subset
             %
             % Outputs:
-            %   Q (double) : quadratic cost coefficient matrix :math:`\QQ` or
-            %       vector :math:`\q`
+            %   H (double) : quadratic cost coefficient matrix :math:`\Hh` or
+            %       vector :math:`\param{\h}`
             %   c (double) : linear cost coefficient vector :math:`\c`
             %   k (double) : constant cost term, scalar :math:`\param{k}`, or vector
             %       :math:`\k`
@@ -259,7 +307,7 @@ classdef sm_quad_cost < mp.set_manager_opt_model
                 end
                 if isempty(idx)                 %% name, no index provided
                     if numel(obj.idx.i1.(name)) == 1    %% simple named set
-                        Q = obj.data.Q.(name);
+                        H = obj.data.H.(name);
                         c = obj.data.c.(name);
                         K = obj.data.k.(name);
                         if nargout > 3
@@ -273,7 +321,7 @@ classdef sm_quad_cost < mp.set_manager_opt_model
                     % s = substruct('.', name, '{}', idx);
                     % ... so replace it with these more efficient lines)
                     sc = struct('type', {'.', '{}'}, 'subs', {name, idx});
-                    Q = subsref(obj.data.Q, sc);
+                    H = subsref(obj.data.H, sc);
                     c = subsref(obj.data.c, sc);
                     K = subsref(obj.data.k, sc);
                     if nargout > 3
@@ -286,34 +334,34 @@ classdef sm_quad_cost < mp.set_manager_opt_model
                     nx = var.N;         %% number of variables
                     if obj.NS < 25 || obj.NS < 100 && nx < 300
                         %% METHOD 1: Add sparse matrices (original method)
-                        Qt = sparse(nx, nx);    %% transpose of quadratic coefficients
+                        Ht = sparse(nx, nx);    %% transpose of quadratic coefficients
                         c = zeros(nx, 1);       %% linear coefficients
                         K = 0;                  %% constant term
                         for k = 1:obj.NS
                             name = obj.order(k).name;
                             idx  = obj.order(k).idx;
                             N = obj.get_N(name, idx);
-                            [Qk, ck, kk, vs] = obj.params(var, name, idx);
-                            haveQ = ~isempty(Qk);
+                            [Hk, ck, kk, vs] = obj.params(var, name, idx);
+                            haveH = ~isempty(Hk);
                             havec = ~isempty(ck);
-                            nk = max(size(Qk, 1), size(ck, 1));     %% size of Qk and/or ck
+                            nk = max(size(Hk, 1), size(ck, 1));     %% size of Hk and/or ck
                             if isempty(vs)
                                 if nk == nx     %% full size
-                                    if size(Qk, 2) == 1     %% Qk is a column vector
-                                        Qkt_full = spdiags(Qk, 0, nx, nx);
-                                    elseif haveQ            %% Qk is a matrix
-                                        Qkt_full = Qk';
+                                    if size(Hk, 2) == 1     %% Hk is a column vector
+                                        Hkt_full = spdiags(Hk, 0, nx, nx);
+                                    elseif haveH            %% Hk is a matrix
+                                        Hkt_full = Hk';
                                     end
                                     if havec
                                         ck_full = ck;
                                     end
                                 else            %% vars added since adding this cost set
-                                    if size(Qk, 2) == 1     %% Qk is a column vector
-                                        Qkt_full = sparse(1:nk, 1:nk, Qk, nx, nx);
-                                    elseif haveQ            %% Qk is a matrix
-                                        Qk_all_cols = sparse(nk, nx);
-                                        Qk_all_cols(:, 1:nk) = Qk;
-                                        Qkt_full(:, 1:nk) = Qk_all_cols';
+                                    if size(Hk, 2) == 1     %% Hk is a column vector
+                                        Hkt_full = sparse(1:nk, 1:nk, Hk, nx, nx);
+                                    elseif haveH            %% Hk is a matrix
+                                        Hk_all_cols = sparse(nk, nx);
+                                        Hk_all_cols(:, 1:nk) = Hk;
+                                        Hkt_full(:, 1:nk) = Hk_all_cols';
                                     end
                                     if havec
                                         ck_full = zeros(nx, 1);
@@ -322,86 +370,78 @@ classdef sm_quad_cost < mp.set_manager_opt_model
                                 end
                             else
                                 jj = var.varsets_idx(vs);   %% indices for var set
-                                if size(Qk, 2) == 1     %% Qk is a column vector
-                                    Qkt_full = sparse(jj, jj, Qk, nx, nx);
-                                elseif haveQ            %% Qk is a matrix
-                                    Qk_all_cols = sparse(nk, nx);
-                                    Qk_all_cols(:, jj) = Qk;
-                                    Qkt_full = sparse(nx, nx);
-                                    Qkt_full(:, jj) = Qk_all_cols';
+                                if size(Hk, 2) == 1     %% Hk is a column vector
+                                    Hkt_full = sparse(jj, jj, Hk, nx, nx);
+                                elseif haveH            %% Hk is a matrix
+                                    Hk_all_cols = sparse(nk, nx);
+                                    Hk_all_cols(:, jj) = Hk;
+                                    Hkt_full = sparse(nx, nx);
+                                    Hkt_full(:, jj) = Hk_all_cols';
                                 end
                                 if havec
                                     ck_full = zeros(nx, 1);
                                     ck_full(jj) = ck;
                                 end
                             end
-                            if haveQ
-                                Qt = Qt + Qkt_full;
+                            if haveH
+                                Ht = Ht + Hkt_full;
                             end
                             if havec
                                 c = c + ck_full;
                             end
-                            if length(kk) == 1
-                                K = K + N * kk;     %% N handles case where k is expanded to vector cost
-                            else
-                                K = K + sum(kk);
-                            end
+                            K = K + sum(kk);
                         end
-                        Q = Qt';
+                        H = Ht';
                    else
                         %% METHOD 2: construct using single call to sparse()
-                        Q_ijv = cell(obj.NS, 3);    %% indices/values to construct Q
+                        H_ijv = cell(obj.NS, 3);    %% indices/values to construct H
                         c_ijv = cell(obj.NS, 3);    %% indices/values to construct c
                         K = 0;                  %% constant term
                         for k = 1:obj.NS
                             name = obj.order(k).name;
                             idx  = obj.order(k).idx;
                             N = obj.get_N(name, idx);
-                            [Qk, ck, kk, vs] = obj.params(var, name, idx);
-                            haveQ = ~isempty(Qk);
+                            [Hk, ck, kk, vs] = obj.params(var, name, idx);
+                            haveH = ~isempty(Hk);
                             havec = ~isempty(ck);
-                            if haveQ
-                                [i, j, v] = find(Qk);
+                            if haveH
+                                [i, j, v] = find(Hk);
                             end
                             if havec
                                 [ic, jc, vc] = find(ck);
                             end
                             if isempty(vs)
-                                if size(Qk, 2) == 1     %% Qk is a column vector
-                                    Q_ijv(k, :) = {i, i, v};
-                                elseif haveQ            %% Qk is a matrix
-                                    Q_ijv(k, :) = {i, j, v};
+                                if size(Hk, 2) == 1     %% Hk is a column vector
+                                    H_ijv(k, :) = {i, i, v};
+                                elseif haveH            %% Hk is a matrix
+                                    H_ijv(k, :) = {i, j, v};
                                 end
                                 if havec
                                     c_ijv(k, :) = {ic, jc, vc};
                                 end
                             else
                                 jj = var.varsets_idx(vs)';  %% indices for var set
-                                if size(Qk, 2) == 1     %% Qk is a column vector
-                                    Q_ijv(k, :) = {jj(i), jj(i), v};
-                                elseif haveQ            %% Qk is a matrix
-                                    Q_ijv(k, :) = {jj(i), jj(j), v};
+                                if size(Hk, 2) == 1     %% Hk is a column vector
+                                    H_ijv(k, :) = {jj(i), jj(i), v};
+                                elseif haveH            %% Hk is a matrix
+                                    H_ijv(k, :) = {jj(i), jj(j), v};
                                 end
                                 if havec
                                     c_ijv(k, :) = {jj(ic), jc, vc};
                                 end
                             end
-                            if length(kk) == 1
-                                K = K + N * kk;     %% N handles case where k is expanded to vector cost
-                            else
-                                K = K + sum(kk);
-                            end
+                            K = K + sum(kk);
                         end
-                        Q = sparse( vertcat(Q_ijv{:,1}), ...
-                                    vertcat(Q_ijv{:,2}), ...
-                                    vertcat(Q_ijv{:,3}), nx, nx);
+                        H = sparse( vertcat(H_ijv{:,1}), ...
+                                    vertcat(H_ijv{:,2}), ...
+                                    vertcat(H_ijv{:,3}), nx, nx);
                         c = accumarray(vertcat(c_ijv{:,1}), vertcat(c_ijv{:,3}), [nx 1]);
                     end
 
                     %% cache aggregated parameters
-                    obj.cache = struct('Q', Q, 'c', c, 'k', K);
+                    obj.cache = struct('H', H, 'c', c, 'k', K);
                 else                    %% return cached values
-                    Q = cache.Q;
+                    H = cache.H;
                     c = cache.c;
                     K = cache.k;
                 end
@@ -415,8 +455,8 @@ classdef sm_quad_cost < mp.set_manager_opt_model
             % Modify quadratic cost parameter data.
             % ::
             %
-            %   qdc.set_params(name, params, vals)
-            %   qdc.set_params(name, idx_list, params, vals)
+            %   qdc.set_params(var, name, params, vals)
+            %   qdc.set_params(var, name, idx_list, params, vals)
             %
             % This method can be used to modify parameters for an existing
             % subset of quadratic costs.
@@ -439,12 +479,12 @@ classdef sm_quad_cost < mp.set_manager_opt_model
             %   vals : new value or cell array of new values corresponding to
             %       ``params``
             %
-            % Valid parameter names are ``Q``, ``c``, ``k``, ``vs``.
+            % Valid parameter names are ``H``, ``c``, ``k``, ``vs``.
             %
             % Examples::
             %
             %   qdc.set_params(var, 'y', {2,3}, {'c'}, {c});
-            %   qdc.set_params(var, 'Pg', 'all', {Q, c, k, vs});
+            %   qdc.set_params(var, 'Pg', 'all', {H, c, k, vs});
             %
             % See also add, params.
 
@@ -455,22 +495,22 @@ classdef sm_quad_cost < mp.set_manager_opt_model
             end
 
             %% create default list of parameters to update based on set type & inputs
-            default_params = {'Q', 'c', 'k', 'vs'};
+            default_params = {'H', 'c', 'k', 'vs'};
 
             %% standardize provided arguments in cell arrays params, vals
             [is_all, np, params, vals] = ...
                 obj.set_params_std_args(default_params, params, vals);
 
             %% get current parameters
-            [Q, c, kk, vs] = obj.params(var, name, idx);
-            [MQ0, NQ0] = size(Q);
+            [H, c, kk, vs] = obj.params(var, name, idx);
+            [MH0, NH0] = size(H);
             [Mc0, Nc0] = size(c);
             Nk0 = length(kk);
-            nx0 = max([MQ0 Mc0 Nk0]);
+            nx0 = max([MH0 Mc0 Nk0]);
             N0 = obj.get_N(name, idx);
             if isempty(vs), vs = {vs}; end
-            p = struct('Q', Q, 'c', c, 'k', kk, 'vs', vs);  %% current parameters
-            u = struct('Q', 0, 'c', 0, 'k',  0, 'vs',  0);  %% which ones to update
+            p = struct('H', H, 'c', c, 'k', kk, 'vs', vs);  %% current parameters
+            u = struct('H', 0, 'c', 0, 'k',  0, 'vs',  0);  %% which ones to update
 
             %% replace with new parameters
             for k = 1:np
@@ -479,19 +519,19 @@ classdef sm_quad_cost < mp.set_manager_opt_model
             end
 
             %% set missing default params for 'all'
-            [MQ, NQ] = size(p.Q);
+            [MH, NH] = size(p.H);
             [Mc, Nc] = size(p.c);
             Nk = length(p.k);
-            nx = max([MQ Mc Nk]);
-            if NQ == 1 || (isempty(p.Q) && (Nk > 1 || k == 0))
-                %% Q is a column vector (cost is element-wise, i.e. a vector)
-                %% OR Q is empty and k is either a vector or zero
+            nx = max([MH Mc Nk]);
+            if NH == 1 || (isempty(p.H) && (Nk > 1 || k == 0))
+                %% H is a column vector (cost is element-wise, i.e. a vector)
+                %% OR H is empty and k is either a vector or zero
                 N = nx;
-            else            %% Q is a square matrix (cost is a scalar)
+            else            %% H is a square matrix (cost is a scalar)
                 N = 1;
             end
             if is_all
-                u.Q = 1;                %% always update Q
+                u.H = 1;                %% always update H
                 if np < 4
                     p.vs = {};
                     u.vs = 1;           %% update vs
@@ -512,14 +552,14 @@ classdef sm_quad_cost < mp.set_manager_opt_model
                 error('mp.sm_quad_cost.set_params: dimension change for ''%s'' not allowed except for ''all''', obj.nameidxstr(name, idx));
             end
 
-            %% Q and c can't both be empty
-            if ~MQ && ~Mc
-                error('mp.sm_quad_cost.set_params: ''%s'' : ''Q'' and ''c'' cannot both be empty', obj.nameidxstr(name, idx));
+            %% H and c can't both be empty
+            if ~MH && ~Mc
+                error('mp.sm_quad_cost.set_params: ''%s'' : ''H'' and ''c'' cannot both be empty', obj.nameidxstr(name, idx));
             end
 
-            %% check sizes of new values of Q, c, k
-            if ~isempty(p.Q) && (MQ ~= nx || (MQ ~= NQ && NQ ~= 1) )
-                error('mp.sm_quad_cost.set_params: ''%s'' : ''%s'' is expected to be (%d x %d)', obj.nameidxstr(name, idx), 'Q', MQ, NQ);
+            %% check sizes of new values of H, c, k
+            if ~isempty(p.H) && (MH ~= nx || (MH ~= NH && NH ~= 1) )
+                error('mp.sm_quad_cost.set_params: ''%s'' : ''%s'' is expected to be (%d x %d)', obj.nameidxstr(name, idx), 'H', MH, NH);
             end
             if ~isempty(p.c) && Mc ~= nx
                 error('mp.sm_quad_cost.set_params: ''%s'' : ''%s'' is expected to be (%d x %d)', obj.nameidxstr(name, idx), 'c', Mc, 1);
@@ -528,12 +568,12 @@ classdef sm_quad_cost < mp.set_manager_opt_model
                 error('mp.sm_quad_cost.set_params: ''%s'' : ''%s'' is expected to be (%d x %d)', obj.nameidxstr(name, idx), 'k', N, 1);
             end
 
-            %% check consistency of Q, c, k and vs
-            if u.Q || u.c || u.vs
+            %% check consistency of H, c, k and vs
+            if u.H || u.c || u.vs
                 p.vs = mp.sm_variable.varsets_cell2struct(p.vs);
                 nv = var.varsets_len(p.vs);     %% number of variables
                 if nx ~= nv
-                    error('mp.sm_quad_cost.set_params: for ''%s'' dimensions of ''Q'', ''c'', ''k'' (%d) must be consistent with ''vs'' (%d)', obj.nameidxstr(name, idx), nx, nv);
+                    error('mp.sm_quad_cost.set_params: for ''%s'' dimensions of ''H'', ''c'', ''k'' (%d) must be consistent with ''vs'' (%d)', obj.nameidxstr(name, idx), nx, nv);
                 end
             end
 
@@ -608,12 +648,12 @@ classdef sm_quad_cost < mp.set_manager_opt_model
 
                 %% collect cost parameters
                 if nargin < 4                       %% full set
-                    [Q, c, k, vs] = obj.params(var);
+                    [H, c, k, vs] = obj.params(var);
                     N = 1;
                 elseif nargin < 5 || isempty(idx)   %% name, no idx provided
                     dims = size(obj.idx.i1.(name));
                     if prod(dims) == 1              %% simple named set
-                        [Q, c, k, vs] = obj.params(var, name);
+                        [H, c, k, vs] = obj.params(var, name);
                         N = obj.get_N(name);
                     elseif nargout == 1             %% indexing required, recurse
                         f = 0;          %% initialize cumulative cost
@@ -638,7 +678,7 @@ classdef sm_quad_cost < mp.set_manager_opt_model
                         error('mp.sm_quad_cost.eval: quadratic cost set ''%s'' requires an IDX_LIST arg when requesting DF output', name)
                     end
                 else                                %% indexed named set
-                    [Q, c, k, vs] = obj.params(var, name, idx);
+                    [H, c, k, vs] = obj.params(var, name, idx);
                     N = obj.get_N(name, idx);
                 end
 
@@ -647,22 +687,22 @@ classdef sm_quad_cost < mp.set_manager_opt_model
                     xx = var.varsets_x(x, vs, 'vector');
 
                     %% compute/assemble f
-                    if N == 1               %% f is scalar (Q is matrix, k is scalar)
+                    if N == 1               %% f is scalar (H is matrix, k is scalar)
                         f = k;                  %% start with k term
                         if ~isempty(c)
                             f = f + c'*xx;      %% add c term
                         end
-                        if ~isempty(Q)          %% add Q term
-                            f = f + (xx'*Q*xx)/2;
+                        if ~isempty(H)          %% add H term
+                            f = f + (xx'*H*xx)/2;
                         end
-                    else                    %% f is vector (Q is vector or empty, k is vector or scalar)
-                        if isempty(c)           %% Q, k terms only
-                            f = (Q .* xx.^2)/2 + k;
+                    else                    %% f is vector (H is vector or empty, k is vector)
+                        if isempty(c)           %% H, k terms only
+                            f = (H .* xx.^2)/2 + k;
                         else
-                            if isempty(Q)       %% c, k terms only
+                            if isempty(H)       %% c, k terms only
                                 f = c .* xx + k;
-                            else                %% Q, c, k terms
-                                f = (Q .* xx.^2)/2 + c .* xx + k;
+                            else                %% H, c, k terms
+                                f = (H .* xx.^2)/2 + c .* xx + k;
                             end
                         end
                     end
@@ -674,25 +714,25 @@ classdef sm_quad_cost < mp.set_manager_opt_model
                         else
                             df = 0;             %% start with nothing
                         end
-                        if ~isempty(Q)
-                            if N == 1       %% f is scalar (Q is matrix, k is scalar)
-                                df = df + Q*xx;     %% add Q term
-                            else            %% f is vector (Q is vector or empty, k is vector or scalar)
-                                df = df + Q.*xx;    %% add Q term
+                        if ~isempty(H)
+                            if N == 1       %% f is scalar (H is matrix, k is scalar)
+                                df = df + H*xx;     %% add H term
+                            else            %% f is vector (H is vector or empty, k is vector or scalar)
+                                df = df + H.*xx;    %% add H term
                             end
                         end
 
                         %% assemble d2f
                         if nargout > 2
-                            if isempty(Q)
+                            if isempty(H)
                                 nx = length(xx);
-                                if N == 1   %% f is scalar (Q is matrix, k is scalar)
+                                if N == 1   %% f is scalar (H is matrix, k is scalar)
                                     d2f = sparse(nx, nx);
-                                else        %% f is vector (Q is vector or empty, k is vector or scalar)
+                                else        %% f is vector (H is vector or empty, k is vector or scalar)
                                     d2f = sparse(nx, 1);
                                 end
                             else
-                                d2f = Q;
+                                d2f = H;
                             end
                         end
                     end     %% nargout > 1
@@ -759,7 +799,7 @@ classdef sm_quad_cost < mp.set_manager_opt_model
                 for k = 1:length(obj.order)
                     n = obj.order(k).name;
                     i = obj.order(k).idx;
-                    [QQ, cc, kk, vs] = obj.params(var, n, i);
+                    [HH, cc, kk, vs] = obj.params(var, n, i);
                     xx = var.varsets_x(soln.x, vs, 'vector');
                     c_total = obj.eval(var, soln.x, n, i);
                     len = length(c_total);
@@ -789,7 +829,7 @@ classdef sm_quad_cost < mp.set_manager_opt_model
                             c_constant = kk;
                         end
                     end
-                    if sum(sum(QQ)) == 0 && sum(kk) == 0 && len == length(cc)
+                    if sum(sum(HH)) == 0 && sum(kk) == 0 && len == length(cc)
                         c_average = cc;
                     end
                     c = [c; c_total];

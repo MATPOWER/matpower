@@ -41,6 +41,9 @@ if nargout > 0
 else
     if h.av
         fprintf('%-22s Version %-10s %-11s\n', v.Name, v.Version, v.Date);
+        if exist('verHiGHSMEX')
+            fprintf('%-22s Version %-10s %-11s\n', 'HiGHSMEX', verHiGHSMEX(), '');
+        end
     else
         fprintf('%-22s -- not installed --\n', v.Name);
     end

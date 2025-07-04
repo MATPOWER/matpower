@@ -5,6 +5,45 @@ Change history for MP-Opt-Model
 since 4.2
 ---------
 
+#### 7/3/25
+  - Add support for Artelys Knitro 15.x which required changes to the
+    prior options handling.
+  - **INCOMPATIBLE CHANGE:** The `knitro_opts` field of the `opt` input
+    to `nlps_master()` and `nlps_knitro()` and the `solve()` method of
+    `opt_model` has been redesigned. It is now a raw Artelys Knitro options
+    struct, so the `opts`, `tol_x` and `tol_f` fields are no longer valid.
+    For `tol_x` and `tol_f`, use `xtol` and `ftol`, and the contents of
+    `opts` should be placed directly in the top level of the `knitro_opts`
+    field.
+  - **INCOMPATIBLE CHANGE:** Remove support for older versions of Knitro,
+    including all references to `ktrlink` for pre-v9 versions. Currently
+    supports Artelys Knitro version 13.1 and later.
+
+#### 6/21/25
+  - Add new `mp.struct2object()` function to convert a struct back to the
+    object from which it was created. Helps with workarounds to the fact
+    that Octave still (as of 10.x) does not support saving/loading of
+    classdef objects. This function allows objects to implement
+    `to_struct()` and `from_struct()` methods to facilitate the process.
+  - Add `to_struct()` and `from_struct()` methods to `mp.opt_model`,
+    `mp.set_manager`, and legacy `opt_model` classes, to facilitate
+    trivial conversion between objects, which Octave cannot save/load,
+    and structs, which it can.
+
+#### 6/10/25
+  - Fix handling of scalar inputs for vector parameters when adding an
+    empty set of variables or linear/quadratic constraints. Now
+    properly "expands" them to an empty vector ([issue #16][18]).
+  - Update handling by `mp.sm_quad_cost` of constant term for
+    quadratic costs ([issue #15][17]):
+    - When `H` is empty, a scalar `k` will no longer be expanded
+      _(implicitly)_ to a vector, rather it will result in a scalar
+      cost set.
+    - When `H` is a vector and `k` is a scalar, `k` will be expanded
+      _explicitly_ to a vector.
+    The `mp.sm_quad_cost_legacy` class is unchanged, so this change
+    affects only `mp.opt_model`, not the legacy `opt_model`.
+
 #### 5/23/25
   - Add support to `qps_master()` and `miqps_master()` for the
     open-source [HiGHS][15] solver for LP, QP and MILP problems,
@@ -627,3 +666,5 @@ Version 0.7.0 - *Jun 20, 2019*
 [14]: https://www.artelys.com/solvers/knitro/
 [15]: https://highs.dev
 [16]: https://github.com/savyasachi/HiGHSMEX
+[17]: https://github.com/MATPOWER/matpower/issues/15
+[18]: https://github.com/MATPOWER/matpower/issues/16

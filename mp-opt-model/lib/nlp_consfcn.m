@@ -1,17 +1,17 @@
-function [h, g, dh, dg] = nlp_consfcn(om, x, dhs, dgs)
+function [h, g, dh, dg] = nlp_consfcn(mm, x, dhs, dgs)
 % nlp_consfcn - Evaluates nonlinear constraints and their Jacobian for NLP solver.
 % ::
 %
-%   [H, G] = NLP_CONSFCN(OM, X)
-%   [H, G, DH, DG] = NLP_CONSFCN(OM, X)
-%   [H, G, DH, DG] = NLP_CONSFCN(OM, X, DHS, DGS)
+%   [H, G] = NLP_CONSFCN(MM, X)
+%   [H, G, DH, DG] = NLP_CONSFCN(MM, X)
+%   [H, G, DH, DG] = NLP_CONSFCN(MM, X, DHS, DGS)
 %
 %   Constraint evaluation function nonlinear constraints, suitable
 %   for use with MIPS, FMINCON, etc. Computes constraint vectors and their
 %   gradients.
 %
 %   Inputs:
-%     OM : Opt-Model object
+%     MM : MP-Opt-Model object
 %     X : optimization vector
 %     DHS : (optional) sparse matrix with tiny non-zero values specifying
 %          the fixed sparsity structure that the resulting DH should match
@@ -26,14 +26,14 @@ function [h, g, dh, dg] = nlp_consfcn(om, x, dhs, dgs)
 %     DG : (optional) equality constraint gradients
 %
 %   Examples:
-%       [h, g] = nlp_consfcn(om, x);
-%       [h, g, dh, dg] = nlp_consfcn(om, x);
-%       [...] = nlp_consfcn(om, x, dhs, dgs);
+%       [h, g] = nlp_consfcn(mm, x);
+%       [h, g, dh, dg] = nlp_consfcn(mm, x);
+%       [...] = nlp_consfcn(mm, x, dhs, dgs);
 %
 % See also nlp_costfcn, nlp_hessfcn.
 
 %   MP-Opt-Model
-%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2025, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.
@@ -41,11 +41,11 @@ function [h, g, dh, dg] = nlp_consfcn(om, x, dhs, dgs)
 %   See https://github.com/MATPOWER/mp-opt-model for more info.
 
 if nargout == 2     %% contraints only
-    g = om.eval_nln_constraint(x, 1);       %% equalities
-    h = om.eval_nln_constraint(x, 0);       %% inequalities
+    g = mm.nle.eval(mm.var, x);         %% equalities
+    h = mm.nli.eval(mm.var, x);         %% inequalities
 else                %% constraints and derivatives
-    [g, dg] = om.eval_nln_constraint(x, 1); %% equalities
-    [h, dh] = om.eval_nln_constraint(x, 0); %% inequalities
+    [g, dg] = mm.nle.eval(mm.var, x);   %% equalities
+    [h, dh] = mm.nli.eval(mm.var, x);   %% inequalities
     dg = dg';
     dh = dh';
 

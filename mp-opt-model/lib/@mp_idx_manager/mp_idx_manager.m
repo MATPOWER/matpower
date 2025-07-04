@@ -1,5 +1,12 @@
 classdef mp_idx_manager < handle
 % mp_idx_manager - |MATPOWER| Index Manager abstract class
+%
+% .. note::
+%    .. deprecated:: 5.0 Please use mp.set_manager instead. The functionality
+%       previously implemented in mp_idx_manager, a parent container class
+%       for managing various set types, has been moved to mp.set_manager,
+%       a base class for the set type objects themselves.
+%
 % ::
 %
 %   A MATPOWER Index Manager object can be used to manage the indexing of
@@ -190,6 +197,8 @@ classdef mp_idx_manager < handle
                 nis = obj.set_types.(f{1});
                 if ischar(nis)
                     nis = mp.set_manager(nis);
+                else
+                    nis = nis.copy();
                 end
                 obj.(f{1}) = nis;
             end
@@ -245,7 +254,9 @@ classdef mp_idx_manager < handle
 end         %% classdef
 
 function d = copy_prop(s, d, prop)
-    if isa(s.(prop), 'mp.set_manager')
+    if isa(s.(prop), 'mp.sm_quad_cost')
+        d.(prop) = s.(prop).copy('mp.sm_quad_cost_legacy');
+    elseif isa(s.(prop), 'mp.set_manager')
         d.(prop) = s.(prop).copy();
     elseif isa(d.(prop), 'mp.set_manager')
         d.(prop) = nested_struct_copy( ...

@@ -21,7 +21,9 @@ classdef set_manager < handle
 % mp.set_manager Methods:
 %   * set_manager - constructor
 %   * copy - make a duplicate (shallow copy) of the object
-%   * add - a named (and optionally indexed) subset of entities
+%   * to_struct - convert object data *to* a struct
+%   * from_struct - copy object data *from* a struct
+%   * add - add a named (and optionally indexed) subset of entities
 %   * describe_idx - provide/display name and index label for given indices
 %   * display - display summary of indexing of subsets in object
 %   * get_N - return the number of elements in the set
@@ -156,21 +158,43 @@ classdef set_manager < handle
             % ::
             %
             %   sm = mp.set_manager(label)
+            %   sm = mp.set_manager(s)
+            %
+            % Input:
+            %   label (char array) : label used in display for this set type
+            %   s (struct) : a struct to use as an input to from_struct()
 
-            obj.label = label;
+            if isstruct(label)
+                obj = obj.from_struct(label);
+            elseif ischar(label)
+                obj.label = label;
+            else
+                error('mp.set_manager: constructor input argument must be char array or struct');
+            end
         end
 
-        function new_obj = copy(obj)
+        function new_obj = copy(obj, cls)
             % Duplicate the object.
             % ::
             %
             %   new_sm = sm.copy()
+            %   new_sm = sm.copy(new_class)
             %
-            % Make a shallow copy of the object by copying each of the
+            % Input:
+            %   new_class (char array) : *(default = same class)* name of class
+            %       to use for new object
+            %
+            % Output:
+            %   new_sm (mp.set_manager) : duplicate of original object
+            %
+            % Make a shallow copy of the object by copying each of the
             % top-level properties.
 
             %% create new object
-            new_obj = eval(sprintf('%s(''%s'')', class(obj), obj.label));
+            if nargin < 2
+                cls = class(obj);
+            end
+            new_obj = eval(sprintf('%s(''%s'')', cls, obj.label));
 
             %% get the names of the properties
             if have_feature('octave')
@@ -188,8 +212,36 @@ classdef set_manager < handle
             end
         end
 
+        function s =  to_struct(obj)
+            % Convert object data *to* a struct.
+            % ::
+            %
+            %   s = sm.to_struct()
+            %
+            % Converts the object data *to* a struct that can later be
+            % converted back to an identical object using mp.struct2object.
+            % Useful for saving the object data to a MAT-file in Octave.
+
+            s = nested_struct_copy(struct(), obj);
+            s.class_ = class(obj);
+            s.constructor_args_ = { obj.label };
+        end
+
+        function obj = from_struct(obj, s)
+            % Copy object data *from* a struct.
+            % ::
+            %
+            %   sm.from_struct(s)
+            %
+            % Called by function mp.struct2object, after creating the object
+            % to copy the object data *from* a struct. Useful for recreating
+            % the object after loading struct data from a MAT-file in Octave.
+
+            obj = nested_struct_copy(obj, s);
+        end
+
         function obj = add(obj, name, idx, varargin)
-            % add - Add a named (and optionally indexed) subset of entities.
+            % Add a named (and optionally indexed) subset of entities.
             % ::
             %
             %   sm.add(name, N, ...)
@@ -254,7 +306,7 @@ classdef set_manager < handle
                 if subsref(obj.idx.i1, sn) ~= 0
                     str = '%d'; for m = 2:length(idx), str = [str ',%d']; end
                     nname = sprintf(['%s(' str, ')'], name, idx{:});
-                    error('mp_idx_manager.add_named_set: %s set named ''%s'' already exists', obj.label, nname);
+                    error('mp.set_manager.add: %s set named ''%s'' already exists', obj.label, nname);
                 end
 
                 %% add indexing info about this set
@@ -269,7 +321,7 @@ classdef set_manager < handle
         end
 
         function label = describe_idx(obj, idxs)
-            % describe_idx - Provide/display name and index label for given indices.
+            % Provide/display name and index label for given indices.
             % ::
             %
             %   label = sm.describe_idx(idxs)
@@ -364,12 +416,12 @@ classdef set_manager < handle
         end
 
         function N = get_N(obj, name, idx)
-            % get_N - Return the number of elements in the set.
+            % Return the number of elements in the set.
             % ::
             %
-            %   N = obj.get_N()
-            %   N = obj.get_N(name)
-            %   N = obj.get_N(name, idx_list)
+            %   N = sm.get_N()
+            %   N = sm.get_N(name)
+            %   N = sm.get_N(name, idx_list)
             %
             % Returns either the total number of elements in the set or the
             % number corresponding to a specified named block, or indexed named
@@ -377,9 +429,9 @@ classdef set_manager < handle
             %
             % Examples::
             %
-            %   N = obj.get_N()             % total number of elements in set
-            %   N = obj.get_N(name)         % # of elements in named set
-            %   N = obj.get_N(name, idx)    % # of elements in indexed named set
+            %   N = sm.get_N()             % total number of elements in set
+            %   N = sm.get_N(name)         % # of elements in named set
+            %   N = sm.get_N(name, idx)    % # of elements in indexed named set
 
             if nargin < 2
                 N = obj.N;
@@ -399,7 +451,7 @@ classdef set_manager < handle
         end
 
         function obj = init_indexed_name(obj, name, dim_list)
-            % init_indexed_name - Initialize dimensions for an indexed named set.
+            % Initialize dimensions for an indexed named set.
             % ::
             %
             %   sm.init_indexed_name(name, dim_list)
@@ -426,7 +478,7 @@ classdef set_manager < handle
 
             %% prevent duplicate name in set of specified type
             if isfield(obj.idx.N, name)
-                error('mp_idx_manager.init_indexed_name: %s set named ''%s'' already exists', ...
+                error('mp.set_manager.init_indexed_name: %s set named ''%s'' already exists', ...
                     st_label, name);
             end
 
@@ -450,12 +502,12 @@ classdef set_manager < handle
         end
 
         function s = set_type_idx_map(obj, idxs, group_by_name)
-            % set_type_idx_map - Map index back to named subset & index within set.
+            % Map index back to named subset & index within set.
             % ::
             %
-            %   s = obj.set_type_idx_map()
-            %   s = obj.set_type_idx_map(idxs)
-            %   s = obj.set_type_idx_map(idxs, group_by_name)
+            %   s = sm.set_type_idx_map()
+            %   s = sm.set_type_idx_map(idxs)
+            %   s = sm.set_type_idx_map(idxs, group_by_name)
             %
             % Returns a struct of same dimensions as ``idxs`` specifying, for
             % each index, the corresponding named set and element within the
@@ -466,7 +518,7 @@ classdef set_manager < handle
             %       full set *(default, if empty or not provided, is*
             %       ``[1:ns]'`` *where* ``ns`` *is the full dimension of the
             %       set corresponding to the all elements)*
-            %   group_by_name (boolean) : *(default = false)* if true, then the
+            %   group_by_name (logical) : *(default = false)* if true, then the
             %       results are consolidated, with a single entry in ``s`` for
             %       each unique name/idx pair, where the ``i`` and ``j`` fields
             %       are vectors. In this case ``s`` is 1 dimensional.
@@ -489,7 +541,7 @@ classdef set_manager < handle
             %     s = var.set_type_idx_map());
             %     s = lin.set_type_idx_map([], 1));
             %
-            % See also describe_idx, mp_idx_manager.
+            % See also describe_idx.
 
             %% default args
             if nargin < 3
@@ -533,10 +585,10 @@ classdef set_manager < handle
 
                 %% check for invalid idxs
                 if any(idxs > obj.N)
-                    error('mp_idx_manager.set_type_idx_map: IDXS must not exceed maximum index (%d)', obj.N);
+                    error('mp.set_manager.set_type_idx_map: IDXS must not exceed maximum index (%d)', obj.N);
                 end
                 if any(idxs < 1)
-                    error('mp_idx_manager.set_type_idx_map: IDXS must be positive');
+                    error('mp.set_manager.set_type_idx_map: IDXS must be positive');
                 end
 
                 %% pre-allocate return struct

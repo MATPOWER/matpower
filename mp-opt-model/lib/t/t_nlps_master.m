@@ -69,7 +69,7 @@ for k = 1:length(cfg)
 %                 opt.ipopt_opt.linear_solver   = 'ma57';
             case 'KNITRO'
                 opt.knitro_opt = opts;
-                opt.knitro_opt.tol_f = 1e-8;
+                opt.knitro_opt.opttol = 1e-8;
         end
 
 t = sprintf('%s - unconstrained banana function : ', name);

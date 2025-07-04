@@ -16,10 +16,12 @@ System Requirements
 -------------------
 
 *   [MATLAB][3] version 7.9 (R2009b) or later, or
-*   [GNU Octave][4] version 4 or later
+*   [GNU Octave][4] version 6.2 or later [^1]
 *   [MP-Test][5]
 *   [MATPOWER Interior Point Solver (MIPS)][6]
 
+[^1]: All functionality except object copy constructors work on GNU Octave
+4.4 and later.
 
 Installation
 ------------
@@ -76,7 +78,7 @@ and two constraints, one equality and the other inequality, along with
 lower bounds on all of the variables.
 
 ```
-  min  1/2 [y; z]' * Q * [y; z]
+  min  1/2 [y; z]' * H * [y; z]
   y,z
 
 subject to:
@@ -102,31 +104,31 @@ A1 = [ 6 1 5 -4 ];  b1 = 4;
 A2 = [ 4 9 ];       u2 = 2;
 
 %% quadratic cost coefficients
-Q = [ 8  1 -3 -4;
+H = [ 8  1 -3 -4;
       1  4 -2 -1;
      -3 -2  5  4;
      -4 -1  4  12  ];
 ```
 
 Below, we will show two approaches to construct and solve the problem.
-The first method, based on the the Optimization Model class `opt_model`,
+The first method, based on the the Optimization Model class `mp.opt_model`,
 allows you to add variables, constraints and costs to the model
-individually. Then `opt_model` automatically assembles and solves the
+individually. Then `mp.opt_model` automatically assembles and solves the
 full model automatically.
 
 
 ```matlab
 %%-----  METHOD 1  -----
 %% build model
-om = opt_model;
-om.add_var('y', 2, y0, ymin);
-om.add_var('z', 2, z0, [], zmax);
-om.add_lin_constraint('lincon1', A1, b1, b1);
-om.add_lin_constraint('lincon2', A2, [], u2, {'y'});
-om.add_quad_cost('cost', Q, []);
+mm = mp.opt_model;
+mm.var.add('y', 2, y0, ymin);
+mm.var.add('z', 2, z0, [], zmax);
+mm.lin.add(mm.var, 'lincon1', A1, b1, b1);
+mm.lin.add(mm.var, 'lincon2', A2, [], u2, {'y'});
+mm.qdc.add(mm.var, 'cost', H, []);
 
 %% solve model
-[x, f, exitflag, output, lambda] = om.solve();
+[x, f, exitflag, output, lambda] = mm.solve();
 ```
 
 The second method requires you to construct the parameters for the full
@@ -143,7 +145,7 @@ l = [ b1; -Inf ];
 u = [ b1;  u2  ];
 
 %% solve model
-[x, f, exitflag, output, lambda] = qps_master(Q, [], A, l, u, xmin, xmax, x0);
+[x, f, exitflag, output, lambda] = qps_master(H, [], A, l, u, xmin, xmax, x0);
 ```
 
 The above examples are included in `<MPOM>/lib/t/qp_ex1.m` along with
@@ -236,7 +238,7 @@ MP-Opt-Model is distributed under the [3-clause BSD license][9].
 [1]: https://github.com/MATPOWER/mp-opt-model
 [2]: https://matpower.org/
 [3]: https://www.mathworks.com/
-[4]: https://www.gnu.org/software/octave/
+[4]: https://octave.org
 [5]: https://github.com/MATPOWER/mptest
 [6]: https://github.com/MATPOWER/mips
 [7]: docs/MP-Opt-Model-manual.pdf

@@ -1,14 +1,14 @@
-function [f, df, d2f] = nlp_costfcn(om, x)
+function [f, df, d2f] = nlp_costfcn(mm, x)
 % nlp_costfcn - Evaluates objective function, gradient and Hessian for NLP solver.
 % ::
 %
-%   [F, DF, D2F] = NLP_COSTFCN(OM, X)
+%   [F, DF, D2F] = NLP_COSTFCN(MM, X)
 %
 %   Objective function evaluation routine, suitable for use with MIPS,
 %   FMINCON, etc. Computes objective function value, gradient and Hessian.
 %
 %   Inputs:
-%     OM : Opt-Model object
+%     MM : MP-Opt-Model object
 %     X : optimization vector
 %
 %   Outputs:
@@ -17,14 +17,14 @@ function [f, df, d2f] = nlp_costfcn(om, x)
 %     D2F : (optional) Hessian of objective function (sparse matrix)
 %
 %   Examples:
-%       f = nlp_costfcn(om, x);
-%       [f, df] = nlp_costfcn(om, x);
-%       [f, df, d2f] = nlp_costfcn(om, x);
+%       f = nlp_costfcn(mm, x);
+%       [f, df] = nlp_costfcn(mm, x);
+%       [f, df, d2f] = nlp_costfcn(mm, x);
 %
 % See also nlp_consfcn, nlp_hessfcn.
 
 %   MP-Opt-Model
-%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2025, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.
@@ -34,24 +34,24 @@ function [f, df, d2f] = nlp_costfcn(om, x)
 %%----- evaluate objective function -----
 %% general nonlinear costs
 if nargout == 3
-    [f, df, d2f]    = om.eval_nln_cost(x);
-    if om.qdc.NS
-        [fq, dfq, d2fq] = om.eval_quad_cost(x);
+    [f, df, d2f]    = mm.nlc.eval(mm.var, x);
+    if mm.qdc.NS
+        [fq, dfq, d2fq] = mm.qdc.eval(mm.var, x);
         f = f + sum(fq);
         df = df + dfq;
         d2f = d2f + d2fq;
     end
 elseif nargout == 2
-    [f, df]   = om.eval_nln_cost(x);
-    if om.qdc.NS
-        [fq, dfq] = om.eval_quad_cost(x);
+    [f, df]   = mm.nlc.eval(mm.var, x);
+    if mm.qdc.NS
+        [fq, dfq] = mm.qdc.eval(mm.var, x);
         f = f + sum(fq);
         df = df + dfq;
     end
 else
-    f  = om.eval_nln_cost(x);
-    if om.qdc.NS
-        fq = om.eval_quad_cost(x);
+    f  = mm.nlc.eval(mm.var, x);
+    if mm.qdc.NS
+        fq = mm.qdc.eval(mm.var, x);
         f = f + sum(fq);
     end
 end

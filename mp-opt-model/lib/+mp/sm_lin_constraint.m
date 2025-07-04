@@ -52,12 +52,14 @@ classdef sm_lin_constraint < mp.set_manager_opt_model
 
             es = struct();  %% empty struct
             obj@mp.set_manager_opt_model(varargin{:});
-            obj.data = struct( ...
-                'A', es, ...
-                'l', es, ...
-                'u', es, ...
-                'tr', es, ...
-                'vs', es );
+            if isempty(fieldnames(obj.data))
+                obj.data = struct( ...
+                    'A', es, ...
+                    'l', es, ...
+                    'u', es, ...
+                    'tr', es, ...
+                    'vs', es );
+            end
         end
 
         function obj = add(obj, var, name, idx, varargin)
@@ -103,7 +105,7 @@ classdef sm_lin_constraint < mp.set_manager_opt_model
             %       pairs of indexed named subsets of variables; order of
             %       ``vs`` determines order of blocks in :math:`\x`; if
             %       empty, :math:`\x` is assumed to be the full variable vector
-            %   tr (boolean) : *(optional, default* ``false`` *)* if true, it
+            %   tr (logical) : *(optional, default* ``false`` *)* if true, it
             %       means that :math:`\trans{\AA}` is supplied/stored rather
             %       than :math:`\AA`
             %
@@ -161,12 +163,12 @@ classdef sm_lin_constraint < mp.set_manager_opt_model
 
             if isempty(l)                   %% default l is -Inf
                 l = -Inf(N, 1);
-            elseif N > 1 && length(l) == 1  %% expand from scalar as needed
+            elseif N ~= 1 && length(l) == 1 %% expand from scalar as needed
                 l = l * ones(N, 1);
             end
             if isempty(u)                   %% default u is Inf
                 u = Inf(N, 1);
-            elseif N > 1 && length(u) == 1  %% expand from scalar as needed
+            elseif N ~= 1 && length(u) == 1 %% expand from scalar as needed
                 u = u * ones(N, 1);
             end
 
@@ -249,7 +251,7 @@ classdef sm_lin_constraint < mp.set_manager_opt_model
             %       order of blocks in :math:`\x`
             %   i1 (integer) : index of 1st row of specified subset in full set
             %   iN (integer) : index of last row of specified subset in full set
-            %   tr (boolean) : if true, it means that :math:`\trans{\AA}` was
+            %   tr (logical) : if true, it means that :math:`\trans{\AA}` was
             %       supplied/stored rather than :math:`\AA`
             %
             % Examples::
@@ -880,7 +882,7 @@ classdef sm_lin_constraint < mp.set_manager_opt_model
             %               - ``mu_u`` - linear constraint upper bounds
             %               - ``lower`` - variable lower bounds
             %               - ``upper`` - variable upper bounds
-            %   stash (boolean) : if true, store return value in :attr:`soln`
+            %   stash (logical) : if true, store return value in :attr:`soln`
             %       property
             %
             % Output:

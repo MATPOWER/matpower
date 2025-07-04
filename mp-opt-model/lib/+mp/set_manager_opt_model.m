@@ -1,20 +1,22 @@
 classdef set_manager_opt_model < mp.set_manager
-% mp.set_manager_opt_model -  MP Set Manager base class for opt_model fields.
+% mp.set_manager_opt_model -  MP Set Manager base class for mp.opt_model fields.
 % ::
 %
 %   sm = mp.set_manager_opt_model(label)
 %
 % Implements functionality to handle parameters and solution data for
-% set types used to implement properties of the opt_model class.
+% set types used to implement properties of the mp.opt_model class.
 %
 % mp.set_manager_opt_model Properties:
 %   * soln - struct for storing parsed solution values
 %
 % mp.set_manager_opt_model Methods:
+%   * set_manager_opt_model - constructor
 %   * params - *(abstract)* return set-type-specific parameter data
 %   * set_params - *(abstract)* modify set-type-specific parameter data
 %   * display_soln - display solution values
 %   * has_parsed_soln - return true if parsed solution is available
+%   * parse_soln - parse solution
 %
 % By convention, ``sm`` is the variable name used for mp.set_manager_opt_model
 % objects.
@@ -70,8 +72,8 @@ classdef set_manager_opt_model < mp.set_manager
             % Modify parameter data.
             % ::
             %
-            %   sm.set_params(name, params, vals)
-            %   sm.set_params(name, idx_list, params, vals)
+            %   sm.set_params(var, name, params, vals)
+            %   sm.set_params(var, name, idx_list, params, vals)
             %
             % .. note:: This abstract method must be implemented by a
             %   subclass.
@@ -80,6 +82,9 @@ classdef set_manager_opt_model < mp.set_manager
             % for an existing subset.
             %
             % Inputs:
+            %   var (mp.sm_variable) : set manager object for variables
+            %       (this input is omitted for objects of subclass
+            %       mp.sm_variable)
             %   name (char array) : name of subset/block of entities to modify
             %   idx_list (cell array) : *(optional)* index list for subset/block
             %       of entities modify (for an indexed subset)
@@ -165,7 +170,7 @@ classdef set_manager_opt_model < mp.set_manager
             %   TorF = sm.has_parsed_soln()
             %
             % Output:
-            %   TorF (boolean) : true if parsed solution is available in
+            %   TorF (logical) : true if parsed solution is available in
             %       :attr:`soln` property; format of :attr:`soln` depends
             %       on implementing subclass
 
@@ -195,7 +200,7 @@ classdef set_manager_opt_model < mp.set_manager
             %               - ``mu_u`` - linear constraint upper bounds
             %               - ``lower`` - variable lower bounds
             %               - ``upper`` - variable upper bounds
-            %   stash (boolean) : if true, store return value in :attr:`soln`
+            %   stash (logical) : if true, store return value in :attr:`soln`
             %       property
             %
             % Output:
@@ -537,6 +542,7 @@ classdef set_manager_opt_model < mp.set_manager
         end
 
         function str = sprintf_num(obj, width, val)
+            %
             val = full(val);
             if all(isnan(val))
                 fmt = sprintf('%%%ds', width);
@@ -558,10 +564,12 @@ classdef set_manager_opt_model < mp.set_manager
         end
 
         function v = mu_thresh(obj)
+            %
             v = 1e-7;
         end
 
         function v = num_inf(obj)
+            %
             v = 1e10;
         end
     end     %% methods (Access=protected)

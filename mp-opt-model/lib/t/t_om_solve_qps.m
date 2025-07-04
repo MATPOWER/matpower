@@ -111,6 +111,7 @@ for k = 1:length(algs)
         end
         if have_feature('knitro')
             opt.knitro_opt = artelys_knitro_options([],  mpopt);
+            opt.knitro_opt.opttol = 1e-8;
         end
 
         t = sprintf('%s - 3-d LP : ', names{k});
@@ -297,23 +298,27 @@ t_is(om.lin.soln.mu_l.Ax, om.get_soln('lin', 'mu_l', 'Ax'), 14, [t 'lin.mu_l.Ax'
 t_is(om.lin.soln.mu_u.Ax, om.get_soln('lin', 'mu_u', 'Ax'), 14, [t 'lin.mu_u.Ax']);
 
 t = 'disp_soln';
-rn = fix(1e9*rand);
-[pathstr, name, ext] = fileparts(which('t_opt_model'));
-fname = 't_om_solve_qps_display_soln';
-fname_e = fullfile(pathstr, 'display_soln', sprintf('%s.txt', fname));
-fname_g = sprintf('%s_%d.txt', fname, rn);
-[fd, msg] = fopen(fname_g, 'wt');   %% open solution file
-if fd == -1
-    error('t_om_solve_qps: could not create %d : %s', fname, msg);
-end
-om.display_soln(fd);    %% write out solution
-fclose(fd);
-if ~t_file_match(fname_g, fname_e, t, reps, 1);
-    fprintf('  compare these 2 files:\n    %s\n    %s\n', fname_g, fname_e);
-    if show_diff_on_fail
-        cmd = sprintf('%s %s %s', diff_tool, fname_g, fname_e);
-        [status, result] = system(cmd);
-        keyboard
+if have_feature('matlab') && have_feature('matlab', 'vnum') < 8
+    t_skip(1, [t ' : old MATLAB number format not exact match']);
+else
+    rn = fix(1e9*rand);
+    [pathstr, name, ext] = fileparts(which('t_opt_model'));
+    fname = 't_mm_solve_qps_display_soln';
+    fname_e = fullfile(pathstr, 'display_soln', sprintf('%s.txt', fname));
+    fname_g = sprintf('%s_%d.txt', fname, rn);
+    [fd, msg] = fopen(fname_g, 'wt');   %% open solution file
+    if fd == -1
+        error('t_om_solve_qps: could not create %d : %s', fname, msg);
+    end
+    om.display_soln(fd);    %% write out solution
+    fclose(fd);
+    if ~t_file_match(fname_g, fname_e, t, reps, 1);
+        fprintf('  compare these 2 files:\n    %s\n    %s\n', fname_g, fname_e);
+        if show_diff_on_fail
+            cmd = sprintf('%s %s %s', diff_tool, fname_g, fname_e);
+            [status, result] = system(cmd);
+            keyboard
+        end
     end
 end
 

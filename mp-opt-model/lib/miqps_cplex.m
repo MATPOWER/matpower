@@ -87,7 +87,6 @@ function [x, f, eflag, output, lambda] = miqps_cplex(H, c, A, l, u, xmin, xmax, 
 %       [x, f, exitflag, output] = miqps_cplex(...)
 %       [x, f, exitflag, output, lambda] = miqps_cplex(...)
 %
-%
 %   Example: (problem from https://v8doc.sas.com/sashtml/iml/chap8/sect12.htm)
 %       H = [   1003.1  4.3     6.3     5.9;
 %               4.3     2.2     2.1     3.9;
@@ -242,7 +241,7 @@ if verbose
     };
 end
 if isempty(vtype) || isempty(find(vtype == 'B' | vtype == 'I' | ...
-        vtype == 'S' | vtype == 'N'))
+        vtype == 'S' | vtype == 'N', 1))
     mi = 0;
 else
     mi = 1;

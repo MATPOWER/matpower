@@ -1,14 +1,18 @@
 classdef opt_model < mp_idx_manager
 % opt_model - MP-Opt-Model optimization model class.
+%
+% .. note::
+%    .. deprecated:: 5.0 Please use mp.opt_model instead.
+%
 % ::
 %
 %   OM = OPT_MODEL
 %   OM = OPT_MODEL(S)
 %
-%   This class implements the optimization model object used to encapsulate
-%   a given optimization problem formulation. It allows for access to
-%   optimization variables, constraints and costs in named blocks, keeping
-%   track of the ordering and indexing of the blocks as variables,
+%   This class implements the model object used to encapsulate a given
+%   mathematical programming or optimization problem formulation. It allows
+%   for access to optimization variables, constraints and costs in named blocks,
+%   keeping track of the ordering and indexing of the blocks as variables,
 %   constraints and costs are added to the problem.
 %
 %   Below are the list of available methods for use with the Opt Model class.
@@ -75,9 +79,6 @@ classdef opt_model < mp_idx_manager
 %
 %   Return the value of an individual field:
 %       get
-%
-%   Indentify variable, constraint or cost row indices:
-%       describe_idx
 %
 %   Make a shallow copy of the object:
 %       copy
@@ -286,7 +287,7 @@ classdef opt_model < mp_idx_manager
                     'qcn', mp.sm_quad_constraint('QUADRATIC CONSTRAINTS'), ...
                     'nle', mp.sm_nln_constraint('NONLIN EQ CONSTRAINTS'), ...
                     'nli', mp.sm_nln_constraint('NONLIN INEQ CONSTRAINTS'), ...
-                    'qdc', mp.sm_quad_cost('QUADRATIC COSTS'), ...
+                    'qdc', mp.sm_quad_cost_legacy('QUADRATIC COSTS'), ...
                     'nlc', mp.sm_nln_cost('GEN NONLIN COSTS') ...
                 );
         end
@@ -305,6 +306,41 @@ classdef opt_model < mp_idx_manager
 
             %% call parent to make the copy
             new_om = copy@mp_idx_manager(om);
+        end
+
+        function s = to_struct(om)
+            % Convert object data *to* a struct.
+            % ::
+            %
+            %   s = om.to_struct()
+            %
+            % Converts the object data *to* a struct that can later be
+            % converted back to an identical object using mp.struct2object.
+            % Useful for saving the object data to a MAT-file in Octave.
+
+            s = nested_struct_copy(struct(), om);
+            s.class_ = class(om);
+            st = fieldnames(om.set_types);
+            for k = 1:length(st)
+                s.(st{k}) = s.(st{k}).to_struct();
+            end
+        end
+
+        function om = from_struct(om, s)
+            % Copy object data *from* a struct.
+            % ::
+            %
+            %   om.from_struct(s)
+            %
+            % Called by function mp.struct2object, after creating the object
+            % to copy the object data *from* a struct. Useful for recreating
+            % the object after loading struct data from a MAT-file in Octave.
+
+            om = nested_struct_copy(om, s);
+            st = fieldnames(om.set_types);
+            for k = 1:length(st)
+                om.(st{k}) = mp.struct2object(om.(st{k}));
+            end
         end
 
         function TorF = is_solved(om)

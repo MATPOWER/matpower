@@ -50,11 +50,13 @@ classdef sm_variable < mp.set_manager_opt_model
 
             es = struct();  %% empty struct
             obj@mp.set_manager_opt_model(varargin{:});
-            obj.data = struct( ...
-                'v0', es, ...
-                'vl', es, ...
-                'vu', es, ...
-                'vt', es );
+            if isempty(fieldnames(obj.data))
+                obj.data = struct( ...
+                    'v0', es, ...
+                    'vl', es, ...
+                    'vu', es, ...
+                    'vt', es );
+            end
         end
 
         function obj = add(obj, name, idx, varargin)
@@ -123,7 +125,7 @@ classdef sm_variable < mp.set_manager_opt_model
             nargs = length(args);
 
             %% prepare data
-            v0 = []; vl = []; vu = []; vt = [];
+            v0 = []; vl = []; vu = []; vt = '';
             if nargs >= 1
                 v0 = args{1};
                 if nargs >= 2
@@ -138,17 +140,17 @@ classdef sm_variable < mp.set_manager_opt_model
             end
             if isempty(v0)
                 v0 = zeros(N, 1);   %% init to zero by default
-            elseif N > 1 && length(v0) == 1     %% expand from scalar as needed
+            elseif N ~= 1 && length(v0) == 1    %% expand from scalar as needed
                 v0 = v0 * ones(N, 1);
             end
             if isempty(vl)
                 vl = -Inf(N, 1);    %% unbounded below by default
-            elseif N > 1 && length(vl) == 1     %% expand from scalar as needed
+            elseif N ~= 1 && length(vl) == 1    %% expand from scalar as needed
                 vl = vl * ones(N, 1);
             end
             if isempty(vu)
                 vu = Inf(N, 1);     %% unbounded above by default
-            elseif N > 1 && length(vu) == 1     %% expand from scalar as needed
+            elseif N ~= 1 && length(vu) == 1    %% expand from scalar as needed
                 vu = vu * ones(N, 1);
             end
             if isempty(vt) && N > 0
@@ -219,7 +221,7 @@ classdef sm_variable < mp.set_manager_opt_model
             end
             if nargin < 2       %% aggregate
                 if isempty(obj.cache)       %% build the aggregate
-                    v0 = []; vl = []; vu = []; vt = char([]);
+                    v0 = []; vl = []; vu = []; vt = '';
                     %% calls to substruct() are relatively expensive, so we pre-build the
                     %% structs for addressing cell and numeric array fields, updating only
                     %% the subscripts before use
@@ -317,7 +319,7 @@ classdef sm_variable < mp.set_manager_opt_model
                     vl = [];
                     vu = [];
                     if have_vt
-                        vt = [];
+                        vt = '';
                     end
                 end
             end
@@ -671,7 +673,7 @@ classdef sm_variable < mp.set_manager_opt_model
             %               - ``mu_u`` - linear constraint upper bounds
             %               - ``lower`` - variable lower bounds
             %               - ``upper`` - variable upper bounds
-            %   stash (boolean) : if true, store return value in :attr:`soln`
+            %   stash (logical) : if true, store return value in :attr:`soln`
             %       property
             %
             % Output:

@@ -1,14 +1,14 @@
-function Lxx = nlp_hessfcn(om, x, lambda, cost_mult, Hs)
+function Lxx = nlp_hessfcn(mm, x, lambda, cost_mult, Hs)
 % nlp_hessfcn - Evaluates Hessian of Lagrangian for NLP solver.
 % ::
 %
-%   LXX = NLP_HESSFCN(OM, X, LAMBDA, COST_MULT)
-%   LXX = NLP_HESSFCN(OM, X, LAMBDA, COST_MULT, HS)
+%   LXX = NLP_HESSFCN(MM, X, LAMBDA, COST_MULT)
+%   LXX = NLP_HESSFCN(MM, X, LAMBDA, COST_MULT, HS)
 %
 %   Hessian evaluation function, suitable for use with MIPS, FMINCON, etc.
 %
 %   Inputs:
-%     OM : Opt-Model object
+%     MM : MP-Opt-Model object
 %     X : optimization vector
 %     LAMBDA (struct)
 %       .eqnonlin : Lagrange multipliers on equality constraints
@@ -22,13 +22,13 @@ function Lxx = nlp_hessfcn(om, x, lambda, cost_mult, Hs)
 %     LXX : Hessian of the Lagrangian.
 %
 %   Examples:
-%       Lxx = nlp_hessfcn(om, x, lambda, cost_mult);
-%       Lxx = nlp_hessfcn(om, x, lambda, cost_mult, Hs);
+%       Lxx = nlp_hessfcn(mm, x, lambda, cost_mult);
+%       Lxx = nlp_hessfcn(mm, x, lambda, cost_mult, Hs);
 %
 % See also nlp_costfcn, nlp_consfcn.
 
 %   MP-Opt-Model
-%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2025, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.
@@ -36,14 +36,14 @@ function Lxx = nlp_hessfcn(om, x, lambda, cost_mult, Hs)
 %   See https://github.com/MATPOWER/mp-opt-model for more info.
 
 %% ----- evaluate d2f -----
-[f, df, d2f] = nlp_costfcn(om, x);
+[f, df, d2f] = nlp_costfcn(mm, x);
 d2f = d2f * cost_mult;
 
 %%----- evaluate Hessian of equality constraints -----
-d2G = om.eval_nln_constraint_hess(x, lambda.eqnonlin, 1);
+d2G = mm.nle.eval_hess(mm.var, x, lambda.eqnonlin);
 
 %%----- evaluate Hessian of inequality constraints -----
-d2H = om.eval_nln_constraint_hess(x, lambda.ineqnonlin, 0);
+d2H = mm.nli.eval_hess(mm.var, x, lambda.ineqnonlin);
 
 %%-----  do numerical check using (central) finite differences  -----
 if 0
@@ -58,11 +58,11 @@ if 0
         xp(i) = x(i) + step/2;
         xm(i) = x(i) - step/2;
         % evaluate cost & gradients
-        [fp, dfp] = nlp_costfcn(om, xp);
-        [fm, dfm] = nlp_costfcn(om, xm);
+        [fp, dfp] = nlp_costfcn(mm, xp);
+        [fm, dfm] = nlp_costfcn(mm, xm);
         % evaluate constraints & gradients
-        [Hp, Gp, dHp, dGp] = nlp_consfcn(om, xp);
-        [Hm, Gm, dHm, dGm] = nlp_consfcn(om, xm);
+        [Hp, Gp, dHp, dGp] = nlp_consfcn(mm, xp);
+        [Hm, Gm, dHm, dGm] = nlp_consfcn(mm, xm);
         num_d2f(:, i) = cost_mult * (dfp - dfm) / step;
         num_d2G(:, i) = (dGp - dGm) * lambda.eqnonlin   / step;
         num_d2H(:, i) = (dHp - dHm) * lambda.ineqnonlin / step;

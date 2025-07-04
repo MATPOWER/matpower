@@ -85,7 +85,6 @@ function [x, f, eflag, output, lambda] = miqps_glpk(H, c, A, l, u, xmin, xmax, x
 %       [x, f, exitflag, output] = miqps_glpk(...)
 %       [x, f, exitflag, output, lambda] = miqps_glpk(...)
 %
-%
 %   Example: (problem from https://v8doc.sas.com/sashtml/iml/chap8/sect12.htm)
 %       H = [   1003.1  4.3     6.3     5.9;
 %               4.3     2.2     2.1     3.9;
@@ -200,7 +199,7 @@ niq = length(ilt) + length(igt);    %% number of inequalities
 
 ctype = [repmat('S', neq, 1); repmat('U', niq, 1)];
 
-if isempty(vtype) || isempty(find(vtype == 'B' | vtype == 'I'))
+if isempty(vtype) || isempty(find(vtype == 'B' | vtype == 'I', 1))
     mi = 0;
     vtype = repmat('C', nx, 1);
 else

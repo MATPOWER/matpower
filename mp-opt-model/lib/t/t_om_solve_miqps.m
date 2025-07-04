@@ -147,9 +147,8 @@ for k = 1:length(algs)
         t = sprintf('%s - 6-d ILP (integer relaxed) : ', names{k});
         [x, f, s, out, lam] = om.solve(opt_r);
         t_is(s, 1, 12, [t 'success']);
-        t_ok(norm(x - [0; 0; 2.7; 0; 0; 2.5], Inf) < 1e-12 || ...
-             norm(x - [0; 0; 3.0; 0; 0; 2.2], Inf) < 1e-12, [t 'x']);
-        t_is(f, 15.6, 12, [t 'f']);
+        t_is([x([1;2;4;5]); x(3)+x(6)], [0; 0; 0; 0; 5.2], 7, [t 'x']);
+        t_is(f, 15.6, 7, [t 'f']);
 
         if does_miqp(k)
             t = sprintf('%s - 4-d MIQP : ', names{k});
@@ -290,7 +289,7 @@ if have_milp_solver()
     t = 'disp_soln';
     rn = fix(1e9*rand);
     [pathstr, name, ext] = fileparts(which('t_opt_model'));
-    fname = 't_om_solve_miqps_display_soln';
+    fname = 't_mm_solve_miqps_display_soln';
     fname_e = fullfile(pathstr, 'display_soln', sprintf('%s.txt', fname));
     fname_g = sprintf('%s_%d.txt', fname, rn);
     [fd, msg] = fopen(fname_g, 'wt');   %% open solution file

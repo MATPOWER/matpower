@@ -40,9 +40,11 @@ classdef sm_nln_cost < mp.set_manager_opt_model
 
             es = struct();  %% empty struct
             obj@mp.set_manager_opt_model(varargin{:});
-            obj.data = struct( ...
-                'fcn', es, ...
-                'vs', es );
+            if isempty(fieldnames(obj.data))
+                obj.data = struct( ...
+                    'fcn', es, ...
+                    'vs', es );
+            end
         end
 
         function obj = add(obj, var, name, idx, varargin)
@@ -234,8 +236,8 @@ classdef sm_nln_cost < mp.set_manager_opt_model
             % Modify general nonlinear cost parameter data.
             % ::
             %
-            %   nlc.set_params(name, params, vals)
-            %   nlc.set_params(name, idx_list, params, vals)
+            %   nlc.set_params(var, name, params, vals)
+            %   nlc.set_params(var, name, idx_list, params, vals)
             %
             % This method can be used to modify parameters for an existing
             % subset of general nonlinear costs.
@@ -462,7 +464,7 @@ classdef sm_nln_cost < mp.set_manager_opt_model
                     done = 0;
                     f = 0;          %% initialize cumulative cost
                     idx = num2cell(ones(size(dims))); %% initialize idx
-                    while ~done     %% call eval_nln_cost() recursively
+                    while ~done     %% call eval() recursively
                         f = f + sum(obj.eval(var, x, name, idx));
 
                         %% increment idx

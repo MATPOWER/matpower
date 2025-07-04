@@ -86,7 +86,6 @@ function [x, f, eflag, output, lambda] = miqps_highs(H, c, A, l, u, xmin, xmax, 
 %       [x, f, exitflag, output] = miqps_highs(...)
 %       [x, f, exitflag, output, lambda] = miqps_highs(...)
 %
-%
 %   Example: (problem from https://v8doc.sas.com/sashtml/iml/chap8/sect12.htm)
 %       H = [   1003.1  4.3     6.3     5.9;
 %               4.3     2.2     2.1     3.9;
@@ -190,12 +189,6 @@ end
 if isempty(x0)
     x0 = zeros(nx, 1);
 end
-if nA == 0      %% unconstrained
-    %% add single non-binding constraint
-    A = sparse(1, nx);
-    l = -Inf;
-    u =  Inf;
-end
 
 %% default options
 if ~isempty(opt) && isfield(opt, 'verbose') && ~isempty(opt.verbose)
@@ -206,7 +199,7 @@ end
 
 %% handle variable types
 if isempty(vtype) || isempty(find(vtype == 'B' | vtype == 'I' | ...
-        vtype == 'S' | vtype == 'N'))
+        vtype == 'S' | vtype == 'N', 1))
     mi = 0;
     integrality = [];
 else
@@ -230,8 +223,10 @@ else
         xmin(k(kk)) = 0;
     end
     %% form integrality input
-    map = struct('C', "c", 'B', "i", 'I', "i", 'S', "sc", 'N', "si");
-    integrality = cellfun(@(s) map.(s), cellstr(vtype));
+    integrality = repmat("c", nx, 1);               %% continuous, default
+    integrality(vtype == 'B' | vtype == 'I') = "i"; %% integer
+    integrality(vtype == 'S') = "sc";               %% semi-continuous
+    integrality(vtype == 'N') = "si";               %% semi-integer
 end
 
 %% set up options struct for HiGHS
@@ -296,18 +291,26 @@ output = info;
 if nA == 0      %% unconstrained
     mu_l = [];
     mu_u = [];
-else
+elseif soln.dual_valid
     mu_l =  soln.row_dual;
     mu_u = -soln.row_dual;
     mu_l(mu_l < 0) = 0;
     mu_u(mu_u < 0) = 0;
+else
+    mu_l = NaN(nA, 1);
+    mu_u = NaN(nA, 1);
 end
 
 %% variable bounds
-lam_lower =  soln.col_dual;
-lam_upper = -soln.col_dual;
-lam_lower(lam_lower < 0) = 0;
-lam_upper(lam_upper < 0) = 0;
+if soln.dual_valid
+    lam_lower =  soln.col_dual;
+    lam_upper = -soln.col_dual;
+    lam_lower(lam_lower < 0) = 0;
+    lam_upper(lam_upper < 0) = 0;
+else
+    lam_lower = NaN(nx, 1);
+    lam_upper = NaN(nx, 1);
+end
 
 %% package lambdas
 lambda = struct( ...

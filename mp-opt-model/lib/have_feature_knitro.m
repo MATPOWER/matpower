@@ -21,14 +21,7 @@ if tmp.av
     vstr = tmp.vstr;
     rdate = tmp.date;
 else
-    tmp = have_feature('ktrlink', 'all');
-    if tmp.av
-        TorF = tmp.av;
-        vstr = tmp.vstr;
-        rdate = tmp.date;
-    else
-        TorF = 0;
-        vstr = '';
-        rdate = '';
-    end
+    TorF = 0;
+    vstr = '';
+    rdate = '';
 end

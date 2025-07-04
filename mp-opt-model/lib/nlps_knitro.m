@@ -57,11 +57,9 @@ function [x, f, eflag, output, lambda] = nlps_knitro(f_fcn, x0, A, l, u, xmin, x
 %               2 = verbose progress output
 %           knitro_opt  - options struct for Artelys Knitro, value in verbose
 %                   overrides these options
-%               opts - struct of other values to be passed directly to
-%                   Aretelys Knitro via an options file
-%               tol_x - termination tol on x
-%               tol_f - termination tol on f
-%               maxit - maximum number of iterations
+%           knitro_opt_fname - name of user-supplied options file, to be
+%               passed to the solver as a 'knitroOptsFile' input argument,
+%               overriding any options it specifies
 %       PROBLEM : The inputs can alternatively be supplied in a single
 %           PROBLEM struct with fields corresponding to the input arguments
 %           described above: f_fcn, x0, A, l, u, xmin, xmax,
@@ -158,10 +156,6 @@ function [x, f, eflag, output, lambda] = nlps_knitro(f_fcn, x0, A, l, u, xmin, x
 %   This file is part of MP-Opt-Model.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See https://github.com/MATPOWER/mp-opt-model for more info.
-
-%% options
-use_ktropts_file = 1;       %% use a Knitro options file to pass options
-create_ktropts_file = 0;    %% generate a Knitro options file on the fly
 
 %%----- input argument handling  -----
 %% gather inputs
@@ -275,97 +269,35 @@ end
 ktr_gh_fcn   = @(x)constraints(x, gh_fcn, dgs, dhs);
 ktr_hess_fcn = @(x, lambda)hessian(x, lambda, f_fcn, hess_fcn, Hs);
 
-%% basic optimset options needed for ktrlink
+%% set up options struct for Knitro
 if isfield(opt, 'knitro_opt')
-    knitro_opt = opt.knitro_opt;
+    kn_opt = artelys_knitro_options(opt.knitro_opt);
 else
-    knitro_opt = struct();
+    kn_opt = artelys_knitro_options();
 end
-kopts = struct();
-kopts.GradObj = 'on';
-kopts.GradConstr = 'on';
-kopts.HessFcn = ktr_hess_fcn;
-kopts.Hessian = 'user-supplied';
+kn_opt.outlev = verbose;
+kn_opt.gradopt = 1;
+kn_opt.hessopt = 1;
 if issparse(Js)
-    kopts.JacobPattern = Js;
+    kn_opt.JacobPattern = Js;
 end
 if issparse(Hs)
-    kopts.HessPattern = Hs;
+    kn_opt.HessPattern = Hs;
 end
-
-if use_ktropts_file
-    if isfield(knitro_opt, 'opt_fname') && ~isempty(knitro_opt.opt_fname)
-        opt_fname = knitro_opt.opt_fname;
-    elseif isfield(knitro_opt, 'opt') && knitro_opt.opt
-        opt_fname = sprintf('knitro_user_options_%d.txt', knitro_opt.opt);
-    else
-        %% create ktropts file
-        ktropts.algorithm           = 1;
-        ktropts.bar_directinterval  = 0;
-        ktropts.outlev              = verbose;
-        if isfield(knitro_opt, 'opts')  %% raw Knitro options for options file
-            ktropts = nested_struct_copy(ktropts, knitro_opt.opts);
-        end
-        if isfield(knitro_opt, 'tol_x') && ~isempty(knitro_opt.tol_x)
-            ktropts.xtol = knitro_opt.tol_x;
-        end
-        if isfield(knitro_opt, 'tol_f') && ~isempty(knitro_opt.tol_f)
-            ktropts.opttol = knitro_opt.tol_f;
-        end
-        if isfield(knitro_opt, 'maxit') && knitro_opt.maxit ~= 0
-            ktropts.maxit = knitro_opt.maxit;
-        end
-
-        opt_fname = write_ktropts(ktropts);
-        create_ktropts_file = 1;    %% make a note that I created it
-    end
-else
-    if isfield(knitro_opt, 'opts')  %% raw Knitro options for optimset()
-        kopts = nested_struct_copy(kopts, knitro_opt.opts);
-    end
-    kopts.Algorithm = 'interior-point';
-    if isfield(knitro_opt, 'tol_x') && ~isempty(knitro_opt.tol_x)
-        kopts.TolX = knitro_opt.tol_x;
-    end
-    if isfield(knitro_opt, 'tol_f') && ~isempty(knitro_opt.tol_f)
-        kopts.TolFun = knitro_opt.tol_f;
-    end
-    if isfield(knitro_opt, 'maxit') && knitro_opt.maxit ~= 0
-        kopts.MaxIter = knitro_opt.maxit;
-        kopts.MaxFunEvals = 4 * knitro_opt.maxit;
-    end
-    if verbose > 1
-        kopts.Display = 'iter';
-    elseif verbose == 1
-        kopts.Display = 'final';
-    else
-        kopts.Display = 'off';
-    end
-    opt_fname = [];
-end
-fmoptions = optimset(kopts);
+ext_features = struct('HessFcn', ktr_hess_fcn);
 
 %%-----  run solver  -----
-if have_feature('knitromatlab')
-    if have_feature('knitromatlab', 'vnum') < 12.001
-        [x, f, eflag, output, Lambda] = knitromatlab(f_fcn, x0, Af, bf, Afeq, bfeq, ...
-                                        xmin, xmax, ktr_gh_fcn, [], fmoptions, opt_fname);
-    else
-        [x, f, eflag, output, Lambda] = knitro_nlp(f_fcn, x0, Af, bf, Afeq, bfeq, ...
-                                        xmin, xmax, ktr_gh_fcn, [], fmoptions, opt_fname);
-    end
+if isfield(opt, 'knitro_opt_fname') && ~isempty(opt.knitro_opt_fname)
+    opt_fname = opt.knitro_opt_fname;
+    [x, f, eflag, output, Lambda] = knitro_nlp(f_fcn, x0, Af, bf, ...
+        Afeq, bfeq, xmin, xmax, ktr_gh_fcn, ext_features, kn_opt, opt_fname);
 else
-    [x, f, eflag, output, Lambda] = ktrlink(f_fcn, x0, Af, bf, Afeq, bfeq, ...
-                                    xmin, xmax, ktr_gh_fcn, fmoptions, opt_fname);
+    [x, f, eflag, output, Lambda] = knitro_nlp(f_fcn, x0, Af, bf, ...
+        Afeq, bfeq, xmin, xmax, ktr_gh_fcn, ext_features, kn_opt);
 end
 success = (eflag == 0);
 if success
     eflag = 1;      %% success is 1 (not zero), all other values are Knitro return codes
-end
-
-%% delete ktropts file
-if create_ktropts_file  %% ... but only if I created it
-    delete(opt_fname);
 end
 
 %% fix Lambdas
@@ -414,27 +346,4 @@ else
     if issparse(H)
         H = H + Hs;
     end
-end
-
-%%-----  write_ktropts  -----
-function fname = write_ktropts(ktropts)
-
-%% generate file name
-fname = sprintf('ktropts_%06d.txt', fix(1e6*rand));
-
-%% open file
-[fd, msg] = fopen(fname, 'wt');     %% write options file
-if fd == -1
-    error('nlps_knitro: could not create %d : %s', fname, msg);
-end
-
-%% write options
-fields = fieldnames(ktropts);
-for k = 1:length(fields)
-    fprintf(fd, '%s %g\n', fields{k}, ktropts.(fields{k}));
-end
-
-%% close file
-if fd ~= 1
-    fclose(fd);
 end

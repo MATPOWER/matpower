@@ -86,7 +86,13 @@ switch alg
     case 'IPOPT'
         nlpopt.ipopt_opt = ipopt_options([], mpopt);
     case 'KNITRO'
-        nlpopt.knitro_opt               = mpopt.knitro;
-        nlpopt.knitro_opt.opts.feastol  = mpopt.opf.violation;
-%         nlpopt.knitro_opt.opts.TolCon   = mpopt.opf.violation;
+        nlpopt.knitro_opt = artelys_knitro_options([], mpopt);
+        if isempty(mpopt.knitro.opt_fname)
+            if mpopt.knitro.opt ~= 0
+                nlpopt.knitro_opt_fname = ...
+                    sprintf('knitro_user_options_%d.txt', mpopt.knitro.opt);
+            end
+        else
+            nlpopt.knitro_opt_fname = mpopt.knitro.opt_fname;
+        end
 end

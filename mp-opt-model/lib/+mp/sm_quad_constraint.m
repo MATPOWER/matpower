@@ -93,12 +93,14 @@ classdef sm_quad_constraint < mp.set_manager_opt_model
 
             es = struct();  %% empty struct
             obj@mp.set_manager_opt_model(varargin{:});
-            obj.data = struct( ...
-                'Q', es, ...
-                'B', es, ...
-                'l', es, ...
-                'u', es, ...
-                'vs', es );
+            if isempty(fieldnames(obj.data))
+                obj.data = struct( ...
+                    'Q', es, ...
+                    'B', es, ...
+                    'l', es, ...
+                    'u', es, ...
+                    'vs', es );
+            end
         end
 
         function obj = add(obj, var, name, idx, varargin)
@@ -221,17 +223,17 @@ classdef sm_quad_constraint < mp.set_manager_opt_model
             else
                 B = sparse(N, nv);
             end
-            if isempty(l)
+            if isempty(l)                   %% default l is -Inf
                 l = -Inf(N, 1);
-            elseif N > 1 && numel(l) == 1
-                l = l*ones(N, 1);
+            elseif N ~= 1 && length(l) == 1 %% expand from scalar as needed
+                l = l * ones(N, 1);
             elseif numel(l) ~= N
                 error('mp.sm_quad_constraint.add: l (%d x %d) must (%d x 1), a scalar, or empty', size(l, 1), size(l, 2), N);
             end
-            if isempty(u)
+            if isempty(u)                   %% default u is Inf
                 u = Inf(N, 1);
-            elseif N > 1 && numel(u) == 1
-                u = u*ones(N, 1);
+            elseif N ~= 1 && length(u) == 1 %% expand from scalar as needed
+                u = u * ones(N, 1);
             elseif numel(u) ~= N
                 error('mp.sm_quad_constraint.add: u (%d x %d) must (%d x 1), a scalar, or empty', size(u, 1), size(u, 2), N);
             end
@@ -243,7 +245,7 @@ classdef sm_quad_constraint < mp.set_manager_opt_model
                 add@mp.set_manager_opt_model(obj, name, idx, N, args{:});
             end
 
-            %% assign data (wgv: this replaces the old add_named_set method)
+            %% assign data
             if isempty(idx)
                 obj.data.Q.(name)  = Q;
                 obj.data.B.(name)  = B;
@@ -959,7 +961,7 @@ classdef sm_quad_constraint < mp.set_manager_opt_model
             %               - ``mu_uq`` - quadratic constraint upper bounds
             %               - ``lower`` - variable lower bounds
             %               - ``upper`` - variable upper bounds
-            %   stash (boolean) : if true, store return value in :attr:`soln`
+            %   stash (logical) : if true, store return value in :attr:`soln`
             %       property
             %
             % Output:

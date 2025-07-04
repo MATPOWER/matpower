@@ -2,7 +2,7 @@ function t_opt_model(quiet)
 % t_opt_model - Tests for opt_model.
 
 %   MP-Opt-Model
-%   Copyright (c) 2012-2024, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2012-2025, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.
@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 802;
+num_tests = 811;
 
 t_begin(num_tests, quiet);
 
@@ -1598,6 +1598,7 @@ if have_feature('isequaln')
     val = repmat(s.qcn.data.Q.Qmis(1), m+1, n);
     try
         om.qcn.set_params(om.var, 'Qmis', 'Q', val);
+        t_ok(false, [t 'Qmis, Q (wrong cell size, no error thrown)']);
     catch me
         TorF = strfind(me.message, 'dimension change for ''Qmis'' not allowed except for ''all''');
         t_ok(TorF, [t 'Qmis, Q (wrong cell size)']);
@@ -1647,6 +1648,7 @@ if have_feature('isequaln')
     val = {Q(2:3), B(2:3,:), lq(2:3), uq(2:3)};
     try
         om.qcn.set_params(om.var, 'myqcn', {2,2}, 'all', val);
+        t_ok(false, [t 'Qmis, Q (wrong cell size, no error thrown)']);
     catch me
         TorF = strfind(me.message, 'for ''myqcn(2,2)'' number of columns of ''Q'' (5) must be consistent with ''vs'' (170)');
         t_ok(TorF, [t 'Qmis, Q (wrong cell size)']);
@@ -1916,27 +1918,42 @@ if have_feature('isequaln')
     om.set_params('nlc', 'wc', {2,2}, 'all', val);
     t_ok(isequaln(struct(om), s), [t 'wc{2,2}, all']);
 else
-    t_skip(40, 'om.set_params tests require ''isequaln()''');
+    t_skip(47, 'om.set_params tests require ''isequaln()''');
 end
 
-%% turn object to struct warnings back on
-warning(s1.state, warn_id);
-
-
 %%-----  copy  -----
-t = 'copy constructor';
+t = 'copy constructor : ';
 if have_feature('octave') && have_feature('octave', 'vnum') < 5.003
-    t_skip(1, [t ' - https://savannah.gnu.org/bugs/?52614']);
+    t_skip(2, [t ' - https://savannah.gnu.org/bugs/?52614']);
 else
     om1 = opt_model(om);
+    t_ok(isequal(om1, om), [t 'identical']);
     om1.add_var('test', 10);
-    t_is(om1.var.N, om.var.N+10, 12, t);
+    t_is(om1.var.N, om.var.N+10, 12, [t 'orig not modified by copy']);
 end
 
 t = 'copy';
 om2 = om.copy();
 om2.add_var('test', 10);
 t_is(om2.var.N, om.var.N+10, 12, t);
+
+%%-----  to_struct()/from_struct()  -----
+t = 'to_struct() : ';
+s = om.to_struct();
+t_ok(isstruct(s), [t 'isstruct']);
+t_ok(isfield(s, 'var') && isstruct(s.var), [t 'var']);
+t_ok(isfield(s, 'lin') && isstruct(s.lin), [t 'lin']);
+t_ok(isfield(s, 'qdc') && isstruct(s.qdc), [t 'qdc']);
+t_ok(isfield(s, 'nle') && isstruct(s.nle), [t 'nle']);
+t_ok(isfield(s, 'nli') && isstruct(s.nli), [t 'nli']);
+t_ok(isfield(s, 'nlc') && isstruct(s.nlc), [t 'nlc']);
+
+t = 'from_struct()';
+om1 = mp.struct2object(s);
+t_ok(isequal(om, om1), t);
+
+%% turn object to struct warnings back on
+warning(s1.state, warn_id);
 
 %%-----  set_type_idx_map  -----
 t = 'set_type_idx_map : ';
@@ -1965,18 +1982,18 @@ else
     t_ok(isequal(g, e), [t '''lin'', [12 3;2 10]']);
 end
 
-mm = opt_model();
-mm.add_var('a', 3);
-mm.init_indexed_name('var', 'b', {2});
-mm.add_var('b', {1}, 2);
-mm.add_var('b', {2}, 1);
-mm.add_var('c', 2);
-g = mm.set_type_idx_map('var');
+om1 = opt_model();
+om1.add_var('a', 3);
+om1.init_indexed_name('var', 'b', {2});
+om1.add_var('b', {1}, 2);
+om1.add_var('b', {2}, 1);
+om1.add_var('c', 2);
+g = om1.set_type_idx_map('var');
 e = struct( 'name', {'a','a','a','b','b','b','c','c'}, ...
             'idx',  { [], [], [],{1},{1},{2}, [], []}, ...
             'i',    { 1,  2,  3,  1,  2,  1,  1,  2 })';
 t_ok(isequal(g, e), [t '''var''']);
-g = mm.set_type_idx_map('var', []);
+g = om1.set_type_idx_map('var', []);
 t_ok(isequal(g, e), [t '''var'', []']);
 
 g = om.set_type_idx_map('lin', [12 3;5 10]);
@@ -2001,7 +2018,7 @@ else
 end
 t_ok(isequal(g, e), [t '''lin'', [12 3;5 10], 1']);
 
-g = mm.set_type_idx_map('var', [], 1);
+g = om1.set_type_idx_map('var', [], 1);
 e = struct( 'name', {'a',     'b',  'b','c'}, ...
             'idx',  { [],     {1},  {2}, []}, ...
             'i',    { [1:3]', [1;2], 1,  [1;2] }, ...
