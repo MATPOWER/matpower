@@ -1,7 +1,6 @@
-% This is a new function (not part of MATPOWER) developed to generate a 
-% PSS/E ROP (Raw Operating Point) file from a given test case.
 function fname_out = save2psse_rop(fname, mpc, rawver)
-%SAVE2PSSE_ROP   Save MATPOWER case to a PSS/E ROP (Raw Operating Point) file.
+%save2psse_rop - Save |MATPOWER| case to a PSS/E ROP (Raw Operating Point) file.
+% ::
 %
 %   FNAME_OUT = SAVE2PSSE_ROP(FNAME, MPC, ROPVER)
 %
@@ -20,15 +19,15 @@ function fname_out = save2psse_rop(fname, mpc, rawver)
 %       - Active power dispatch tables
 %       - Polynomial cost tables
 %       - Section separators for other categories (left empty)
-%
+
 %   MATPOWER
-%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2025, Power Systems Engineering Research Center (PSERC)
 %   and individual contributors (see AUTHORS file for details).
+%   by Irabiel Romero, University of California, Merced
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See https://matpower.org for more info.
-
 
 %% define named indices into bus, gen, branch matrices
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
@@ -39,8 +38,8 @@ function fname_out = save2psse_rop(fname, mpc, rawver)
 [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
     TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
-[PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, C0, C1, C2] = idx_quad_cost;
-c = idx_dcline;
+[PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
+[C0, C1, C2] = idx_quad_cost;
 
 %% verify valid filename
 [pathstr, fcn_name, extension] = fileparts(fname);
@@ -72,21 +71,19 @@ fprintf(fd, ' 0 / End of Bus Load data, begin Adjustable Bus Load Tables\n');
 fprintf(fd, ' 0 / End of Adjustable Bus Load Tables, begin Generator Dispatch data\n');
 
 %% Gen Data
-ng = size(mpc.gen, 1);  %% number of buses
+nb = size(mpc.bus, 1);  %% number of buses
+ng = size(mpc.gen, 1);  %% number of gens
 %% Generator Dispatch data
 %% Bus, GenID, Disp, DspTbl
-GenIDs = zeros(length(mpc.bus),1);
+GenIDs = ones(ng, 1);
+counts = zeros(nb, 1);
 for i = 1:ng
-    GenIDs(mpc.gen(i, GEN_BUS)) = GenIDs(mpc.gen(i, GEN_BUS)) + 1;
-    GenID = GenIDs(mpc.gen(i, GEN_BUS));
-    fprintf(fd, '%d, %d, %.1f, %d\n', ...
-    [ mpc.gen(i, GEN_BUS), ...
-    GenID, ...
-    1, ...
-    i ...
-    ]');
+    b = e2i(mpc.gen(i, GEN_BUS));
+    counts(b) = counts(b) + 1;
+    GenIDs(i) = counts(b);
 end
-
+fprintf(fd, '%d, %d, %.1f, %d\n', ...
+    [ mpc.gen(:, GEN_BUS), GenIDs, ones(ng, 1), (1:ng)' ]');
 fprintf(fd, ' 0 / End of Generator Dispatch data, begin Active Power Dispatch Tables\n');
 
 %% Active Power Dispatch Tables
@@ -175,23 +172,8 @@ if k
     ckt(k) = generate_ckt_num(ft(k, :), ckt(k));
 end
 
-function [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, C0, C1, C2] = idx_quad_cost
-%IDX_COST   Defines constants for named column indices to gencost matrix.
-
-
-%% define cost models
-PW_LINEAR   = 1;
-POLYNOMIAL  = 2;
-
-%% define the indices
-MODEL       = 1;    %% cost model, 1 = piecewise linear, 2 = polynomial
-STARTUP     = 2;    %% startup cost in US dollars
-SHUTDOWN    = 3;    %% shutdown cost in US dollars
-NCOST       = 4;    %% number N = n+1 of end/breakpoints in piecewise linear
-%% cost function, or of coefficients in polynomial cost fcn
-COST        = 5;    %% parameters defining total cost function begin in this col
-C2          = 5;                    %% (MODEL = 2) : cn, ..., c1, c0
-C1          = 6;          %%      N coefficients of an n-th order polynomial cost fcn,
+function [C0, C1, C2] = idx_quad_cost
+C2          = 5;         %% (MODEL = 2) : cn, ..., c1, c0
+C1          = 6;         %%      N coefficients of an n-th order polynomial cost fcn,
 C0          = 7;         %%      starting with highest order, where cost is
 %%      f(p) = cn*p^n + ... + c1*p + c0
-
