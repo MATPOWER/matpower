@@ -13,7 +13,15 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 since 8.0
 ---------
 
-#### 5/24/25
+#### 7/4/25
+  - New utility, `mp.case_utils.convert_1p_to_3p()`, converts a standard
+    single-phase MATPOWER case to an equivalent balanced three-phase
+    case. Includes a live script `lib/t/convert_1p_to_3p_ex1.mlx` to
+    illustrate use of these new single-phase to three-phase conversion
+    capabilities.
+    *Thanks to Wilson González Vanegas.*
+
+#### 6/24/25
   - Add support to `savecase()` for three-phase prototype data.
 
 #### 5/23/25

@@ -8676,11 +8676,13 @@ The \href{https://matpower.org/docs/MATPOWER-manual-8.1-dev.pdf}{\matpower{} 8.1
 
 \subsubsection*{New Features}
 \begin{itemize}
-\item Add off-nominal tap ratio parameter to prototype three-phase transformer model.
+\item New utility, \code{mp.case\_utils.convert\_1p\_to\_3p()}, converts a standard single-phase \matpower{} case to an equivalent balanced three-phase case.
 \emph{Thanks to Wilson Gonz\'alez Vanegas.}
-\item Add prototype three-phase shunt model.
+\item New off-nominal tap ratio parameter in prototype three-phase transformer model.
 \emph{Thanks to Wilson Gonz\'alez Vanegas.}
-\item Add support to \code{savecase()} for three-phase prototype data.
+\item New prototype three-phase shunt model.
+\emph{Thanks to Wilson Gonz\'alez Vanegas.}
+\item Support for three-phase prototype data in \code{savecase()}.
 \item New options:
 \begin{itemize}
     \item \code{highs.opts} overrides default \highs{} options.
@@ -8688,6 +8690,7 @@ The \href{https://matpower.org/docs/MATPOWER-manual-8.1-dev.pdf}{\matpower{} 8.1
 \item New functions/methods:
     \begin{itemize}
         \item \code{mp.load\_dm} -- Loads a data model object.
+        \item \code{mp.case\_utils.convert\_1p\_to\_3p} -- Converts a single-phase case to a three-phase case.
     \end{itemize}
 \end{itemize}
 
@@ -8698,7 +8701,7 @@ The \href{https://matpower.org/docs/MATPOWER-manual-8.1-dev.pdf}{\matpower{} 8.1
 
 \subsubsection*{New Documentation}
 \begin{itemize}
-    \item 
+    \item Live script \code{lib/t/convert\_1p\_to\_3p\_ex1.mlx} illustrates the use of the new single-phase to three-phase conversion capabilities.
 \end{itemize}
 
 \subsubsection*{Other Improvements}
