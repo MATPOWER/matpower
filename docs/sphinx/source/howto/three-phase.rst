@@ -394,6 +394,20 @@ The data for the 4 bus, three-phase system in |t_case3p_a|_ comes from ``4Bus-YY
 
 The five and six bus cases connect this 4-bus three-phase case to 1 or 2 single-phase buses. And the 21-bus cases are based on connecting three copies of the 4 bus three-phase case to the single-phase |case9|_.
 
+Single Phase to Three-Phase Conversion
+--------------------------------------
+
+As of version 8.1, |MATPOWER| includes a utility
+:meth:`mp.case_utils.convert_1p_to_3p` for converting a standard single-phase |MATPOWER| case into an equivalent balanced three-phase case based on the prototype three-phase modeling described above.
+
+The example below converts the IEEE 9-bus |MATPOWER| test case (|case9|_) and runs a three-phase balanced power flow.
+::
+
+   mpc3p = mp.case_utils.convert_1p_to_3p('case9');
+   run_pf(mpc3p, mpoption, 'mpx', mp.xt_3p)
+
+See the live script |convert_1p_to_3p_ex1|_ for an illustration of using this utility to help create an unbalanced three-phase case. The test script :func:`t_convert_1p_to_3p` also illustrates the use of this function to convert and validate many of the cases included in the |MATPOWER| distribution.
+
 .. |t_run_mp_3p_m| replace:: :file:`t_run_mp_3p.m`
 .. |lib_t| replace:: :file:`lib/t`
 .. |case9| replace:: :file:`case9.m`
@@ -406,6 +420,7 @@ The five and six bus cases connect this 4-bus three-phase case to 1 or 2 single-
 .. |t_case3p_f| replace:: :file:`t_case3p_f.m`
 .. |t_case3p_g| replace:: :file:`t_case3p_g.m`
 .. |t_case3p_h| replace:: :file:`t_case3p_h.m`
+.. |convert_1p_to_3p_ex1| replace:: :file:`lib/t/convert_1p_to_3p_ex1.mlx`
 
 .. [#] https://sourceforge.net/p/electricdss/code/HEAD/tree/trunk/Distrib/IEEETestCases/4Bus-YY-Bal/4Bus-YY-Bal.DSS
 .. _t_run_mp_3p_m: https://github.com/MATPOWER/matpower/blob/master/lib/t/t_run_mp_3p.m
@@ -420,3 +435,4 @@ The five and six bus cases connect this 4-bus three-phase case to 1 or 2 single-
 .. _t_case3p_f: https://github.com/MATPOWER/matpower/blob/master/lib/t/t_case3p_f.m
 .. _t_case3p_g: https://github.com/MATPOWER/matpower/blob/master/lib/t/t_case3p_g.m
 .. _t_case3p_h: https://github.com/MATPOWER/matpower/blob/master/lib/t/t_case3p_h.m
+.. _convert_1p_to_3p_ex1: https://github.com/MATPOWER/matpower/blob/master/lib/t/convert_1p_to_3p_ex1.mlx
