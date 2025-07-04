@@ -23,6 +23,12 @@ since 8.0
   - Add a new distribution system case.
     *Thanks to Paul S. Moses.*
     - `case1197` – 1197-bus radial distribution case
+  - The `save2psse` function now creates distinct generator IDs for
+    cases with multiple generators at a single bus.
+    *Thanks to Irabiel Romero.*
+  - Add new function `save2psse_rop` to save a MATPOWER case to a PSS/E
+    ROP (Raw Operating Point) file.
+    *Thanks to Irabiel Romero.*
 
 #### 6/24/25
   - Add support to `savecase()` for three-phase prototype data.

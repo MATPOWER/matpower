@@ -4078,6 +4078,22 @@ The \code{psse2mpc} function converts a PSS/E RAW data file into a \matpower{} c
 
 The \code{save2psse} function saves a \matpower{} case struct \code{mpc} as a PSS/E RAW file. The \code{fname} parameter is a string containing the name of the file to be created or overwritten. If \code{fname} does not include a file extension, codeq{.raw} will be added. Optionally returns the, possibly updated, filename. Currently exports to RAW format Rev 33.
 
+\subsubsection{\tt save2psse\_rop}
+
+\begin{Code}
+  save2psse_rop(fname, mpc)
+  fname_out = save2psse_rop(fname, mpc)
+\end{Code}
+
+The \code{save2psse\_rop} function takes a \matpower{} case struct \code{mpc} and exports a PSS/E ROP (Raw Operating Point) file. The \code{fname} parameter is a string containing the name of the file to be created or overwritten. Currently, it includes:
+\begin{itemize}
+    \setlength{\itemsep}{6pt}
+    \setlength{\parskip}{-6pt}
+    \item Generator dispatch data
+    \item Active power dispatch tables
+    \item Polynomial cost tables
+    \item Section separators for other categories (left empty)
+\end{itemize}
 
 \subsection{System Information}
 
@@ -6091,6 +6107,7 @@ name & description \\
 \code{printpf}	& pretty prints power flow and OPF results	\\
 \code{psse2mpc}	& converts power flow data from PSS/E RAW format to \matpower{} format	\\
 \code{save2psse}	& exports \matpower{} case to PSS/E RAW format	\\
+\code{save2psse\_rop}	& exports \matpower{} case to PSS/E ROP (Raw Operating Point) format	\\
 \code{savecase}	& saves case data to a \matpower{} case file	\\
 \code{savechgtab}	& saves a change table, such as used by \code{apply\_changes}, to a file	\\
 \bottomrule
@@ -8693,6 +8710,7 @@ The \href{https://matpower.org/docs/MATPOWER-manual-8.1-dev.pdf}{\matpower{} 8.1
     \begin{itemize}
         \item \code{mp.load\_dm} -- Loads a data model object.
         \item \code{mp.case\_utils.convert\_1p\_to\_3p} -- Converts a single-phase case to a three-phase case.
+        \item \code{save2psse\_rop} -- Saves data from a \matpower{} case to a PSS/E ROP (Raw Operating Point) file. \emph{Thanks to Irabiel Romero.}
     \end{itemize}
 \end{itemize}
 
@@ -8717,6 +8735,7 @@ The \href{https://matpower.org/docs/MATPOWER-manual-8.1-dev.pdf}{\matpower{} 8.1
 \item Major \mpomlink{} refactor of \code{mp\_idx\_manager} and \code{opt\_model} to use the new classes \code{mp.set\_manager}, \code{mp\_set\_manager\_opt\_model}, and their subclasses. See \code{mp-opt-model/CHANGES.md} for details.
 \item Add shunt loss columns (\code{psh\_fr}, \code{qsh\_fr}, \code{psh\_to}, \code{qsh\_to}) to branch data model. In pretty-printed output, separate branch loss summary into series and shunt losses and add series loss columns to branch detail output.
 \emph{Thanks to Wilson Gonz\'alez Vanegas.}
+\item The \code{save2psse} function now creates distinct generator IDs for cases with multiple generators at a single bus. \emph{Thanks to Irabiel Romero.}
 \item Deprecated functions:
     \begin{itemize}
     \item 
