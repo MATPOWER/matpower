@@ -13,6 +13,11 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 since 8.0
 ---------
 
+#### 7/5/25
+  - Add a new 59 bus Australian case.
+    *Thanks to Mory Najafi.*
+    - `case59` - 59 bus, 14 generator Australian network.
+
 #### 7/4/25
   - New utility, `mp.case_utils.convert_1p_to_3p()`, converts a standard
     single-phase MATPOWER case to an equivalent balanced three-phase

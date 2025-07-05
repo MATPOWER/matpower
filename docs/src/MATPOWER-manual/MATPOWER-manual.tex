@@ -6694,8 +6694,9 @@ name & description \\
 \code{case30Q}	& \code{case30} with reactive power costs	\\
 \code{case39}	& 39-bus New England case	\\
 \code{case57}	& IEEE 57-bus case	\\
+\code{case59}	& 59 bus, 14 generator Australian case\tnote{\dag}	\\
 \code{case60nordic}	& 60-bus Nordic case\tnote{*}	\\
-\code{case\_RTS\_GMLC}	& 96-machine, 73-bus Reliability Test System\tnote{\dag} \\
+\code{case\_RTS\_GMLC}	& 96-machine, 73-bus Reliability Test System\tnote{\ddag} \\
 \code{case118}	& IEEE 118-bus case	\\
 \code{case145}	& IEEE 145-bus case, 50 generator dynamic test case	\\
 \code{case300}	& IEEE 300-bus case	\\
@@ -6704,7 +6705,8 @@ name & description \\
 \begin{tablenotes}
  \scriptsize
  \item [*] Contributed by Florin Capitanescu. Please cite reference \cite{capitanescu2020} when publishing results based on this data.
- \item [\dag] Reliability Test System Grid Modernization Lab Consortium data from\\ \url{https://github.com/GridMod/RTS-GMLC}.
+ \item [\dag] Contributed by Mory Najafi. Please cite reference \cite{gibbard2014} when publishing results based on this data.
+ \item [\ddag] Reliability Test System Grid Modernization Lab Consortium data from\\ \url{https://github.com/GridMod/RTS-GMLC}.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -8723,6 +8725,13 @@ The \href{https://matpower.org/docs/MATPOWER-manual-8.1-dev.pdf}{\matpower{} 8.1
 %        \setlength{\parsep}{-3pt}
         \item \code{case1197} -- 1197-bus radial distribution system case~\cite{masoum2011, grainger1985}.
     \end{itemize}
+\item One new transmmission system case. \emph{Thanks to Mory Najafi.}
+    \begin{itemize}
+        \setlength{\itemsep}{6pt}
+        \setlength{\parskip}{-6pt}
+%        \setlength{\parsep}{-3pt}
+        \item \code{case59} -- 59 bus, 14 generator Australian network case~\cite{gibbard2014}.
+    \end{itemize}
 \end{itemize}
 
 \subsubsection*{New Documentation}
@@ -9039,6 +9048,9 @@ A.~S.~Masoum, S.~Deilami, P.~S.~Moses, M.~A.~S.~Masoum, A.~Abu-Siada, ``Smart lo
 \bibitem{grainger1985}
 J.~J.~Grainger, S.~Civanlar, ``Volt/var control on distribution systems with lateral branches using shunt capacitors and voltage regulators. Part III: The numerical result,'' \emph{Power Apparatus and Systems, IEEE Transactions on}, vol.~104, pp.~3291--3297, 1985.
 \doi{10.1109/TPAS.1985.318842}
+
+\bibitem{gibbard2014}
+ M.~J.~Gibbard \& D.~J.~Vowles, ``Simplified 14-Generator Model of the South East Australian Power System,'' Revision 4, School of Electrical \& Electronic Engineering, The University of Adelaide, South Australia, 14 June 2014.
 
 \bibitem{birchfield2017}
 A.B.~Birchfield, T.~Xu, K.M.~Gegner, K.S.~Shetye, T.J.~Overbye,
