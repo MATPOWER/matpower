@@ -40,6 +40,10 @@ function mpc = case1197
 %   Power Apparatus and Systems, vol. 104, pp. 3291-3297, 1985.
 %   doi: 10.1109/TPAS.1985.318842
 
+%   MATPOWER
+%   Licensed under the Creative Commons Attribution 4.0 International license,
+%   https://creativecommons.org/licenses/by/4.0/
+
 %% MATPOWER Case Format : Version 2
 mpc.version = '2';
 
