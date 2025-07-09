@@ -25,8 +25,8 @@ fudging = struct( ...       %% paramters for fudging reserve contract for sopf2
                             %% with fudge equal to this limit
 
 %% options
-algs.dc     = {'MIPS'}; %% opf.dc.solver sequence to try for c3sopf (DC run)
-algs.ac     = {'MIPS'}; %% opf.ac.solver sequence to try for c3sopf (AC run)
+algs.dc     = {'DEFAULT'};  %% opf.dc.solver sequence to try for c3sopf (DC run)
+algs.ac     = {'MIPS'};     %% opf.ac.solver sequence to try for c3sopf (AC run)
 mpopt = mpoption('verbose', 0, 'out.all', 0);
 mpopt = mpoption(mpopt, 'opf.violation', 5e-7, 'mips.comptol', 5e-8);
 mpopt = mpoption(mpopt, 'sopf.force_Pc_eq_P0', 0);  %% don't constrain contracted == base case dispatch

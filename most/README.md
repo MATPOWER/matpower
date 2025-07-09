@@ -57,12 +57,12 @@ t_most_30b_3_1_0.......ok
 t_most_fixed_res.......ok
 t_most_30b_1_1_0_uc....ok
 t_most_mpopf...........ok
-t_most_uc..............ok (272 of 340 skipped)
-t_most_suc.............ok (148 of 185 skipped)
+t_most_uc..............ok (345 of 414 skipped)
+t_most_suc.............ok (185 of 222 skipped)
 t_most_tlmp............ok
 t_most_w_ds............ok
-All tests successful (359 passed, 420 skipped of 779)
-Elapsed time 39.45 seconds.
+All tests successful (360 passed, 530 skipped of 890)
+Elapsed time 15.92 seconds.
 ```
 
 If, for some reason, you prefer to install your own copy of MOST directly
@@ -141,12 +141,12 @@ citing both the 2011 MATPOWER paper and the 2013 MOST paper.
 The [MATPOWER Optimal Scheduling Tool (MOST) User's Manual][7] should
 also be cited explicitly in work that refers to or is derived from its
 content. The citation and DOI can be version-specific or general, as
-appropriate. For version 1.3, use:
+appropriate. For version 1.3.1, use:
 
 >   R. D. Zimmerman, C. E. Murillo-Sanchez. *MATPOWER Optimal Scheduling
-    Tool (MOST) User's Manual, Version 1.3*. 2024. [Online].
-    Available: https://matpower.org/docs/MOST-manual-1.3.pdf  
-    doi: [10.5281/zenodo.11177189](https://doi.org/10.5281/zenodo.11177189)
+    Tool (MOST) User's Manual, Version 1.3.1*. 2025. [Online].
+    Available: https://matpower.org/docs/MOST-manual-1.3.1.pdf  
+    doi: [10.5281/zenodo.15829809](https://doi.org/10.5281/zenodo.15829809)
 
 For a version non-specific citation, use the following citation and DOI,
 with *\<YEAR\>* replaced by the year of the most recent release:
@@ -178,7 +178,7 @@ MOST is distributed under the [3-clause BSD license][12].
 [2]: https://matpower.org
 [3]: https://github.com/MATPOWER/matpower
 [4]: https://www.mathworks.com/
-[5]: https://www.gnu.org/software/octave/
+[5]: https://octave.org
 [6]: https://github.com/MATPOWER/matpower/blob/master/docs/MATPOWER-manual.pdf
 [7]: docs/MOST-manual.pdf
 [8]: CONTRIBUTING.md

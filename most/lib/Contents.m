@@ -1,5 +1,5 @@
 % MOST
-%   Version 1.3         10-May-2024
+%   Version 1.3.1       07-Jul-2025
 %
 %   The MATPOWER Optimal Scheduling Tool (MOST) is framework for solving
 %   generalized steady-state electric power scheduling problems.
@@ -30,7 +30,7 @@
 %   MOST is covered by the 3-clause BSD License (see LICENSE for details).
 
 %   MOST
-%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2025, Power Systems Engineering Research Center (PSERC)
 %   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %   and Ray Zimmerman, PSERC Cornell
 %

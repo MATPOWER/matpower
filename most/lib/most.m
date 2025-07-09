@@ -62,7 +62,7 @@ function mdo = most(mdi, mpopt)
 % See also loadmd.
 
 %   MOST
-%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2025, Power Systems Engineering Research Center (PSERC)
 %   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %   and Ray Zimmerman, PSERC Cornell
 %
@@ -86,7 +86,7 @@ if verbose
     fprintf(  '                       -----  Built on MATPOWER  -----\n');
     fprintf(  '  by Carlos E. Murillo-Sanchez, Universidad Nacional de Colombia--Manizales\n');
     fprintf(  '                  and Ray D. Zimmerman, Cornell University\n');
-    fprintf(  '       (c) 2012-2024 Power Systems Engineering Research Center (PSERC)       \n');
+    fprintf(  '       (c) 2010-2025 Power Systems Engineering Research Center (PSERC)       \n');
     fprintf(  '=============================================================================\n');
 end
 

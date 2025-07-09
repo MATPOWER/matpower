@@ -31,10 +31,11 @@ Pre-release
     - `mp-docs-shared/prolog.rst.txt` - in URL in raw-html for |MOSTman|
 - In `README.md` and `docs/src/MOST-manual/MOST-manual.tex`
   - update output of `test_most` in Section 2.2
-    - may require first doing:
+    - may require first doing (to disable all solvers except Gurobi):
       ```matlab
         have_feature('cplex', 0);
         have_feature('glpk', 0);
+        have_feature('highs', 0);
         have_feature('intlinprog', 0);
         have_feature('mosek', 0);
         rmpath('/Users/ray/dev/projects/sopf/dist');
@@ -61,7 +62,7 @@ Pre-release
   - Make updates for current version specific citations:
     - version number (3 places)
     - year
-    - latest version DOI, current is: 10.5281/zenodo.11177189
+    - latest version DOI, current is: 10.5281/zenodo.15829809
       - (update here each time)
     ... in the following places ...
     - CITATION file
