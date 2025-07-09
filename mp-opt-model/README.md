@@ -218,7 +218,7 @@ For version 5.0, use:
 
 >   R. D. Zimmerman. *MP-Opt-Model User's Manual, Version 5.0*. 2025.
     [Online]. Available: https://matpower.org/docs/MP-Opt-Model-manual-5.0.pdf  
-    doi: [10.5281/zenodo.15817212](https://doi.org/10.5281/zenodo.15817212)
+    doi: [10.5281/zenodo.15851564](https://doi.org/10.5281/zenodo.15851564)
 
 For a version non-specific citation, use the following citation and DOI,
 with *\<YEAR\>* replaced by the year of the most recent release:

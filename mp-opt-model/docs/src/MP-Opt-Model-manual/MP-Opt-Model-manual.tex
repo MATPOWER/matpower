@@ -245,7 +245,7 @@
 %\title{\hl{--- DRAFT  ---}\\\hl{\em do not distribute}\\~\\{\huge \bfseries \mpomname{} User's Manual } \\ ~ \\ \LARGE Version \mpomver{}\\
 \title{{\huge \bfseries \mpomname{} User's Manual } \\ ~ \\ \LARGE Version \mpomver{}}
 \author{Ray~D.~Zimmerman}
-\date{July 5, 2025} % comment this line to display the current date
+\date{July 9, 2025} % comment this line to display the current date
 %\date{May 8, 2020\thanks{Second revision. First revision was April 29, 2020}} % comment this line to display the current date
 
 %%% BEGIN DOCUMENT
@@ -335,7 +335,7 @@ The citation and DOI can be version-specific or general, as appropriate. For ver
 \begin{quote}
 \footnotesize
 R.~D. Zimmerman. \mpomname{} User's Manual, Version 5.0. 2025. [Online]. Available: \url{https://matpower.org/docs/MP-Opt-Model-manual-5.0.pdf}\\
-\doi{10.5281/zenodo.15817212}
+\doi{10.5281/zenodo.15851564}
 \end{quote}
 For a version non-specific citation, use the following citation and DOI,
 with \emph{\textless{}YEAR\textgreater{}} replaced by the year of the most recent release:
@@ -2300,7 +2300,7 @@ fprintf('%4g%4g%4g\n', jac');
 \begin{Code}
 >> pne_ex1
 
-MP-Opt-Model Version 5.0, 05-Jul-2025 -- Predictor/Corrector Continuation Method
+MP-Opt-Model Version 5.0, 09-Jul-2025 -- Predictor/Corrector Continuation Method
 step   0  :                          lambda =  0.000,  6 corrector steps
 step   1  : PAL stepsize = 0.6       lambda =  0.081   2 corrector steps
 step   2  : PAL stepsize = 0.6       lambda =  0.162   2 corrector steps
@@ -6563,7 +6563,7 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-4.2.pdf}{\mpom{} 4.2 Use
 
 \end{itemize}
 
-\subsection{Version 5.0 -- released Jul 5, 2025}
+\subsection{Version 5.0 -- released Jul 9, 2025}
 \label{app:v50}
 
 The \href{https://matpower.org/docs/MP-Opt-Model-manual-5.0.pdf}{\mpom{} 5.0 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MP-Opt-Model-manual-5.0.pdf}}
@@ -6572,7 +6572,7 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-5.0.pdf}{\mpom{} 5.0 Use
 \begin{itemize}
 \item Support for quadratic constraints in \code{opt\_model} and quadratically-constrained quadratic programming (QCQP) problems, including functions \code{qcqps\_master()}, \code{qcqps\_gurobi()}, \code{qcqps\_knitro()}, \code{qcqps\_nlps()}, and more.
 \emph{Thanks to Wilson Gonz{\'a}lez Vanegas.}
-\item Support for the open-source \href{https://highs.dev}{\highs{}}\footnote{\url{https://highs.dev}} solver for LP, QP and MILP problems, including functions \code{miqps\_highs()}, \code{qps\_highs()}, \code{have\_feature\_highs()}, \code{highsver()}, and \code{highs\_options()}. Uses the \href{https://github.com/savyasachi/HiGHSMEX}{HiGHSMEX}\footnote{\url{https://github.com/savyasachi/HiGHSMEX}} interface for HiGHS.
+\item Support for the open-source \href{https://highs.dev}{\highs{}}\footnote{\url{https://highs.dev}} solver for LP, QP and MILP problems, including functions \code{miqps\_highs()}, \code{qps\_highs()}, \code{have\_feature\_highs()}, \code{highsver()}, and \code{highs\_options()} based on the \href{https://github.com/savyasachi/HiGHSMEX}{HiGHSMEX}\footnote{\url{https://github.com/savyasachi/HiGHSMEX}} interface.
 \item New \code{relax\_integer} option for \code{opt\_model.solve()}. Set to true to easily solve the LP or QP relaxation of a mixed integer LP or QP.
 \item Support for \href{https://www.artelys.com/solvers/knitro/}{\knitro{}} solver for LP and QP problems, including functions \code{qps\_knitro()}, \code{knitrover()}, and \code{artelys\_knitro\_options()}.
 \emph{Thanks to Wilson Gonz{\'a}lez Vanegas.}
@@ -6611,6 +6611,13 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-5.0.pdf}{\mpom{} 5.0 Use
     \item \code{qps\_highs()} provides standardized interface for using \highs{} to solve LP/QP problems.
     \item \code{qps\_knitro()} provides standardized interface for using \knitro{} to solve LP/QP problems.
     \end{itemize}
+\end{itemize}
+
+\subsubsection*{New Documentation}
+Two live scripts illustrate the use of new features.
+\begin{itemize}
+    \item \code{milp\_example1.mlx} (in \code{lib/t}) illustrates the use of \mpom{} and the new \code{mp.opt\_model} class to build and solve an optimization (MILP) model.
+    \item \code{qcqp\_example1.mlx} (in \code{lib/t}) illustrates the new quadratic constraint features and two methods of building and solving a quadratically-constrained quadratic programming (QCQP) model.
 \end{itemize}
 
 \subsubsection*{Bugs Fixed}

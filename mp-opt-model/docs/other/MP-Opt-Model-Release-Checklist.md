@@ -43,7 +43,7 @@ Pre-release
   - Make updates for current version specific citations:
     - version number (3 places)
     - year
-    - latest version DOI, current is: 10.5281/zenodo.15817212
+    - latest version DOI, current is: 10.5281/zenodo.15851564
       - (update here each time)
     ... in the following places ...
     - CITATION file
@@ -83,7 +83,7 @@ Pre-release
 Release
 -------
 - Merge latest `prep-for-release` into `master`.
-- Tag with version number, e.g. `4.2`.
+- Tag with version number, e.g. `5.0`.
 - Push `master` to GitHub.
 - Publish new release on GitHub: https://github.com/MATPOWER/mp-opt-model/releases/new
   - use (possibly shortened) contents of `docs/relnotes/MP-Opt-Model-Release-Notes-#.#.md`
