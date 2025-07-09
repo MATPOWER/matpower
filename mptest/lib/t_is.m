@@ -15,7 +15,7 @@ function ok = t_is(got, expected, prec, msg)
 %   msg (char array) : message to display for this test
 %
 % Output:
-%   ok (boolean) : *(optional)* true if test passed, false if failed
+%   ok (logical) : *(optional)* true if test passed, false if failed
 %
 % Increments the global test count and, if the test passes, then it
 % increments the passed tests count, otherwise  increments the failed
@@ -25,7 +25,7 @@ function ok = t_is(got, expected, prec, msg)
 % The input values can be real or complex, and they can be scalar, vector,
 % or 2-d or higher matrices. If ``got`` is a vector or matrix and
 % ``expected`` is a scalar or *NaN*, all elements must match the scalar.
-% *NaN* values are considered to be equal to each other.
+% *NaN* values are considered to be equal to each other, as are Inf values.
 %
 % Intended to be called between calls to t_begin and t_end.
 %
@@ -41,7 +41,7 @@ function ok = t_is(got, expected, prec, msg)
 % See also t_ok, t_file_match, t_str_match, t_skip, t_begin, t_end, t_run_tests.
 
 %   MP-Test
-%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2025, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Test.
@@ -86,14 +86,36 @@ if (length(edims) == length(gdims) && all(edims == gdims)) || ...
         elseif all(isnan(expected(:))) && all(isnan(got(:)))
             condition = true;
         else
+            have_inf = any(isinf(got(:))) || any(isinf(expected(:)));
+            if have_inf
+                pi_got = find(got(:) == Inf);
+                ni_got = find(got(:) == -Inf);
+                pi_expected = find(expected(:) == Inf);
+                ni_expected = find(expected(:) == -Inf);
+                got(pi_got) = 1e10;
+                got(ni_got) = -1e10;
+                expected(pi_expected) = 1e10;
+                expected(ni_expected) = -1e10;
+            end
             got_minus_expected = got - expected;
-            max_diff = max(abs(got_minus_expected(:)));
+            [max_diff, i] = max(abs(got_minus_expected(:)));
             condition = ( max_diff < 10^(-prec) );
+
+            if ~condition && have_inf
+                if ismember(i, [pi_got; ni_got; pi_expected; ni_expected]) || ...
+                        (isscalar(expected) && ismember(1, [pi_expected; ni_expected]))
+                    max_diff = Inf;
+                end
+                got(pi_got) = Inf;
+                got(ni_got) = -Inf;
+                expected(pi_expected) = Inf;
+                expected(ni_expected) = -Inf;
+            end
         end
     end
 else
     condition = false;
-    max_diff = 0;
+    max_diff = 0;       %% dimension mismatch
 end
 
 if isreal(got) && isreal(expected)
@@ -105,7 +127,7 @@ end
 t_ok(condition, msg);
 if ~condition && ~t_quiet
     if max_diff > 0
-        k = find(~(abs(got_minus_expected(:)) < 10^(-prec)));
+        k = find(~(abs(got_minus_expected(:)) < 10^(-prec)) & ~isnan(got_minus_expected(:)));
         [vv, kk] = max(abs(got_minus_expected(k)));
         fprintf('    index              got             expected      abs(got - exp)\n');
         fprintf('---------------  ----------------  ----------------  ----------------');
@@ -126,10 +148,10 @@ if ~condition && ~t_quiet
             if cplx
                 fprintf('\n%14s  %16s  %16s  %16g', ...
                     idxstr, format_complex(full(got(k(u))), '%g'), ...
-                            format_complex(full(ex), '%g'), full(abs(got_minus_expected(k(u)))));
+                            format_complex(full(ex), '%g'), full(abs(got(k(u)) - ex)));
             else
                 fprintf('\n%14s  %16g  %16g  %16g', ...
-                    idxstr, full(got(k(u))), full(ex), full(abs(got_minus_expected(k(u)))));
+                    idxstr, full(got(k(u))), full(ex), full(abs(got(k(u)) - ex)));
             end
             if u == kk
                 fprintf('  *');

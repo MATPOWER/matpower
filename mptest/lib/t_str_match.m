@@ -17,7 +17,7 @@ function ok = t_str_match(got, expected, msg, reps)
 %   reps (char array) : *(optional)* cell array of replacement specs
 %
 % Output:
-%   ok (boolean) : *(optional)* true if test passed, false if failed
+%   ok (logical) : *(optional)* true if test passed, false if failed
 %
 % The ``reps`` argument is a cell array of replacement specs, applied
 % sequentially, where each replacement spec is a cell array of the

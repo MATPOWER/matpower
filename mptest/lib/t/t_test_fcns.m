@@ -21,8 +21,8 @@ if nargin < 1
 end
 
 ntests = 5;
-npass = 29;
-nfail = 18;
+npass = 34;
+nfail = 27;
 
 g = [];
 e = [];
@@ -62,9 +62,33 @@ expected = 3;
 got = 3;
 g(k) = t_is(got, expected, tol, t);
 
+k = k + 1; e(k) = 1;
+t = sprintf('%s : t_is(Inf, Inf, ...)', f(e(k)));
+expected = Inf;
+got = Inf;
+g(k) = t_is(got, expected, tol, t);
+
+k = k + 1; e(k) = 1;
+t = sprintf('%s : t_is(-Inf, -Inf, ...)', f(e(k)));
+expected = -Inf;
+got = -Inf;
+g(k) = t_is(got, expected, tol, t);
+
 k = k + 1; e(k) = 0;
 t = sprintf('%s : t_is(1, 3, ...)', f(e(k)));
 expected = 3;
+got = 1;
+g(k) = t_is(got, expected, tol, t);
+
+k = k + 1; e(k) = 0;
+t = sprintf('%s : t_is(Inf, 3, ...)', f(e(k)));
+expected = 3;
+got = Inf;
+g(k) = t_is(got, expected, tol, t);
+
+k = k + 1; e(k) = 0;
+t = sprintf('%s : t_is(1, -Inf, ...)', f(e(k)));
+expected = -Inf;
 got = 1;
 g(k) = t_is(got, expected, tol, t);
 
@@ -74,10 +98,22 @@ expected = 3;
 got = [3 3; 3 3];
 g(k) = t_is(got, expected, tol, t);
 
+k = k + 1; e(k) = 1;
+t = sprintf('%s : t_is([Inf Inf; Inf Inf], Inf, ...)', f(e(k)));
+expected = Inf;
+got = [Inf Inf; Inf Inf];
+g(k) = t_is(got, expected, tol, t);
+
 k = k + 1; e(k) = 0;
 t = sprintf('%s : t_is([3 4; 3 3], 3, ...)', f(e(k)));
 expected = 3;
 got = [3 4; 3 3];
+g(k) = t_is(got, expected, tol, t);
+
+k = k + 1; e(k) = 0;
+t = sprintf('%s : t_is([Inf 4; Inf Inf], Inf, ...)', f(e(k)));
+expected = Inf;
+got = [Inf 4; Inf Inf];
 g(k) = t_is(got, expected, tol, t);
 
 k = k + 1; e(k) = 1;
@@ -86,10 +122,28 @@ expected = [3 3; 4 3];
 got = [3 3; 4 3];
 g(k) = t_is(got, expected, tol, t);
 
+k = k + 1; e(k) = 1;
+t = sprintf('%s : t_is([3 -Inf; 4 3], [3 -Inf; 4 3], ...)', f(e(k)));
+expected = [3 -Inf; 4 3];
+got = [3 -Inf; 4 3];
+g(k) = t_is(got, expected, tol, t);
+
 k = k + 1; e(k) = 0;
 t = sprintf('%s : t_is([3 4; 3 3], [3 3; 4 3], ...)', f(e(k)));
 expected = [3 3; 4 3];
 got = [3 4; 3 3];
+g(k) = t_is(got, expected, tol, t);
+
+k = k + 1; e(k) = 0;
+t = sprintf('%s : t_is([3 4; 3 -Inf], [3 3; 4 3], ...)', f(e(k)));
+expected = [3 3; 4 3];
+got = [3 4; 3 -Inf];
+g(k) = t_is(got, expected, tol, t);
+
+k = k + 1; e(k) = 0;
+t = sprintf('%s : t_is([3 3; 4 -Inf], [3 3; 4 Inf], ...)', f(e(k)));
+expected = [3 3; 4 Inf];
+got = [3 3; 4 -Inf];
 g(k) = t_is(got, expected, tol, t);
 
 k = k + 1; e(k) = 1;
@@ -148,11 +202,41 @@ expected = 3;
 got = NaN;
 g(k) = t_is(got, expected, tol, t);
 
+k = k + 1; e(k) = 0;
+t = sprintf('%s : t_is(-Inf, NaN, ...)', f(e(k)));
+expected = NaN;
+got = -Inf;
+g(k) = t_is(got, expected, tol, t);
+
+k = k + 1; e(k) = 0;
+t = sprintf('%s : t_is(NaN, Inf, ...)', f(e(k)));
+expected = Inf;
+got = NaN;
+g(k) = t_is(got, expected, tol, t);
+
 k = k + 1; e(k) = 1;
 t = sprintf('%s : t_is(NaN(3,2), NaN, ...)', f(e(k)));
 expected = NaN;
 got = NaN(3,2);
 g(k) = t_is(got, expected, tol, t);
+
+k = k + 1; e(k) = 1;
+t = sprintf('%s : t_is([3 4; NaN Inf], [3 4; NaN Inf], ...)', f(e(k)));
+expected = [3 4; NaN Inf];
+got = [3 4; NaN Inf];
+g(k) = t_is(got, expected, tol, t);
+
+k = k + 1; e(k) = 0;
+t = sprintf('%s : t_is([3 4; NaN Inf], [3 4; Inf NaN], ...)', f(e(k)));
+expected = [3 4; Inf NaN];
+got = [3 4; NaN Inf];
+g(k) = t_is(got, expected, tol, t);
+
+k = k + 1; e(k) = 0;
+t = sprintf('%s : t_is([3 4.001; NaN Inf], [3 4; NaN Inf], ...)', f(e(k)));
+expected = [3 4; NaN Inf];
+got = [3 4.001; NaN Inf];
+g(k) = t_is(got, expected, 4, t);
 
 k = k + 1; e(k) = 0;
 t = sprintf('%s : t_is(int32(0.6), 1.0, ...)', f(e(k)));

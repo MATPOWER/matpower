@@ -23,11 +23,11 @@ function rv = have_feature(tag, rtype)
 %       ==========  ============  ========================================
 %       ``toggle``  return type   description and return value
 %       ==========  ============  ========================================
-%       *<none>*    *boolean*     check availability, return true if available, false if not
-%       0           *boolean*     **turn off** optional functionality, return false
-%       1           *boolean*     **turn on** optional functionality, return
+%       *<none>*    *logical*     check availability, return true if available, false if not
+%       0           *logical*     **turn off** optional functionality, return false
+%       1           *logical*     **turn on** optional functionality, return
 %                                 true if available, false if not
-%       -1          *boolean*     **toggle** on/off state of optional
+%       -1          *logical*     **toggle** on/off state of optional
 %                                 functionality, return true if available,
 %                                 false if not
 %       ==========  ============  ========================================
@@ -45,7 +45,7 @@ function rv = have_feature(tag, rtype)
 %       =================  ============  ========================================
 %
 % Output:
-%   TorF (boolean) : true if optional functionality is available,
+%   TorF (logical) : true if optional functionality is available,
 %       false otherwise
 %   ver_str (char array) : version number as a string (e.g. ``'3.11.4'``)
 %   ver_num (double) : version number as numeric value (e.g. ``3.011004``)

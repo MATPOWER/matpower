@@ -29,8 +29,10 @@ optional functionality and to check the version of the installed MP-Test.
 
 .. toctree::
 
+   functions/debug_assert
    functions/have_feature
    functions/mptestver
+   functions/toggle_debug_mode
 
 
 Tests of MP-Test
@@ -41,6 +43,7 @@ These functions test that MP-Test is installed and functioning as expected.
 .. toctree::
 
    functions/test_mptest
+   functions/t_debug_assert
    functions/t_have_feature
    functions/t_test_fcns
 

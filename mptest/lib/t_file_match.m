@@ -16,11 +16,11 @@ function ok = t_file_match(got_fname, exp_fname, msg, reps, del_got_fname)
 %   exp_fname (char array) : name of file containing expected result
 %   msg (char array) : message to display for this test
 %   reps (char array) : *(optional)* cell array of replacement specs
-%   del_got_fname (boolean) : *(optional, default = false)* if true, the
+%   del_got_fname (logical) : *(optional, default = false)* if true, the
 %       file named in ``got_fname`` will be deleted if the test passes
 %
 % Output:
-%   ok (boolean) : *(optional)* true if test passed, false if failed
+%   ok (logical) : *(optional)* true if test passed, false if failed
 %
 % It ignores any differences in line ending characters and, like
 % t_str_match, can apply replacements to the contents of ``got_fname``,

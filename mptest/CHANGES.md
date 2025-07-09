@@ -2,6 +2,19 @@ Change history for MP-Test
 ==========================
 
 
+Version 8.1 - *July 5, 2024*
+----------------------------
+
+#### 7/5/25
+  - Release 8.1.
+  - Add two new functions to assist with code for debugging:
+    - `assert_debug()` -- calls `assert()` if `DEBUG_MODE` is on
+    - `toggle_debug_mode()` -- set/toggles whether `DEBUG_MODE` is on
+
+#### 3/21/25
+  - Enhance `t_is()` to handle `Inf` values appropriately.
+
+
 Version 8.0 - *May 10, 2024*
 ----------------------------
 

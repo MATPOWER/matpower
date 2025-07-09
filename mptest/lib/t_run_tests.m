@@ -13,7 +13,7 @@ function all_ok_ = t_run_tests(test_names, verbose)
 %       - 1 -- print full output for each test, plus summary section
 %
 % Output:
-%   all_ok (boolean) : *(optional)* true if all tests passed and the number
+%   all_ok (logical) : *(optional)* true if all tests passed and the number
 %       of tests matches the expected number, false otherwise
 %
 % Runs a set of tests whose names are given in the cell array ``test_names``.

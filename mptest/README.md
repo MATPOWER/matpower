@@ -34,9 +34,10 @@ of MATLAB or Octave, including setting up your MATLAB/Octave path.
 ```matlab
   >> test_mptest
   t_test_fcns.......ok
+  t_debug_assert....ok
   t_have_feature....ok
-  All tests successful (29 of 29)
-  Elapsed time 0.14 seconds.
+  All tests successful (37 of 37)
+  Elapsed time 0.13 seconds.
 ```
 
 Usage

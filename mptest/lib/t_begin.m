@@ -13,7 +13,7 @@ function t_begin(num_of_tests, quiet)
 %
 % Inputs:
 %   num_of_tests (integer) : number of tests expected
-%   quiet (boolean) : *(optional, default = false)* if true, prevents
+%   quiet (logical) : *(optional, default = false)* if true, prevents
 %       printing individual tests results
 %
 % Example::

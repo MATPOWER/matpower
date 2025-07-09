@@ -8,11 +8,11 @@ function ok = t_ok(cond, msg)
 % Test passes if ``expr`` evaluates to true.
 %
 % Inputs:
-%   expr (boolean) : boolean expression from actual test results
+%   expr (logical) : logical expression from actual test results
 %   msg (char array) : message to display for this test
 %
 % Output:
-%   ok (boolean) : *(optional)* true if test passed, false if failed
+%   ok (logical) : *(optional)* true if test passed, false if failed
 %
 % Increments the global test count and if the ``expr`` is true it
 % increments the passed tests count, otherwise increments the failed
