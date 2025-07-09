@@ -22,7 +22,7 @@
 .. |/MATPOWER/| replace:: :raw-html:`<em>M<span style="font-size:smaller">ATPOWER</span></em>`:raw-latex:`\matpoweri{}`
 .. |*MATPOWER*| replace:: :raw-html:`<strong>M<span style="font-size:smaller">ATPOWER</span></strong>`:raw-latex:`\matpowerb{}`
 .. |MATPOWER GitHub URL| replace:: https://github.com/MATPOWER/matpower
-.. |MUM| replace:: :raw-html:`<a href="https://matpower.org/docs/MATPOWER-manual-8.0.pdf">M<span style="font-size:smaller">ATPOWER</span> User's Manual</a>`:raw-latex:`\mum{}`
+.. |MUM| replace:: :raw-html:`<a href="https://matpower.org/docs/MATPOWER-manual-8.1.pdf">M<span style="font-size:smaller">ATPOWER</span> User's Manual</a>`:raw-latex:`\mum{}`
 
 .. |MATPOWER-Extras| replace:: :raw-html:`M<span style="font-size:smaller">ATPOWER</span> Extras`:raw-latex:`\matpower{} Extras`
 .. |MATPOWER-Extras>| replace:: :raw-html:`<a href="https://github.com/MATPOWER/matpower-extras">M<span style="font-size:smaller">ATPOWER</span> Extras</a>`:raw-latex:`\matpowerextraslink{}`
@@ -42,7 +42,7 @@
 .. |MIPS| replace:: :raw-html:`MIPS`:raw-latex:`\mips{}`
 .. |MIPS>| replace:: :raw-html:`<a href="https://github.com/MATPOWER/mips">MIPS</a>`:raw-latex:`\mipslink{}`
 .. |MIPSname| replace:: :raw-html:`<b>M</b><span style="font-size:smaller">ATPOWER</span> <b>I</b>nterior <b>P</b>oint <b>S</b>olver`:raw-latex:`\mipsname{}`
-.. |MIPSman| replace:: :raw-html:`<a href="https://matpower.org/docs/MIPS-manual-1.5.1.pdf">MIPS User's Manual</a>`:raw-latex:`\mipsman{}`
+.. |MIPSman| replace:: :raw-html:`<a href="https://matpower.org/docs/MIPS-manual-1.5.2.pdf">MIPS User's Manual</a>`:raw-latex:`\mipsman{}`
 
 .. |MPTEST| replace:: :raw-html:`MP-Test`:raw-latex:`\mptest{}`
 .. |MPTEST>| replace:: :raw-html:`<a href="https://github.com/MATPOWER/mptest">MP-Test</a>`:raw-latex:`\mptestlink{}`
@@ -50,12 +50,12 @@
 
 .. |MPOM| replace:: :raw-html:`MP-Opt-Model`:raw-latex:`\mpom{}`
 .. |MPOM>| replace:: :raw-html:`<a href="https://github.com/MATPOWER/mp-opt-model">MP-Opt-Model</a>`:raw-latex:`\mpomlink{}`
-.. |MPOMman| replace:: :raw-html:`<a href="https://matpower.org/docs/MP-Opt-Model-manual-4.2.pdf">MP-Opt-Model User's Manual</a>`:raw-latex:`\mpomman{}`
+.. |MPOMman| replace:: :raw-html:`<a href="https://matpower.org/docs/MP-Opt-Model-manual-5.0.pdf">MP-Opt-Model User's Manual</a>`:raw-latex:`\mpomman{}`
 
 .. |MOST| replace:: :raw-html:`MOST`:raw-latex:`\most{}`
 .. |MOST>| replace:: :raw-html:`<a href="https://github.com/MATPOWER/most">MOST</a>`:raw-latex:`\mostlink{}`
 .. |MOSTname| replace:: :raw-html:`<b>M</b><span style="font-size:smaller">ATPOWER</span> <b>O</b>ptimal <b>S</b>cheduling <b>T</b>ool`:raw-latex:`\mostname{}`
-.. |MOSTman| replace:: :raw-html:`<a href="https://matpower.org/docs/MOST-manual-1.3.pdf">MOST User's Manual</a>`:raw-latex:`\mostman{}`
+.. |MOSTman| replace:: :raw-html:`<a href="https://matpower.org/docs/MOST-manual-1.3.1.pdf">MOST User's Manual</a>`:raw-latex:`\mostman{}`
 
 .. |TN5| replace:: :raw-html:`<a href="https://matpower.org/docs/TN5-MP-Element.pdf"><em>M<span style="font-size:smaller">ATPOWER</span> Technical Note 5</em></a>`:raw-latex:`\TNfive{}`
 .. |MATPOWER-Users-Manual| replace:: :ref:`MATPOWER User's Manual <matpower_users_manual>`

@@ -54,13 +54,23 @@
 \newcommand{\y}{\rvec{y}}
 \newcommand{\z}{\rvec{z}}
 
-\renewcommand{\l}{\rvec{l}}
-\renewcommand{\u}{\rvec{u}}
-\renewcommand{\c}{\rvec{c}}
-\newcommand{\Cc}{\rmat{C}}
-\renewcommand{\AA}{\rmat{A}}
-\newcommand{\QQ}{\rmat{Q}}
-\newcommand{\q}{\rvec{q}}
+\renewcommand{\l}{\param{\rvec{l}}}
+\renewcommand{\u}{\param{\rvec{u}}}
+\newcommand{\li}{\param{l}_i}
+\newcommand{\ui}{\param{u}_i}
+\renewcommand{\b}{\param{\rvec{b}}}
+\renewcommand{\c}{\param{\rvec{c}}}
+%\newcommand{\Cc}{\param{\rmat{C}}}
+\newcommand{\Bb}{\param{\rmat{B}}}
+\newcommand{\Hh}{\param{\rmat{H}}}
+\renewcommand{\AA}{\param{\rmat{A}}}
+\renewcommand{\lq}{\l_\textrm{q}}
+\newcommand{\uq}{\u_\textrm{q}}
+\newcommand{\lqi}{{\param{l}_\textrm{q}}_i}
+\newcommand{\uqi}{{\param{u}_\textrm{q}}_i}
+\newcommand{\QQ}{\param{\rmat{Q}}}
+\newcommand{\q}{\param{\rvec{q}}}
+\renewcommand{\k}{\param{\rvec{k}}}
 \newcommand{\Qblk}{\QQ_\textrm{blk}}
 \newcommand{\Xblk}{\rmat{X}_\textrm{blk}}
 
