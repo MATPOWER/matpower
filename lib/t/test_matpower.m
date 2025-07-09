@@ -33,6 +33,7 @@ tests = {};
 
 %% MP-Test
 tests{end+1} = 't_test_fcns';
+tests{end+1} = 't_debug_assert';
 tests{end+1} = 't_have_feature';
 
 %% MIPS
