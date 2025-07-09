@@ -18,11 +18,11 @@ import re
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'MIPS'
-copyright = '2009-2024, Power Systems Engineering Research Center (PSERC)'
+copyright = '2009-2025, Power Systems Engineering Research Center (PSERC)'
 author = 'Ray D. Zimmerman, Hongye Wang'
 
 # The full version, including alpha/beta/rc tags
-release = '1.5.1'
+release = '1.5.2'
 
 
 # -- General configuration ---------------------------------------------------
@@ -71,6 +71,7 @@ matlab_short_links = True
 # matlab_auto_link = "basic"
 matlab_auto_link = "all"
 matlab_show_property_default_value = True
+matlab_show_property_specs = True
 # autoclass_content = 'both'         # 'class', 'init', 'both'
 autodoc_member_order = 'bysource'   # 'alphabetical', 'groupwise', 'bysource'
 napoleon_use_param = False
@@ -111,7 +112,7 @@ mathjax3_config = {
 
 with open('mp-docs-shared/mathCmds.tex.txt', 'r') as f:
     for line in f:
-        macros = re.findall(r'\\(re)?newcommand{\\(.*?)}(\[(\d)\])?{(.+)}', line)
+        macros = re.findall(r'(?<!%)\\(re)?newcommand{\\(.*?)}(\[(\d)\])?{([^%\n]+)}', line)
         for macro in macros:
             if len(macro[2]) == 0:
                 mathjax3_config['tex']['macros'][macro[1]] = macro[4]

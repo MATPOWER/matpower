@@ -47,7 +47,7 @@ of MATLAB or Octave, including setting up your MATLAB/Octave path.
   t_mips_pardiso....ok (60 of 60 skipped)
   t_qps_mips........ok
   All tests successful (304 passed, 68 skipped of 372)
-  Elapsed time 0.08 seconds.
+  Elapsed time 0.07 seconds.
 ```
 
 Documentation
@@ -98,12 +98,12 @@ the following 2007 paper.
 The [MATPOWER Interior Point Solver (MIPS) User's Manual][7] should also be
 cited explicitly in work that refers to or is derived from its content.
 The citation and DOI can be version-specific or general, as appropriate.
-For version 1.5.1, use:
+For version 1.5.2, use:
 
 >   R. D. Zimmerman, H. Wang. *MATPOWER Interior Point Solver (MIPS)
-    User's Manual, Version 1.5.1*. 2024. [Online].
-    Available: https://matpower.org/docs/MIPS-manual-1.5.1.pdf  
-    doi: [10.5281/zenodo.11176870](https://doi.org/10.5281/zenodo.11176870)
+    User's Manual, Version 1.5.2*. 2025. [Online].
+    Available: https://matpower.org/docs/MIPS-manual-1.5.2.pdf  
+    doi: [10.5281/zenodo.15815754](https://doi.org/10.5281/zenodo.15815754)
 
 For a version non-specific citation, use the following citation and DOI,
 with *\<YEAR\>* replaced by the year of the most recent release:
@@ -134,7 +134,7 @@ MIPS is distributed under the [3-clause BSD license][9].
 [2]: http://www.pserc.cornell.edu/tspopf/
 [3]: https://github.com/MATPOWER/matpower
 [4]: https://www.mathworks.com/
-[5]: https://www.gnu.org/software/octave/
+[5]: https://octave.org
 [6]: https://github.com/MATPOWER/mptest
 [7]: docs/MIPS-manual.pdf
 [8]: CONTRIBUTING.md

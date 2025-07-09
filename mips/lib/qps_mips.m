@@ -138,7 +138,7 @@ else                                %% individual args
 end
 
 %% define nx, set default values for H and c
-if ~isfield(p, 'H') || isempty(p.H) || ~any(any(p.H))
+if ~isfield(p, 'H') || ~nnz(p.H)
     if (~isfield(p, 'A') || isempty(p.A)) && ...
             (~isfield(p, 'xmin') || isempty(p.xmin)) && ...
             (~isfield(p, 'xmax') || isempty(p.xmax))

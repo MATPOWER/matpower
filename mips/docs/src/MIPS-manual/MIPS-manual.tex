@@ -129,7 +129,7 @@
 
 %\hyphenation{matpower_manual}
 
-\newcommand{\mpver}[0]{7.1}
+\newcommand{\mpver}[0]{8.1}
 %\newcommand{\matlab}[0]{{Matlab}}
 %\newcommand{\matlab}[0]{{\sc Matlab}\textsuperscript{\tiny \textregistered}}
 \newcommand{\matlab}[0]{{\sc Matlab}}
@@ -140,22 +140,22 @@
 \newcommand{\mptest}[0]{{MP-Test}}
 \newcommand{\mptesturl}[0]{https://github.com/MATPOWER/mptest}
 \newcommand{\mptestlink}[0]{\href{\mptesturl}{\mptest{}}}
-\newcommand{\mptestver}[0]{8.0}
+\newcommand{\mptestver}[0]{8.1}
 \newcommand{\mips}[0]{{MIPS}}
 \newcommand{\mipsurl}[0]{https://github.com/MATPOWER/mips}
 \newcommand{\mipslink}[0]{\href{\mipsurl}{\mips{}}}
 \newcommand{\mipsname}[0]{{{\bf M}{\sc atpower} \textbf{I}nterior \textbf{P}oint \textbf{S}olver}}
-\newcommand{\mipsver}[0]{1.5.1}
+\newcommand{\mipsver}[0]{1.5.2}
 \newcommand{\mpom}[0]{\mbox{MP-Opt-Model}}
 \newcommand{\mpomurl}[0]{https://github.com/MATPOWER/mp-opt-model}
 \newcommand{\mpomlink}[0]{\href{\mpomurl}{\mpom{}}}
 \newcommand{\mpomname}[0]{\mpom{}}
 % \newcommand{\mpomname}[0]{{{\bf M}{\sc at}{\bf P}{\sc ower} \textbf{Opt}imization \textbf{Model}}}
-\newcommand{\mpomver}[0]{4.2}
+\newcommand{\mpomver}[0]{5.0}
 \newcommand{\most}[0]{{MOST}}
 \newcommand{\mostname}[0]{{{\bf M}{\sc atpower} \textbf{O}ptimal \textbf{S}cheduling \textbf{T}ool}}
 \newcommand{\mosturl}[0]{https://github.com/MATPOWER/most}
-\newcommand{\mostver}[0]{1.3}
+\newcommand{\mostver}[0]{1.3.1}
 \newcommand{\md}[0]{{\most{} Data struct}}
 \newcommand{\powerweb}[0]{{\sc PowerWeb}}
 \newcommand{\pserc}[0]{{\sc PSerc}}
@@ -228,7 +228,7 @@
 \title{\mipsname{}\\\mips{} \mipsver{}\\
 User's Manual}
 \author{Ray~D.~Zimmerman \and Hongye~Wang}
-\date{May 10, 2024} % comment this line to display the current date
+\date{July 5, 2025} % comment this line to display the current date
 %\date{December 14, 2011\thanks{Second revision. First revision was December 13, 2011}} % comment this line to display the current date
 
 %%% BEGIN DOCUMENT
@@ -238,7 +238,7 @@ User's Manual}
 \vfill
 \begin{center}
 {\scriptsize
-\copyright~2009--2024~\PSERC{}\\
+\copyright~2009--2025~\PSERC{}\\
 All Rights Reserved}
 \end{center}
 
@@ -275,7 +275,7 @@ The code in \mips{} is distributed under the 3-clause BSD license\footnote{Versi
 ~\cite{bsd}. The full text of the license can be found in the \code{LICENSE} file at the top level of the distribution or at \url{https://github.com/MATPOWER/mips/blob/master/LICENSE} and reads as follows.
 
 \begin{Notice}
-Copyright (c) 1996-2024, Power Systems Engineering Research Center
+Copyright (c) 1996-2025, Power Systems Engineering Research Center
 (PSERC) and individual contributors (see AUTHORS file for details).
 All rights reserved.
 
@@ -322,13 +322,13 @@ Systems, IEEE Transactions on}, vol.~22, no.~3, pp. 1185--1193, August 2007.\\
 
 The \mipsname{} (\mips{}) User's Manual~\cite{mips_manual} should also be cited explicitly
 in work that refers to or is derived from its content. The citation and
-DOI can be version-specific or general, as appropriate. For version 1.5.1,
+DOI can be version-specific or general, as appropriate. For version 1.5.2,
 use:
 
 \begin{quote}
 \footnotesize
-R.~D. Zimmerman, H.~Wang. \mipsname{} (\mips{}) User's Manual, Version 1.5.1. 2024. [Online]. Available: \url{https://matpower.org/docs/MIPS-manual-1.5.1.pdf}\\
-\doi{10.5281/zenodo.11176870}
+R.~D. Zimmerman, H.~Wang. \mipsname{} (\mips{}) User's Manual, Version 1.5.2. 2025. [Online]. Available: \url{https://matpower.org/docs/MIPS-manual-1.5.2.pdf}\\
+\doi{10.5281/zenodo.15815754}
 \end{quote}
 For a version non-specific citation, use the following citation and DOI,
 with \emph{\textless{}YEAR\textgreater{}} replaced by the year of the most recent release:
@@ -366,7 +366,7 @@ The \mips{} GitHub project hosts the public Git code repository as well as a pub
 To use \mips{} \mipsver{} you will need:
 \begin{itemize}
 \item \matlab{}\textsuperscript{\tiny \textregistered} version 7 (R14) or later\footnote{\matlab{} is available from The MathWorks, Inc. (\url{https://www.mathworks.com/}). \matlab{} is a registered trademark of The MathWorks, Inc.}, or
-\item GNU Octave version 3.4 or later\footnote{GNU Octave \cite{octave} is free software, available online at \url{https://www.gnu.org/software/octave/}. \mips{} \mipsver{} may work on earlier versions of Octave, but it has not been tested on versions prior to 3.4.}
+\item GNU Octave version 3.4 or later\footnote{GNU Octave \cite{octave} is free software, available online at \url{https://octave.org}. \mips{} \mipsver{} may work on earlier versions of Octave, but it has not been tested on versions prior to 3.4.}
 \item \mptestlink{} version 7.1 or later.\footnote{\mptest{} is available at \url{\mptesturl}.}
 \end{itemize}
 
@@ -404,7 +404,7 @@ t_mips............ok
 t_mips_pardiso....ok (60 of 60 skipped)
 t_qps_mips........ok
 All tests successful (304 passed, 68 skipped of 372)
-Elapsed time 0.08 seconds.
+Elapsed time 0.07 seconds.
 \end{Code}
 \end{enumerate}
 
@@ -681,7 +681,7 @@ fprintf('   %g\n', lambda.ineqnonlin);
 \end{Code}
 \begin{Code}
 >> mips_example2
-MATPOWER Interior Point Solver -- MIPS, Version 1.5.1, 10-May-2024
+MATPOWER Interior Point Solver -- MIPS, Version 1.5.2, 05-Jul-2025
  (using built-in linear solver)
  it    objective   step size   feascond     gradcond     compcond     costcond  
 ----  ------------ --------- ------------ ------------ ------------ ------------
@@ -692,8 +692,8 @@ MATPOWER Interior Point Solver -- MIPS, Version 1.5.1, 10-May-2024
   4    -7.0686267   0.034574            0   0.00041301    0.0030084   0.00165402
   5    -7.0706104  0.0065191            0  1.53531e-05  0.000337971  0.000245844
   6    -7.0710134 0.00062152            0  1.22094e-07  3.41308e-05  4.99387e-05
-  7    -7.0710623 5.7217e-05            0  9.84879e-10  3.41587e-06  6.05875e-06
-  8    -7.0710673 5.6761e-06            0  9.73527e-12  3.41615e-07  6.15483e-07
+  7    -7.0710623 5.7217e-05            0  9.84878e-10  3.41587e-06  6.05875e-06
+  8    -7.0710673 5.6761e-06            0  9.73553e-12  3.41615e-07  6.15483e-07
 Converged!
 
 f = -7.07107   exitflag = 1
@@ -1036,6 +1036,11 @@ The following are private functions that implement detection of specific optiona
 
 This function implements the \codeq{lu\_vec} tag for \code{have\_feature} to detect support for the \code{lu(..., \textquotesingle{}vector\textquotesingle{})} syntax.
 
+\subsubsection{\tt have\_feature\_mips}
+\label{sec:have_feature_mips}
+
+This function implements the \codeq{mips} tag for \code{have\_feature} to detect availability/version for \code{mips()}.
+
 \subsubsection{\tt have\_feature\_pardiso\_legacy}
 \label{sec:have_feature_pardiso_legacy}
 
@@ -1341,6 +1346,16 @@ The \href{https://matpower.org/docs/MIPS-manual-1.5.1.pdf}{\mips{} 1.5.1 User's 
     \code{mu} (issue \#4).
 \end{itemize}
 
+\subsection{Version 1.5.2 -- released Jul 5, 2025}
+\label{app:v152}
+
+The \href{https://matpower.org/docs/MIPS-manual-1.5.2.pdf}{\mips{} 1.5.2 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MIPS-manual-1.5.2.pdf}}
+
+\subsubsection*{New Features}
+\begin{itemize}
+\item New feature detection function \code{have\_feature\_mips()}, providing implementation of \codeq{mips} tag for \code{have\_feature()}.
+\end{itemize}
+
 
 
 % \subsection{Version 1.6 -- released ??? ?, 2023}
@@ -1403,7 +1418,7 @@ R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez (2024). \matpower{}\\~
 \doi{10.5281/zenodo.3236535}
 
 \bibitem{mips_manual}
-R.~D. Zimmerman, H.~Wang. \mipsname{} (\mips{}) User's Manual. 2024.
+R.~D. Zimmerman, H.~Wang. \mipsname{} (\mips{}) User's Manual. 2025.
 [Online]. Available: \url{https://matpower.org/docs/MIPS-manual.pdf}\\
 \doi{10.5281/zenodo.3236506}
 

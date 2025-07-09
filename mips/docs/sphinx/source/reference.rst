@@ -61,6 +61,7 @@ rather are used to extend the capabilities of :func:`have_feature`.
 .. toctree::
 
    functions/have_feature_lu_vec
+   functions/have_feature_mips
    functions/have_feature_pardiso_legacy
    functions/have_feature_pardiso_object
    functions/have_feature_pardiso
