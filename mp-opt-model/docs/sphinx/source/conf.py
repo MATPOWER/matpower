@@ -22,7 +22,7 @@ copyright = '2020-2025, Power Systems Engineering Research Center (PSERC)'
 author = 'Ray D. Zimmerman'
 
 # The full version, including alpha/beta/rc tags
-release = '5.0-dev'
+release = '5.0'
 
 
 # -- General configuration ---------------------------------------------------

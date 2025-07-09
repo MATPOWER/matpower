@@ -129,7 +129,7 @@
 
 %\hyphenation{matpower_manual}
 
-\newcommand{\mpver}[0]{8.0}
+\newcommand{\mpver}[0]{8.1}
 %\newcommand{\matlab}[0]{{Matlab}}
 %\newcommand{\matlab}[0]{{\sc Matlab}\textsuperscript{\tiny \textregistered}}
 \newcommand{\matlab}[0]{{\sc Matlab}}
@@ -140,25 +140,25 @@
 \newcommand{\mptest}[0]{{MP-Test}}
 \newcommand{\mptesturl}[0]{https://github.com/MATPOWER/mptest}
 \newcommand{\mptestlink}[0]{\href{\mptesturl}{\mptest{}}}
-\newcommand{\mptestver}[0]{8.0}
+\newcommand{\mptestver}[0]{8.1}
 \newcommand{\mips}[0]{{MIPS}}
 \newcommand{\mipsurl}[0]{https://github.com/MATPOWER/mips}
 \newcommand{\mipslink}[0]{\href{\mipsurl}{\mips{}}}
 \newcommand{\mipsname}[0]{{{\bf M}{\sc atpower} \textbf{I}nterior \textbf{P}oint \textbf{S}olver}}
-\newcommand{\mipsver}[0]{1.5.1}
+\newcommand{\mipsver}[0]{1.5.2}
 \newcommand{\mpom}[0]{\mbox{MP-Opt-Model}}
 \newcommand{\mpomurl}[0]{https://github.com/MATPOWER/mp-opt-model}
 \newcommand{\mpomlink}[0]{\href{\mpomurl}{\mpom{}}}
 \newcommand{\mpomname}[0]{\mpom{}}
 % \newcommand{\mpomname}[0]{{{\bf M}{\sc at}{\bf P}{\sc ower} \textbf{Opt}imization \textbf{Model}}}
-\newcommand{\mpomver}[0]{5.0-dev}
+\newcommand{\mpomver}[0]{5.0}
 \newcommand{\most}[0]{{MOST}}
 \newcommand{\mostname}[0]{{{\bf M}{\sc atpower} \textbf{O}ptimal \textbf{S}cheduling \textbf{T}ool}}
 \newcommand{\mosturl}[0]{https://github.com/MATPOWER/most}
 \newcommand{\mostlink}[0]{\href{\mosturl}{\most{}}}
-\newcommand{\mostver}[0]{1.3}
+\newcommand{\mostver}[0]{1.3.1}
 \newcommand{\syngrid}[0]{{SynGrid}}
-\newcommand{\syngridver}[0]{1.0.1}
+\newcommand{\syngridver}[0]{1.0.2}
 \newcommand{\syngridurl}[0]{https://github.com/MATPOWER/mx-syngrid}
 \newcommand{\syngridlink}[0]{\href{\syngridurl}{\syngrid{}}}
 \newcommand{\md}[0]{{\most{} Data struct}}
@@ -245,7 +245,7 @@
 %\title{\hl{--- DRAFT  ---}\\\hl{\em do not distribute}\\~\\{\huge \bfseries \mpomname{} User's Manual } \\ ~ \\ \LARGE Version \mpomver{}\\
 \title{{\huge \bfseries \mpomname{} User's Manual } \\ ~ \\ \LARGE Version \mpomver{}}
 \author{Ray~D.~Zimmerman}
-%\date{May 10, 2024} % comment this line to display the current date
+\date{July 5, 2025} % comment this line to display the current date
 %\date{May 8, 2020\thanks{Second revision. First revision was April 29, 2020}} % comment this line to display the current date
 
 %%% BEGIN DOCUMENT
@@ -293,7 +293,7 @@ The code in \mpom{} is distributed under the 3-clause BSD license
 ~\cite{bsd}. The full text of the license can be found in the \code{LICENSE} file at the top level of the distribution or at \url{https://github.com/MATPOWER/mp-opt-model/blob/master/LICENSE} and reads as follows.
 
 \begin{Notice}
-Copyright (c) 2004-2024, Power Systems Engineering Research Center
+Copyright (c) 2004-2025, Power Systems Engineering Research Center
 (PSERC) and individual contributors (see AUTHORS file for details).
 All rights reserved.
 
@@ -330,12 +330,12 @@ POSSIBILITY OF SUCH DAMAGE.
 \subsection{Citing \mpom{}}
 
 We request that publications derived from the use of \mpom{} explicitly acknowledge that fact by citing the \mpomname{} User's Manual~\cite{mpom_manual}.
-The citation and DOI can be version-specific or general, as appropriate. For version 4.2, use:
+The citation and DOI can be version-specific or general, as appropriate. For version 5.0, use:
 
 \begin{quote}
 \footnotesize
-R.~D. Zimmerman. \mpomname{} User's Manual, Version 4.2. 2024. [Online]. Available: \url{https://matpower.org/docs/MP-Opt-Model-manual-4.2.pdf}\\
-\doi{10.5281/zenodo.11177079}
+R.~D. Zimmerman. \mpomname{} User's Manual, Version 5.0. 2025. [Online]. Available: \url{https://matpower.org/docs/MP-Opt-Model-manual-5.0.pdf}\\
+\doi{10.5281/zenodo.15817212}
 \end{quote}
 For a version non-specific citation, use the following citation and DOI,
 with \emph{\textless{}YEAR\textgreater{}} replaced by the year of the most recent release:
@@ -416,18 +416,28 @@ t_have_fcn..............ok
 t_nested_struct_copy....ok
 t_nleqs_master..........ok (30 of 150 skipped)
 t_pnes_master...........ok
-t_qps_master............ok (100 of 432 skipped)
-t_miqps_master..........ok (78 of 318 skipped)
-t_nlps_master...........ok
+t_qps_master............ok (144 of 504 skipped)
+t_qcqps_master..........ok (94 of 651 skipped)
+t_miqps_master..........ok (128 of 371 skipped)
+t_nlps_master...........ok (16 of 540 skipped)
+t_mp_opt_model..........ok
+t_mm_solve_leqs.........ok
+t_mm_solve_nleqs........ok (36 of 196 skipped)
+t_mm_solve_pne..........ok
+t_mm_solve_qcqps........ok (6 of 214 skipped)
+t_mm_solve_qps..........ok (120 of 449 skipped)
+t_mm_solve_miqps........ok (106 of 261 skipped)
+t_mm_solve_nlps.........ok (9 of 506 skipped)
 t_opt_model.............ok
 t_om_solve_leqs.........ok
-t_om_solve_nleqs........ok (36 of 195 skipped)
+t_om_solve_nleqs........ok (36 of 196 skipped)
 t_om_solve_pne..........ok
-t_om_solve_qps..........ok (81 of 388 skipped)
-t_om_solve_miqps........ok (20 of 131 skipped)
-t_om_solve_nlps.........ok
-All tests successful (3461 passed, 345 skipped of 3806)
-Elapsed time 2.28 seconds.
+t_om_solve_qcqps........ok (6 of 214 skipped)
+t_om_solve_qps..........ok (120 of 449 skipped)
+t_om_solve_miqps........ok (106 of 261 skipped)
+t_om_solve_nlps.........ok (9 of 506 skipped)
+All tests successful (6814 passed, 966 skipped of 7780)
+Elapsed time 18.02 seconds.
 \end{Code}
 \end{enumerate}
 
@@ -1316,7 +1326,7 @@ fprintf('   %g\n', lambda.ineqnonlin);
 \end{Code}
 \begin{Code}
 >> nlps_master_ex2
-MATPOWER Interior Point Solver -- MIPS, Version 1.5.1, 10-May-2024
+MATPOWER Interior Point Solver -- MIPS, Version 1.5.2, 05-Jul-2025
  (using built-in linear solver)
  it    objective   step size   feascond     gradcond     compcond     costcond  
 ----  ------------ --------- ------------ ------------ ------------ ------------
@@ -1327,8 +1337,8 @@ MATPOWER Interior Point Solver -- MIPS, Version 1.5.1, 10-May-2024
   4    -7.0686267   0.034574            0   0.00041301    0.0030084   0.00165402
   5    -7.0706104  0.0065191            0  1.53531e-05  0.000337971  0.000245844
   6    -7.0710134 0.00062152            0  1.22094e-07  3.41308e-05  4.99387e-05
-  7    -7.0710623 5.7217e-05            0  9.84879e-10  3.41587e-06  6.05875e-06
-  8    -7.0710673 5.6761e-06            0  9.73527e-12  3.41615e-07  6.15483e-07
+  7    -7.0710623 5.7217e-05            0  9.84878e-10  3.41587e-06  6.05875e-06
+  8    -7.0710673 5.6761e-06            0  9.73553e-12  3.41615e-07  6.15483e-07
 Converged!
 
 f = -7.07107   exitflag = 1
@@ -1358,10 +1368,11 @@ To use a different solver such as \code{fmincon}, assuming it is available, simp
 
 Local minimum found that satisfies the constraints.
 
-Optimization completed because the objective function is non-decreasing in
+Optimization completed because the objective function is non-decreasing in 
 feasible directions, to within the value of the optimality tolerance,
 and constraints are satisfied to within the value of the constraint tolerance.
 
+<stopping criteria details>
 
 f = -7.07107   exitflag = 1
 
@@ -2289,7 +2300,7 @@ fprintf('%4g%4g%4g\n', jac');
 \begin{Code}
 >> pne_ex1
 
-MP-Opt-Model Version 4.2, 10-May-2024 -- Predictor/Corrector Continuation Method
+MP-Opt-Model Version 5.0, 05-Jul-2025 -- Predictor/Corrector Continuation Method
 step   0  :                          lambda =  0.000,  6 corrector steps
 step   1  : PAL stepsize = 0.6       lambda =  0.081   2 corrector steps
 step   2  : PAL stepsize = 0.6       lambda =  0.162   2 corrector steps
@@ -6552,7 +6563,7 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-4.2.pdf}{\mpom{} 4.2 Use
 
 \end{itemize}
 
-\subsection{Version 5.0 -- released ??? ?, 2025}
+\subsection{Version 5.0 -- released Jul 5, 2025}
 \label{app:v50}
 
 The \href{https://matpower.org/docs/MP-Opt-Model-manual-5.0.pdf}{\mpom{} 5.0 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MP-Opt-Model-manual-5.0.pdf}}
@@ -6591,7 +6602,7 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-5.0.pdf}{\mpom{} 5.0 Use
     \item \code{highs\_options()} sets options for \highs{}.
     \item \code{knitrover()} displays version of installed \knitro{}.
     \item \code{miqps\_highs()} provides standardized interface for using \highs{} to solve MILP problems.
-    \item \code{mpopt2qcqpopt()} creates/modifies \code{qcqps\_master} options struct from \matpower{} options struct
+    \item \code{mpopt2qcqpopt()} creates/modifies \code{qcqps\_master} options struct from \matpower{} options struct.
     \item \code{mp.struct2object()} converts a struct back to the object from which it was created.
     \item \code{qcqps\_gurobi()} provides standardized interface for using \gurobi{} to solve QCQP problems.
     \item \code{qcqps\_knitro()} provides standardized interface for using \knitro{} to solve QCQP problems.
@@ -6698,7 +6709,7 @@ R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez, and R.~J. Thomas, ``\matpower{}: Ste
 \doi{10.1109/TPWRS.2010.2051168}
 
 \bibitem{matpower}
-R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez (2024). \matpower{}\\~
+R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez (2025). \matpower{}\\~
 [Software]. Available: \url{https://matpower.org}\\
 \doi{10.5281/zenodo.3236535}
 
@@ -6709,7 +6720,7 @@ John~W.~Eaton, David~Bateman, S{\o}ren~Hauberg, Rik~Wehbring (2024). \emph{GNU O
 The BSD 3-Clause License. [Online]. Available: \url{https://opensource.org/licenses/BSD-3-Clause}.
 
 \bibitem{mpom_manual}
-R.~D. Zimmerman. \mpomname{} User's Manual. 2024.
+R.~D. Zimmerman. \mpomname{} User's Manual. 2025.
 [Online]. Available: \url{https://matpower.org/docs/MP-Opt-Model-manual.pdf}\\
 \doi{10.5281/zenodo.3818002}
 
@@ -6720,7 +6731,7 @@ Systems, IEEE Transactions on}, vol.~22, no.~3, pp. 1185--1193, August 2007.
 \doi{10.1109/TPWRS.2007.901301}
 
 \bibitem{mips_manual}
-R.~D. Zimmerman, H.~Wang. \mipsname{} (\mips{}) User's Manual. 2024.
+R.~D. Zimmerman, H.~Wang. \mipsname{} (\mips{}) User's Manual. 2025.
 [Online]. Available: \url{https://matpower.org/docs/MIPS-manual.pdf}\\
 \doi{10.5281/zenodo.3236506}
 

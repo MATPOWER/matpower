@@ -55,18 +55,28 @@ of MATLAB or Octave, including setting up your MATLAB/Octave path.
   t_nested_struct_copy....ok
   t_nleqs_master..........ok (30 of 150 skipped)
   t_pnes_master...........ok
-  t_qps_master............ok (100 of 432 skipped)
-  t_miqps_master..........ok (78 of 318 skipped)
-  t_nlps_master...........ok
+  t_qps_master............ok (144 of 504 skipped)
+  t_qcqps_master..........ok (94 of 651 skipped)
+  t_miqps_master..........ok (128 of 371 skipped)
+  t_nlps_master...........ok (16 of 540 skipped)
+  t_mp_opt_model..........ok
+  t_mm_solve_leqs.........ok
+  t_mm_solve_nleqs........ok (36 of 196 skipped)
+  t_mm_solve_pne..........ok
+  t_mm_solve_qcqps........ok (6 of 214 skipped)
+  t_mm_solve_qps..........ok (120 of 449 skipped)
+  t_mm_solve_miqps........ok (106 of 261 skipped)
+  t_mm_solve_nlps.........ok (9 of 506 skipped)
   t_opt_model.............ok
   t_om_solve_leqs.........ok
-  t_om_solve_nleqs........ok (36 of 195 skipped)
+  t_om_solve_nleqs........ok (36 of 196 skipped)
   t_om_solve_pne..........ok
-  t_om_solve_qps..........ok (81 of 388 skipped)
-  t_om_solve_miqps........ok (20 of 131 skipped)
-  t_om_solve_nlps.........ok
-  All tests successful (3461 passed, 345 skipped of 3806)
-  Elapsed time 2.28 seconds.
+  t_om_solve_qcqps........ok (6 of 214 skipped)
+  t_om_solve_qps..........ok (120 of 449 skipped)
+  t_om_solve_miqps........ok (106 of 261 skipped)
+  t_om_solve_nlps.........ok (9 of 506 skipped)
+  All tests successful (6814 passed, 966 skipped of 7780)
+  Elapsed time 18.02 seconds.
 ```
 
 Sample Usage
@@ -204,11 +214,11 @@ function, e.g.: `qps_master`, `miqps_master`, and `nlps_master`.
 We request that publications derived from the use of MP-Opt-Model
 explicitly acknowledge that fact by citing the [MP-Opt-Model User's Manual][7].
 The citation and DOI can be version-specific or general, as appropriate.
-For version 4.2, use:
+For version 5.0, use:
 
->   R. D. Zimmerman. *MP-Opt-Model User's Manual, Version 4.2*. 2024.
-    [Online]. Available: https://matpower.org/docs/MP-Opt-Model-manual-4.2.pdf  
-    doi: [10.5281/zenodo.11177079](https://doi.org/10.5281/zenodo.11177079)
+>   R. D. Zimmerman. *MP-Opt-Model User's Manual, Version 5.0*. 2025.
+    [Online]. Available: https://matpower.org/docs/MP-Opt-Model-manual-5.0.pdf  
+    doi: [10.5281/zenodo.15817212](https://doi.org/10.5281/zenodo.15817212)
 
 For a version non-specific citation, use the following citation and DOI,
 with *\<YEAR\>* replaced by the year of the most recent release:

@@ -2,8 +2,11 @@ Change history for MP-Opt-Model
 ===============================
 
 
-since 4.2
----------
+Version 5.0 - *Jul 5, 2025*
+---------------------------
+
+#### 7/5/25
+  - Release 5.0.
 
 #### 7/3/25
   - Add support for Artelys Knitro 15.x which required changes to the
