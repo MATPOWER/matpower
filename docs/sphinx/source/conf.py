@@ -24,7 +24,7 @@ copyright = '1996-2025, Power Systems Engineering Research Center (PSERC)'
 author = 'Ray D. Zimmerman, Carlos E. Murillo-Sánchez, Hongye Wang, et. al.'
 
 # The full version, including alpha/beta/rc tags
-release = '8.0'
+release = '8.1'
 
 
 # -- General configuration ---------------------------------------------------
@@ -151,7 +151,7 @@ latex_elements = {
     'printindex': r'\footnotesize\raggedright\printindex',
     'maxlistdepth': '8',
     'extraclassoptions': 'openany',     # chapters can start on any page
-    'maketitle': r'\date{May 17, 2024}\newcommand\sphinxbackoftitlepage{\begin{center}{~\vfill\copyright~1996--2024~\PSERC\\All Rights Reserved}\end{center}}\sphinxmaketitle',
+    'maketitle': r'\date{July 10, 2025}\newcommand\sphinxbackoftitlepage{\begin{center}{~\vfill\copyright~1996--2025~\PSERC\\All Rights Reserved}\end{center}}\sphinxmaketitle',
     'extrapackages': r"""\usepackage{bm}
 \usepackage{upgreek}
 \usepackage{amsfonts}

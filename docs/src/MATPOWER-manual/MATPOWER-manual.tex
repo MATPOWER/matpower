@@ -140,7 +140,7 @@
 
 %\hyphenation{matpower}
 
-\newcommand{\mpver}[0]{8.0.1-dev}
+\newcommand{\mpver}[0]{8.1}
 %\newcommand{\matlab}[0]{{Matlab}}
 %\newcommand{\matlab}[0]{{\sc Matlab}\textsuperscript{\tiny \textregistered}}
 \newcommand{\matlab}[0]{{\sc Matlab}}
@@ -162,18 +162,18 @@
 \newcommand{\mptest}[0]{{MP-Test}}
 \newcommand{\mptesturl}[0]{https://github.com/MATPOWER/mptest}
 \newcommand{\mptestlink}[0]{\href{\mptesturl}{\mptest{}}}
-\newcommand{\mptestver}[0]{8.0}
+\newcommand{\mptestver}[0]{8.1}
 \newcommand{\mips}[0]{{MIPS}}
 \newcommand{\mipsurl}[0]{https://github.com/MATPOWER/mips}
 \newcommand{\mipslink}[0]{\href{\mipsurl}{\mips{}}}
 \newcommand{\mipsname}[0]{{{\bf M}{\sc atpower} \textbf{I}nterior \textbf{P}oint \textbf{S}olver}}
-\newcommand{\mipsver}[0]{1.5.1}
+\newcommand{\mipsver}[0]{1.5.2}
 \newcommand{\mpom}[0]{\mbox{MP-Opt-Model}}
 \newcommand{\mpomurl}[0]{https://github.com/MATPOWER/mp-opt-model}
 \newcommand{\mpomlink}[0]{\href{\mpomurl}{\mpom{}}}
 \newcommand{\mpomname}[0]{\mpom{}}
 % \newcommand{\mpomname}[0]{{{\bf M}{\sc at}{\bf P}{\sc ower} \textbf{Opt}imization \textbf{Model}}}
-\newcommand{\mpomver}[0]{4.2}
+\newcommand{\mpomver}[0]{5.0}
 \newcommand{\mpcore}{{MP-Core}}
 \newcommand{\mpe}{{MP-Element}}
 \newcommand{\mpeurl}[0]{https://github.com/MATPOWER/mp-element}
@@ -182,14 +182,16 @@
 \newcommand{\mostname}[0]{{{\bf M}{\sc atpower} \textbf{O}ptimal \textbf{S}cheduling \textbf{T}ool}}
 \newcommand{\mosturl}[0]{https://github.com/MATPOWER/most}
 \newcommand{\mostlink}[0]{\href{\mosturl}{\most{}}}
-\newcommand{\mostver}[0]{1.3}
+\newcommand{\mostver}[0]{1.3.1}
+\newcommand{\mostpro}[0]{{MOST Pro}}
+\newcommand{\mostprover}[0]{1.4.1}
 \newcommand{\md}[0]{{\most{} Data struct}}
 \newcommand{\east}[0]{E4ST}
 \newcommand{\eastver}[0]{1.0b2}
 \newcommand{\easturl}[0]{https://e4st.com}
 \newcommand{\eastlink}[0]{\href{\easturl}{\east}}
 \newcommand{\syngrid}[0]{{SynGrid}}
-\newcommand{\syngridver}[0]{1.0.1}
+\newcommand{\syngridver}[0]{1.0.2}
 \newcommand{\syngridurl}[0]{https://github.com/MATPOWER/mx-syngrid}
 \newcommand{\syngridlink}[0]{\href{\syngridurl}{\syngrid{}}}
 \newcommand{\powerweb}[0]{{\sc PowerWeb}}
@@ -290,7 +292,7 @@
 %\title{\hl{--- DRAFT  ---}\\\hl{\em do not distribute}\\~\\\matpower{} \mpver{}\\User's Manual}
 \title{User's Manual}
 \author{Ray~D.~Zimmerman \and Carlos~E.~Murillo-S\'anchez}
-%\date{May 17, 2024} % comment this line to display the current date
+\date{July 10, 2025} % comment this line to display the current date
 %\date{December 14, 2011\thanks{Second revision. First revision was December 13, 2011}} % comment this line to display the current date
 
 %%% BEGIN DOCUMENT
@@ -368,7 +370,7 @@ Beginning with version 5.1, the code in \matpower{} is distributed under the 3-c
 ~\cite{bsd}. The full text of the license can be found in the \code{LICENSE} file at the top level of the distribution or at \url{https://matpower.org/license/} and reads as follows.
 
 \begin{Notice}
-Copyright (c) 1996-2024, Power Systems Engineering Research Center
+Copyright (c) 1996-2025, Power Systems Engineering Research Center
 (PSERC) and individual contributors (see AUTHORS file for details).
 All rights reserved.
 
@@ -446,13 +448,13 @@ corresponding case files.
 
 For the sake of reproducibility of research results, it is best to cite
 the specific version of the software used, with the version-specfic DOI.
-For example, for version 8.0 of \matpower{}:
+For example, for version 8.1 of \matpower{}:
 
 \begin{quote}
 \footnotesize
-R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez (2024). \matpower{} (Version 8.0)\\~
+R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez (2025). \matpower{} (Version 8.1)\\~
 [Software]. Available: \url{https://matpower.org}\\
-\doi{10.5281/zenodo.11212330}
+\doi{10.5281/zenodo.15857742}
 \end{quote}
 
 To cite the \matpower{} software generally, without reference to a specific
@@ -474,13 +476,13 @@ found via the general DOI at \url{https://doi.org/10.5281/zenodo.3236535}.
 The \matpower{}, \mips{} and \most{} User's Manuals should also be cited
 explicitly in work that refers to or is derived from their content.\footnote{For information on citing the \mips{} or \most{} User's Manuals, please see the \code{mips/CITATION} and \code{most/CITATION} files, respectively.} As
 with the software, the citation and DOI can be version-specific or
-general, as appropriate. For version 8.0 of the \mum{}, use:
+general, as appropriate. For version 8.1 of the \mum{}, use:
 
 \begin{quote}
 \footnotesize
-R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez. \matpower{} User's Manual, Version 8.0. 2024.
-[Online]. Available: \url{https://matpower.org/docs/MATPOWER-manual-8.0.pdf}\\
-\doi{10.5281/zenodo.11212313}
+R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez. \matpower{} User's Manual, Version 8.1. 2025.
+[Online]. Available: \url{https://matpower.org/docs/MATPOWER-manual-8.1.pdf}\\
+\doi{10.5281/zenodo.15856241}
 \end{quote}
 
 For a version non-specific citation, use the following citation and DOI,
@@ -669,11 +671,11 @@ Installation and use of \matpower{} requires familiarity with the basic operatio
     The result should resemble the following, possibly including extra tests, depending on the availablility of optional packages, solvers and extras.
 
 
-%\pagebreak
 % UPDATE BEFORE RELEASE
 \begin{Code}
 >> test_matpower
 t_test_fcns...............ok
+t_debug_assert............ok
 t_have_feature............ok
 t_mplinsolve..............ok (8 of 180 skipped)
 t_mips....................ok
@@ -683,16 +685,26 @@ t_have_fcn................ok
 t_nested_struct_copy......ok
 t_nleqs_master............ok (30 of 150 skipped)
 t_pnes_master.............ok
-t_qps_master..............ok (324 of 432 skipped)
-t_miqps_master............ok (318 of 318 skipped)
+t_qps_master..............ok (396 of 504 skipped)
+t_qcqps_master............ok (465 of 651 skipped)
+t_miqps_master............ok (371 of 371 skipped)
 t_nlps_master.............ok (378 of 540 skipped)
+t_mp_opt_model............ok
+t_mm_solve_leqs...........ok
+t_mm_solve_nleqs..........ok (36 of 196 skipped)
+t_mm_solve_pne............ok
+t_mm_solve_qcqps..........ok (135 of 214 skipped)
+t_mm_solve_qps............ok (330 of 449 skipped)
+t_mm_solve_miqps..........ok (261 of 261 skipped)
+t_mm_solve_nlps...........ok (329 of 506 skipped)
 t_opt_model...............ok
 t_om_solve_leqs...........ok
-t_om_solve_nleqs..........ok (36 of 195 skipped)
+t_om_solve_nleqs..........ok (36 of 196 skipped)
 t_om_solve_pne............ok
-t_om_solve_qps............ok (270 of 388 skipped)
-t_om_solve_miqps..........ok (131 of 131 skipped)
-t_om_solve_nlps...........ok (329 of 505 skipped)
+t_om_solve_qcqps..........ok (135 of 214 skipped)
+t_om_solve_qps............ok (330 of 449 skipped)
+t_om_solve_miqps..........ok (261 of 261 skipped)
+t_om_solve_nlps...........ok (329 of 506 skipped)
 t_qps_matpower............ok (288 of 396 skipped)
 t_miqps_matpower..........ok (276 of 276 skipped)
 t_feval_w_path............ok
@@ -704,6 +716,10 @@ t_hessian.................ok
 t_margcost................ok
 t_totcost.................ok
 t_modcost.................ok
+\end{Code}
+\pagebreak
+\emph{continued from previous page}
+\begin{Code}
 t_hasPQcap................ok
 t_mp_mapped_array.........ok
 t_mp_table................ok (17 of 1044 skipped)
@@ -716,12 +732,10 @@ t_port_inj_current_acp....ok
 t_port_inj_power_acc......ok
 t_port_inj_power_acp......ok
 t_node_test...............ok
-\end{Code}
-\emph{continued from previous page}
-\begin{Code}
 t_run_mp..................ok
 t_run_opf_default.........ok
 t_run_mp_3p...............ok
+t_convert_1p_to_3p........ok (356 of 1373 skipped)
 t_pretty_print............ok
 t_mpxt_reserves...........ok
 t_mpxt_legacy_dcline......ok
@@ -749,13 +763,16 @@ t_vdep_load...............ok
 t_total_load..............ok
 t_scale_load..............ok
 t_apply_changes...........ok
+\end{Code}
+\pagebreak
+\emph{continued from previous page}
+\begin{Code}
 t_psse....................ok
 t_off2case................ok
 t_auction_mips............ok
 t_runmarket...............ok
-All tests successful (14006 passed, 2848 skipped of 16854)
-Elapsed time 60.24 seconds.
-\end{Code}
+All tests successful (17000 passed, 5210 skipped of 22210)
+Elapsed time 175.33 seconds.\end{Code}
 \end{enumerate}
 
 \subsection{Running a Simulation}
@@ -904,7 +921,7 @@ As an example, the help for \code{runopf} looks like:
   runopf - Runs an optimal power flow.
   ::
  
-    [RESULTS, SUCCESS] = RUNOPF(CASEDATA, MPOPT, FNAME, SOLVEDCASE)
+    [RESULTS, SUCCESS] = runopf(CASEDATA, MPOPT, FNAME, SOLVEDCASE)
  
     Runs an optimal power flow (AC OPF by default), optionally returning
     a RESULTS struct and SUCCESS flag.
@@ -2310,13 +2327,13 @@ results = runcpf(mpcb, mpct, mpopt);
 \end{Code}
 This should result in something like the following output to the screen.
 \begin{Code}
-MATPOWER Version 8.0, 17-May-2024 -- AC Continuation Power Flow
+MATPOWER Version 8.1, 10-Jul-2025 -- AC Continuation Power Flow
 step   0  :                      lambda =  0.000,  4 Newton steps
 
-MATPOWER Version 8.0, 17-May-2024
+MATPOWER Version 8.1, 10-Jul-2025
 Continuation Power Flow -- AC-polar-power formulation
 
-MP-Opt-Model Version 4.2, 10-May-2024 -- Predictor/Corrector Continuation Method
+MP-Opt-Model Version 5.0, 09-Jul-2025 -- Predictor/Corrector Continuation Method
 step   0  :                          lambda =  0.000,  0 corrector steps
 step   1  : PAL stepsize = 0.2       lambda =  0.181   2 corrector steps
 step   2  : PAL stepsize = 0.2       lambda =  0.359   2 corrector steps
@@ -2334,7 +2351,7 @@ step  13  : PAL stepsize = 0.2       lambda =  0.294   2 corrector steps
 step  14  : PAL stepsize = 0.2       lambda =  0.176   2 corrector steps
 step  15  : PAL stepsize = 0.2       lambda =  0.060   2 corrector steps
 step  16a : PAL stepsize = 0.2       lambda = -0.054   2 corrector steps ^ ROLLBACK
-step  16  : NAT stepsize = 0.0604    lambda = -0.000   3 corrector steps
+step  16  : NAT stepsize = 0.0604    lambda =  0.000   3 corrector steps
 CONTINUATION TERMINATION: Traced full continuation curve in 16 continuation steps
 CPF successful
 CPF TERMINATION: Traced full continuation curve in 16 continuation steps
@@ -8702,30 +8719,48 @@ Prototype examples of PF, CPF, and OPF, built using the new \matpower{} Extensio
 
 
 \clearpage
-\subsection{Version 8.1-dev -- released ??? ??, 2025}
+\subsection{Version 8.1 -- released Jul 10, 2025}
 \label{app:v81}
 
-The \href{https://matpower.org/docs/MATPOWER-manual-8.1-dev.pdf}{\matpower{} 8.1-dev User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MATPOWER-manual-8.1-dev.pdf}}
+The \href{https://matpower.org/docs/MATPOWER-manual-8.1.pdf}{\matpower{} 8.1 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MATPOWER-manual-8.1.pdf}}
 
 \subsubsection*{New Features}
 \begin{itemize}
-\item New utility, \code{mp.case\_utils.convert\_1p\_to\_3p()}, converts a standard single-phase \matpower{} case to an equivalent balanced three-phase case.
-\emph{Thanks to Wilson Gonz\'alez Vanegas.}
-\item New off-nominal tap ratio parameter in prototype three-phase transformer model.
-\emph{Thanks to Wilson Gonz\'alez Vanegas.}
-\item New prototype three-phase shunt model.
-\emph{Thanks to Wilson Gonz\'alez Vanegas.}
-\item Support for three-phase prototype data in \code{savecase()}.
-\item New options:
-\begin{itemize}
-    \item \code{highs.opts} overrides default \highs{} options.
-\end{itemize}
-\item New functions/methods:
+\item Three-Phase Proof-of-Concept Enhancements
     \begin{itemize}
-        \item \code{mp.load\_dm} -- Loads a data model object.
+    \item New utility, \code{mp.case\_utils.convert\_1p\_to\_3p()}, converts a standard single-phase \matpower{} case to an equivalent balanced three-phase case.
+    \emph{Thanks to Wilson Gonz\'alez Vanegas.}
+    \item New off-nominal tap ratio parameter in prototype three-phase transformer model.
+    \emph{Thanks to Wilson Gonz\'alez Vanegas.}
+    \item New prototype three-phase shunt model.
+    \emph{Thanks to Wilson Gonz\'alez Vanegas.}
+    \item Support for three-phase prototype data in \code{savecase()}.
+    \end{itemize}
+\item \mpomlink{} 5.0 includes:
+    \begin{itemize}
+    \item New, redesigned classes for building and solving mathematical programming/optimization models.\footnote{The new classes \code{mp.opt\_model} and \code{mp.set\_manager} and subclasses replace refactored \code{opt\_model} and \code{mp\_idx\_manager} which are deprecated, but retained for backward compatibility.}.
+    \item Support for quadratic constraints and quadratically constrained quadratic programming (QCQP) models and solvers.
+    \emph{Thanks to Wilson Gonz\'alez Vanegas.}
+    \item Support for the open-source \href{https://highs.dev}{\highs{}}\footnote{\url{https://highs.dev}} solver for LP, QP and MILP problems based on the \href{https://github.com/savyasachi/HiGHSMEX}{HiGHSMEX}\footnote{\url{https://github.com/savyasachi/HiGHSMEX}} interface.
+    \item New \code{relax\_integer} option to facilitate easily solving the LP or QP relaxation of a mixed integer LP or QP model.
+    \item Support for \href{https://www.artelys.com/solvers/knitro/}{\knitro{}} solver for LP and QP problems.
+    \emph{Thanks to Wilson Gonz{\'a}lez Vanegas.}
+    \item Support for \href{https://www.artelys.com/solvers/knitro/}{\knitro{}} 15.x.
+    \item Support for conversion between objects and structs to facilitate workarounds for Octave's inability to save and load classdef objects.
+    \end{itemize}
+For details, see the \href{\mpomurl/blob/master/docs/relnotes/MP-Opt-Model-Release-Notes-5.0.md}{\mpom{} 5.0 release notes}.\footnote{See Appendix~\ref{MPOMMAN-app:release_history} in the \mpomman{}.}
+\item \mostpro{} 1.4.1, available by contacting \href{mailto:info@matpower.org?subject=MOST%20Pro&body=Please%20send%20me%20information%20on%20obtaining%20MOST%20Pro.} {info@matpower.org},\footnote{Please note that \matpower{} 8.1 includes \most{} 1.3.1, and \mostpro{} 1.4.1 is a paid upgrade.} adds support for \matpower{} DC lines as described in Section 7.6.3 of the \mum{}.
+\item \mptestlink{} 8.1 adds functions to assist with code for debugging and enhances handling of \code{Inf} values in test results. For details, see the \href{\mptesturl/blob/master/docs/relnotes/MP-Test-Release-Notes-8.1.md}{\mptest{} 8.1 release notes}.
+\item New functions:
+    \begin{itemize}
         \item \code{mp.case\_utils.convert\_1p\_to\_3p} -- Converts a single-phase case to a three-phase case.
+        \item \code{mp.load\_dm} -- Loads a data model object.
         \item \code{save2psse\_rop} -- Saves data from a \matpower{} case to a PSS/E ROP (Raw Operating Point) file. \emph{Thanks to Irabiel Romero.}
     \end{itemize}
+\item New options:
+\begin{itemize}
+    \item \code{highs.opts} overrides default options for the \href{https://highs.dev}{\highs{}} solver.
+\end{itemize}
 \end{itemize}
 
 \subsubsection*{New Case Files}
@@ -8747,32 +8782,38 @@ The \href{https://matpower.org/docs/MATPOWER-manual-8.1-dev.pdf}{\matpower{} 8.1
 \end{itemize}
 
 \subsubsection*{New Documentation}
+Three live scripts illustrate the use of new features.
 \begin{itemize}
-    \item Live script \code{lib/t/convert\_1p\_to\_3p\_ex1.mlx} illustrates the use of the new single-phase to three-phase conversion capabilities.
+    \item \code{convert\_1p\_to\_3p\_ex1.mlx} (in \code{lib/t}) illustrates the use of the new single-phase to three-phase conversion capabilities.
+    \item \code{milp\_example1.mlx} (in \code{mp-opt-model/lib/t}) illustrates the use of \mpom{} and the new \code{mp.opt\_model} class to build and solve an optimization (MILP) model.
+    \item \code{qcqp\_example1.mlx} (in \code{mp-opt-model/lib/t}) illustrates the new quadratic constraint features and two methods of building and solving a quadratically-constrained quadratic programming (QCQP) model.
 \end{itemize}
 
 \subsubsection*{Other Improvements}
 \begin{itemize}
-\item Major \mpomlink{} refactor of \code{mp\_idx\_manager} and \code{opt\_model} to use the new classes \code{mp.set\_manager}, \code{mp\_set\_manager\_opt\_model}, and their subclasses. See \code{mp-opt-model/CHANGES.md} for details.
 \item Add shunt loss columns (\code{psh\_fr}, \code{qsh\_fr}, \code{psh\_to}, \code{qsh\_to}) to branch data model. In pretty-printed output, separate branch loss summary into series and shunt losses and add series loss columns to branch detail output.
 \emph{Thanks to Wilson Gonz\'alez Vanegas.}
 \item The \code{save2psse} function now creates distinct generator IDs for cases with multiple generators at a single bus. \emph{Thanks to Irabiel Romero.}
-\item Deprecated functions:
-    \begin{itemize}
-    \item 
-    \end{itemize}
+\item \mipslink{} 1.5.2 adds a feature detection function for \mips{}. For details, see the \href{\mipsurl/blob/master/docs/relnotes/MIPS-Release-Notes-1.5.2.md}{\mips{} 1.5.2 release notes}.\footnote{See Appendix~\ref{MIPSMAN-app:release_history} in the \mipsman{}.}
+\item \mostlink{} 1.3.1 fixes bugs in \code{most\_summary()} and some tests, and includes unit commitment tests for \href{https://highs.dev}{HiGHS} solver. For details, see the \href{\mosturl/blob/master/docs/relnotes/MOST-Release-Notes-1.3.1.md}{\most{} 1.3.1 release notes}.\footnote{See Appendix~\ref{MOSTMAN-app:release_history} in the \mostman{}.}
+\item Include \href{https://highs.dev}{\highs{}} solver, if available, in DC OPF tests.
+\item Add \code{rebuild()} method to \code{mp.data\_model}, used to update the data model internals after making changes to data in the data tables of the elements.
+\item Make optional the \code{mpopt} argument to \code{mp.task.run()}.
 \end{itemize}
 
 % \pagebreak
 \subsubsection*{Bugs Fixed}
 \begin{itemize}
+\item Fix typos that cause fatal errors with \octavelink{} 10.x.
+\item Fix typo in units of min and max reactive power shadow price in summary section of legacy OPF output.
 \item  Optional \codeq{soln\_fname} input to \code{run\_mp()}, hence also to \code{run\_pf()}, \code{run\_cpf()}, and \code{run\_opf()}, was being ignored.
 \item Fix bug \#256 to make \code{opf.use\_vg} option compatible with generators at PQ buses.
+\item Build load and shunt connectivity using \code{bus} column in main table (i.e. bus numbers), not \code{source\_uid} column (i.e. row indices in original \code{bus} table).
 \end{itemize}
 
 \subsubsection*{Incompatible Changes}
 \begin{itemize}
-\item 
+\item See the \href{\mpomurl/blob/master/docs/relnotes/MP-Opt-Model-Release-Notes-5.0.md}{\mpom{} 5.0 release notes}\footnote{See Appendix~\ref{MPOMMAN-app:release_history} in the \mpomman{}.} for incompatible changes related to \mpomlink{}.
 \end{itemize}
 
 % \clearpage
@@ -8836,7 +8877,7 @@ R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez, and R.~J. Thomas, ``\matpower{}: Ste
 \doi{10.1109/TPWRS.2010.2051168}
 
 \bibitem{matpower}
-R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez (2024). \matpower{}\\~
+R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez (2025). \matpower{}\\~
 [Software]. Available: \url{https://matpower.org}
 \doi{10.5281/zenodo.3236535}
 
@@ -8864,15 +8905,15 @@ Systems, IEEE Transactions on}, vol.~22, no.~3, pp.~1185--1193, August 2007.
 John~W.~Eaton, David~Bateman, S{\o}ren~Hauberg, Rik~Wehbring (2024). \emph{GNU Octave version 9.2.0 manual: a high-level interactive language for numerical computations.} Available: \url{https://docs.octave.org/v9.2.0/}.
 
 \bibitem{most_manual}
-R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez. \mostname{} (\most{}) User's Manual. 2024. [Online]. Available: \url{\currentmostmanurl}\\
+R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez. \mostname{} (\most{}) User's Manual. 2025. [Online]. Available: \url{\currentmostmanurl}\\
 \doi{10.5281/zenodo.3236531}
 
 \bibitem{mpom_manual}
-R.~D. Zimmerman. \mpomname{} User's Manual. 2024. [Online]. Available: \url{\currentmpommanurl}\\
+R.~D. Zimmerman. \mpomname{} User's Manual. 2025. [Online]. Available: \url{\currentmpommanurl}\\
 \doi{10.5281/zenodo.3818002}
 
 \bibitem{mips_manual}
-R.~D. Zimmerman, H. Wang. \mipsname{} (\mips{}) User's Manual. 2024. [Online]. Available: \url{\currentmipsmanurl}
+R.~D. Zimmerman, H. Wang. \mipsname{} (\mips{}) User's Manual. 2025. [Online]. Available: \url{\currentmipsmanurl}
 \doi{10.5281/zenodo.3236506}
 
 \bibitem{mp_docs}

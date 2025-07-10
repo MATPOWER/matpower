@@ -36,10 +36,12 @@ docker build --build-arg MP_SRC=github --build-arg BRANCH=7.0 --build-arg BASE_T
 docker build --build-arg MP_SRC=github --build-arg BRANCH=7.1 --build-arg BASE_TAG=5.2.0 -f docker/Dockerfile -t matpower/matpower:7.1 .
 docker build --build-arg MP_SRC=github --build-arg BRANCH=8.0b1 --build-arg BASE_TAG=7.3.0 -f docker/Dockerfile -t matpower/matpower:8.0b1 .
 docker build --build-arg MP_SRC=github --build-arg BRANCH=8.0 --build-arg BASE_TAG=9.1.0 -f docker/Dockerfile -t matpower/matpower:8.0 .
+docker build --build-arg MP_SRC=github --build-arg BRANCH=8.1 --build-arg BASE_TAG=10.2.0 -f docker/Dockerfile -t matpower/matpower:8.1 .
 ## with current (latest) Octave version
 docker build --build-arg MP_SRC=github --build-arg BRANCH=7.0 --build-arg WARN=1 -f docker/Dockerfile -t matpower/matpower:7.0c .
 docker build --build-arg MP_SRC=github --build-arg BRANCH=7.1 --build-arg PATCH_MOST_TEST=1 -f docker/Dockerfile -t matpower/matpower:7.1c .
 docker build --build-arg MP_SRC=github --build-arg BRANCH=8.0b1 --build-arg PATCH_MOST_TEST=1 -f docker/Dockerfile -t matpower/matpower:8.0b1c .
+docker build --build-arg MP_SRC=github --build-arg BRANCH=8.1 --build-arg PATCH_MOST_TEST=1 -f docker/Dockerfile -t matpower/matpower:8.1c .
 
 ## Do not rebuild 8.0 with Octave 10.x or later. It has some typos that cause crashes
 ## in 10.x and later, but not 9.4.x and earlier
@@ -64,6 +66,8 @@ docker build --build-arg MP_SRC=github -f docker/Dockerfile -t matpower/matpower
 # 6.0 - 4.2.0 - 3.4+    use matpower/octave:4.2.2
 # 7.0 - 5.1.0 - 4.0+    use matpower/octave:5.1.0
 # 7.1 - 5.2.0 - 4.0+    use matpower/octave:5.2.0
+# 8.0 - 9.1.0 - 6.2     use matpower/octave:9.1.0
+# 8.1 - 10.2.0 - 6.2    use matpower/octave:10.2.0
 # 
 # # ## required by MATPOWER 5.0 with Octave x.x
 # warning('off', 'Octave:num-to-str');

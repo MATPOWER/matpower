@@ -10,8 +10,21 @@ For change history for [MP-Opt-Model][27], see [mp-opt-model/CHANGES.md](mp-opt-
 For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 
 
-since 8.0
----------
+Version 8.1 - *Jul 10, 2025
+---------------------------
+
+#### 7/10/25
+  - Release 8.1.
+
+#### 7/9/25
+  - Update to MP-Opt-Model 5.0, including:
+    - New `mp.opt_model` class replaces legacy `opt_model` and `mp_idx_manager`
+      classes with a new modeling API. *The legacy classes are retained for
+      backward compatibility.*
+    - Support for [Artelys Knitro][39] 15.x, which required changes to
+      the prior options handling.
+    - Enhancements listed previously, and much more. See [MP-Opt-Model 5.0
+      release notes][42] for details.
 
 #### 7/5/25
   - Add a new 59 bus Australian case.
@@ -25,6 +38,8 @@ since 8.0
     illustrate use of these new single-phase to three-phase conversion
     capabilities.
     *Thanks to Wilson González Vanegas.*
+  - New live script `convert_1p_to_3p_ex1.mlx` (in `lib/t`) illustrates
+    the use of the new single-phase to three-phase conversion capabilities.
   - Add a new distribution system case.
     *Thanks to Paul S. Moses.*
     - `case1197` – 1197-bus radial distribution case
@@ -39,8 +54,22 @@ since 8.0
   - Add support to `savecase()` for three-phase prototype data.
 
 #### 5/23/25
-  - Add support to `mpoption()` for HiGHS solver options.
-  - Include HiGHS solver, if available in DC OPF tests.
+  - Major update to MP-Opt-Model with:
+    - Support for quadratic constraints in `opt_model` and
+      quadratically-constrained quadratic programming (QCQP) problems,
+      including functions `qcqps_master()`, `qcqps_gurobi()`,
+      `qcqps_knitro()`, `qcqps_nlps()`, and more.
+      *Thanks to Wilson González Vanegas.*
+    - Support for [Artelys Knitro][39] solver for LP and QP problems,
+      including functions `qps_knitro()`, `knitrover()`, and
+      `artelys_knitro_options()`.
+      *Thanks to Wilson González Vanegas.*
+    - Support for the open-source [HiGHS][41] solver for LP, QP, and
+      MILP problems, including functions `miqps_highs()`, `qps_highs()`,
+      `have_feature_highs()`, `highsver()`, and `highs_options()`, based
+      on the [HiGHSMEX][41] interface.
+  - Add support to `mpoption()` for [HiGHS][41] solver options.
+  - Include [HiGHS][41] solver, if available in DC OPF tests.
 
 #### 5/15/25
   - Add prototype three-phase shunt model.
@@ -3507,3 +3536,7 @@ First Public Release – *Jun 25, 1997*
 [36]: https://github.com/MATPOWER/matpower/issues/210
 [37]: https://github.com/MATPOWER/matpower/issues/223
 [38]: https://github.com/MATPOWER/matpower/issues/256
+[39]: https://www.artelys.com/solvers/knitro/
+[40]: https://github.com/savyasachi/HiGHSMEX
+[41]: https://highs.dev
+[42]: https://github.com/MATPOWER/mp-opt-model/blob/master/docs/relnotes/MP-Opt-Model-Release-Notes-5.0.md

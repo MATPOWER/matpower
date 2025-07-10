@@ -75,13 +75,13 @@ Pre-release
   - Make updates for current version specific citations:
     - version number (3 places)
     - year
-    - latest version DOI, current is: 10.5281/zenodo.11212313
+    - latest version DOI, current is: 10.5281/zenodo.15856241
       - (update here each time)
     ... in the following places ...
     - CITATION file
     - Citing ... section of README.md
     - Citing ... section of User's Manual
-    - Citing ... section of website (https://matpower.org/citing/)
+    - Citing ... section of website (https://matpower.org/citing/), (use code editor)
   - Make updates for non-version specific citations:
     - search everywhere for 10.5281/zenodo.3236519 and update year
       - MATPOWER User's Manual
@@ -93,7 +93,7 @@ Pre-release
   - Make updates for current version specific citations:
     - version number (2 places)
     - year
-    - latest version DOI, current is: 10.5281/zenodo.11212330
+    - latest version DOI, current is: 10.5281/zenodo.15857742
       - (update here each time)
     ... in the following places ...
     - CITATION file
@@ -140,11 +140,11 @@ Pre-release
 Release
 -------
 - Merge latest `prep-for-release` into `master`.
-- Tag with version number, e.g. `8.0`.
+- Tag with version number, e.g. `8.1`.
 - Push `master` to GitHub.
 - create archive with MATPOWER-Extras
   - `cd matpower/untracked/`
-  - `ship_it.sh 8.0`
+  - `ship_it.sh 8.1`
   - (obsolete) copy resulting `matpower#.#.zip` file to
     `https://matpower.org/downloads/#.#/`
 - upload to Zenodo and finish entry for "New Version"
@@ -224,10 +224,10 @@ Post-release
 - update web site
 - add official release version on local machine
   - `cd /usr/local/matpower/dist`
-  - `git clone --branch 8.0 git@github.com:MATPOWER/matpower.git matpower-version8_0`
+  - `git clone --branch 8.1 git@github.com:MATPOWER/matpower.git matpower-version8_1`
   - `cd /usr/local/matpower/dist/matpower-version8_0`
   - `rm -rf .git`
-  - `git clone --branch 8.0 git@github.com:MATPOWER/matpower-extras.git extras`
+  - `git clone --branch 8.1 git@github.com:MATPOWER/matpower-extras.git extras`
   - `cd extras`
   - `rm -rf .git`
 
