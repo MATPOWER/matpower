@@ -40,6 +40,14 @@ This notation is consistent with what was used in the MP-Element technical note,
 
    * - :math:`\diag{\cvec{a}}`
      - diagonal matrix with vector :math:`\cvec{a}` on the diagonal
+   * - :math:`\{\rmat{A}\}_{\times n}`
+     - the set :math:`\{\rmat{A}, \rmat{A}, \dots, \rmat{A}\}` where :math:`\rmat{A}` is repeated :math:`n` times
+   * - :math:`\mathcal{A} = \{\rmat{A}_i\}_{i=1}^n`
+     - set of :math:`n` matrices (or vectors) indexed by :math:`i`
+   * - :math:`\textrm{diag}(\rmat{A}) = \trans{\left[a_{11} \ \dots \ a_{nn}\right]}`
+     - matrix-to-vector diagonal operator
+   * - :math:`\diag{\mathcal{A}}`
+     - block diagonal matrix with the set :math:`\mathcal{A}` of matrices or vectors on the block diagonal
    * - :math:`\trans{\cmat{A}}`
      - (non-conjugate) transpose of matrix :math:`\cmat{A}`
    * - :math:`\conj{\cscal{a}}`, :math:`\conj{\cvec{a}}`, :math:`\conj{\cmat{A}}`
