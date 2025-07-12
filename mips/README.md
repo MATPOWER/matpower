@@ -36,6 +36,7 @@ of MATLAB or Octave, including setting up your MATLAB/Octave path.
 2.  Add the following directories to your MATLAB or Octave path:
     *   `<MIPS>/lib`
     *   `<MIPS>/lib/t`
+    *   `<MIPS>/examples`
 
 3.  At the MATLAB/Octave prompt, type `test_mips` to run the test suite and
     verify that MIPS is properly installed and functioning. The result
@@ -103,7 +104,7 @@ For version 1.5.2, use:
 >   R. D. Zimmerman, H. Wang. *MATPOWER Interior Point Solver (MIPS)
     User's Manual, Version 1.5.2*. 2025. [Online].
     Available: https://matpower.org/docs/MIPS-manual-1.5.2.pdf  
-    doi: [10.5281/zenodo.15815754](https://doi.org/10.5281/zenodo.15815754)
+    doi: [10.5281/zenodo.15871404](https://doi.org/10.5281/zenodo.15871404)
 
 For a version non-specific citation, use the following citation and DOI,
 with *\<YEAR\>* replaced by the year of the most recent release:

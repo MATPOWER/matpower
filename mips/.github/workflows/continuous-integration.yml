@@ -50,7 +50,7 @@ jobs:
         echo "MPTEST_PATH=$HOME/mptest/lib:$HOME/mptest/lib/t" >> $GITHUB_ENV
 
     - name: Set MIPS_PATH
-      run: echo "MIPS_PATH=${GITHUB_WORKSPACE}/lib:${GITHUB_WORKSPACE}/lib/t:${MPTEST_PATH}" >> $GITHUB_ENV
+      run: echo "MIPS_PATH=${GITHUB_WORKSPACE}/lib:${GITHUB_WORKSPACE}/lib/t:${GITHUB_WORKSPACE}/examples:${MPTEST_PATH}" >> $GITHUB_ENV
 
     - name: Test MP-Test
       run: env $ML_PATHVAR=$MPTEST_PATH $ML_CMD "mptestver; test_mptest(0,1)"

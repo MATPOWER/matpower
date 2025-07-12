@@ -40,7 +40,7 @@ Pre-release
   - Make updates for current version specific citations:
     - version number (3 places)
     - year
-    - latest version DOI, current is: 10.5281/zenodo.11176870
+    - latest version DOI, current is: 10.5281/zenodo.15871404
       - (update here each time)
     ... in the following places ...
     - CITATION file
@@ -53,6 +53,10 @@ Pre-release
       - search citations in all other projects being updated simultaneously
         - MATPOWER-manual.tex
         - MP-Opt-Model-manual.tex
+    - search everywhere for 10.5281/zenodo.3236519 and update year (MATPOWER User's Manual)
+      - User's Manual
+    - search everywhere for 10.5281/zenodo.3236535 and update year (MATPOWER Software)
+      - User's Manual
 - Create `MIPS-manual.pdf` from `MIPS-manual.tex` and move to `docs`.
 - Add release notice with date and version in `CHANGES.md`.
 - Commit all changes to `prep-for-release`.
@@ -78,7 +82,7 @@ Pre-release
 Release
 -------
 - Merge latest `prep-for-release` into `master`.
-- Tag with version number, e.g. `1.5`.
+- Tag with version number, e.g. `1.5.2`.
 - Push `master` to GitHub.
 - Publish new release on GitHub: https://github.com/MATPOWER/mips/releases/new
   - use (possibly shortened) contents of `docs/relnotes/MIPS-Release-Notes-#.#.md`

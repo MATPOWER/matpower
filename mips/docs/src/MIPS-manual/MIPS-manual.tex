@@ -228,7 +228,7 @@
 \title{\mipsname{}\\\mips{} \mipsver{}\\
 User's Manual}
 \author{Ray~D.~Zimmerman \and Hongye~Wang}
-\date{July 5, 2025} % comment this line to display the current date
+\date{July 12, 2025} % comment this line to display the current date
 %\date{December 14, 2011\thanks{Second revision. First revision was December 13, 2011}} % comment this line to display the current date
 
 %%% BEGIN DOCUMENT
@@ -328,7 +328,7 @@ use:
 \begin{quote}
 \footnotesize
 R.~D. Zimmerman, H.~Wang. \mipsname{} (\mips{}) User's Manual, Version 1.5.2. 2025. [Online]. Available: \url{https://matpower.org/docs/MIPS-manual-1.5.2.pdf}\\
-\doi{10.5281/zenodo.15815754}
+\doi{10.5281/zenodo.15871404}
 \end{quote}
 For a version non-specific citation, use the following citation and DOI,
 with \emph{\textless{}YEAR\textgreater{}} replaced by the year of the most recent release:
@@ -392,6 +392,7 @@ We will use \mipspath{} to denote the path to this directory.
 \begin{itemize}
 \item \mipspath{/lib} -- core \mips{} functions
 \item \mipspath{/lib/t} -- test scripts for \mips{}
+\item \mipspath{/examples} -- \mips{} examples
 \end{itemize}
 \item At the \matlab{}/Octave prompt, type \code{test\_mips} to run the test suite and verify that \mips{} is properly installed and functioning.\footnote{The tests require a functioning installation of \mptestlink{}.} The result should resemble the following:
 %\clearpage
@@ -586,7 +587,7 @@ The use of \code{nargout} in \code{f\_fcn} and \code{gh\_fcn} is recommended so 
 \subsection{Example 1}
 \label{sec:ex1}
 
-The following code, included as \code{mips\_example1.m} in \mipspath{lib/t}, shows a simple example of using \code{mips} to solve a 2-dimensional unconstrained optimization of Rosenbrock's ``banana'' function\footnote{\url{https://en.wikipedia.org/wiki/Rosenbrock_function}}
+The following code, included as \code{mips\_example1.m} in \mipspath{examples}, shows a simple example of using \code{mips} to solve a 2-dimensional unconstrained optimization of Rosenbrock's ``banana'' function\footnote{\url{https://en.wikipedia.org/wiki/Rosenbrock_function}}
 \begin{equation}
 f(x) = 100 (x_2-x_1^2)^2+(1-x_1)^2.
 \end{equation}
@@ -681,7 +682,7 @@ fprintf('   %g\n', lambda.ineqnonlin);
 \end{Code}
 \begin{Code}
 >> mips_example2
-MATPOWER Interior Point Solver -- MIPS, Version 1.5.2, 05-Jul-2025
+MATPOWER Interior Point Solver -- MIPS, Version 1.5.2, 12-Jul-2025
  (using built-in linear solver)
  it    objective   step size   feascond     gradcond     compcond     costcond  
 ----  ------------ --------- ------------ ------------ ------------ ------------
@@ -707,7 +708,7 @@ lambda.ineqnonlin =
    0
    0.707107
 \end{Code}
-This example can be found in \code{mips\_example2.m}. More example problems for \code{mips} can be found in \code{t\_mips.m}, both in \mipspath{lib/t}.
+This example can be found in \code{mips\_example2.m} in \mipspath{examples}. More example problems for \code{mips} can be found in \code{t\_mips.m} in \mipspath{lib/t}.
 
 \subsection{Primal-Dual Interior Point Algorithm}
 
@@ -1093,6 +1094,9 @@ name & description \\
 \code{~~MIPS-manual.pdf}	& \mipsman{}	\\
 \code{~~src/MIPS-manual/}	&	\\
 \code{~~~~MIPS-manual.tex}	& LaTeX source for \mips{} User's Manual	\\
+\code{examples/}	& 	\\
+\code{~~~~mips\_example1}	& implements example 1 from \mips{} User's Manual	\\
+\code{~~~~mips\_example2}	& implements example 2 from \mips{} User's Manual	\\
 \code{lib/}	& 	\\
 \code{~~have\_feature\_lu\_vec}\tnote{*}	& support for \code{lu(..., \textquotesingle{}vector\textquotesingle{})} syntax	\\
 \code{~~have\_feature\_pardiso\_legacy}\tnote{*}	& \pardiso{} v5, individual MEX files for factor, solve, etc.	\\
@@ -1103,8 +1107,6 @@ name & description \\
 \code{~~mplinsolve}	& common linear system solver interface, used by \mips{}	\\
 \code{~~qps\_mips}	& common QP/LP solver interface to \mips{}-based solver	\\
 \code{~~t/}	& 	\\
-\code{~~~~mips\_example1}	& implements example 1 from \mips{} User's Manual	\\
-\code{~~~~mips\_example2}	& implements example 2 from \mips{} User's Manual	\\
 \code{~~~~test\_mips}	& runs full \mips{} test suite	\\
 \code{~~~~t\_mips}	& runs tests for \mips{} NLP solver	\\
 \code{~~~~t\_mips\_pardiso}	& runs tests for \mips{} NLP solver, using PARDISO as linear solver\tnote{\dag}	\\
@@ -1346,7 +1348,7 @@ The \href{https://matpower.org/docs/MIPS-manual-1.5.1.pdf}{\mips{} 1.5.1 User's 
     \code{mu} (issue \#4).
 \end{itemize}
 
-\subsection{Version 1.5.2 -- released Jul 5, 2025}
+\subsection{Version 1.5.2 -- released Jul 12, 2025}
 \label{app:v152}
 
 The \href{https://matpower.org/docs/MIPS-manual-1.5.2.pdf}{\mips{} 1.5.2 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MIPS-manual-1.5.2.pdf}}
@@ -1413,7 +1415,7 @@ R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez, and R.~J. Thomas, ``\matpower{}: Ste
 \doi{10.1109/TPWRS.2010.2051168}
 
 \bibitem{matpower}
-R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez (2024). \matpower{}\\~
+R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez (2025). \matpower{}\\~
 [Software]. Available: \url{https://matpower.org}\\
 \doi{10.5281/zenodo.3236535}
 

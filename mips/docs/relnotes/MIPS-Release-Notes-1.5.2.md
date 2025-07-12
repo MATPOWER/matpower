@@ -1,7 +1,7 @@
 What's New in MIPS 1.5.2
 ------------------------
 
-#### Released July 5, 2025
+#### Released July 12, 2025
 
 Below is a summary of the changes since version 1.5.1 of MIPS. See the
 [`CHANGES.md`][1] file for all the gory details. For release notes for

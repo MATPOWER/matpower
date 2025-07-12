@@ -1,1 +1,1 @@
-../../../../../lib/t/mips_example1.m
+../../../../../examples/mips_example1.m
