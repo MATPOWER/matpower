@@ -1,1 +1,1 @@
-../../../../../lib/t/most_ex4_dcopf_ss.m
+../../../../../examples/most_ex4_dcopf_ss.m

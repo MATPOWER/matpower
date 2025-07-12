@@ -72,6 +72,7 @@ resulting `most` directory. Then add the following directories to your
 MATLAB or Octave path:
  *  `<MOST>/lib`
  *  `<MOST>/lib/t`
+ *  `<MOST>/examples`
 
 It is important that they appear before MATPOWER in your path if you want
 to use this version of MOST, rather than the one included with MATPOWER.
@@ -146,7 +147,7 @@ appropriate. For version 1.3.1, use:
 >   R. D. Zimmerman, C. E. Murillo-Sanchez. *MATPOWER Optimal Scheduling
     Tool (MOST) User's Manual, Version 1.3.1*. 2025. [Online].
     Available: https://matpower.org/docs/MOST-manual-1.3.1.pdf  
-    doi: [10.5281/zenodo.15829809](https://doi.org/10.5281/zenodo.15829809)
+    doi: [10.5281/zenodo.15871471](https://doi.org/10.5281/zenodo.15871471)
 
 For a version non-specific citation, use the following citation and DOI,
 with *\<YEAR\>* replaced by the year of the most recent release:

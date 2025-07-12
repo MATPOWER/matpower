@@ -62,7 +62,7 @@ Pre-release
   - Make updates for current version specific citations:
     - version number (3 places)
     - year
-    - latest version DOI, current is: 10.5281/zenodo.15829809
+    - latest version DOI, current is: 10.5281/zenodo.15871471
       - (update here each time)
     ... in the following places ...
     - CITATION file
@@ -75,6 +75,8 @@ Pre-release
       - search citations in all other projects being updated simultaneously
         - MATPOWER User's Manual
     - search everywhere for 10.5281/zenodo.3236519 and update year (MATPOWER User's Manual)
+      - User's Manual
+    - search everywhere for 10.5281/zenodo.3236535 and update year (MATPOWER Software)
       - User's Manual
 - Copy latest `MATPOWER-manual.aux` to `docs/src/MOST-manual` for
   `\externaldocument`
@@ -103,7 +105,7 @@ Pre-release
 Release
 -------
 - Merge latest `prep-for-release` into `master`.
-- Tag with version number, e.g. `1.3`.
+- Tag with version number, e.g. `1.3.1`.
 - Push `master` to GitHub.
 - Publish new release on GitHub: https://github.com/MATPOWER/most/releases/new
   - use (possibly shortened) contents of `docs/relnotes/MOST-Release-Notes-#.#.md`

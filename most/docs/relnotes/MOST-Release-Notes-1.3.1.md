@@ -1,7 +1,7 @@
 What's New in MOST 1.3.1
 ------------------------
 
-#### Released Jul 7, 2025
+#### Released Jul 12, 2025
 
 Below is a summary of the changes since version 1.3 of MOST. See the
 [`CHANGES.md`][1] file for all the gory details. For release notes for

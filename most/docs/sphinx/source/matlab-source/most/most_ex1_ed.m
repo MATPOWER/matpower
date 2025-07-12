@@ -1,1 +1,1 @@
-../../../../../lib/t/most_ex1_ed.m
+../../../../../examples/most_ex1_ed.m

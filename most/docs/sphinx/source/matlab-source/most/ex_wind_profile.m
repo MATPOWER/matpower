@@ -1,1 +1,1 @@
-../../../../../lib/t/ex_wind_profile.m
+../../../../../examples/ex_wind_profile.m

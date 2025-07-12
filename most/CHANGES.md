@@ -2,11 +2,12 @@ Change history for MOST
 =======================
 
 
-Version 1.3.1 - *Jul 7, 2025*
------------------------------
+Version 1.3.1 - *Jul 12, 2025*
+------------------------------
 
-#### 7/7/25
+#### 7/12/25
   - Release 1.3.1.
+  - Move examples from `lib/t` to their own `examples` directory.
 
 #### 5/23/25
   - Include [HiGHS][13] solver (via [HiGHSMEX][14] interface), if

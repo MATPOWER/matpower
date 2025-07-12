@@ -1,1 +1,1 @@
-../../../../../lib/t/ex_load_profile.m
+../../../../../examples/ex_load_profile.m

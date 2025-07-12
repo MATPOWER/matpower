@@ -1,1 +1,1 @@
-../../../../../lib/t/most_ex6_uc.m
+../../../../../examples/most_ex6_uc.m

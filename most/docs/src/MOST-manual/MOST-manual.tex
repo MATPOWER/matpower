@@ -240,7 +240,7 @@ User's Manual}
 %%% BEFORE PUBLISHING A NEW VERSION:
 %%%   Update the publication year for \bibitem{matpower} and
 %%%   \bibitem{matpower_manual} to the year of the latest release
-\date{July 7, 2025} % comment this line to display the current date
+\date{July 12, 2025} % comment this line to display the current date
 %\date{December 14, 2011\thanks{Second revision. First revision was December 13, 2011}} % comment this line to display the current date
 
 %%% BEGIN DOCUMENT
@@ -336,7 +336,7 @@ For version 1.3.1, use:
 \begin{quote}
 \footnotesize
 R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez. \mostname{} (\most{}) User's Manual, Version 1.3.1. 2025. [Online]. Available: \url{https://matpower.org/docs/MOST-manual-1.3.1.pdf}\\
-\doi{10.5281/zenodo.15829809}
+\doi{10.5281/zenodo.15871471}
 \end{quote}
 For a version non-specific citation, use the following citation and DOI,
 with \emph{\textless{}YEAR\textgreater{}} replaced by the year of the most recent release:
@@ -392,7 +392,7 @@ But even for continuous LP and QP problems, these solvers will offer much better
 The preferred method of installation is simply to install \matpower{}, which
 is a prerequisite for \most{} and also includes its own copy of \most{}.
 
-If you have followed the directions for installing \matpower{} found in Section~\ref{MUM-sec:installation} of the \mum{}, then \most{} should already be installed in the \mostpath{} directory and the appropriate paths\footnote{To use \most{} your \matlab{}/Octave path must include \mostpath{/lib} and, to run the tests, \mostpath{/lib/t}.} added to your \matlab{}/Octave path.
+If you have followed the directions for installing \matpower{} found in Section~\ref{MUM-sec:installation} of the \mum{}, then \most{} should already be installed in the \mostpath{} directory and the appropriate paths\footnote{To use \most{} your \matlab{}/Octave path must include \mostpath{/lib} and, to run the tests and examples, \mostpath{/examples} and \mostpath{/lib/t}.} added to your \matlab{}/Octave path.
 
 To run the test suite and verify that \most{} is properly installed and functioning, at the \matlab{}/Octave prompt, type \code{test\_most} . The result should resemble the following, possibly including extra tests, depending on the availablility of optional packages.
 % UPDATE BEFORE RELEASE
@@ -423,6 +423,7 @@ resulting \code{most} directory. Then add the following directories to your \mat
 \setlength{\parskip}{0pt}
 \item \mostpathb{/lib} -- core \most{} functions
 \item \mostpathb{/lib/t} -- test scripts for \most{}
+\item \mostpathb{/examples} -- \most{} examples
 \end{itemize}
 It is important that they appear before \matpower{} in your path if you want
 to use this version of \most{}, rather than the one included with \matpower{}.
@@ -2577,7 +2578,7 @@ The examples in this section are based on the simple three bus model summarized 
   \label{fig:threebus}
 \end{figure}
 
-The code for the following examples can be found in \mostpath{/lib/t} in the files whose names begin with \code{most\_ex}, such as \code{most\_ex1\_ed.m}.
+The code for the following examples can be found in \mostpath{/examples}.
 For all of the following examples, assume that \code{mpopt} is a \matpower{} options struct and that \code{define\_constants} has already been executed.
 
 \begin{Code}
@@ -3207,21 +3208,20 @@ name & description \\
 \end{table}
 
 \clearpage
-\subsection{Automated Test Suite}
+\subsection{\most{} Examples}
 
 \begin{table}[!ht]
 %\renewcommand{\arraystretch}{1.2}
 \centering
 \begin{threeparttable}
-\caption{\most{} Test and Example Data}
+\caption{\most{} Examples and Example Data}
 \label{tab:mosttestdata}
 \footnotesize
 \begin{tabular}{ll}
 \toprule
 name & description \\
 \midrule
-\code{lib/t/}	& 	\\
-\code{~~c118swf}	& 118-bus test case, used by \code{t\_most\_w\_ds}	\\
+\code{examples/}	& 	\\
 \code{~~ex\_case3a}	& sample 3-bus \matpower{} case (version $a$)	\\
 \code{~~ex\_case3b}	& sample 3-bus \matpower{} case (version $b$)	\\
 \code{~~ex\_contab}	& sample contingency table	\\
@@ -3243,6 +3243,27 @@ name & description \\
 \code{~~most\_ex5\_mpopf}	& Tutorial Example 5, see Section~\ref{sec:tutex5} 	\\
 \code{~~most\_ex6\_uc}	& Tutorial Example 6, see Section~\ref{sec:tutex6} 	\\
 \code{~~most\_ex7\_suc}	& Tutorial Example 7, see Section~\ref{sec:tutex7} 	\\
+\bottomrule
+\end{tabular}
+\end{threeparttable}
+\end{table}
+
+\clearpage
+\subsection{Automated Test Suite}
+
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
+\caption{\most{} Test Data}
+\label{tab:mosttestdata}
+\footnotesize
+\begin{tabular}{ll}
+\toprule
+name & description \\
+\midrule
+\code{lib/t/}	& 	\\
+\code{~~c118swf}	& 118-bus test case, used by \code{t\_most\_w\_ds}	\\
 \code{~~t\_case3\_most}	& 3-bus \matpower{} test case	\\
 \code{~~t\_case30\_most}	& 30-bus \matpower{} test case	\\
 \code{~~t\_most\_mpopf\_soln.mat}	& solution data for \code{t\_most\_mpopf}	\\
@@ -3459,7 +3480,7 @@ The \href{https://matpower.org/docs/MOST-manual-1.3.pdf}{\most{} 1.3 User's Manu
 \end{itemize}
 
 
-\subsection{Version 1.3.1 -- released Jul 7, 2025}
+\subsection{Version 1.3.1 -- released Jul 12, 2025}
 \label{app:v131}
 
 The \href{https://matpower.org/docs/MOST-manual-1.3.1.pdf}{\most{} 1.3.1 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MOST-manual-1.3.1.pdf}}
@@ -3521,7 +3542,7 @@ R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez, and R.~J. Thomas,
 \doi{10.1109/TPWRS.2010.2051168}
 
 \bibitem{matpower}
-R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez (2024). \matpower{}\\~
+R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez (2025). \matpower{}\\~
 [Software]. Available: \url{https://matpower.org}\\
 \doi{10.5281/zenodo.3236535}
 

@@ -1,1 +1,1 @@
-../../../../../lib/t/ex_contab.m
+../../../../../examples/ex_contab.m

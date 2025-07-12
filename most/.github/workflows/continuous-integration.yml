@@ -54,19 +54,19 @@ jobs:
     - name: Install MIPS, Set MIPS_PATH
       run: |
         git clone --depth=1 https://github.com/MATPOWER/mips.git $HOME/mips
-        echo "MIPS_PATH=$HOME/mips/lib:$HOME/mips/lib/t:${MPTEST_PATH}" >> $GITHUB_ENV
+        echo "MIPS_PATH=$HOME/mips/lib:$HOME/mips/lib/t:$HOME/mips/examples:${MPTEST_PATH}" >> $GITHUB_ENV
 
     - name: Install MP-Opt-Model, Set MP_OPT_MODEL_PATH
       run: |
         git clone --depth=1 https://github.com/MATPOWER/mp-opt-model.git $HOME/mp-opt-model
-        echo "MP_OPT_MODEL_PATH=$HOME/mp-opt-model/lib:$HOME/mp-opt-model/lib/t:${MIPS_PATH}" >> $GITHUB_ENV
+        echo "MP_OPT_MODEL_PATH=$HOME/mp-opt-model/lib:$HOME/mp-opt-model/lib/t:$HOME/mp-opt-model/examples:${MIPS_PATH}" >> $GITHUB_ENV
 
     - name: Install MATPOWER
       run: |
         git clone --depth=1 https://github.com/MATPOWER/matpower.git $HOME/matpower
         env $ML_PATHVAR=$HOME/matpower $ML_CMD "install_matpower(0,1,1)"
         ln -s ./startup.m .octaverc
-        echo "TEST_PATH=${GITHUB_WORKSPACE}/lib:${GITHUB_WORKSPACE}/lib/t:${MP_OPT_MODEL_PATH}" >> $GITHUB_ENV
+        echo "TEST_PATH=${GITHUB_WORKSPACE}/lib:${GITHUB_WORKSPACE}/lib/t:${GITHUB_WORKSPACE}/examples:${MP_OPT_MODEL_PATH}" >> $GITHUB_ENV
 
     - name: Test MOST
       run: env $ML_PATHVAR=$TEST_PATH $ML_CMD "mpver; test_most(0,1)"

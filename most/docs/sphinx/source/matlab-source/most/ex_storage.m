@@ -1,1 +1,1 @@
-../../../../../lib/t/ex_storage.m
+../../../../../examples/ex_storage.m

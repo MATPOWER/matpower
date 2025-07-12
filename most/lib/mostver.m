@@ -16,7 +16,7 @@ function rv = mostver(varargin)
 % See also mpver.
 
 %   MOST
-%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2025, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.
@@ -26,7 +26,7 @@ function rv = mostver(varargin)
 v = struct( 'Name',     'MOST', ...
             'Version',  '1.3.1', ...
             'Release',  '', ...
-            'Date',     '07-Jul-2025' );
+            'Date',     '12-Jul-2025' );
 if nargout > 0
     if nargin > 0
         rv = v;

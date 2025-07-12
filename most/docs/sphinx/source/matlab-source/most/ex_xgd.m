@@ -1,1 +1,1 @@
-../../../../../lib/t/ex_xgd.m
+../../../../../examples/ex_xgd.m

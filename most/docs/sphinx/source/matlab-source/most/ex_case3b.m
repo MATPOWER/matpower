@@ -1,1 +1,1 @@
-../../../../../lib/t/ex_case3b.m
+../../../../../examples/ex_case3b.m

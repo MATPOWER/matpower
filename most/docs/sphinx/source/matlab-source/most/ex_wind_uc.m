@@ -1,1 +1,1 @@
-../../../../../lib/t/ex_wind_uc.m
+../../../../../examples/ex_wind_uc.m

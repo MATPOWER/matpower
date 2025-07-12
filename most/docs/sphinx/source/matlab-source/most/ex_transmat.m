@@ -1,1 +1,1 @@
-../../../../../lib/t/ex_transmat.m
+../../../../../examples/ex_transmat.m

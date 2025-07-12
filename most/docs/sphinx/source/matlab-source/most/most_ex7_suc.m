@@ -1,1 +1,1 @@
-../../../../../lib/t/most_ex7_suc.m
+../../../../../examples/most_ex7_suc.m
