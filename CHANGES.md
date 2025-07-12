@@ -13,8 +13,11 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Version 8.1 - *Jul 10, 2025
 ---------------------------
 
-#### 7/10/25
-  - Release 8.1.
+#### 7/12/25
+  - Update live script `convert_1p_to_3p_ex1.mlx` to work on older
+    versions of MATLAB, and move from `lib/t` to its own `examples`
+    directory, which is now included in the paths added by
+    `install_matpower`.
 
 #### 7/9/25
   - Update to MP-Opt-Model 5.0, including:
@@ -34,12 +37,11 @@ Version 8.1 - *Jul 10, 2025
 #### 7/4/25
   - New utility, `mp.case_utils.convert_1p_to_3p()`, converts a standard
     single-phase MATPOWER case to an equivalent balanced three-phase
-    case. Includes a live script `lib/t/convert_1p_to_3p_ex1.mlx` to
-    illustrate use of these new single-phase to three-phase conversion
-    capabilities.
+    case.
     *Thanks to Wilson González Vanegas.*
   - New live script `convert_1p_to_3p_ex1.mlx` (in `lib/t`) illustrates
     the use of the new single-phase to three-phase conversion capabilities.
+    *Thanks to Wilson González Vanegas.*
   - Add a new distribution system case.
     *Thanks to Paul S. Moses.*
     - `case1197` – 1197-bus radial distribution case

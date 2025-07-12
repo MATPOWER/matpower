@@ -420,7 +420,7 @@ See the live script |convert_1p_to_3p_ex1|_ for an illustration of using this ut
 .. |t_case3p_f| replace:: :file:`t_case3p_f.m`
 .. |t_case3p_g| replace:: :file:`t_case3p_g.m`
 .. |t_case3p_h| replace:: :file:`t_case3p_h.m`
-.. |convert_1p_to_3p_ex1| replace:: :file:`lib/t/convert_1p_to_3p_ex1.mlx`
+.. |convert_1p_to_3p_ex1| replace:: :file:`examples/convert_1p_to_3p_ex1.mlx`
 
 .. [#] https://sourceforge.net/p/electricdss/code/HEAD/tree/trunk/Distrib/IEEETestCases/4Bus-YY-Bal/4Bus-YY-Bal.DSS
 .. _t_run_mp_3p_m: https://github.com/MATPOWER/matpower/blob/master/lib/t/t_run_mp_3p.m
@@ -435,4 +435,4 @@ See the live script |convert_1p_to_3p_ex1|_ for an illustration of using this ut
 .. _t_case3p_f: https://github.com/MATPOWER/matpower/blob/master/lib/t/t_case3p_f.m
 .. _t_case3p_g: https://github.com/MATPOWER/matpower/blob/master/lib/t/t_case3p_g.m
 .. _t_case3p_h: https://github.com/MATPOWER/matpower/blob/master/lib/t/t_case3p_h.m
-.. _convert_1p_to_3p_ex1: https://github.com/MATPOWER/matpower/blob/master/lib/t/convert_1p_to_3p_ex1.mlx
+.. _convert_1p_to_3p_ex1: https://github.com/MATPOWER/matpower/blob/master/examples/convert_1p_to_3p_ex1.mlx

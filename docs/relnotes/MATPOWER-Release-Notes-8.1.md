@@ -47,9 +47,9 @@ previous versions, see Appendix H of the [MATPOWER User's Manual][2].
 
 #### New Documentation:
 Three live scripts illustrate the use of new features.
-- `convert_1p_to_3p_ex1.mlx` (in `lib/t`) illustrates the use of the new single-phase to three-phase conversion capabilities.
-- `milp_example1.mlx` (in `mp-opt-model/lib/t`) illustrates the use of MP-Opt-Model and the new `mp.opt_model` class to build and solve an optimization (MILP) model.
-- `qcqp_example1.mlx` (in `mp-opt-model/lib/t`) illustrates the new quadratic constraint features and two methods of building and solving a quadratically-constrained quadratic programming (QCQP) model.
+- `convert_1p_to_3p_ex1.mlx` (in `examples`) illustrates the use of the new single-phase to three-phase conversion capabilities.
+- `milp_example1.mlx` (in `mp-opt-model/examples`) illustrates the use of MP-Opt-Model and the new `mp.opt_model` class to build and solve an optimization (MILP) model.
+- `qcqp_example1.mlx` (in `mp-opt-model/examples`) illustrates the new quadratic constraint features and two methods of building and solving a quadratically-constrained quadratic programming (QCQP) model.
 
 
 #### Other Improvements:
