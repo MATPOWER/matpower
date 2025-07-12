@@ -18,6 +18,8 @@ Version 8.1 - *Jul 10, 2025
     versions of MATLAB, and move from `lib/t` to its own `examples`
     directory, which is now included in the paths added by
     `install_matpower`.
+  - Add `examples/cpf_example.m` script to generate CPF nose-curve
+    Figure 5-1 in the User's Manual.
 
 #### 7/9/25
   - Update to MP-Opt-Model 5.0, including:
