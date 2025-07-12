@@ -1,1 +1,1 @@
-../../../../../lib/t/pne_ex1.m
+../../../../../examples/pne_ex1.m

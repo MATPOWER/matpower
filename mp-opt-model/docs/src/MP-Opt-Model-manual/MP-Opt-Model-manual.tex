@@ -245,7 +245,7 @@
 %\title{\hl{--- DRAFT  ---}\\\hl{\em do not distribute}\\~\\{\huge \bfseries \mpomname{} User's Manual } \\ ~ \\ \LARGE Version \mpomver{}\\
 \title{{\huge \bfseries \mpomname{} User's Manual } \\ ~ \\ \LARGE Version \mpomver{}}
 \author{Ray~D.~Zimmerman}
-\date{July 9, 2025} % comment this line to display the current date
+\date{July 12, 2025} % comment this line to display the current date
 %\date{May 8, 2020\thanks{Second revision. First revision was April 29, 2020}} % comment this line to display the current date
 
 %%% BEGIN DOCUMENT
@@ -335,7 +335,7 @@ The citation and DOI can be version-specific or general, as appropriate. For ver
 \begin{quote}
 \footnotesize
 R.~D. Zimmerman. \mpomname{} User's Manual, Version 5.0. 2025. [Online]. Available: \url{https://matpower.org/docs/MP-Opt-Model-manual-5.0.pdf}\\
-\doi{10.5281/zenodo.15851564}
+\doi{10.5281/zenodo.15871431}
 \end{quote}
 For a version non-specific citation, use the following citation and DOI,
 with \emph{\textless{}YEAR\textgreater{}} replaced by the year of the most recent release:
@@ -405,6 +405,7 @@ We will use \mpompath{} to denote the path to this directory.
 \begin{itemize}
 \item \mpompath{/lib} -- core \mpom{} functions
 \item \mpompath{/lib/t} -- test scripts for \mpom{}
+\item \mpompath{/examples} -- \mpom{} examples
 \end{itemize}
 \item At the \matlab{}/Octave prompt, type \code{test\_mp\_opt\_model} to run the test suite and verify that \mpom{} is properly installed and functioning.\footnote{The tests require functioning installations of \mptestlink{} and \mipslink{}.} The result should resemble the following:
 %\clearpage
@@ -512,7 +513,7 @@ u = [ b1;  u2  ];
 [x, f, exitflag, output, lambda] = qps_master(Q, [], A, l, u, xmin, xmax, x0);
 \end{Code}
 
-The above examples are included in \mpompath{lib/t/qp\_ex1.m} along with some commands to print the results, yielding the output below for each approach:
+The above examples are included in \mpompath{examples/qp\_ex1.m} along with some commands to print the results, yielding the output below for each approach:
 
 \begin{Code}
 f = 1.875      exitflag = 1
@@ -1229,7 +1230,7 @@ The \code{nlps\_master} function is simply a master wrapper around corresponding
 \subsubsection{NLP Example 1}
 \label{sec:nlp_ex1}
 
-The following code, included as \code{nlps\_master\_ex1.m} in \mpompath{lib/t}, shows a simple example of using \code{nlps\_master} to solve a 2-dimensional unconstrained optimization of Rosenbrock's ``banana'' function\footnote{\url{https://en.wikipedia.org/wiki/Rosenbrock_function}}
+The following code, included as \code{nlps\_master\_ex1.m} in \mpompath{examples}, shows a simple example of using \code{nlps\_master} to solve a 2-dimensional unconstrained optimization of Rosenbrock's ``banana'' function\footnote{\url{https://en.wikipedia.org/wiki/Rosenbrock_function}}
 \begin{equation}
 f(x) = 100 (x_2-x_1^2)^2+(1-x_1)^2.
 \end{equation}
@@ -1326,7 +1327,7 @@ fprintf('   %g\n', lambda.ineqnonlin);
 \end{Code}
 \begin{Code}
 >> nlps_master_ex2
-MATPOWER Interior Point Solver -- MIPS, Version 1.5.2, 05-Jul-2025
+MATPOWER Interior Point Solver -- MIPS, Version 1.5.2, 12-Jul-2025
  (using built-in linear solver)
  it    objective   step size   feascond     gradcond     compcond     costcond  
 ----  ------------ --------- ------------ ------------ ------------ ------------
@@ -1387,7 +1388,7 @@ lambda.ineqnonlin =
 \end{Code}
 
 
-This example can be found in \code{nlps\_master\_ex2.m}. More example problems for \code{nlps\_master} can be found in \code{t\_nlps\_master.m}, both in \mpompath{lib/t}.
+This example can be found in \code{nlps\_master\_ex2.m} in \mpompath{examples}. More example problems for \code{nlps\_master} can be found in \code{t\_nlps\_master.m} in \mpompath{lib/t}.
 
 
 
@@ -1527,7 +1528,7 @@ There is also a more general function named \code{nleqs\_core} which takes an ar
 \subsubsection{NLEQ Example 1}
 \label{sec:nleq_ex1}
 
-The following code, included as \code{nleqs\_master\_ex1.m} in \mpompath{lib/t}, shows a simple example of using \code{nleqs\_master} to solve a 2-dimensional nonlinear function\footnote{\url{https://www.chilimath.com/lessons/advanced-algebra/systems-non-linear-equations/}}
+The following code, included as \code{nleqs\_master\_ex1.m} in \mpompath{examples}, shows a simple example of using \code{nleqs\_master} to solve a 2-dimensional nonlinear function\footnote{\url{https://www.chilimath.com/lessons/advanced-algebra/systems-non-linear-equations/}}
 \begin{equation}
 f(x) = \left[\begin{array}{c}x_1 + x_2 -1 \\ -x_1^2 + x_2 + 5\end{array}\right]
 \end{equation}
@@ -1637,7 +1638,7 @@ jac =
 \subsubsection{NLEQ Example 2}
 \label{sec:nleq_ex2}
 
-The following code, included as \code{nleqs\_master\_ex2.m} in \mpompath{lib/t}, shows another simple example of using \code{nleqs\_master} to solve a 2-dimensional nonlinear function.\footnote{From Christi Patton Luks, \url{https://www.youtube.com/watch?v=pJG4yhtgerg}} This example includes the update function required for Gauss-Seidel and the Jacobian approximation function required for the fast-decoupled Newton's method.
+The following code, included as \code{nleqs\_master\_ex2.m} in \mpompath{examples}, shows another simple example of using \code{nleqs\_master} to solve a 2-dimensional nonlinear function.\footnote{From Christi Patton Luks, \url{https://www.youtube.com/watch?v=pJG4yhtgerg}} This example includes the update function required for Gauss-Seidel and the Jacobian approximation function required for the fast-decoupled Newton's method.
 \begin{equation}
 f(x) = \left[\begin{array}{c}x_1^2 + x_1 x_2 - 10 \\
 x_2 + 3 x_1 x_2^2  - 57\end{array}\right]
@@ -2246,7 +2247,7 @@ name & description \\
 \subsubsection{PNE Example}
 \label{sec:pne_ex}
 
-The following code is a simplified version of the example included as \code{pne\_ex1.m} in \mpompath{lib/t}. It illustrates the use of \code{pnes\_master} to solve a 2-dimensional parameterized nonlinear function of 3 variables.\footnote{Based on a similar problem from \url{https://www.chilimath.com/lessons/advanced-algebra/systems-non-linear-equations/}.} Recall that $x_3$, the last element of $x$, corresponds to the parameter $\lambda$.
+The following code is a simplified version of the example included as \code{pne\_ex1.m} in \mpompath{examples}. It illustrates the use of \code{pnes\_master} to solve a 2-dimensional parameterized nonlinear function of 3 variables.\footnote{Based on a similar problem from \url{https://www.chilimath.com/lessons/advanced-algebra/systems-non-linear-equations/}.} Recall that $x_3$, the last element of $x$, corresponds to the parameter $\lambda$.
 \begin{equation}
 f(x) = \left[\begin{array}{c}x_1 + x_2 + 6 x_3 - 1 \\ -x_1^2 + x_2 + 5\end{array}\right]
 \end{equation}
@@ -2300,7 +2301,7 @@ fprintf('%4g%4g%4g\n', jac');
 \begin{Code}
 >> pne_ex1
 
-MP-Opt-Model Version 5.0, 09-Jul-2025 -- Predictor/Corrector Continuation Method
+MP-Opt-Model Version 5.0, 12-Jul-2025 -- Predictor/Corrector Continuation Method
 step   0  :                          lambda =  0.000,  6 corrector steps
 step   1  : PAL stepsize = 0.6       lambda =  0.081   2 corrector steps
 step   2  : PAL stepsize = 0.6       lambda =  0.162   2 corrector steps
@@ -4262,6 +4263,7 @@ name & description \\
 \code{~~sphinx/}	& contains Sphinx source for \href{https://matpower.org/doc/mpom/}{\mpom{} Reference Manual}	\\
 \code{~~src/MP-Opt-Model-manual/}	&	\\
 \code{~~~~MP-Opt-Model-manual.tex}	& LaTeX source for \mpomman{}	\\
+\code{examples/}	& \mpom{} example functions, live scripts, etc.	\\
 \code{lib/}	& \mpom{} software (see Tables~\ref{tab:master_solvers}, \ref{tab:solver_implementations}, \ref{tab:mp_opt_model}, \ref{tab:mp_idx_manager} and \ref{tab:utility})	\\
 \code{~~t/}	& \mpom{} tests (see Table~\ref{tab:tests})	\\
 \bottomrule
@@ -4645,7 +4647,41 @@ name & description \\
 %\renewcommand{\arraystretch}{1.2}
 \centering
 \begin{threeparttable}
-\caption{\mpom{} Examples \& Tests}
+\caption{\mpom{} Examples}
+\label{tab:examples}
+\footnotesize
+\begin{tabular}{ll}
+% \begin{tabular}{p{0.31\textwidth}p{0.64\textwidth}}
+\toprule
+name & description \\
+\midrule
+\code{examples/}	& \mpom{} examples	\\
+\code{~~lp\_ex1}	& code for LP Example	\\
+\code{~~milp\_ex1}	& code for MILP Example	\\
+\code{~~milp\_example1.mlx}	& live script for MILP Example 1	\\
+\code{~~nleqs\_master\_ex1}	& code for NLEQ Example 1 (see Section~\ref{sec:nleq_ex1}) for \code{nleqs\_master}	\\
+\code{~~nleqs\_master\_ex2}	& code for NLEQ Example 2 (see Section~\ref{sec:nleq_ex2}) for \code{nleqs\_master}	\\
+\code{~~nlps\_master\_ex1}	& code for NLP Example 1 (see Section~\ref{sec:nlp_ex1}) for \code{nlps\_master}	\\
+\code{~~nlps\_master\_ex2}	& code for NLP Example 2 (see Section~\ref{sec:nlp_ex2}) for \code{nlps\_master}	\\
+\code{~~pne\_ex1}	& code for PNE Example (see Section~\ref{sec:pne_ex}) for \code{pnes\_master}	\\
+\code{~~qcqp\_ex1}	& code for QCQP Example	\\
+\code{~~qcqp\_example1.mlx}	& live script for QCQP Example	\\
+\code{~~qp\_ex1}	& code for QP Example from Section~\ref{sec:usage}	\\
+\bottomrule
+\end{tabular}
+% \begin{tablenotes}
+%  \scriptsize
+%  \item [\dag] {These tests are part of \mpomlink{} and are found in \mpompath{/lib/t}.}
+% \end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
+\caption{\mpom{} Tests}
 \label{tab:tests}
 \footnotesize
 \begin{tabular}{ll}
@@ -4653,13 +4689,7 @@ name & description \\
 \toprule
 name & description \\
 \midrule
-\code{lib/t/}	& \mpom{} examples \& tests	\\
-\code{~~nleqs\_master\_ex1}	& code for NLEQ Example 1 (see Section~\ref{sec:nleq_ex1}) for \code{nleqs\_master}	\\
-\code{~~nleqs\_master\_ex2}	& code for NLEQ Example 2 (see Section~\ref{sec:nleq_ex2}) for \code{nleqs\_master}	\\
-\code{~~nlps\_master\_ex1}	& code for NLP Example 1 (see Section~\ref{sec:nlp_ex1}) for \code{nlps\_master}	\\
-\code{~~nlps\_master\_ex2}	& code for NLP Example 2 (see Section~\ref{sec:nlp_ex2}) for \code{nlps\_master}	\\
-\code{~~qp\_ex1}	& code for QP Example from Section~\ref{sec:usage}	\\
-\code{~~pne\_ex1}	& code for PNE Example (see Section~\ref{sec:pne_ex}) for \code{pnes\_master}	\\
+\code{lib/t/}	& \mpom{} tests	\\
 \code{~~test\_mp\_opt\_model}	& runs full \mpom{} test suite	\\
 \code{~~t\_have\_fcn}	& runs tests for (deprecated) \code{have\_fcn}	\\
 \code{~~t\_miqps\_master}	& runs tests of MILP/MIQP solvers via \code{miqps\_master}	\\
@@ -6563,7 +6593,7 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-4.2.pdf}{\mpom{} 4.2 Use
 
 \end{itemize}
 
-\subsection{Version 5.0 -- released Jul 9, 2025}
+\subsection{Version 5.0 -- released Jul 12, 2025}
 \label{app:v50}
 
 The \href{https://matpower.org/docs/MP-Opt-Model-manual-5.0.pdf}{\mpom{} 5.0 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MP-Opt-Model-manual-5.0.pdf}}
@@ -6616,8 +6646,8 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-5.0.pdf}{\mpom{} 5.0 Use
 \subsubsection*{New Documentation}
 Two live scripts illustrate the use of new features.
 \begin{itemize}
-    \item \code{milp\_example1.mlx} (in \code{lib/t}) illustrates the use of \mpom{} and the new \code{mp.opt\_model} class to build and solve an optimization (MILP) model.
-    \item \code{qcqp\_example1.mlx} (in \code{lib/t}) illustrates the new quadratic constraint features and two methods of building and solving a quadratically-constrained quadratic programming (QCQP) model.
+    \item \code{milp\_example1.mlx} (in \code{examples}) illustrates the use of \mpom{} and the new \code{mp.opt\_model} class to build and solve an optimization (MILP) model.
+    \item \code{qcqp\_example1.mlx} (in \code{examples}) illustrates the new quadratic constraint features and two methods of building and solving a quadratically-constrained quadratic programming (QCQP) model.
 \end{itemize}
 
 \subsubsection*{Bugs Fixed}

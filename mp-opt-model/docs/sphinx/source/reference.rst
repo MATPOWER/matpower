@@ -212,14 +212,14 @@ These are examples of using |MPOM| to build and solve various types of problems.
    functions/qcqp_ex1
    functions/qp_ex1
 
-The following Live Scripts, also found in the ``lib/t`` directory, help to
+The following Live Scripts, also found in the ``examples`` directory, help to
 illustrate MP-Opt-Model usage.
 
 - `milp_example1.mlx`_ - *Good introduction to build and solve a model with MP-Opt-Model.*
 - `qcqp_example1.mlx`_ - *Example of quadratic constraints and QCQP.*
 
-.. _milp_example1.mlx: https://github.com/MATPOWER/mp-opt-model/blob/master/lib/t/milp_example1.mlx
-.. _qcqp_example1.mlx: https://github.com/MATPOWER/mp-opt-model/blob/master/lib/t/qcqp_example1.mlx
+.. _milp_example1.mlx: https://github.com/MATPOWER/mp-opt-model/blob/master/examples/milp_example1.mlx
+.. _qcqp_example1.mlx: https://github.com/MATPOWER/mp-opt-model/blob/master/examples/qcqp_example1.mlx
 
 
 |MPOM| Tests

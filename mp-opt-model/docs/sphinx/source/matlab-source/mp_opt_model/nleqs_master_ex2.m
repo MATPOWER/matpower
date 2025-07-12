@@ -1,1 +1,1 @@
-../../../../../lib/t/nleqs_master_ex2.m
+../../../../../examples/nleqs_master_ex2.m

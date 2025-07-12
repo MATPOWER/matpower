@@ -1,5 +1,5 @@
 % MP-Opt-Model
-%   Version 5.0         09-Jul-2025
+%   Version 5.0         12-Jul-2025
 %
 %   MP-Opt-Model is a package of MATLAB/Octave M-files for constructing
 %   and solving mathematical programming and optimization problems. It

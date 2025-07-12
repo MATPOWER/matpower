@@ -115,10 +115,10 @@ jobs:
     - name: Install MIPS, Set MIPS_PATH
       run: |
         git clone --depth=1 https://github.com/MATPOWER/mips.git $HOME/mips
-        echo "MIPS_PATH=$HOME/mips/lib:$HOME/mips/lib/t:${MPTEST_PATH}" >> $GITHUB_ENV
+        echo "MIPS_PATH=$HOME/mips/lib:$HOME/mips/lib/t:$HOME/mips/examples:${MPTEST_PATH}" >> $GITHUB_ENV
 
     - name: Set MP_OPT_MODEL_PATH
-      run: echo "MP_OPT_MODEL_PATH=${GITHUB_WORKSPACE}/lib:${GITHUB_WORKSPACE}/lib/t:${MIPS_PATH}" >> $GITHUB_ENV
+      run: echo "MP_OPT_MODEL_PATH=${GITHUB_WORKSPACE}/lib:${GITHUB_WORKSPACE}/lib/t:${GITHUB_WORKSPACE}/examples:${MIPS_PATH}" >> $GITHUB_ENV
 
     - name: Test GLPK availability, print version number
       if: matrix.platform == 'octave'

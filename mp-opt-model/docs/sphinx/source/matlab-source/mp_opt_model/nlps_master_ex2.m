@@ -1,1 +1,1 @@
-../../../../../lib/t/nlps_master_ex2.m
+../../../../../examples/nlps_master_ex2.m

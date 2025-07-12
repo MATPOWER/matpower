@@ -1,1 +1,1 @@
-../../../../../lib/t/qcqp_ex1.m
+../../../../../examples/qcqp_ex1.m
