@@ -349,7 +349,7 @@ For example, for version 8.1 of MATPOWER, use:
 
 >   R. D. Zimmerman, C. E. Murillo-Sanchez (2025). *MATPOWER (Version 8.1)*
     [Software]. Available: https://matpower.org  
-    doi: [10.5281/zenodo.15857742](https://doi.org/10.5281/zenodo.15857742)
+    doi: [10.5281/zenodo.15871662](https://doi.org/10.5281/zenodo.15871662)
 
 To cite the MATPOWER software generally, without reference to a specific
 version, use the following citation and DOI, with *\<YEAR\>* replaced by the
@@ -373,7 +373,7 @@ use:
 >   R. D. Zimmerman, C. E. Murillo-Sanchez. *MATPOWER User's Manual,
     Version 8.1.* 2025.  
     [Online]. Available: https://matpower.org/docs/MATPOWER-manual-8.1.pdf  
-    doi: [10.5281/zenodo.15856241](https://doi.org/10.5281/zenodo.15856241)
+    doi: [10.5281/zenodo.15871661](https://doi.org/10.5281/zenodo.15871661)
 
 For a version non-specific citation, use the following citation and DOI,
 with *\<YEAR\>* replaced by the year of the most recent release:

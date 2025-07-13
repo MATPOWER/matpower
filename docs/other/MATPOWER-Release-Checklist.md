@@ -75,7 +75,7 @@ Pre-release
   - Make updates for current version specific citations:
     - version number (3 places)
     - year
-    - latest version DOI, current is: 10.5281/zenodo.15856241
+    - latest version DOI, current is: 10.5281/zenodo.15871661
       - (update here each time)
     ... in the following places ...
     - CITATION file
@@ -93,7 +93,7 @@ Pre-release
   - Make updates for current version specific citations:
     - version number (2 places)
     - year
-    - latest version DOI, current is: 10.5281/zenodo.15857742
+    - latest version DOI, current is: 10.5281/zenodo.15871662
       - (update here each time)
     ... in the following places ...
     - CITATION file
@@ -159,13 +159,13 @@ Release
 - Publish new release on GitHub: https://github.com/MATPOWER/most/releases/new
   - use contents of `docs/relnotes/MATPOWER-Announce-#.#.md`
   - add download badge at top:
-    - ![7.0 Downloads](https://img.shields.io/github/downloads/MATPOWER/matpower/7.0/total.svg)
+    - ![8.1 Downloads](https://img.shields.io/github/downloads/MATPOWER/matpower/8.1/total.svg)
   - add DOIs at bottom:
     -   General DOI:
         [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3236535.svg)](https://doi.org/10.5281/zenodo.3236535)
 
         Version Specific DOI:
-        [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.11212330.svg)](https://doi.org/10.5281/zenodo.11212330)
+        [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15871662.svg)](https://doi.org/10.5281/zenodo.15871662)
 - (obsolete)
   - Add version number to
     - `https://matpower.org/sw-download-config.php`

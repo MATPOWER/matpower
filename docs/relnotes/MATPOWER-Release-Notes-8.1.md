@@ -1,7 +1,7 @@
 What's New in MATPOWER 8.1
 --------------------------
 
-#### Released Jul 10, 2025
+#### Released Jul 12, 2025
 
 Below is a summary of the changes since version 8.0 of MATPOWER. See the
 [`CHANGES.md`][1] file for all the gory details. For release notes for

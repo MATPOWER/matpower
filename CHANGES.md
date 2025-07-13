@@ -10,10 +10,11 @@ For change history for [MP-Opt-Model][27], see [mp-opt-model/CHANGES.md](mp-opt-
 For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 
 
-Version 8.1 - *Jul 10, 2025
+Version 8.1 - *Jul 12, 2025
 ---------------------------
 
 #### 7/12/25
+  - Release 8.1.
   - Update live script `convert_1p_to_3p_ex1.mlx` to work on older
     versions of MATLAB, and move from `lib/t` to its own `examples`
     directory, which is now included in the paths added by
