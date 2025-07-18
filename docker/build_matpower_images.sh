@@ -47,7 +47,7 @@ docker build --build-arg MP_SRC=github --build-arg BRANCH=8.1 --build-arg PATCH_
 ## in 10.x and later, but not 9.4.x and earlier
 docker build --build-arg MP_SRC=github --build-arg BRANCH=8.0 --build-arg PATCH_MOST_TEST=1 -f docker/Dockerfile -t matpower/matpower:8.0c .
 # docker build --build-arg MP_SRC=github --build-arg BRANCH=7.1 --build-arg PATCH_MOST_TEST=1 -f docker/Dockerfile -t matpower/matpower:latest .
-docker tag matpower/matpower:8.0c matpower/matpower:latest
+docker tag matpower/matpower:8.1c matpower/matpower:latest
 
 ## dev versions from current master branch
 docker build --build-arg MP_SRC=github --build-arg BASE_TAG=4.4.1 -f docker/Dockerfile -t matpower/matpower:dev-latest-4.4.1 .

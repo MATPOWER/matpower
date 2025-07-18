@@ -158,6 +158,7 @@ Release
       - version specific DOI for "documents this upload" (MP-Opt-Model manual)
 - Publish new release on GitHub: https://github.com/MATPOWER/most/releases/new
   - use contents of `docs/relnotes/MATPOWER-Announce-#.#.md`
+  - upload matpower#.#.zip file created above
   - add download badge at top:
     - ![8.1 Downloads](https://img.shields.io/github/downloads/MATPOWER/matpower/8.1/total.svg)
   - add DOIs at bottom:
@@ -189,6 +190,7 @@ Release
         - 1394 - 7.1 - 33852202
         - 1524 - 8.0b1 - 40315426
         - 1632 - 8.0 - 45767223
+        - 1678 - 8.1 - 47268554
     - check the "Redirect to file" option in the right sidebar
     - create new Custom HTML widget for new Download button
     - use this widget in release landing page
@@ -203,9 +205,16 @@ Release
   - update download counter file at rdzman@matpower.org:/home4/rdzman/matpower.org-downloads
     - add a column to the header line at the top of matpower-download-log.txt
   - build latest MATPOWER Sphinx documentation
+    - copy to new directory corresonding to version (e.g. 8.1) in
+      `matpower-docs` repo
+    - move `current` symlink to point to this new version
+      ```
+      rm current
+      ln -s 8.1 current
+      ```
     - commit to matpower-docs
     - push
-    - pull to matpower.org
+    - pull to matpower.org in matpower-docs dir
 - MATLAB Central File Exchange
     - https://www.mathworks.com/matlabcentral/fileexchange/72085-matpower/
     (this is currently just a link)
