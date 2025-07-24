@@ -447,7 +447,7 @@ MATPOWER is distributed as open-source under the [3-clause BSD license][30].
 [4]: https://octave.org
 [5]: https://git-scm.com/downloads
 [6]: https://git-scm.com
-[6b]: https://matlab.mathworks.com/open/github/v1?repo=MATPOWER/matpower
+[6b]: https://matlab.mathworks.com/open/github/v1?repo=MATPOWER/matpower&branch=ci-testing
 [7]: CONTRIBUTING.md
 [7a]: https://hub.docker.com/
 [7b]: https://www.docker.com
