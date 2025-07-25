@@ -32,7 +32,7 @@ classdef opt_model < handle
 %   * to_struct - convert object data *to* a struct
 %   * from_struct - copy object data *from* a struct
 %   * get_idx - return ``idx`` struct for vars, constraints, costs
-%   * get_user_data - used to retrieve values of user data
+%   * get_userdata - used to retrieve values of user data
 %   * problem_type - return string identifying type of mathematical program
 %   * is_mixed_integer - return true if model is mixed integer, false otherwise
 %   * is_solved - return true if model has been solved

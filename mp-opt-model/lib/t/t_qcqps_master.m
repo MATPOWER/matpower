@@ -69,6 +69,10 @@ for k = 1:length(algs)
             opt.knitro_opt = artelys_knitro_options([],  mpopt);
             opt.knitro_opt.ncvx_qcqp_init = 1;
         end
+        if have_feature('fmincon')
+            %% needed for QP problems when 'DEFAULT' means 'FMINCON'
+            opt.fmincon_opt.opts.OptimalityTolerance = 1e-8;
+        end
 
         if does_lp(k)
             t = sprintf('%s - 3-d LP : ', names{k});
