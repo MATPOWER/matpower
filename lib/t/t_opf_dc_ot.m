@@ -19,7 +19,11 @@ if matlab
         if have_feature('optimoptions')
             if have_feature('linprog_ds')
                 if have_feature('quadprog', 'vnum') >= 7.005  %% R2016b and later
-                    algs  = {'interior-point', 'dual-simplex'};
+                    if have_feature('matlab', 'vnum') == 25.001
+                        algs  = {'dual-simplex'};
+                    else
+                        algs  = {'interior-point', 'dual-simplex'};
+                    end
                 else
                     algs  = {'interior-point', 'active-set', 'simplex', 'dual-simplex'};
                 end
@@ -85,14 +89,6 @@ if have_feature('quadprog')
         have_prices = 0;    %% dual-simplex did not return prices in MATLAB R2014b!?!
     else
         have_prices = 1;
-    end
-    if strcmp(algs{k}, 'interior-point') && strcmp(have_feature('linprog', 'vstr'), '25.1')
-        % HiGHS presolve for interior-point linprog causes failure with
-        % default tolerances in R2025a (see Opt Tbx 25.1 release notes)
-        % mpopt = mpoption(mpopt, 'linprog.OptimalityTolerance', 1e-6);
-        % mpopt = mpoption(mpopt, 'linprog.ConstraintTolerance', 2e-5);
-        % mpopt = mpoption(mpopt, 'linprog.Presolve', 'off');
-        mpopt = mpoption(mpopt, 'linprog.Algorithm', 'interior-point-legacy');
     end
     t0 = sprintf('DC OPF (OT %s): ', algs{k});
 
