@@ -48,7 +48,7 @@ Download the ZIP file of the latest official versioned release from the
 
 #### Current Development Version
 
-There are also two options for obtaining the most recent development version
+There are also three options for obtaining the most recent development version
 of MATPOWER from the `master` branch on GitHub.
 **Note:** This does _not_ include the [MATPOWER Extras][7d].
 
@@ -70,6 +70,8 @@ of MATPOWER from the `master` branch on GitHub.
    [give Git a try][6]).*
     - Go to the [MATPOWER GitHub repository page][2].
     - Click the green **Clone or download** button, then **Download ZIP**.
+
+3. [![Open in MATLAB Online](https://www.mathworks.com/images/responsive/global/open-in-matlab-online.svg)][6b]
 
 See [CONTRIBUTING.md][7] for information on how to get a local copy
 of your own MATPOWER fork, if you are interesting in contributing
@@ -103,7 +105,7 @@ was simplified with an install script following version 6.0.
     not need to be modified, so it is recommended that they be kept
     separate from your own code.
 
-2.  **Run the installer.**
+2.  **Run the installer.** *(skip this step for [![Open in MATLAB Online](https://www.mathworks.com/images/responsive/global/open-in-matlab-online.svg)][6b])*
     - Open MATLAB or Octave and change to the `<MATPOWER>` directory.
     - Run the installer and follow the directions to add the
       required directories to your MATLAB or Octave path, by typing:
@@ -445,6 +447,7 @@ MATPOWER is distributed as open-source under the [3-clause BSD license][30].
 [4]: https://octave.org
 [5]: https://git-scm.com/downloads
 [6]: https://git-scm.com
+[6b]: https://matlab.mathworks.com/open/github/v1?repo=MATPOWER/matpower&project=matpower.prj
 [7]: CONTRIBUTING.md
 [7a]: https://hub.docker.com/
 [7b]: https://www.docker.com
