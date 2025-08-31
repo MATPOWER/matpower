@@ -221,6 +221,11 @@ Appendix H of the [MATPOWER User's Manual][8]. A complete, detailed
 change log, even for unreleased versions, is available in the
 [`CHANGES.md`][11] file.
 
+Check out the following three live scripts to explore features introduced
+in MATPOWER 8.1.
+- [![Open in MATLAB Online](https://www.mathworks.com/images/responsive/global/open-in-matlab-online.svg)](https://matlab.mathworks.com/open/github/v1?repo=MATPOWER/matpower&project=matpower.prj&file=examples/convert_1p_to_3p_ex1.mlx) `convert_1p_to_3p_ex1.mlx` (in `examples`) illustrates the use of the new single-phase to three-phase conversion capabilities.
+- [![Open in MATLAB Online](https://www.mathworks.com/images/responsive/global/open-in-matlab-online.svg)](https://matlab.mathworks.com/open/github/v1?repo=MATPOWER/matpower&project=matpower.prj&file=mp-opt-model/examples/milp_example1.mlx) `milp_example1.mlx` (in `mp-opt-model/examples`) illustrates the use of MP-Opt-Model and the new `mp.opt_model` class to build and solve an optimization (MILP) model.
+- [![Open in MATLAB Online](https://www.mathworks.com/images/responsive/global/open-in-matlab-online.svg)](https://matlab.mathworks.com/open/github/v1?repo=MATPOWER/matpower&project=matpower.prj&file=mp-opt-model/examples/qcqp_example1.mlx) `qcqp_example1.mlx` (in `mp-opt-model/examples`) illustrates the new quadratic constraint features and two methods of building and solving a quadratically-constrained quadratic programming (QCQP) model.
 
 Contributing
 ------------

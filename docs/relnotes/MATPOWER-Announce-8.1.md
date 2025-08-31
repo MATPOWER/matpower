@@ -32,9 +32,9 @@ Appendix H of the [MATPOWER User's Manual][3].
 
 #### New Documentation:
 Three live scripts illustrate the use of new features.
-- single-phase to three-phase conversion capabilities [![Open in MATLAB Online](https://www.mathworks.com/images/responsive/global/open-in-matlab-online.svg)](https://matlab.mathworks.com/open/github/v1?repo=MATPOWER/matpower&project=matpower.prj&file=examples/convert_1p_to_3p_ex1.mlx)
-- using new `mp.opt_model` class to build and solve an optimization model [![Open in MATLAB Online](https://www.mathworks.com/images/responsive/global/open-in-matlab-online.svg)](https://matlab.mathworks.com/open/github/v1?repo=MATPOWER/matpower&project=matpower.prj&file=mp-opt-model/examples/milp_example1.mlx)
-- new quadratic constraint features and QCQP features [![Open in MATLAB Online](https://www.mathworks.com/images/responsive/global/open-in-matlab-online.svg)](https://matlab.mathworks.com/open/github/v1?repo=MATPOWER/matpower&project=matpower.prj&file=mp-opt-model/examples/qcqp_example1.mlx)
+- [![Open in MATLAB Online](https://www.mathworks.com/images/responsive/global/open-in-matlab-online.svg)](https://matlab.mathworks.com/open/github/v1?repo=MATPOWER/matpower&project=matpower.prj&file=examples/convert_1p_to_3p_ex1.mlx) `examples/convert_1p_to_3p_ex1.mlx` - single-phase to three-phase conversion capabilities
+- [![Open in MATLAB Online](https://www.mathworks.com/images/responsive/global/open-in-matlab-online.svg)](https://matlab.mathworks.com/open/github/v1?repo=MATPOWER/matpower&project=matpower.prj&file=mp-opt-model/examples/milp_example1.mlx) `mp-opt-model/examples/milp_example1.mlx` - using new `mp.opt_model` class to build and solve an optimization model
+- [![Open in MATLAB Online](https://www.mathworks.com/images/responsive/global/open-in-matlab-online.svg)](https://matlab.mathworks.com/open/github/v1?repo=MATPOWER/matpower&project=matpower.prj&file=mp-opt-model/examples/qcqp_example1.mlx) `mp-opt-model/examples/qcqp_example1.mlx` - new quadratic constraint features and QCQP features
 
 
 #### Other Improvements:
