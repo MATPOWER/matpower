@@ -28,6 +28,7 @@ jobs:
       run: echo "INCLUDE_IPOPT=1" >> $GITHUB_ENV
 
     - name: Include OSQP?
+      if: startsWith(matrix.os, 'ubuntu')
       run: echo "INCLUDE_OSQP=1" >> $GITHUB_ENV
 
     - name: Cache IPOPT Libs (macOS)
