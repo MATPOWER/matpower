@@ -10,6 +10,13 @@ For change history for [MP-Opt-Model][27], see [mp-opt-model/CHANGES.md](mp-opt-
 For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 
 
+since version 8.1
+-----------------
+
+#### 9/25/25
+  - Skip failing interior point algorithm for R2025b `linprog` in DC OPF tests.
+
+
 Version 8.1 - *Jul 12, 2025
 ---------------------------
 
