@@ -16,6 +16,7 @@ function [TorF, vstr, rdate] = have_feature_opti_clp()
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See https://github.com/MATPOWER/mp-opt-model for more info.
 
+s = which('clp');   %% help it find .mex* before .m
 TorF = exist('opti_clp', 'file') == 2 && exist('clp', 'file') == 3;
 vstr = '';
 rdate = '';

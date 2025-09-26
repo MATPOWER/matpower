@@ -2,6 +2,17 @@ Change history for MP-Opt-Model
 ===============================
 
 
+since version 5.0
+-----------------
+
+#### 9/25/25
+  - Improve reliability of detection of CLP MEX file.
+
+#### 7/18/25
+  - Fix failing tests in `t_qcqps_master` when `'DEFAULT'` implies `'FMINCON'`
+    (as in MATLAB Online).
+
+
 Version 5.0 - *Jul 12, 2025*
 ----------------------------
 
