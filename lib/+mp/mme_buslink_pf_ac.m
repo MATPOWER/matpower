@@ -138,6 +138,21 @@ classdef (Abstract) mme_buslink_pf_ac < mp.mme_buslink
                     A_vm(d_vm, :) = [];
                     b_vm(d_vm) = [];
                 end
+            end            
+        end
+        function obj = data_model_update_on(obj, mm, nm, dm, mpopt)
+            dme = obj.data_model_element(dm);
+            nme = obj.network_model_element(nm);
+
+            ss = nm.get_idx('state');
+
+            for p = 1:nme.nz
+                %% buslink complex power flows
+                zbl = nm.soln.z(ss.i1.buslink(p):ss.iN.buslink(p));                
+
+                %% update in the data model
+                dme.tab.(sprintf('pg%d_start', p))(dme.on) = real(zbl) * dm.base_kva;
+                dme.tab.(sprintf('qg%d_start', p))(dme.on) = imag(zbl) * dm.base_kva;
             end
         end
     end     %% methods
