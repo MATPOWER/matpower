@@ -17,15 +17,20 @@ algs = {
     "choose",
     'simplex',
     "ipm",
-    "pdlp",     %% currently results in fatal error
+    "ipx",
+    "hipo",
+    "pdlp",
 };
 alg_names = {
     'default',
     'dual simplex',
-    'interior point',
+    'interior point (auto)',
+    'interior point (IPX)',
+    'interior point (HiPO)',    
     'primal-dual hybrid gradient',
 };
-num_tests = 43 * length(algs);
+ntests = 43;
+num_tests = ntests * length(algs);
 
 t_begin(num_tests, quiet);
 
@@ -56,6 +61,10 @@ end
 %% run DC OPF
 if have_feature('highs')
   for k = 1:length(algs)
+   if strcmp(algs{k}, 'ipx') && have_feature('highs', 'vnum') < 1.012 || ...
+      strcmp(algs{k}, 'hipo') && ~have_feature('highs_hipo')
+    t_skip(ntests, sprintf('HiGHS solver ''%s'' not supported by your HiGHS installation', algs{k}));
+   else
     mpopt = mpoption(mpopt, 'highs.opts.solver', algs{k});
     t0 = sprintf('DC OPF (HiGHS %s): ', alg_names{k});
 
@@ -197,6 +206,7 @@ if have_feature('highs')
     if strcmp(algs{k}, 'pdlp')
         warning(s.state, 'highs:mex');
     end
+   end
   end
 else
     t_skip(num_tests, 'HiGHS not available');
