@@ -84,13 +84,14 @@ function [x, f, eflag, output, lambda] = solve(om, opt)
 %           newton_opt  - options struct for Newton method, NLEQS_NEWTON
 %           osqp_opt    - options struct for OSQP
 %           quadprog_opt - options struct for QUADPROG
+%           fix_integer (0) - fix integer variables at value in x0, if true
+%           relax_integer (0) - relax integer constraints, if true
 %           parse_soln (0) - flag that specifies whether or not to call
 %               the PARSE_SOLN method and place the return values in OM.soln.
 %           price_stage_warn_tol (1e-7) - tolerance on the objective fcn
 %               value and primal variable relative match required to avoid
 %               mis-match warning message if mixed integer price computation
 %               stage is not skipped
-%           relax_integer (0) - relax integer constraints, if true
 %           skip_prices (0) - flag that specifies whether or not to skip the
 %               price computation stage for mixed integer problems, in which
 %               the problem is re-solved for only the continuous variables,
@@ -200,17 +201,10 @@ switch pt
                 [x, f, eflag, output, lambda] = pnes_master(fcn, x0, opt);
         end
     case {'MINLP', 'NLP'}
-        mixed_integer = strcmp(pt(1:2), 'MI') && ...
-            (~isfield(opt, 'relax_integer') || ~opt.relax_integer);
+        [mixed_integer, x0, xmin, xmax, vtype] = mixed_integer_helper(om, opt);
         if mixed_integer    %% MINLP - mixed integer non-linear program
             error('opt_model.solve: not yet implemented for ''MINLP'' problems.')
         else                %% NLP   - nonlinear program
-            %% optimization vars, bounds, types
-            [x0, xmin, xmax] = om.params_var();
-            if isfield(opt, 'x0')
-                x0 = opt.x0;
-            end
-
             %% run solver
             [A, l, u] = om.params_lin_constraint();
             f_fcn = @(x)nlp_costfcn(om, x);
@@ -224,16 +218,8 @@ switch pt
         [HH, CC, C0] = om.params_quad_cost();
         [Q, B, ll, uu] = om.qcn.params(om.var);
         [A, l, u] = om.params_lin_constraint();
-        mixed_integer = strcmp(pt(1:2), 'MI') && ...
-            (~isfield(opt, 'relax_integer') || ~opt.relax_integer);
-
+        [mixed_integer, x0, xmin, xmax, vtype] = mixed_integer_helper(om, opt);
         if mixed_integer
-            %% optimization vars, bounds, types
-            [x0, xmin, xmax, vtype] = om.params_var();
-            if isfield(opt, 'x0')
-                x0 = opt.x0;
-            end
-
             %% run solver
             if isempty(Q)          %% MILP, MIQP - mixed integer linear/quadratic program
                 [x, f, eflag, output, lambda] = ...
@@ -244,12 +230,6 @@ switch pt
                 %    miqcqps_master(HH, CC, Q, B, k, ll, uu, A, l, u, xmin, xmax, x0, vtype, opt);
             end
         else                %% LP, QP - linear/quadratic program
-            %% optimization vars, bounds, types
-            [x0, xmin, xmax] = om.params_var();
-            if isfield(opt, 'x0')
-                x0 = opt.x0;
-            end
-
             %% run solver
             if isempty(Q)          %% LP, QP - linear/quadratic program
                 [x, f, eflag, output, lambda] = ...
@@ -304,3 +284,30 @@ else
     end
 end
 f = [fnln; fqcn; flin];
+
+function [mixed_integer, x0, xmin, xmax, vtype] = mixed_integer_helper(om, opt)
+pt = om.problem_type();
+mixed_integer = strcmp(pt(1:2), 'MI') && ...
+    (~isfield(opt, 'relax_integer') || ~opt.relax_integer);
+if mixed_integer
+    %% optimization vars, bounds, types
+    [x0, xmin, xmax, vtype] = om.var.params();
+    if isfield(opt, 'x0')
+        x0 = opt.x0;
+    end
+
+%     if isfield(opt, 'fix_integer') && opt.fix_integer
+%         %% fix integer variables
+%         j = (vtype == 'B' | vtype == 'I')';
+%         xmin(j) = x0(j);
+%         xmax(j) = x0(j);
+%         mixed_integer = false;
+%     end
+else
+    %% optimization vars, bounds, types
+    [x0, xmin, xmax] = om.var.params();
+    if isfield(opt, 'x0')
+        x0 = opt.x0;
+    end
+    vtype = [];
+end

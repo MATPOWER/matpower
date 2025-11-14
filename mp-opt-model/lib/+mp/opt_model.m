@@ -659,6 +659,9 @@ classdef opt_model < handle
             %         nleqs_newton
             %       - ``osqp_opt``    - options struct for OSQP
             %       - ``quadprog_opt`` - options struct for :func:`quadprog`
+            %       - ``fix_integer`` (0) - fix integer variables at value in
+            %         ``x0``, if true
+            %       - ``relax_integer`` (0) - relax integer constraints, if true
             %       - ``parse_soln`` (0) - flag that specifies whether or not
             %         to call the parse_soln() method and place the return values
             %         in ``mm.soln``.
@@ -666,7 +669,6 @@ classdef opt_model < handle
             %         objective fcn value and primal variable relative match
             %         required to avoid mismatch warning message if mixed
             %         integer price computation stage is not skipped
-            %       - ``relax_integer`` (0) - relax integer constraints, if true
             %       - ``skip_prices`` (0) - flag that specifies whether or not
             %         to skip the price computation stage for mixed integer
             %         problems, in which the problem is re-solved for only the
@@ -773,17 +775,11 @@ classdef opt_model < handle
                             [x, f, eflag, output, lambda] = pnes_master(fcn, x0, opt);
                     end
                 case {'MINLP', 'NLP'}
-                    mixed_integer = strcmp(pt(1:2), 'MI') && ...
-                        (~isfield(opt, 'relax_integer') || ~opt.relax_integer);
+                    [mixed_integer, x0, xmin, xmax, vtype] = ...
+                        mm.mixed_integer_helper(opt);
                     if mixed_integer    %% MINLP - mixed integer non-linear program
                         error('mp.opt_model.solve: not yet implemented for ''MINLP'' problems.')
                     else                %% NLP   - nonlinear program
-                        %% optimization vars, bounds, types
-                        [x0, xmin, xmax] = mm.var.params();
-                        if isfield(opt, 'x0')
-                            x0 = opt.x0;
-                        end
-
                         %% run solver
                         [A, l, u] = mm.lin.params(mm.var);
                         f_fcn = @(x)nlp_costfcn(mm, x);
@@ -797,16 +793,9 @@ classdef opt_model < handle
                     [HH, CC, C0] = mm.qdc.params(mm.var);
                     [Q, B, ll, uu] = mm.qcn.params(mm.var);
                     [A, l, u] = mm.lin.params(mm.var);
-                    mixed_integer = strcmp(pt(1:2), 'MI') && ...
-                        (~isfield(opt, 'relax_integer') || ~opt.relax_integer);
-
+                    [mixed_integer, x0, xmin, xmax, vtype] = ...
+                        mm.mixed_integer_helper(opt);
                     if mixed_integer
-                        %% optimization vars, bounds, types
-                        [x0, xmin, xmax, vtype] = mm.var.params();
-                        if isfield(opt, 'x0')
-                            x0 = opt.x0;
-                        end
-
                         %% run solver
                         if isempty(Q)          %% MILP, MIQP - mixed integer linear/quadratic program
                             [x, f, eflag, output, lambda] = ...
@@ -817,12 +806,6 @@ classdef opt_model < handle
                             %    miqcqps_master(HH, CC, Q, B, k, ll, uu, A, l, u, xmin, xmax, x0, vtype, opt);
                         end
                     else                %% LP, QP - linear/quadratic program
-                        %% optimization vars, bounds, types
-                        [x0, xmin, xmax] = mm.var.params();
-                        if isfield(opt, 'x0')
-                            x0 = opt.x0;
-                        end
-
                         %% run solver
                         if isempty(Q)          %% LP, QP - linear/quadratic program
                             [x, f, eflag, output, lambda] = ...
@@ -1129,6 +1112,37 @@ classdef opt_model < handle
             end
         end
     end     %% methods
+
+    methods (Access=protected)
+        function [mixed_integer, x0, xmin, xmax, vtype] = mixed_integer_helper(mm, opt)
+            %
+            pt = mm.problem_type();
+            mixed_integer = strcmp(pt(1:2), 'MI') && ...
+                (~isfield(opt, 'relax_integer') || ~opt.relax_integer);
+            if mixed_integer
+                %% optimization vars, bounds, types
+                [x0, xmin, xmax, vtype] = mm.var.params();
+                if isfield(opt, 'x0')
+                    x0 = opt.x0;
+                end
+
+%                 if isfield(opt, 'fix_integer') && opt.fix_integer
+%                     %% fix integer variables
+%                     j = find(vtype == 'B' | vtype == 'I')';
+%                     xmin(j) = x0(j);
+%                     xmax(j) = x0(j);
+%                     mixed_integer = false;
+%                 end
+            else
+                %% optimization vars, bounds, types
+                [x0, xmin, xmax] = mm.var.params();
+                if isfield(opt, 'x0')
+                    x0 = opt.x0;
+                end
+                vtype = [];
+            end
+        end
+    end
 end         %% classdef
 
 function d = copy_prop(s, d, prop)

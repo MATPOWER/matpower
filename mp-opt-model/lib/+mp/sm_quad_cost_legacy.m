@@ -514,9 +514,9 @@ classdef sm_quad_cost_legacy < mp.set_manager_opt_model
             [Mc, Nc] = size(p.c);
             Nk = length(p.k);
             nx = max([MQ Mc Nk]);
-            if NQ == 1 || (isempty(p.Q) && (Nk > 1 || k == 0))
+            if NQ == 1 || (isempty(p.Q) && (Nk ~= 1 || p.k == 0))
                 %% Q is a column vector (cost is element-wise, i.e. a vector)
-                %% OR Q is empty and k is either a vector or zero
+                %% OR Q is empty and k is either a vector, empty, or zero
                 N = nx;
             else            %% Q is a square matrix (cost is a scalar)
                 N = 1;

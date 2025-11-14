@@ -151,7 +151,7 @@
 \newcommand{\mpomlink}[0]{\href{\mpomurl}{\mpom{}}}
 \newcommand{\mpomname}[0]{\mpom{}}
 % \newcommand{\mpomname}[0]{{{\bf M}{\sc at}{\bf P}{\sc ower} \textbf{Opt}imization \textbf{Model}}}
-\newcommand{\mpomver}[0]{5.0}
+\newcommand{\mpomver}[0]{5.1-dev}
 \newcommand{\most}[0]{{MOST}}
 \newcommand{\mostname}[0]{{{\bf M}{\sc atpower} \textbf{O}ptimal \textbf{S}cheduling \textbf{T}ool}}
 \newcommand{\mosturl}[0]{https://github.com/MATPOWER/most}
@@ -867,6 +867,8 @@ name & default & description \\
 2 & print a lot of progress info \\
 3 & print all progress info \\
 \end{tabular}	\\
+\code{fix\_integer}	& 0	& fix integer variables at value in \code{x0}, if true \\
+\code{relax\_integer}	& 0	& relax integer constraints, if true \\
 \code{skip\_prices}	& 0	& flag that specifies whether or not to skip the price computation stage, in which the problem is re-solved for only the continuous variables, with all others being constrained to their solved values \\
 \code{price\_stage\_warn\_tol}	& \emph{$10^{-7}$}	& tolerance on the objective function value and primal variable relative mismatch required to avoid mismatch warning message \\
 \code{cplex\_opt}	& \emph{empty}	& options struct for \cplex{}\tnote{*} \\
@@ -2711,7 +2713,6 @@ name & default & description \\
 \end{tabular}	\\
 \code{~~parse\_soln}	& 0	& flag that specifies whether or not to call the \code{parse\_soln} method and place the return values in the \code{soln}
 property of the field type objects \\
-\code{~~relax\_integer}	& 0	& relax integer constraints, if true \\
 \code{~~x0}	& \emph{empty}	& optional initial value of $x$, overrides value stored in model, \emph{(ignored by some solvers)}	\\
 \midrule
 \multicolumn{3}{l}{\emph{Additional Options for Specific Problem Types}} \\
@@ -4076,7 +4077,12 @@ This function implements the \codeq{gurobi} tag for \code{have\_feature} to dete
 \subsubsection{\tt have\_feature\_highs}
 \label{sec:have_feature_highs}
 
-This function implements the \codeq{highs} tag for \code{have\_feature} to detect availability/version of \code{callhighs}, \highs{} optimizer. See also Appendix~\ref{app:gurobi}.
+This function implements the \codeq{highs} tag for \code{have\_feature} to detect availability/version of \code{callhighs}, \highs{} optimizer. See also Appendix~\ref{app:highs}.
+
+\subsubsection{\tt have\_feature\_highs\_hipo}
+\label{sec:have_feature_highs_hipo}
+
+This function implements the \codeq{highs\_hipo} tag for \code{have\_feature} to detect availability/version of the HiPO interior point LP solver for the \highs{} optimizer. See also Appendix~\ref{app:highs}.
 
 \subsubsection{\tt have\_feature\_intlinprog}
 \label{sec:have_feature_intlinprog}
@@ -5194,7 +5200,6 @@ name & default & description \\
 \end{tabular}	\\
 \code{~~parse\_soln}	& 0	& flag that specifies whether or not to call the \code{parse\_soln} method and place the return values in the \code{soln}
 property of the field type objects \\
-\code{~~relax\_integer}	& 0	& relax integer constraints, if true \\
 \code{~~x0}	& \emph{empty}	& optional initial value of $x$, overrides value stored in model, \emph{(ignored by some solvers)}	\\
 \midrule
 \multicolumn{3}{l}{\emph{Additional Options for Specific Problem Types}} \\
@@ -6708,10 +6713,39 @@ Two live scripts illustrate the use of new features.
 \item Remove support for older versions of \knitro{}, including all references to \code{ktrlink} for pre-v9 versions. Currently supports \knitro{} version 13.1 and later.
 \end{itemize}
 
-% \subsection{Version 5.0 -- released ??? ?, 202?}
-% \label{app:v50}
+\subsection{Version 5.1 -- released ??? ?, 202?}
+\label{app:v51}
+
+\hl{\emph{(not yet released)}}
+The \href{https://matpower.org/docs/MP-Opt-Model-manual-5.1.pdf}{\mpom{} 5.1 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MP-Opt-Model-manual-5.1.pdf}}
+
+\subsubsection*{New Features}
+\begin{itemize}
+\item New \code{fix\_integer} option for \code{miqps\_master()} and \code{mp.opt\_model.solve()}. Set to true to fix any integer variables to their initial values, as specified in \code{x0} or \code{opt.x0}.
+\item Add \code{relax\_integer} option to \code{miqps\_master()} and move the implementation from \code{mp.opt\_model.solve()}.
+\item Support for the new HiPO interior point LP solver in the \highs{} optimizer.
+\item New functions:
+    \begin{itemize}
+    \item \code{have\_feature\_highs\_hipo()} feature detection function for HiPO solver in \highs{} optimizer.
+    \end{itemize}
+\end{itemize}
+
+\subsubsection*{Bugs Fixed}
+\begin{itemize}
+\item
+    \emph{Thanks to Fulano.}
+\end{itemize}
+
+\subsubsection*{Other Changes}
+\begin{itemize}
+\item
+
+\end{itemize}
+
+% \subsection{Version 6.0 -- released ??? ?, 202?}
+% \label{app:v60}
 % 
-% The \href{https://matpower.org/docs/MP-Opt-Model-manual-5.0.pdf}{\mpom{} 5.0 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MP-Opt-Model-manual-5.0.pdf}}
+% The \href{https://matpower.org/docs/MP-Opt-Model-manual-6.0.pdf}{\mpom{} 6.0 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MP-Opt-Model-manual-6.0.pdf}}
 % 
 % \subsubsection*{New Features}
 % \begin{itemize}

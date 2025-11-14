@@ -523,9 +523,9 @@ classdef sm_quad_cost < mp.set_manager_opt_model
             [Mc, Nc] = size(p.c);
             Nk = length(p.k);
             nx = max([MH Mc Nk]);
-            if NH == 1 || (isempty(p.H) && (Nk > 1 || k == 0))
+            if NH == 1 || (isempty(p.H) && (Nk ~= 1 || p.k == 0))
                 %% H is a column vector (cost is element-wise, i.e. a vector)
-                %% OR H is empty and k is either a vector or zero
+                %% OR H is empty and k is either a vector, empty, or zero
                 N = nx;
             else            %% H is a square matrix (cost is a scalar)
                 N = 1;

@@ -21,7 +21,7 @@ rdate = '';
 if TorF
     try
         vstr = char(callhighs(string('ver')));
-    catch % gurobiError
+    catch
         TorF = 0;
         fprintf('HiGHS Error!\n');
     end

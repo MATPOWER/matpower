@@ -284,6 +284,7 @@ rather are used to extend the capabilities of :func:`have_feature`.
    functions/have_feature_glpk
    functions/have_feature_gurobi
    functions/have_feature_highs
+   functions/have_feature_highs_hipo
    functions/have_feature_intlinprog
    functions/have_feature_ipopt_auxdata
    functions/have_feature_ipopt

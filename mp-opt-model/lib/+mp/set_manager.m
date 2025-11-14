@@ -273,10 +273,10 @@ classdef set_manager < handle
 
             %% handle input args
             if iscell(idx)
-                N = varargin{1};
+                N = full(varargin{1});
                 args = varargin(2:end);
             else
-                N = idx;
+                N = full(idx);
                 idx = {};
                 args = varargin;
             end

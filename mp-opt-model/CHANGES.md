@@ -5,6 +5,27 @@ Change history for MP-Opt-Model
 since version 5.0
 -----------------
 
+#### 11/14/25
+  - Add support for the new HiPO interior point LP solver in HiGHS, including
+    `have_feature_highs_hipo()` to detect availability.
+
+#### 10/28/25
+  - Add `fix_integer` and `relax_integer` options to `miqps_master()` and move
+    the implementations from `mp.opt_model.solve()` to `miqps_master()`.
+    *Note: Since the implementation is in `miqps_master()` it is not available
+    directly in the individual solver-specific `miqps_<solver>()` functions.*
+
+#### 10/21/25
+  - Add `fix_integer` option for `mp.opt_model.solve()`. Set to true to fix
+    any integer variables to their initial values, as specified in ``x0`` or
+    ``opt.x0``.
+  - Add MILP example from `examples/miqp_ex1.m` to MILP tests.
+  - Fix typo bug in dimension checking in `set_params()` for quadratic costs.
+
+#### 10/3/25
+  - Avoid error displaying `mp.opt_model` object when variable was added
+    with a sparse dimension argument.
+
 #### 9/25/25
   - Improve reliability of detection of CLP MEX file.
 

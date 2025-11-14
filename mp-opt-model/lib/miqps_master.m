@@ -52,6 +52,8 @@ function [x, f, eflag, output, lambda] = miqps_master(H, c, A, l, u, xmin, xmax,
 %               0 = no progress output
 %               1 = some progress output
 %               2 = verbose progress output
+%           fix_integer (0) - fix integer variables at value in x0, if true
+%           relax_integer (0) - relax integer constraints, if true
 %           skip_prices (0) - flag that specifies whether or not to
 %               skip the price computation stage, in which the problem
 %               is re-solved for only the continuous variables, with all
@@ -109,7 +111,7 @@ function [x, f, eflag, output, lambda] = miqps_master(H, c, A, l, u, xmin, xmax,
 %       [x, f, exitflag, output] = miqps_master(...)
 %       [x, f, exitflag, output, lambda] = miqps_master(...)
 %
-%   Example: (problem from %% from MOSEK 6.0 Guided Tour, section  7.13.1
+%   Example: (problem from MOSEK 6.0 Guided Tour, section  7.13.1
 %             https://docs.mosek.com/6.0/toolbox/node009.html)
 %       c = [-2; -3];
 %       A = sparse([195 273; 4 40]);
@@ -234,6 +236,35 @@ if strcmp(alg, 'DEFAULT')
             end
         end
     end
+end
+
+%% handle relax_integer and fix_integer options
+if ~isempty(vtype) && (isfield(opt, 'relax_integer') && opt.relax_integer || ...
+        isfield(opt, 'fix_integer') && opt.fix_integer)
+    nx = length(x0);
+    if length(vtype) == 1   %% expand if necessary
+        vtype = char(vtype * ones(1, nx));
+    end
+    j = (vtype == 'B' | vtype == 'I')';
+    if isfield(opt, 'fix_integer') && opt.fix_integer
+        %% fix integer variables
+        if ~isempty(j)
+            %% expand if necessary
+            if length(xmin) == 1
+                xmin = xmin * ones(nx, 1);
+            elseif isempty(xmin)
+                xmin = -Inf(nx, 1);
+            end
+            if length(xmax) == 1
+                xmax = xmax * ones(nx, 1);
+            elseif isempty(xmax)
+                xmax = Inf(nx, 1);
+            end
+            xmin(j) = x0(j);
+            xmax(j) = x0(j);
+        end
+    end
+    vtype(j) = 'C';
 end
 
 %%----- call the appropriate solver  -----
