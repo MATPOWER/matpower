@@ -19,7 +19,7 @@ if matlab
         if have_feature('optimoptions')
             if have_feature('linprog_ds')
                 if have_feature('quadprog', 'vnum') >= 7.005  %% R2016b and later
-                    if have_feature('matlab', 'vnum') == 25.001 || have_feature('matlab', 'vnum') == 25.002
+                    if have_feature('matlab', 'vnum') >= 25.001 && have_feature('matlab', 'vnum') <= 26.001
                         algs  = {'dual-simplex'};
                     else
                         algs  = {'interior-point', 'dual-simplex'};
