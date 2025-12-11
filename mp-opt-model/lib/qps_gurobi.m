@@ -237,11 +237,17 @@ if verbose
         'interior point',
         'concurrent',
         'deterministic concurrent',
-        'deterministic concurrent simplex'
+        'deterministic concurrent simplex',
+        'PDHG'
     };
     vn = gurobiver;
+    if length(alg_names) >= g_opt.Method+2
+        alg_name = alg_names{g_opt.Method+2};
+    else
+        alg_name = 'unknown';
+    end
     fprintf('Gurobi Version %s -- %s %s solver\n', ...
-        vn, alg_names{g_opt.Method+2}, lpqp);
+        vn, alg_name, lpqp);
 end
 results = gurobi(m, g_opt);
 switch results.status

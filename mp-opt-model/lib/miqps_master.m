@@ -239,6 +239,8 @@ if strcmp(alg, 'DEFAULT')
 end
 
 %% handle relax_integer and fix_integer options
+done = false;
+fix_integer_presolve = true;
 if ~isempty(vtype) && (isfield(opt, 'relax_integer') && opt.relax_integer || ...
         isfield(opt, 'fix_integer') && opt.fix_integer)
     nx = length(x0);
@@ -247,54 +249,85 @@ if ~isempty(vtype) && (isfield(opt, 'relax_integer') && opt.relax_integer || ...
     end
     j = (vtype == 'B' | vtype == 'I')';
     if isfield(opt, 'fix_integer') && opt.fix_integer
-        %% fix integer variables
-        if ~isempty(j)
-            %% expand if necessary
-            if length(xmin) == 1
-                xmin = xmin * ones(nx, 1);
-            elseif isempty(xmin)
-                xmin = -Inf(nx, 1);
+        x0(j) = round(x0(j));
+        if fix_integer_presolve
+            x = x0;
+            Axj = A(:,j) * x(j);
+            cc = c(~j);
+            if isempty(H)
+                HH = [];
+            else
+                HH = H(~j, ~j);
+                cc = cc + (H(~j,j)+H(j,~j)') * x(j);
             end
-            if length(xmax) == 1
-                xmax = xmax * ones(nx, 1);
-            elseif isempty(xmax)
-                xmax = Inf(nx, 1);
+            [x(~j), f, eflag, output, lambda] = ...
+                qps_master(HH, cc,  A(:, ~j), l-Axj, u-Axj, ...
+                    xmin(~j), xmax(~j), x(~j), opt);
+            f = f + c(j)' * x(j);
+            if ~isempty(H)
+                f = f + x(j)' * H(j,j) * x(j);
             end
-            xmin(j) = x0(j);
-            xmax(j) = x0(j);
+            mu_lower = zeros(size(x));
+            mu_upper = zeros(size(x));
+            mu_lower(~j) = lambda.lower;
+            mu_upper(~j) = lambda.upper;
+            lambda.lower = mu_lower;
+            lambda.upper = mu_upper;
+            done = true;
+        else
+            %% fix integer variables
+            if ~isempty(j)
+                %% expand if necessary
+                if length(xmin) == 1
+                    xmin = xmin * ones(nx, 1);
+                elseif isempty(xmin)
+                    xmin = -Inf(nx, 1);
+                end
+                if length(xmax) == 1
+                    xmax = xmax * ones(nx, 1);
+                elseif isempty(xmax)
+                    xmax = Inf(nx, 1);
+                end
+                xmin(j) = x0(j);
+                xmax(j) = x0(j);
+            end
         end
     end
-    vtype(j) = 'C';
+    if ~done
+        vtype(j) = 'C';
+    end
 end
 
 %%----- call the appropriate solver  -----
-switch alg
-    case 'CPLEX'
-        [x, f, eflag, output, lambda] = ...
-            miqps_cplex(H, c, A, l, u, xmin, xmax, x0, vtype, opt);
-    case 'GLPK'
-        [x, f, eflag, output, lambda] = ...
-            miqps_glpk(H, c, A, l, u, xmin, xmax, x0, vtype, opt);
-    case 'GUROBI'
-        [x, f, eflag, output, lambda] = ...
-            miqps_gurobi(H, c, A, l, u, xmin, xmax, x0, vtype, opt);
-    case 'MOSEK'
-        [x, f, eflag, output, lambda] = ...
-            miqps_mosek(H, c, A, l, u, xmin, xmax, x0, vtype, opt);
-    case 'OT'
-        [x, f, eflag, output, lambda] = ...
-            miqps_ot(H, c, A, l, u, xmin, xmax, x0, vtype, opt);
-    case 'HIGHS'
-        [x, f, eflag, output, lambda] = ...
-            miqps_highs(H, c, A, l, u, xmin, xmax, x0, vtype, opt);
-    otherwise
-        fcn = ['miqps_' lower(alg)];
-        if exist([fcn '.m']) == 2
+if ~done
+    switch alg
+        case 'CPLEX'
             [x, f, eflag, output, lambda] = ...
-                feval(fcn, H, c, A, l, u, xmin, xmax, x0, vtype, opt);
-        else
-            error('miqps_master: ''%s'' is not a valid algorithm code', alg);
-        end
+                miqps_cplex(H, c, A, l, u, xmin, xmax, x0, vtype, opt);
+        case 'GLPK'
+            [x, f, eflag, output, lambda] = ...
+                miqps_glpk(H, c, A, l, u, xmin, xmax, x0, vtype, opt);
+        case 'GUROBI'
+            [x, f, eflag, output, lambda] = ...
+                miqps_gurobi(H, c, A, l, u, xmin, xmax, x0, vtype, opt);
+        case 'MOSEK'
+            [x, f, eflag, output, lambda] = ...
+                miqps_mosek(H, c, A, l, u, xmin, xmax, x0, vtype, opt);
+        case 'OT'
+            [x, f, eflag, output, lambda] = ...
+                miqps_ot(H, c, A, l, u, xmin, xmax, x0, vtype, opt);
+        case 'HIGHS'
+            [x, f, eflag, output, lambda] = ...
+                miqps_highs(H, c, A, l, u, xmin, xmax, x0, vtype, opt);
+        otherwise
+            fcn = ['miqps_' lower(alg)];
+            if exist([fcn '.m']) == 2
+                [x, f, eflag, output, lambda] = ...
+                    feval(fcn, H, c, A, l, u, xmin, xmax, x0, vtype, opt);
+            else
+                error('miqps_master: ''%s'' is not a valid algorithm code', alg);
+            end
+    end
 end
 if ~isfield(output, 'alg') || isempty(output.alg)
     output.alg = alg;

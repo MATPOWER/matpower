@@ -5,6 +5,10 @@ Change history for MP-Opt-Model
 since version 5.0
 -----------------
 
+
+#### 12/10/25
+   - Add support for the Gurobi's new PDHG LP solver in `qps_gurobi()`.
+
 #### 11/14/25
   - Add support for the new HiPO interior point LP solver in HiGHS, including
     `have_feature_highs_hipo()` to detect availability.
