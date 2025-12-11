@@ -23,6 +23,10 @@ alg_names = {
     'deterministic concurrent',
     'deterministic concurrent simplex',
 };
+if have_feature('gurobi', 'vnum') >= 13
+    algs(end+1) = 6;
+    alg_names{end+1} = 'PDHG';
+end
 num_tests = 43 * length(algs);
 
 t_begin(num_tests, quiet);
@@ -45,6 +49,11 @@ end
 
 mpopt = mpoption('out.all', 0, 'verbose', verbose);
 mpopt = mpoption(mpopt, 'opf.dc.solver', 'GUROBI');
+
+%% to keep presolve from solving the full problem, so we are actually
+%% testing the different solvers
+mpopt0 = mpopt;
+mpopt = mpoption(mpopt, 'gurobi.opts.Presolve', 0);
 
 %% run DC OPF
 if have_feature('gurobi')
@@ -169,7 +178,12 @@ if have_feature('gurobi')
     mpc.A = sparse([1;1], [10;11], [1;1], 1, 14);   %% Pg1 + Pg2
     mpc.u = Inf;
     mpc.l = 600;
-    [r, success] = rundcopf(mpc, mpopt);
+    if algs(k) == 6
+        % PDHG w/o presolve does not efficiently detect infeasibility
+        [r, success] = rundcopf(mpc, mpopt0);
+    else
+        [r, success] = rundcopf(mpc, mpopt);
+    end
     t_ok(~success, [t 'no success']);
 
     %% OPF with all buses isolated
