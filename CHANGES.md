@@ -13,6 +13,10 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 since version 8.1
 -----------------
 
+#### 2/16/26
+  - Add 11-bus example case from Kundur, Power System Stability and Control.
+    *Thanks to Mirko Todorovski.*
+
 #### 9/25/25
   - Skip failing interior point algorithm for R2025b `linprog` in DC OPF tests.
 
