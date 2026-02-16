@@ -2,6 +2,15 @@ Change history for MOST
 =======================
 
 
+since 1.3.1
+-----------
+
+#### 2/16/26
+  - Allow absolute paths for file inputs to `loadgenericdata()` and the
+    functions that call it, e.g. `addstorage()`, `addwind()`, `getprofiles()`,
+    `loadmd()`, `loadstoragedata()`, `loadxgendata()`.
+
+
 Version 1.3.1 - *Jul 12, 2025*
 ------------------------------
 

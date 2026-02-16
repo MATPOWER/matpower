@@ -159,7 +159,7 @@
 \newcommand{\mostname}[0]{{{\bf M}{\sc atpower} \textbf{O}ptimal \textbf{S}cheduling \textbf{T}ool}}
 \newcommand{\mosturl}[0]{https://github.com/MATPOWER/most}
 \newcommand{\mostlink}[0]{\href{\mosturl}{\most{}}}
-\newcommand{\mostver}[0]{1.3.1}
+\newcommand{\mostver}[0]{1.3.2-dev}
 \newcommand{\md}[0]{{\most{} Data struct}}
 \newcommand{\powerweb}[0]{{\sc PowerWeb}}
 \newcommand{\pserc}[0]{{\sc PSerc}}
@@ -240,7 +240,7 @@ User's Manual}
 %%% BEFORE PUBLISHING A NEW VERSION:
 %%%   Update the publication year for \bibitem{matpower} and
 %%%   \bibitem{matpower_manual} to the year of the latest release
-\date{July 12, 2025} % comment this line to display the current date
+%\date{July 12, 2025} % comment this line to display the current date
 %\date{December 14, 2011\thanks{Second revision. First revision was December 13, 2011}} % comment this line to display the current date
 
 %%% BEGIN DOCUMENT
@@ -250,7 +250,7 @@ User's Manual}
 \vfill
 \begin{center}
 {\scriptsize
-\copyright~2011--2025~\PSERC{}\\
+\copyright~2011--2026~\PSERC{}\\
 All Rights Reserved}
 \end{center}
 
@@ -3505,6 +3505,21 @@ The \href{https://matpower.org/docs/MOST-manual-1.3.1.pdf}{\most{} 1.3.1 User's 
 \item There is now a PRO version of MOST that adds support for \matpower{} DC lines as described in Section 7.6.3 of the \mum{}. Please contact \href{mailto:info@matpower.org?subject=MOST%20Pro&body=Please%20send%20me%20information%20on%20obtaining%20MOST%20Pro.} {info@matpower.org} for information on obtaining this version.
 \end{itemize}
 
+
+\subsection{Version 1.3.2 -- released ??? ??, 202?}
+\label{app:v132}
+
+The \href{https://matpower.org/docs/MOST-manual-1.3.2.pdf}{\most{} 1.3.2 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MOST-manual-1.3.2.pdf}}
+
+\subsubsection*{Changes}
+\begin{itemize}
+\item Allow absolute paths for file inputs to \codeq{loadgenericdata()} and the functions that call it, e.g. \codeq{addstorage()}, \codeq{addwind()}, \codeq{getprofiles()}, \codeq{loadmd()}, \codeq{loadstoragedata()}, \codeq{loadxgendata()}.
+\end{itemize}
+
+\subsubsection*{Bugs Fixed}
+\begin{itemize}
+\item 
+\end{itemize}
 
 % \subsection{Version 1.4 -- released ??? ?, 202?}
 % \label{app:v14}

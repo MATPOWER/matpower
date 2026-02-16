@@ -96,12 +96,25 @@ if ischar(varfile)      %% it's a file name
             error('loadgenericdata: No variable named ''%s'' in ''%s.mat''', varname, rootname);
         end
     elseif strcmp(extension,'.m')       %% from M file
-        if isempty(args)
-            var = feval(rootname);
-        elseif iscell(args)
-            var = feval(rootname, args{:});
+        [pathstr, fname_only, ~] = fileparts(rootname);
+        if isempty(pathstr)
+            %% no path specified, use feval directly
+            if isempty(args)
+                var = feval(rootname);
+            elseif iscell(args)
+                var = feval(rootname, args{:});
+            else
+                var = feval(rootname, args);
+            end
         else
-            var = feval(rootname, args);
+            %% path specified, use feval_w_path
+            if isempty(args)
+                var = feval_w_path(pathstr, fname_only);
+            elseif iscell(args)
+                var = feval_w_path(pathstr, fname_only, args{:});
+            else
+                var = feval_w_path(pathstr, fname_only, args);
+            end
         end
     end
 else                    %% it's a data structure, not a file name
