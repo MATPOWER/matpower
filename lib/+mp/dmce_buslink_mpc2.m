@@ -34,6 +34,12 @@ classdef dmce_buslink_mpc2 < mp.dmc_element % & mp.dmce_buslink
             vmap.source_uid = {'cell', ''};     %% empty char
             vmap.bus{2}     = 2;
             vmap.bus3p{2}   = 3;
+            vmap.p1         = {'num', 0};       %% zeros
+            vmap.p2         = {'num', 0};       %% zeros
+            vmap.p3         = {'num', 0};       %% zeros
+            vmap.q1         = {'num', 0};       %% zeros
+            vmap.q2         = {'num', 0};       %% zeros
+            vmap.q3         = {'num', 0};       %% zeros
         end
     end     %% methods
 end         %% classdef

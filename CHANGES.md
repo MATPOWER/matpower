@@ -14,6 +14,8 @@ since version 8.1
 -----------------
 
 #### 2/16/26
+  - Add pretty-printing of power for buslink elements.
+    *Thanks to Wilson González Vanegas.*
   - Add 11-bus example case from Kundur, Power System Stability and Control.
     *Thanks to Mirko Todorovski.*
 
