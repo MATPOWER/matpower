@@ -13,6 +13,10 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 since version 8.1
 -----------------
 
+#### 3/10/26
+  - Add to `mp_table` the ability to delete rows with `T(*, :) = []` syntax,
+    as with MATLAB tables.
+
 #### 2/16/26
   - Add pretty-printing of power for buslink elements.
     *Thanks to Wilson González Vanegas.*

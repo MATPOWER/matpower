@@ -2,7 +2,7 @@ function obj = t_mp_table(quiet)
 % t_mp_table - Tests for mp_table (and :class:`table`).
 
 %   MATPOWER
-%   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2026, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -28,7 +28,7 @@ if have_feature('table')
     class_names = {'table', class_names{:}};
 end
 nc = length(table_classes);
-nt = 229 + 8*nc;
+nt = 233 + 8*nc;
 
 t_begin(nc*nt, quiet);
 
@@ -498,6 +498,20 @@ for k = 1:nc
         t_skip(1, [t 'DimensionNames not yet supported'])
     else
         t_ok(isequal(T2.Properties.DimensionNames, dim_names), [t 'DimensionNames']);
+    end
+
+    t = sprintf('%s : subsasgn () : T(i1:s:iN,:)) delete rows : ', cls);
+    T4 = T;
+    T4(2:2:6, :) = [];
+    ii = [5;3;1];
+    ii0 = [1;3;5];
+    t_ok(isequal(T4.Properties.VariableNames, var_names), [t 'VariableNames']);
+    t_ok(isequal(table_values(T4), {v1(ii), v2(ii), v3(ii), v4(ii), v5(ii), v6(ii, :)}), [t 'VariableValues']);
+    t_ok(isequal(T4.Properties.RowNames, row_names(ii0)), [t 'RowNames']);
+    if skip_ml_tab
+        t_skip(1, [t 'DimensionNames not yet supported'])
+    else
+        t_ok(isequal(T4.Properties.DimensionNames, dim_names), [t 'DimensionNames']);
     end
     T(1:2:5, :) = T3;   %% restore
 

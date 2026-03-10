@@ -33,7 +33,7 @@ classdef mp_table
 % See also table.
 
 %   MATPOWER
-%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2026, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -245,6 +245,7 @@ classdef mp_table
             %   T(*, j) = sub_T
             %   T(*, j1:jN) = sub_T
             %   T(*, :) = sub_T
+            %   T(*, :) = []
             %   T(*,  <str>) = sub_T
             %   T(*,  <cell>) = sub_T
             %   T.<name> = val
@@ -316,12 +317,20 @@ classdef mp_table
                             obj.Properties.VariableValues{idx(k)}(s(1).subs{1}, :) = ...
                                 subsref(b, ss);     %% = b{:, k};
                         end
-                    else    %% delete variable
+                    elseif ~isempty(idx)    %% delete variable(s)
                         obj.Properties.VariableNames(idx) = [];
                         obj.Properties.VariableValues(idx) = [];
                         %% rebuild map
                         nv = size(obj, 2);
                         obj.Properties.Map = cell2struct(num2cell(1:nv), obj.Properties.VariableNames, 2);
+                    else                    %% delete row(s)
+                        nv = size(obj, 2);
+                        for k = 1:nv
+                            obj.Properties.VariableValues{k}(s(1).subs{1}, :) = [];
+                        end
+                        if ~isempty(obj.Properties.RowNames)
+                            obj.Properties.RowNames(s(1).subs{1}) = [];
+                        end
                     end
                     if R
                         error('mp_table.subasgn: sub-indexing following {}-indexing not supported');
@@ -651,7 +660,7 @@ classdef mp_table
             %   [...] = extract_named_args(..., 'RowNames', {name1, name2, ...})
             %   [...] = extract_named_args(..., 'DimensionNames', {name1, name2, ...})
             %
-            % Used to extract named arguments, ``'VariableNames'``, 
+            % Used to extract named arguments, ``'VariableNames'``,
             % ``'RowNames'``, and ``'DimensionNames'``, to pass to constructor.
             var_names = {};
             row_names = {};
