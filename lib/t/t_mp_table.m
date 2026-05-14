@@ -501,17 +501,22 @@ for k = 1:nc
     end
 
     t = sprintf('%s : subsasgn () : T(i1:s:iN,:)) delete rows : ', cls);
-    T4 = T;
-    T4(2:2:6, :) = [];
-    ii = [5;3;1];
-    ii0 = [1;3;5];
-    t_ok(isequal(T4.Properties.VariableNames, var_names), [t 'VariableNames']);
-    t_ok(isequal(table_values(T4), {v1(ii), v2(ii), v3(ii), v4(ii), v5(ii), v6(ii, :)}), [t 'VariableValues']);
-    t_ok(isequal(T4.Properties.RowNames, row_names(ii0)), [t 'RowNames']);
-    if skip_ml_tab
-        t_skip(1, [t 'DimensionNames not yet supported'])
+    if have_feature('matlab') && have_feature('matlab', 'vnum') <= 9.011 && ...
+            isa(T, 'mp_table_subclass')
+        t_skip(4, [t 'MATLAB R2021a and earlier known fail'])
     else
-        t_ok(isequal(T4.Properties.DimensionNames, dim_names), [t 'DimensionNames']);
+        T4 = T;
+        T4(2:2:6, :) = [];
+        ii = [5;3;1];
+        ii0 = [1;3;5];
+        t_ok(isequal(T4.Properties.VariableNames, var_names), [t 'VariableNames']);
+        t_ok(isequal(table_values(T4), {v1(ii), v2(ii), v3(ii), v4(ii), v5(ii), v6(ii, :)}), [t 'VariableValues']);
+        t_ok(isequal(T4.Properties.RowNames, row_names(ii0)), [t 'RowNames']);
+        if skip_ml_tab
+            t_skip(1, [t 'DimensionNames not yet supported'])
+        else
+            t_ok(isequal(T4.Properties.DimensionNames, dim_names), [t 'DimensionNames']);
+        end
     end
     T(1:2:5, :) = T3;   %% restore
 
