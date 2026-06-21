@@ -4,7 +4,7 @@ MATPOWER Developer's Guide
 Consider this to be a bare-bones, rough draft of an evolving
 document. I'm sure there are many helpful things that are missing.
 Please feel free to discuss additions, modifications, etc. on the
-[MATPOWER-DEV-L email list][1].
+[MATPOWER Discussions][1].
 
 One of the primary goals for the MATPOWER code is to **keep things
 as simple as possible**. That is, we want to keep the code as simple
@@ -77,4 +77,4 @@ The following are some guidelines, in no particular order.
   misuse of a function.
 
 
-[1]: https://matpower.org/mailing-lists/#devlist
+[1]: https://github.com/MATPOWER/matpower/discussions

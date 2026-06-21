@@ -406,26 +406,17 @@ code and data required to generate the results you are publishing.
 options][39].
 
 
-E-mail Lists
-------------
+MATPOWER Discussions
+--------------------
 
-There are two e-mail lists available to serve the MATPOWER community:
+Your participation is welcomed on [MATPOWER Discussions][26] on GitHub,
+a place to connect with other members of the MATPOWER community to ask
+questions, share ideas, and engage with other MATPOWER users and
+developers. MATPOWER Discussions replaces the legacy MATPOWER-L and
+MATPOWER-DEV-L [e-mail lists][27].
 
-- [**Discussion List**][26] ([MATPOWER-L][26]) – to facilitate discussion
-  among MATPOWER users and provide a forum for help with MATPOWER
-  related questions
-
-- [**Developer List**][27] ([MATPOWER-DEV-L][27]) – to provide a forum
-  for discussion among MATPOWER users and developers related to the
-  development of the MATPOWER software or proposed contributions
-
-For details see the [Mailing Lists section][28] of the
-[MATPOWER website][1].
-
-Please select the most appropriate list for your post and do *not*
-cross-post to both Discussion and Developer lists. Bug reports,
-software patches, proposed enhancements, etc. should be submitted to
-the [issue tracker on GitHub][29].
+Bug reports, software patches, proposed enhancements, etc. should be
+submitted to the [issue tracker on GitHub][29].
 
 
 Optional Packages
@@ -488,9 +479,8 @@ MATPOWER is distributed as open-source under the [3-clause BSD license][30].
 [22]: https://matpower.org/docs/TN3-More-OPF-Derivatives.pdf
 [23]: https://matpower.org/docs/TN4-OPF-Derivatives-Cartesian.pdf
 [24]: https://github.com/MATPOWER/most
-[26]: https://matpower.org/mailing-lists/#discusslist
-[27]: https://matpower.org/mailing-lists/#devlist
-[28]: https://matpower.org/mailing-lists
+[26]: https://github.com/MATPOWER/matpower/discussions
+[27]: https://matpower.org/mailing-lists
 [29]: https://github.com/MATPOWER/matpower/issues
 [30]: LICENSE
 [31]: CITATION
