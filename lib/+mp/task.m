@@ -188,6 +188,16 @@ classdef (Abstract) task < handle
             obj.i_nm = 0;   %% iteration counter for network model loop
             obj.i_mm = 0;   %% iteration counter for math model loop
 
+            %% warning for bug in Octave 11.x
+            is_octave11 = have_feature('octave') && floor(have_feature('octave', 'vnum')) == 11;
+            if is_octave11
+                persistent show_octave11_warning_once;
+                if isempty(show_octave11_warning_once)
+                    show_octave11_warning_once = 1;
+                    warning(sprintf('\n###############################################################################\n#  GNU Octave 11.x has a bug (https://savannah.gnu.org/bugs/index.php?68227)  #\n#  that results in lots of warnings when running MATPOWER. One workaround is  #\n#  to turn off all warnings using:  warning off                               #\n###############################################################################\n'));
+                end
+            end
+
             obj.load_dm(d, mpopt, mpx);
             dm = obj.dm;
 
