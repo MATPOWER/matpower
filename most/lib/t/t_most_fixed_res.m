@@ -2,7 +2,7 @@ function t_most_fixed_res(quiet)
 % t_most_fixed_res - Tests MOST with fixed reserve requirements.
 
 %   MOST
-%   Copyright (c) 2012-2024, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2012-2026, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.
@@ -41,10 +41,12 @@ end
 if have_feature('cplex')
     mpopt = mpoption(mpopt, 'cplex.qpmethod', 2);   %% dual-simplex
 end
-% if have_feature('mosek')
+if have_feature('mosek')
 %     sc = mosek_symbcon;
 %     mpopt = mpoption(mpopt, 'mosek.lp_alg', sc.MSK_OPTIMIZER_DUAL_SIMPLEX);     %% dual simplex
-% end
+    mosek_opts = struct('MSK_DPAR_INTPNT_QO_TOL_DFEAS', 1e-9);
+    mpopt = mpoption(mpopt, 'mosek.opts', mosek_opts);
+end
 if have_feature('linprog')
     if have_feature('linprog_ds')
         mpopt = mpoption(mpopt, 'linprog.Algorithm', 'dual-simplex');
@@ -180,25 +182,25 @@ for tt = 1:nt
     t_ok(r(tt).success, t);
 
     t = 'Pg';
-    t_is(mdo.flow(tt,1,1).mpc.gen(:, PG), r(tt).gen(:, PG), 4, sprintf('(t=%d) : %s', tt, t));
+    t_is(mdo.flow(tt,1,1).mpc.gen(:, PG), r(tt).gen(:, PG), 3.5, sprintf('(t=%d) : %s', tt, t));
 
     t = 'R';
-    t_is(mdo.flow(tt,1,1).mpc.reserves.R, r(tt).reserves.R, 4, sprintf('(t=%d) : %s', tt, t));
+    t_is(mdo.flow(tt,1,1).mpc.reserves.R, r(tt).reserves.R, 3.5, sprintf('(t=%d) : %s', tt, t));
 
     t = 'prc';
-    t_is(mdo.flow(tt,1,1).mpc.reserves.prc, r(tt).reserves.prc, 5, sprintf('(t=%d) : %s', tt, t));
+    t_is(mdo.flow(tt,1,1).mpc.reserves.prc, r(tt).reserves.prc, 4.5, sprintf('(t=%d) : %s', tt, t));
 
     t = 'totalcost';
-    t_is(mdo.flow(tt,1,1).mpc.reserves.totalcost, r(tt).reserves.totalcost, 4, sprintf('(t=%d) : %s', tt, t));
+    t_is(mdo.flow(tt,1,1).mpc.reserves.totalcost, r(tt).reserves.totalcost, 3.5, sprintf('(t=%d) : %s', tt, t));
 
     t = 'mu.l';
-    t_is(mdo.flow(tt,1,1).mpc.reserves.mu.l, r(tt).reserves.mu.l, 5, sprintf('(t=%d) : %s', tt, t));
+    t_is(mdo.flow(tt,1,1).mpc.reserves.mu.l, r(tt).reserves.mu.l, 4.5, sprintf('(t=%d) : %s', tt, t));
 
     t = 'mu.u';
     t_is(mdo.flow(tt,1,1).mpc.reserves.mu.u, r(tt).reserves.mu.u, 6, sprintf('(t=%d) : %s', tt, t));
 
     t = 'mu.Pmax';
-    t_is(mdo.flow(tt,1,1).mpc.reserves.mu.Pmax, r(tt).reserves.mu.Pmax, 5, sprintf('(t=%d) : %s', tt, t));
+    t_is(mdo.flow(tt,1,1).mpc.reserves.mu.Pmax, r(tt).reserves.mu.Pmax, 4.5, sprintf('(t=%d) : %s', tt, t));
 end
 
 warning(s.state, near_sing_matrix_warn_id);

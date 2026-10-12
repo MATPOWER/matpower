@@ -20,7 +20,7 @@ if quiet
 else
     verbose = 0;
 end
-verbose = 0;
+% verbose = 2;
 
 %% set up options
 define_constants;
@@ -33,6 +33,7 @@ mpopt = mpoption(mpopt, 'most.dc_model', 1);
 if have_feature('mosek')
     sc = mosek_symbcon;
     mpopt = mpoption(mpopt, 'mosek.lp_alg', sc.MSK_OPTIMIZER_DUAL_SIMPLEX);     %% dual simplex
+    mpopt = mpoption(mpopt, 'mosek.lp_alg', sc.MSK_OPTIMIZER_PRIMAL_SIMPLEX);   %% primal simplex
 end
 if ~verbose
     mpopt = mpoption(mpopt, 'out.all', 0);

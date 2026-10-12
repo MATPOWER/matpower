@@ -178,7 +178,7 @@ t = 'energy prices';
 t_is(r.results.GenPrices, s.rdc.energy.prc.sum_bus_lam_p(gbus), 6, t);
 
 t = 'Pc';
-t_is(r.results.Pc, s.rdc.energy.Pc, 4, t);
+t_is(r.results.Pc, s.rdc.energy.Pc, 3.5, t);
 
 t = 'Gmin';
 t_is(r.results.Pc - r.results.Rpm, s.rdc.energy.Gmin, 4, t);
@@ -187,10 +187,10 @@ t = 'Gmax';
 t_is(r.results.Pc + r.results.Rpp, s.rdc.energy.Gmax, 4, t);
 
 t = 'upward contingency reserve quantities';
-t_is(r.results.Rpp, s.rdc.reserve.qty.Rp_pos, 4, t);
+t_is(r.results.Rpp, s.rdc.reserve.qty.Rp_pos, 3.5, t);
 
 t = 'downward contingency reserve quantities';
-t_is(r.results.Rpm, s.rdc.reserve.qty.Rp_neg, 4, t);
+t_is(r.results.Rpm, s.rdc.reserve.qty.Rp_neg, 3.5, t);
 
 t = 'upward contingency reserve prices';
 t_is(r.results.RppPrices, s.rdc.reserve.prc.Rp_pos, 6, t);

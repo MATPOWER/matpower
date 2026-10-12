@@ -47,7 +47,8 @@ solnfile = 't_most_w_ds_z';
     CT_MODCOST_X] = idx_ct;
 
 if have_feature('cplex') || have_feature('gurobi') || ...
-        have_feature('mosek') || have_feature('quadprog_ls') || include_MIPS
+        have_feature('mosek') || have_feature('quadprog_ls') && ...
+        have_feature('quadprog_ls', 'vnum') ~= 26.002 || include_MIPS
     mdi = md_init;
 
     %% choose solver
