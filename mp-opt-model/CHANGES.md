@@ -5,6 +5,25 @@ Change history for MP-Opt-Model
 since version 5.0
 -----------------
 
+#### 8/14/26
+  - Add support for mixed-integer quadratically-constrained quadratic
+    programming (MIQCQP) problems
+  - Add support for MIQCQP (mixed-integer quadratically-constrained quadratic
+    programming) problems.
+    *Thanks to Wilson Gonzalez Vanegas.*
+    - Add new top-level wrapper function `miqcqps_master()` to provide
+      a standard unified interface for mixed-integer quadratically-constrained
+      quadratic programming (MIQCQP) problems, with the ability to provide
+      solver-specific input options.
+    - Add `miqcqps_gurobi()` with interface that matches `miqcqps_master()` to
+      handle implementation for Gurobi solver.
+    - Add automatic detection of a new `MIQCQP` problem type that is
+      sent to `miqcqps_master()` to solve.
+
+#### 8/12/26
+  - Add mechanism for limiting number of lazy constraint iterations, controlled
+    by new options `lazy_it_lim`, `lazy_mode`, and `lazy_thresh_multiplier`.
+
 #### 8/4/26
   - Add support for redirecting console output via `mp.logger` by replacing
     `fprintf()` and `warning()` everywhere with `mp_printf()` and
@@ -172,7 +191,7 @@ Version 5.0 - *Jul 12, 2025*
     constrained quadratic programming) problems.
     *Thanks to Wilson Gonzalez Vanegas.*
     - Add new top-level wrapper function `qcqps_master()` to provide
-      a standard unified interface quadratically-constrained quadratic
+      a standard unified interface for quadratically-constrained quadratic
       programming (QCQP) problems, with the ability to provide solver-
       specific input options.
     - Add `qcqps_gurobi()`, `qcqps_knitro()`, `qcqps_nlps()` with

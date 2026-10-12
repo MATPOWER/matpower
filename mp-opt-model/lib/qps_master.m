@@ -56,9 +56,23 @@ function [x, f, eflag, output, lambda] = qps_master(H, c, A, l, u, xmin, xmax, x
 %           lazy ([]) - vector of constraint indices (logical or numeric) of
 %               lazy constraints, triggers an iterative cutting plane approach,
 %               if not empty; set to 'all' to indicate all constraints are lazy
+%           lazy_it_lim (Inf) - lazy constraint iteration limit
+%           lazy_mode (0) - selects mode for handling lazy constraints
+%               0 = add all lazy constraints at iteration lazy_it_lim if any
+%                   are still not satisfied
+%               1 = scale lazy_thresh by lazy_thresh_multiplier at each
+%                   iteration beginning at iteration lazy_it_lim
+%               2 = scale lazy_thresh by lazy_thresh_multiplier at each
+%                   iteration *beginning when* number of violations increases
+%                   from previous iteration, plus lazy_mode = 0 behavior
+%               3 = scale lazy_thresh by lazy_thresh_multiplier at each
+%                   iteration *in which* number of violations increases
+%                   from previous iteration, plus lazy_mode = 0 behavior
 %           lazy_thresh ([]) - vector of constraint thresholds for including
 %               lazy constraints, size must match total number of constraints
 %               or number of lazy constraints
+%           lazy_thresh_multiplier (2) - used to scale lazy_thresh as specified
+%                by lazy_mode
 %           lazy_violation_cost (1) - cost (scalar) of violating a lazy
 %               constraint when evaluating violations and thresholds
 %           bp_opt      - options vector for BP
@@ -219,18 +233,23 @@ if ~isempty(opt) && isfield(opt, 'lazy') && any(opt.lazy)
             error('qps_master: opt.lazy must be a constraint index vector or ''all''');
         end
     elseif ~islogical(lazy)
-        tmp = false(m, 1);
-        tmp(lazy) = true;
-        lazy = tmp;
+        if all(lazy >= 1) && all(lazy <= m)
+            tmp = false(m, 1);
+            tmp(lazy) = true;
+            lazy = tmp;
+        else
+            error('qps_master: if opt.lazy is a numerical vector, all elements must be >= 1 and <= %d', m);
+        end
     elseif length(lazy) ~= m
-        error('qps_master: if opt.lazy is a logical vector its length (%d) must match the number of constraints (%d)', length(lazy), m);
+        error('qps_master: if opt.lazy is a logical vector, its length (%d) must match the number of constraints (%d)', length(lazy), m);
     end
     if ~isempty(opt) && isfield(opt, 'lazy_thresh') && ~isempty(opt.lazy_thresh)
         lazy_thresh = opt.lazy_thresh;
         if length(lazy_thresh) ~= m
             if length(lazy_thresh) == sum(lazy)
-                lazy_thresh = zeros(m, 1);
-                lazy_thresh(lazy) = lazy_thresh;
+                tmp = zeros(m, 1);
+                tmp(lazy) = lazy_thresh;
+                lazy_thresh = tmp;
             else
                 error('qps_master: size of opt.lazy_thresh (%d) must match number of lazy (%d) or total (%d) constraints', length(lazy_thresh), sum(lazy), m);
             end
@@ -238,10 +257,25 @@ if ~isempty(opt) && isfield(opt, 'lazy') && any(opt.lazy)
     else
         lazy_thresh = [];
     end
+    if ~isempty(opt) && isfield(opt, 'lazy_it_lim') && ~isempty(opt.lazy_it_lim)
+        lazy_it_lim = opt.lazy_it_lim;
+    else
+        lazy_it_lim = Inf;
+    end
+    if ~isempty(opt) && isfield(opt, 'lazy_mode') && ~isempty(opt.lazy_mode)
+        lazy_mode = opt.lazy_mode;
+    else
+        lazy_mode = 0;
+    end
     if ~isempty(opt) && isfield(opt, 'lazy_violation_cost') && ~isempty(opt.lazy_violation_cost)
         lazy_violation_cost = opt.lazy_violation_cost;
     else
         lazy_violation_cost = 1;
+    end
+    if ~isempty(opt) && isfield(opt, 'lazy_thresh_multiplier') && ~isempty(opt.lazy_thresh_multiplier)
+        lazy_thresh_multiplier = opt.lazy_thresh_multiplier;
+    else
+        lazy_thresh_multiplier = 2;
     end
 else
     lazy = [];
@@ -361,6 +395,8 @@ else    %% use cutting plain approach for lazy constraints
     ilazy = 0;
     nlazy = sum(lazy);
     active_rows = ~lazy;
+    increase_thresh = false;
+    current_thresh_multiplier = 1;
     % make all equality constraints active
     out = {};
     opt_no_lazy = opt;
@@ -381,8 +417,8 @@ else    %% use cutting plain approach for lazy constraints
             mp_printf('----- %3d : Solved with %d of %d lazy constraints : eflag = %d (%g sec)\n', ...
                 ilazy, sum(lazy & active_rows), nlazy, eflag, toc(t0));
         end
-        out{end+1} = output;
-        out{end}.eflag = eflag;
+        out{ilazy} = output;
+        out{ilazy}.eflag = eflag;
 
         if ~all(active_rows)
             %% partition constraints and variables into active/inactive
@@ -452,8 +488,9 @@ else    %% use cutting plain approach for lazy constraints
                 end
             end
 
-            if any(violated)    %% update active, re-solve
-                nviolated = sum(violated);
+            nviolated = sum(violated);
+            out{ilazy}.nviolated = nviolated;
+            if nviolated        %% update active, re-solve
                 if ~isempty(lazy_thresh)
                     if ni == 0  %% no "inactive" vars, evaluate slack directly
                         sl = Aia_xa - l(~active_rows);
@@ -476,6 +513,31 @@ else    %% use cutting plain approach for lazy constraints
                             AAn * (xx(js) - xxmax(js)) + ...
                             AAp * (xx(js) - xxmin(js));
                     end
+                    if lazy_mode ~= 1 && ilazy >= lazy_it_lim
+                        violated(~active_rows) = true;  %% include all lazy constraints
+                        current_thresh_multiplier = Inf;
+                    end
+                    switch lazy_mode
+                    case 1  %% increase thresh every iteration starting at lazy_it_lim
+                        if ilazy >= lazy_it_lim
+                            increase_thresh = true;
+                        end
+                    case 2  %% increase thresh every iteration starting at first violation increase
+                        if ilazy > 1 && out{ilazy}.nviolated > out{ilazy-1}.nviolated
+                            increase_thresh = true;
+                        end
+                    case 3  %% increase thresh at every violation increase
+                        if ilazy > 1 && out{ilazy}.nviolated > out{ilazy-1}.nviolated
+                            increase_thresh = true;
+                        else
+                            increase_thresh = false;
+                        end
+                    end
+                    if increase_thresh
+                        lazy_thresh = lazy_thresh * lazy_thresh_multiplier;
+                        current_thresh_multiplier = current_thresh_multiplier * lazy_thresh_multiplier;
+                    end
+                    out{ilazy}.lazy_thresh_multiplier = current_thresh_multiplier;
                     violated(~active_rows) = violated(~active_rows) | ...
                         sl < lazy_thresh(~active_rows) | ...
                         su < lazy_thresh(~active_rows);

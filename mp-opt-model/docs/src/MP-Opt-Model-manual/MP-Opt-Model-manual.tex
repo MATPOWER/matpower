@@ -417,9 +417,10 @@ t_have_fcn..............ok
 t_nested_struct_copy....ok
 t_nleqs_master..........ok (30 of 150 skipped)
 t_pnes_master...........ok
-t_qps_master............ok (144 of 504 skipped)
+t_qps_master............ok (288 of 1008 skipped)
 t_qcqps_master..........ok (94 of 651 skipped)
-t_miqps_master..........ok (128 of 371 skipped)
+t_miqps_master..........ok (376 of 1162 skipped)
+t_miqcqps_master........ok (75 of 96 skipped)
 t_nlps_master...........ok (16 of 540 skipped)
 t_mp_opt_model..........ok
 t_mm_solve_leqs.........ok
@@ -427,7 +428,8 @@ t_mm_solve_nleqs........ok (36 of 196 skipped)
 t_mm_solve_pne..........ok
 t_mm_solve_qcqps........ok (6 of 214 skipped)
 t_mm_solve_qps..........ok (120 of 449 skipped)
-t_mm_solve_miqps........ok (106 of 261 skipped)
+t_mm_solve_miqps........ok (160 of 450 skipped)
+t_mm_solve_miqcqps......ok (75 of 96 skipped)
 t_mm_solve_nlps.........ok (9 of 506 skipped)
 t_opt_model.............ok
 t_om_solve_leqs.........ok
@@ -435,10 +437,11 @@ t_om_solve_nleqs........ok (36 of 196 skipped)
 t_om_solve_pne..........ok
 t_om_solve_qcqps........ok (6 of 214 skipped)
 t_om_solve_qps..........ok (120 of 449 skipped)
-t_om_solve_miqps........ok (106 of 261 skipped)
+t_om_solve_miqps........ok (160 of 450 skipped)
+t_om_solve_miqcqps......ok (75 of 96 skipped)
 t_om_solve_nlps.........ok (9 of 506 skipped)
-All tests successful (6814 passed, 966 skipped of 7780)
-Elapsed time 18.02 seconds.
+All tests successful (8050 passed, 1691 skipped of 9741)
+Elapsed time 20.47 seconds.
 \end{Code}
 \end{enumerate}
 
@@ -531,7 +534,7 @@ lambda.mu_l  lambda.mu_u
   0.0000       0.6250
 \end{Code}
 
-Both approaches can be applied to each of the types of problems that \mpom{} handles, namely, LP, QP, MILP, MIQP, QCQP, NLP and linear and nonlinear equations, including families of parameterized nonlinear equations.
+Both approaches can be applied to each of the types of problems that \mpom{} handles, namely, LP, QP, MILP, MIQP, QCQP, MIQCQP, NLP and linear and nonlinear equations, including families of parameterized nonlinear equations.
 
 An options struct can be passed to the \code{solve} method or the \code{qps\_master} function to select a specific solver, control the level of
 progress output, or modify a solver's default parameters.
@@ -556,6 +559,7 @@ The first part consists of interfaces to various numerical optimization solvers 
 \item linear (LP) and quadratic (QP) programming problems
 \item mixed-integer linear (MILP) and quadratic (MIQP) programming problems
 \item quadratically-constrained quadratic programming problems (QCQP)
+\item mixed-integer quadratically-constrained quadratic programming problems (MIQCQP)
 \item nonlinear programming problems (NLP)
 \item linear equations (LEQ)
 \item nonlinear equations (NLEQ)
@@ -590,7 +594,7 @@ This function can be used to solve the problem with any of the available solvers
 [x, f, exitflag, output, lambda] = ...
     qps_master(H, c, A, l, u, xmin, xmax, x0, opt);
 \end{Code}
-where the input and output arguments are described in Tables~\ref{tab:qps_master_input} and \ref{tab:qps_master_output}, respectively, and the options in Table~\ref{tab:qps_master_options}.
+where the input and output arguments are described in Tables~\ref{tab:qps_master_input} and \ref{tab:qps_master_output}, respectively, and the options in Tables~\ref{tab:qps_master_options} and \ref{tab:lazy_options}.
 Alternatively, the input arguments can be packaged as fields in a \code{problem} struct and passed in as a single argument, where all fields are (individually) optional.
 \begin{Code}
 [x, f, exitflag, output, lambda] = qps_master(problem);
@@ -618,7 +622,7 @@ name & description \\
 \code{xmin}	& column vector $x_\mathrm{min}$ of lower bounds on $x$, defaults to $-\infty$	\\
 \code{xmax}	& 	column vector $x_\mathrm{max}$ of upper bounds on $x$, defaults to $+\infty$	\\
 \code{x0}	& optional starting value of optimization vector $x$ \emph{(ignored by some solvers)}	\\
-\code{opt}	& optional options struct (all fields optional), see Table~\ref{tab:qps_master_options} for details	\\
+\code{opt}	& optional options struct (all fields optional), see Tables~\ref{tab:qps_master_options} and \ref{tab:lazy_options} for details	\\
 \code{problem}	& alternative, single argument input struct with fields corresponding to arguments above	\\
 \bottomrule
 \end{tabular}
@@ -692,6 +696,7 @@ name & default & description \\
 \codeq{IPOPT} & \ipopt{}\tnote{*} \\
 \codeq{MIPS} & \mipslink{}, \mipsname{} \\
 \codeq{MOSEK} & \mosek{}\tnote{*} \\
+\codeq{OSQP} & \osqp{}\tnote{*} \\
 \codeq{OT} & \matlab{} Opt Toolbox, \code{quadprog}, \code{linprog} \\
 \end{tabular}	\\
 \code{verbose}	& 0	& amount of progress info to be printed \\
@@ -701,9 +706,6 @@ name & default & description \\
 2 & print a lot of progress info \\
 3 & print all progress info \\
 \end{tabular}	\\
-\code{lazy}	& \emph{empty}	& vector of constraint indices (logical or numeric) of lazy constraints, triggers an iterative cutting plane approach, if not empty; set to \codeq{all} to indicate all constraints are lazy \\
-\code{lazy\_thresh}	& \emph{empty}	& vector of constraint thresholds for including lazy constraints, size must match total number of constraints or number of lazy constraints \\
-\code{lazy\_violation\_cost}	& 1	& cost (scalar) of violating a lazy constraint when evaluating violations and thresholds \\
 \code{bp\_opt}	& \emph{empty}	& options vector for \code{bp}\tnote{*} \\
 \code{clp\_opt}	& \emph{empty}	& options vector for \clp{}\tnote{*} \\
 \code{cplex\_opt}	& \emph{empty}	& options struct for \cplex{}\tnote{*} \\
@@ -714,7 +716,9 @@ name & default & description \\
 \code{linprog\_opt}	& \emph{empty}	& options struct for \code{linprog}\tnote{*} \\
 \code{mips\_opt}	& \emph{empty}	& options struct for \mips{} \\
 \code{mosek\_opt}	& \emph{empty}	& options struct for \mosek{}\tnote{*} \\
+\code{osqp\_opt}	& \emph{empty}	& options struct for \osqp{}\tnote{*} \\
 \code{quadprog\_opt}	& \emph{empty}	& options struct for \code{quadprog}\tnote{*} \\
+\emph{lazy constraint options} && see Table~\ref{tab:lazy_options} \\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -724,7 +728,40 @@ name & default & description \\
 \end{threeparttable}
 \end{table}
 
-The \code{qps\_master} function is simply a master wrapper around corresponding functions specific to each solver, namely, \code{qps\_bpmpd}, \code{qps\_clp}, \code{qps\_cplex}, \code{qps\_glpk}, \code{qps\_gurobi}, \code{qps\_highs}, \code{qps\_ipopt}, \code{qps\_knitro}, \code{qps\_mips}, \code{qps\_mosek}, and \code{qps\_ot}. Each of these functions has an interface identical to that of \code{qps\_master}, with the exception of the options struct for \code{qps\_mips}, which is a simple \mips{} options struct.
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
+\caption{Lazy Constraint Options for \code{qps\_master} and \code{miqps\_master}}
+\label{tab:lazy_options}
+\footnotesize
+\begin{tabular}{lcp{0.62\textwidth}}
+\toprule
+name & default & description \\
+\midrule
+\code{lazy}	& \emph{empty}	& vector of constraint indices (logical or numeric) of lazy constraints, triggers an iterative cutting plane approach, if not empty; set to \codeq{all} to indicate all constraints are lazy \\
+\code{lazy\_it\_lim}	& $\infty$	& lazy constraint iteration limit \\
+\code{lazy\_mode}	& 0	& selects mode for handling lazy constraints \\
+&& \begin{tabular}{r @{ -- } p{0.58\textwidth}}
+0 & add all lazy constraints at iteration \code{lazy\_it\_lim} if any are still not satisfied \\
+1 & scale \code{lazy\_thresh} by \code{lazy\_thresh\_multiplier} at each iteration beginning at iteration \code{lazy\_it\_lim} \\
+2 & scale \code{lazy\_thresh} by \code{lazy\_thresh\_multiplier} at each iteration \emph{beginning when} number of violations increases from previous iteration, plus \code{lazy\_mode} = 0 behavior \\
+3 & scale \code{lazy\_thresh} by \code{lazy\_thresh\_multiplier} at each iteration \emph{in which} number of violations increases from previous iteration, plus \code{lazy\_mode} = 0 behavior \\
+\end{tabular}	\\
+\code{lazy\_thresh}	& \emph{empty}	& vector of constraint thresholds for including lazy constraints, size must match total number of constraints or number of lazy constraints \\
+\code{lazy\_thresh\_multiplier}	& 2	& used to scale \code{lazy\_thresh} as specified by \code{lazy\_mode} \\
+\code{lazy\_violation\_cost}	& 1	& cost (scalar) of violating a lazy constraint when evaluating violations and thresholds \\
+\code{lazy\_mip\_gap}\tnote{*}	& \code{[]}	& $n$-element vector of values to use for \code{mip\_gap} parameter for first $n$ iterations of lazy constraint handling, last element defines final MIP gap tolerance \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+ \scriptsize
+ \item [*] {For \code{miqps\_master} only.}
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+The \code{qps\_master} function is simply a master wrapper around corresponding functions specific to each solver, namely, \code{qps\_bpmpd}, \code{qps\_clp}, \code{qps\_cplex}, \code{qps\_glpk}, \code{qps\_gurobi}, \code{qps\_highs}, \code{qps\_ipopt}, \code{qps\_knitro}, \code{qps\_mips}, \code{qps\_mosek}, \code{qps\_osqp}, and \code{qps\_ot}. Each of these functions has an interface identical to that of \code{qps\_master}, with the exception of the options struct for \code{qps\_mips}, which is a simple \mips{} options struct.
 
 \clearpage
 \subsubsection{QP Example}
@@ -768,7 +805,7 @@ This function can be used to solve the problem with any of the available solvers
     miqps_master(H, c, A, l, u, xmin, xmax, x0, vtype, opt);
 [x, f, exitflag, output, lambda] = miqps_master(problem);
 \end{Code}
-The calling syntax for \code{miqps\_master} is identical to that used by \code{qps\_master} with the exception of a single new input argument, \code{vtype}, to specify the variable type, just before the options struct. The input arguments, output arguments, and options for \code{miqps\_master} are described in Tables~\ref{tab:miqps_master_input}, Tables~\ref{tab:miqps_master_output}, and \ref{tab:miqps_master_options}, respectively.
+The calling syntax for \code{miqps\_master} is identical to that used by \code{qps\_master} with the exception of a single new input argument, \code{vtype}, to specify the variable type, just before the options struct. The input arguments, output arguments, and options for \code{miqps\_master} are described in Table~\ref{tab:miqps_master_input}, Table~\ref{tab:miqps_master_output}, and Tables~\ref{tab:miqps_master_options} and \ref{tab:lazy_options}, respectively.
 
 \begin{table}[!ht]
 %\renewcommand{\arraystretch}{1.2}
@@ -789,6 +826,7 @@ name & description \\
 \codeq{B} & binary \\
 \codeq{I} & integer \\
 \end{tabular}	\\
+\code{opt}	& optional options struct (all fields optional), see Tables~\ref{tab:miqps_master_options} and \ref{tab:lazy_options} for details	\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -878,10 +916,6 @@ name & default & description \\
 3 & print all progress info \\
 \end{tabular}	\\
 \code{fix\_integer}	& 0	& fix integer variables at value in \code{x0}, if true \\
-\code{lazy}	& \emph{empty}	& vector of constraint indices (logical or numeric) of lazy constraints, triggers an iterative cutting plane approach, if not empty; set to \codeq{all} to indicate all constraints are lazy \\
-\code{lazy\_thresh}	& \emph{empty}	& vector of constraint thresholds for including lazy constraints, size must match total number of constraints or number of lazy constraints \\
-\code{lazy\_violation\_cost}	& 1	& cost (scalar) of violating a lazy constraint when evaluating violations and thresholds \\
-\code{lazy\_mip\_gap}	& \code{[]}	& $n$-element vector of values to use for \code{mip\_gap} parameter for first $n$ iterations of lazy constraint handling, last element defines final MIP gap tolerance \\
 \code{mip\_gap}	& \code{[]}	& relative MIP gap tolerance, defaults to solver default/options \\
 \code{mip\_gap\_abs}	& \code{[]}	& absolute MIP gap tolerance, defaults to solver default/options \\
 \code{relax\_integer}	& 0	& relax integer constraints, if true \\
@@ -893,6 +927,7 @@ name & default & description \\
 \code{highs\_opt}	& \emph{empty}	& options struct for \highs{}\tnote{*} \\
 \code{intlinprog\_opt}	& \emph{empty}	& options struct for \code{intlinprog}\tnote{*} \\
 \code{mosek\_opt}	& \emph{empty}	& options struct for \mosek{}\tnote{*} \\
+\emph{lazy constraint options} && see Table~\ref{tab:lazy_options} \\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -902,7 +937,7 @@ name & default & description \\
 \end{threeparttable}
 \end{table}
 
-By default, unless the \code{skip\_prices} option is set to 1, once \code{miqps\_master} has found the integer solution, it constrain the integer variables to their solved values and call \code{qps\_matpower} on the resulting problem to determine the shadow prices in \code{lambda}.
+By default, unless the \code{skip\_prices} option is set to 1, once \code{miqps\_master} has found the integer solution, it constrains the integer variables to their solved values and calls \code{qps\_matpower} on the resulting problem to determine the shadow prices in \code{lambda}.
 
 The \code{miqps\_master} function is simply a master wrapper around corresponding functions specific to each solver, namely, \code{miqps\_cplex}, \code{miqps\_glpk}, \code{miqps\_gurobi}, \code{miqps\_highs}, \code{miqps\_mosek}, and \code{miqps\_ot}. Each of these functions has an interface identical to that of \code{miqps\_master}.
 
@@ -1095,6 +1130,190 @@ opt = struct('verbose', 2);
 \end{Code}
 
 Other examples of using \code{qcqps\_master} to solve QCQP problems can be found in \code{t\_qcqps\_master.m}.
+
+
+\clearpage
+\subsection{MIQCQP Solvers -- {\tt miqcqps\_master}}
+\label{sec:miqcqps_master}
+
+The \code{miqcqps\_master} function provides a common \textbf{\underline{m}}ixed-\textbf{\underline{i}}nteger \textbf{\underline{q}}uadratically-\textbf{\underline{c}}onstrained \textbf{\underline{q}}uadratic \textbf{\underline{p}}rogramming \textbf{\underline{s}}olver interface for MIQCQP problems. The form of the problem is identical to \eqref{eq:QCQPobj}--\eqref{eq:QCQPvarbounds}, with the addition of two possible additional constraints, namely,
+\begin{align}
+x_i \in \mathbb{Z}, \qquad\quad \forall i &\in \mathcal{I} \label{eq:mi_integer}\\
+x_j \in \{0, 1\}, \quad \forall j &\in \mathcal{B}, \label{eq:mi_binary}
+\end{align}
+where $\mathcal{I}$ and $\mathcal{B}$ are the sets of indices of variables that are restricted to integer or binary values, respectively.
+
+This function can be used to solve the problem with any of the available solvers by calling it as follows,
+\begin{Code}
+[x, f, exitflag, output, lambda] = ...
+    miqcqps_master(H, c, Q, B, lq, uq, A, l, u, xmin, xmax, x0, vtype, opt);
+[x, f, exitflag, output, lambda] = miqcqps_master(problem);
+\end{Code}
+The calling syntax for \code{miqcqps\_master} is identical to that used by \code{qcqps\_master} with the exception of a single new input argument, \code{vtype}, to specify the variable type, just before the options struct. The input arguments, output arguments, and options for \code{miqcqps\_master} are described in Table~\ref{tab:miqcqp_master_input}, Table~\ref{tab:miqcqp_master_output}, and Table~\ref{tab:miqcqps_master_options}, respectively.
+
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
+\caption{Input Arguments for \code{miqcqp\_master}}
+\label{tab:miqcqp_master_input}
+\footnotesize
+\begin{tabular}{p{0.15\textwidth}p{0.78\textwidth}}
+\toprule
+name & description \\
+\midrule
+\multicolumn{2}{l}{\emph{all \code{qcqps\_master} input args from Table~\ref{tab:qcqps_master_input}, with the following additions/modifications}} \\
+& \\
+\code{vtype}	& character string of length $n_x$ (number of elements in $x$), or 1 (value applies to all variables in $x$), specifying variable type; allowed values are:\tnote{\dag}	\\
+& \begin{tabular}{r @{ -- } l}
+\codeq{C} & continuous (default) \\
+\codeq{B} & binary \\
+\codeq{I} & integer \\
+\end{tabular}	\\
+\code{opt}	& optional options struct (all fields optional), see Table~\ref{tab:miqcqps_master_options} for details	\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+ \scriptsize
+ \item [\dag] {\cplex{} and \gurobi{} also include \codeq{S} for semi-continuous and \codeq{N} for semi-integer, but these have not been tested.}
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
+\caption{Output Arguments for \code{miqcqp\_master}}
+\label{tab:miqcqp_master_output}
+\footnotesize
+\begin{tabular}{p{0.12\textwidth}p{0.82\textwidth}}
+\toprule
+name & description \\
+\midrule
+% \multicolumn{2}{l}{\emph{all \code{qps\_master} output args from Table~\ref{tab:qps_master_output}, with the following additions/modifications}} \\
+% & \\
+% \code{output}	& output struct with the following fields:	\\
+% & \begin{tabular}{r @{ -- } l}
+% \code{mip\_gap} & relative MIP gap at the solution, if provided by the solver \\
+% \end{tabular}	\\
+\code{x}	& solution vector $x$	\\
+\code{f}	& final objective function value $f(x) = \frac{1}{2} \trans{x} H x + \trans{c} x$	\\
+\code{exitflag}	& exit flag	\\
+& \begin{tabular}{r @{ -- } l}
+1 & converged successfully \\
+$\le 0$ & solver-specific failure code \\
+\end{tabular}	\\
+\code{output}	& output struct with the following fields:	\\
+& \begin{tabular}{r @{ -- } l}
+% \code{active\_constraints} & logical vector indicating active constraints\tnote{\ddag} \\
+\code{alg} & algorithm code of solver used \\
+% \code{mip\_gap} & relative MIP gap at the solution, if provided by the solver \\
+\emph{(others)} & solver-specific fields \\
+\end{tabular}	\\
+\code{lambda}\tnote{\dag}	& struct containing the Langrange and Kuhn-Tucker multipliers on the constraints, with fields:	\\
+& \begin{tabular}{r @{ -- } l}
+\code{mu\_l} & lower (left-hand) limit on linear constraints \\
+\code{mu\_u} & upper (right-hand) limit on linear constraints \\
+\code{mu\_lq} & lower (left-hand) limit on quadratic constraints \\
+\code{mu\_uq} & upper (right-hand) limit on quadratic constraints \\
+\code{lower} & lower bound on optimization variables \\
+\code{upper} & upper bound on optimization variables \\
+\end{tabular}	\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\scriptsize
+\item [\dag] {In the current implementation, shadow prices are computed only for problems with all continuous variables.}
+%\item [\ddag] {Only present if \code{lazy} option was provided as input. A constraint is considered active unless it was specified as lazy \emph{and} was not included as an active row in the final solve.}
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
+\caption{Options for \code{miqcqp\_master}}
+\label{tab:miqcqps_master_options}
+\footnotesize
+\begin{tabular}{lcp{0.62\textwidth}}
+\toprule
+name & default & description \\
+\midrule
+% \multicolumn{3}{l}{\emph{all \code{qps\_master} options from Table~\ref{tab:qps_master_options}, with the following additions/modifications}} \\
+% & \\
+\code{alg}	& \codeq{DEFAULT}	& determines which solver to use \\
+&& \begin{tabular}{c @{ -- } p{0.5\textwidth}}
+\codeq{DEFAULT} & automatic, first available of \gurobi{}, \cplex{}, \mosek{}, \ot{} (if \matlab{}, MILP only), \highs{} (MILP only), \glpk{} (MILP only) \\
+\codeq{CPLEX} & \cplex{}\tnote{*} \\
+\codeq{GLPK} & \glpk{}\tnote{*} \emph{(LP only)} \\
+\codeq{GUROBI} & \gurobi{}\tnote{*} \\
+\codeq{HIGHS} & \highs{}\tnote{*} \\
+\codeq{MOSEK} & \mosek{}\tnote{*} \\
+\codeq{OT} & \matlab{} Opt Toolbox, \code{intlinprog} \\
+\end{tabular}	\\
+\code{verbose}	& 0	& amount of progress info to be printed \\
+&& \begin{tabular}{r @{ -- } l}
+0 & print no progress info \\
+1 & print a little progress info \\
+2 & print a lot of progress info \\
+3 & print all progress info \\
+\end{tabular}	\\
+\code{fix\_integer}	& 0	& fix integer variables at value in \code{x0}, if true \\
+\code{mip\_gap}	& \code{[]}	& relative MIP gap tolerance, defaults to solver default/options \\
+\code{mip\_gap\_abs}	& \code{[]}	& absolute MIP gap tolerance, defaults to solver default/options \\
+\code{relax\_integer}	& 0	& relax integer constraints, if true \\
+\code{skip\_prices}	& 0	& flag that specifies whether or not to skip the price computation stage, in which the problem is re-solved for only the continuous variables, with all others being constrained to their solved values \\
+\code{price\_stage\_warn\_tol}	& \emph{$10^{-7}$}	& tolerance on the objective function value and primal variable relative mismatch required to avoid mismatch warning message \\
+\code{cplex\_opt}	& \emph{empty}	& options struct for \cplex{}\tnote{*} \\
+\code{glpk\_opt}	& \emph{empty}	& options struct for \glpk{}\tnote{*} \\
+\code{grb\_opt}	& \emph{empty}	& options struct for \gurobi{}\tnote{*} \\
+\code{highs\_opt}	& \emph{empty}	& options struct for \highs{}\tnote{*} \\
+\code{intlinprog\_opt}	& \emph{empty}	& options struct for \code{intlinprog}\tnote{*} \\
+\code{mosek\_opt}	& \emph{empty}	& options struct for \mosek{}\tnote{*} \\
+\emph{lazy constraint options} && see Table~\ref{tab:lazy_options} \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+ \scriptsize
+ \item [*] {Requires the installation of an optional package. See Appendix~\ref{app:optional_packages} for details on the corresponding package.}
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+%By default, unless the \code{skip\_prices} option is set to 1, once \code{miqcqp\_master} has found the integer solution, it constrains the integer variables to their solved values and calls \code{qcqps\_matpower} on the resulting problem to determine the shadow prices in \code{lambda}.
+
+The \code{miqcqp\_master} function is simply a master wrapper around corresponding functions specific to each solver, namely, \code{miqcqp\_gurobi} \emph{(the only one currently implemented)}. Each of these functions has an interface identical to that of \code{miqcqp\_master}.
+
+\clearpage
+\subsubsection{MIQCQP Example}
+\label{sec:miqcqp_ex}
+
+The following code shows an example of using \code{miqcqp\_master} to solve a simple 2-dimensional MIQCQP problem\footnote{From OPTI Toolbox, see:\\ \url{https://jonathancurrie.github.io/OPTI/examples/problem-types/miqcqp/}} using the default solver.
+
+\begin{Code}
+H = [1  0; 0  1];
+c = [-2 -2]';
+Q = {2*speye(2)};
+B  = [0 -2];
+lq = [];
+uq = 1;
+A = [-1 1; 1 3];
+u = [2 5]';
+l = [];
+xmin = zeros(2,1);
+xmax = Inf(2,1);
+x0 = [];
+vtype = 'IC';
+opt = struct('verbose', 2);
+[x, f, s, out, lam] = ...
+    miqcqps_master(H, c, Q, B, lq, uq, A, l, u, xmin, xmax, x0, vtype, opt);
+\end{Code}
+
+Other examples of using \code{miqcqp\_master} to solve MIQCQP problems can be found in \code{t\_miqcqp\_master.m}.
 
 
 % \clearpage
@@ -2371,7 +2590,7 @@ jac =
 \section{Mathematical Model Class -- {\tt mp.opt\_model}}
 \label{sec:mp_opt_model}
 
-The \code{mp.opt\_model} class provides facilities for constructing a mathematical programming or optimization problem by adding and managing the indexing of sets of variables, constraints and costs. The model can then be solved by simply calling the \code{solve} method which automatically selects and calls the appropriate master solver function, i.e. \code{qps\_master}, \code{miqps\_master}, \code{qcqps\_master}, \code{nlps\_master}, \code{nleqs\_master} or \code{mplinsolve}, depending on the type of problem.
+The \code{mp.opt\_model} class provides facilities for constructing a mathematical programming or optimization problem by adding and managing the indexing of sets of variables, constraints and costs. The model can then be solved by simply calling the \code{solve} method which automatically selects and calls the appropriate master solver function, i.e. \code{qps\_master}, \code{miqps\_master}, \code{qcqps\_master}, \code{miqcqps\_master}, \code{nlps\_master}, \code{nleqs\_master} or \code{mplinsolve}, depending on the type of problem.
 
 In this manual, and in the code, \code{mm} is the name of the variable used by convention for mathematical model objects of the class \code{mp.opt\_model}, which is typically created by calling the constructor \code{mp.opt\_model} with no arguments.\footnote{The name \code{om} is used for legacy mathematical model objects of the class \code{opt\_model}.}.
 
@@ -2704,9 +2923,9 @@ mm.solve()
 [...] = mm.solve(opt)
 \end{Code}
 
-After all variables, constraints and costs have been added to the model, the mathematical programming or optimization problem can be solved simply by calling the \code{solve} method. This method automatically selects and calls, depending on the problem type, \code{mplinsolve} or one of the master solver interface functions from Section~\ref{sec:master_solvers}, namely \code{qps\_master}, \code{miqps\_master}, \code{qcqps\_master}, \code{nlps\_master}, \code{nleqs\_master}, or \code{pnes\_master}. Note that one of the equation solvers is chosen if the model has no costs and no inequality constraints. In this case, if the number of variables is equal to the number of equality constraints, \code{mplinsolve} or \code{nleqs\_master} is selected. If the number of variables is one more than the number of constraints \code{pnes\_master} is chosen.
+After all variables, constraints and costs have been added to the model, the mathematical programming or optimization problem can be solved simply by calling the \code{solve} method. This method automatically selects and calls, depending on the problem type, \code{mplinsolve} or one of the master solver interface functions from Section~\ref{sec:master_solvers}, namely \code{qps\_master}, \code{miqps\_master}, \code{qcqps\_master}, \code{miqcqps\_master}, \code{nlps\_master}, \code{nleqs\_master}, or \code{pnes\_master}. Note that one of the equation solvers is chosen if the model has no costs and no inequality constraints. In this case, if the number of variables is equal to the number of equality constraints, \code{mplinsolve} or \code{nleqs\_master} is selected. If the number of variables is one more than the number of constraints \code{pnes\_master} is chosen.
 
-The results are stored in the \code{soln} field (see Section~\ref{sec:soln}) of the \mpom{} object and can be returned in the optional output arguments. The input options struct \code{opt}, summarized in Tables~\ref{tab:solve_options} and \ref{tab:solve_alg_option}, is optional, as are all of its fields. For details on the return values see the descriptions of the individual solver functions in Sections~\ref{sec:qps_master}, \ref{sec:miqps_master}, \ref{sec:qcqps_master}, \ref{sec:nlps_master}, \ref{sec:nleqs_master}, and \ref{sec:pnes_master}. For linear equations, the \code{solver} and \code{opt} arguments for \code{mplinsolve}, described in Section~\ref{MIPSMAN-sec:mplinsolve} of the \mipsman{}, can be provided in the respective fields of \code{opt.leq\_opt}.
+The results are stored in the \code{soln} field (see Section~\ref{sec:soln}) of the \mpom{} object and can be returned in the optional output arguments. The input options struct \code{opt}, summarized in Tables~\ref{tab:solve_options} and \ref{tab:solve_alg_option}, is optional, as are all of its fields. For details on the return values see the descriptions of the individual solver functions in Sections~\ref{sec:qps_master}, \ref{sec:miqps_master}, \ref{sec:qcqps_master}, \ref{sec:miqcqps_master}, \ref{sec:nlps_master}, \ref{sec:nleqs_master}, and \ref{sec:pnes_master}. For linear equations, the \code{solver} and \code{opt} arguments for \code{mplinsolve}, described in Section~\ref{MIPSMAN-sec:mplinsolve} of the \mipsman{}, can be provided in the respective fields of \code{opt.leq\_opt}.
 
 
 \begin{table}[!ht]
@@ -2734,9 +2953,10 @@ property of the field type objects \\
 \midrule
 \multicolumn{3}{l}{\emph{Additional Options for Specific Problem Types}} \\
 % \emph{problem type} & & \emph{for details see ...} \\
-~~LP/QP & & see Table~\ref{tab:qps_master_options} \\
-~~MILP/MIQP & & see Table~\ref{tab:miqps_master_options} \\
+~~LP/QP & & see Tables~\ref{tab:qps_master_options} and \ref{tab:lazy_options} \\
+~~MILP/MIQP & & see Tables~\ref{tab:miqps_master_options} and \ref{tab:lazy_options} \\
 ~~QCQP & & see Table~\ref{tab:qcqps_master_options} \\
+~~MIQCQP & & see Table~\ref{tab:miqcqps_master_options} \\
 ~~NLP & & see Table~\ref{tab:nlps_master_options} \\
 ~~LEQ & & see Section~\ref{MIPSMAN-sec:mplinsolve} of the \mipsman{} \\
 ~~~~\code{leq\_opt.solver} & \codeq{} & see \code{help mplinsolve}, input argument \code{solver} \\
@@ -2761,7 +2981,7 @@ property of the field type objects \\
 \caption{Values for \code{alg} Option to \code{solve}}
 \label{tab:solve_alg_option}
 \footnotesize
-\begin{tabular}{lcp{0.55\textwidth}}
+\begin{tabular}{lp{0.3\textwidth}p{0.55\textwidth}}
 \toprule
 \code{alg} value & problem type(s) & description \\
 \midrule
@@ -2771,6 +2991,7 @@ property of the field type objects \\
 & MILP & \gurobi{}, \cplex{}, \mosek{}, \code{intlinprog}, \highs{}, \glpk{} \\
 & MIQP & \gurobi{}, \cplex{}, \mosek{} \\
 & QCQP & \ipopt{}, \knitro{}, \code{fmincon}\tnote{\P}, \mips{} \\
+& MIQCQP & \gurobi{} \\
 & NLP & \mips{} \\
 & MINLP & \knitro{} (not yet implemented) \\
 & LEQ & built-in backslash operator \\
@@ -2784,7 +3005,7 @@ property of the field type objects \\
 \codeq{FSOLVE} & NLEQ & \matlab{} Opt Toolbox, \code{fsolve}\tnote{\S} \\
 \codeq{GLPK} & LP, MILP & \glpk{}\tnote{*} \emph{(LP only)} \\
 \codeq{GS} & NLEQ & Gauss-Seidel method\tnote{\ddag} \\
-\codeq{GUROBI} & LP, QP, MILP, MIQP, QCQP & \gurobi{}\tnote{*} \\
+\codeq{GUROBI} & LP, QP, MILP, MIQP, QCQP, MIQCQP & \gurobi{}\tnote{*} \\
 \codeq{HIGHS} & LP, QP, MILP & \highs{}\tnote{*} \\
 \codeq{IPOPT} & LP, QP, QCQP, NLP & \ipopt{}\tnote{*} \\
 \codeq{KNITRO} & QCQP, NLP, MINLP & \knitro{}\tnote{*} \\
@@ -2806,7 +3027,7 @@ property of the field type objects \\
 \end{threeparttable}
 \end{table}
 
-
+\clearpage
 \subsection{Accessing the Model}
 
 \subsubsection{Indexing}
@@ -3544,6 +3765,7 @@ The \code{prob\_type} string is one of the following:
 \item \codeq{NLP} – nonlinear program
 \item \codeq{MILP} – mixed-integer linear program
 \item \codeq{MIQP} – mixed-integer quadratic program
+\item \codeq{MIQCQP} – mixed-integer quadratically-constrained quadratic program
 \item \codeq{MINLP} – mixed-integer nonlinear program\footnote{\mpom{} does not yet implement solving MINLP problems.}
 \end{itemize}
 
@@ -4247,9 +4469,9 @@ When the solver is set to \codeq{DEFAULT}, this function also selects the best a
   qcqpopt = mpopt2qcqpopt(mpopt, model, alg)
 \end{Code}
 
-The \code{mpopt2qcqpopt} function returns an options struct suitable for \code{qcqps\_master} or one of the solver specific equivalents. It is constructed from the relevant portions of \code{mpopt}, a \matpower{} options struct. The \code{model} argument specifies whether the problem to be solved is an LP, QP, or QCQP problem to allow for the selection of a suitable default solver. The final \code{alg} argument allows the solver to be set explicitly (in \code{qcqpopt.alg}). By default this value is taken from \code{mpopt.opf.ac.solver}.
+The \code{mpopt2qcqpopt} function returns an options struct suitable for \code{miqcqps\_master}, \code{qcqps\_master}, or one of the solver specific equivalents. It is constructed from the relevant portions of \code{mpopt}, a \matpower{} options struct. The \code{model} argument specifies whether the problem to be solved is an LP, QP, QCQP, MILP, MIQP, or MIQCQP problem to allow for the selection of a suitable default solver. The final \code{alg} argument allows the solver to be set explicitly (in \code{qcqpopt.alg}). By default this value is taken from \code{mpopt.opf.ac.solver}.
 
-When the solver is set to \codeq{DEFAULT}, this function also selects the best available solver that is applicable to the specific problem class. For LP and QP problems \code{mpopt2qpopt} is called, but for QCQP problems the precedence is: \ipopt{}, \knitro{}, \code{fmincon}, \mips{}.
+When the solver is set to \codeq{DEFAULT}, this function also selects the best available solver that is applicable to the specific problem class. For LP and QP problems \code{mpopt2qpopt} is called, but for QCQP problems the precedence is: \ipopt{}, \knitro{}, \code{fmincon}, \mips{}. And for MIQCQP problems Gurobi is selected.
 
 
 \subsubsection{\tt mpopt2pneopt}
@@ -4267,7 +4489,7 @@ The \code{mpopt2pneopt} function returns an options struct suitable for \code{pn
 \section{Acknowledgments}
 The authors would like to acknowledge the support of the research grants and contracts that have contributed directly and indirectly to the development of \mpom{}. This includes funding from the \PSERC{}, the U.S. Department of Energy,\footnote{Supported in part by the \CERTS{} and the Office of Electricity Delivery and Energy Reliability, Transmission Reliability Program of the U.S. Department of Energy under the National Energy Technology Laboratory Cooperative Agreement No.~DE-FC26-09NT43321.} and the National Science Foundation.\footnote{This material is based upon work supported in part by the National Science Foundation under Grant Nos. 0532744, 1642341 and 1931421. Any opinions, findings, and conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of the National Science Foundation.}
 
-The authors would also like to explicitly thank and acknowledge Shrirang Abhyankar and Alexander Flueck for their contributions to the continuation power flow code and documentation in \matpowerlink{} upon which the predictor-corrector continuation method for parameterized nonlinear equations in \mpom{} is based. And we thank Wilson Gonz{\'a}lez Vanegas for contributing the quadratic constraint implementation and QCQP handling functionality.
+The authors would also like to explicitly thank and acknowledge Shrirang Abhyankar and Alexander Flueck for their contributions to the continuation power flow code and documentation in \matpowerlink{} upon which the predictor-corrector continuation method for parameterized nonlinear equations in \mpom{} is based. And we thank Wilson Gonz{\'a}lez Vanegas for contributing the quadratic constraint implementation and QCQP/MIQCQP handling functionality.
 
 \begin{appendices}
 
@@ -4323,6 +4545,7 @@ name & description \\
 \toprule
 name & description \\
 \midrule
+\code{miqcqps\_master}	& Mixed-Integer Quadratically-Constrained Quadratic Program Solver wrapper function, provides a unified interface for various MIQCQP solvers	\\
 \code{miqps\_master}	& Mixed-Integer Quadratic Program Solver wrapper function, provides a unified interface for various MIQP/MILP solvers	\\
 \code{nleqs\_master}	& Nonlinear Equation Solver wrapper function, provides a unified interface for various nonlinear equation (NLEQ) solvers	\\
 \code{nlps\_master}	& Nonlinear Program Solver wrapper function, provides a unified interface for various NLP solvers	\\
@@ -4355,6 +4578,7 @@ name & description \\
 \toprule
 name & description \\
 \midrule
+\code{miqcqps\_gurobi}	& MIQCQP solver API implementation for \gurobi{}\tnote{\dag}	\\
 \code{miqps\_cplex}	& MIQP/MILP solver API implementation for CPLEX (\code{cplexmiqp} and \code{cplexmilp})\tnote{\dag}	\\
 \code{miqps\_glpk}	& MILP solver API implementation for \glpk{}\tnote{\dag}	\\
 \code{miqps\_gurobi}	& MIQP/MILP solver API implementation for \gurobi{}\tnote{\dag}	\\
@@ -4729,9 +4953,11 @@ name & description \\
 \code{lib/t/}	& \mpom{} tests	\\
 \code{~~test\_mp\_opt\_model}	& runs full \mpom{} test suite	\\
 \code{~~t\_have\_fcn}	& runs tests for (deprecated) \code{have\_fcn}	\\
+\code{~~t\_miqcqps\_master}	& runs tests of MIQCQP solvers via \code{miqcqps\_master}	\\
 \code{~~t\_miqps\_master}	& runs tests of MILP/MIQP solvers via \code{miqps\_master}	\\
 \code{~~t\_mp\_opt\_model}	& runs tests for \code{mp.opt\_model} objects	\\
 \code{~~t\_mm\_solve\_leqs}	& runs tests of LEQ solvers via \code{mm.solve()}	\\
+\code{~~t\_mm\_solve\_miqcqps}	& runs tests of MIQCQP solvers via \code{mm.solve()}	\\
 \code{~~t\_mm\_solve\_miqps}	& runs tests of MILP/MIQP solvers via \code{mm.solve()}	\\
 \code{~~t\_mm\_solve\_nleqs}	& runs tests of NLEQ solvers via \code{mm.solve()}	\\
 \code{~~t\_mm\_solve\_nlps}	& runs tests of NLP solvers via \code{mm.solve()}	\\
@@ -4743,6 +4969,7 @@ name & description \\
 \code{~~t\_nlps\_master}	& runs tests of NLP solvers via \code{nlps\_master}	\\
 \code{~~t\_om\_solve\_leqs}	& runs tests of LEQ solvers via \code{om.solve()}	\\
 \code{~~t\_om\_solve\_miqps}	& runs tests of MILP/MIQP solvers via \code{om.solve()}	\\
+\code{~~t\_om\_solve\_miqcqps}	& runs tests of MIQCQP solvers via \code{om.solve()}	\\
 \code{~~t\_om\_solve\_nleqs}	& runs tests of NLEQ solvers via \code{om.solve()}	\\
 \code{~~t\_om\_solve\_nlps}	& runs tests of NLP solvers via \code{om.solve()}	\\
 \code{~~t\_om\_solve\_pne}	& runs tests of PNE solvers via \code{om.solve()}	\\
@@ -4809,12 +5036,12 @@ To use \glpk{} with \mpom{}, a MEX interface is required\footnote{The \url{http:
 
 When \glpk{} is installed, either as part of Octave or with a MEX interface for \matlab{}, it can be used to solve general LP problems via \mpom{}'s common QP solver interface \code{qps\_master}, or MILP problems via \code{miqps\_master}, with the algorithm option set to \codeq{GLPK}, or by calling \code{qps\_glpk} or \code{miqps\_glpk} directly.
 
-\subsection{\gurobi{} -- High-performance LP, QP, QCQP, MILP and MIQP Solvers}
+\subsection{\gurobi{} -- High-performance LP, QP, QCQP, MILP, MIQP, MIQCQP Solvers}
 \label{app:gurobi}
 
 \gurobi{}~\cite{gurobi} is a collection of optimization tools that includes high-performance solvers for large-scale linear programming (LP) and quadratic programming (QP) problems, among others. The project was started by some former \cplex{} developers. More information is available at \url{https://www.gurobi.com/}.
 
-Although \gurobi{} is a commercial package, at the time of this writing their is a free academic license available. See \url{https://www.gurobi.com/academia/for-universities} for more details.
+Although \gurobi{} is a commercial package, at the time of this writing there is a free academic license available. See \url{https://www.gurobi.com/academia/for-universities} for more details.
 
 When \gurobi{} is installed, it can be used to solve general LP and QP problems via \mpom{}'s common QP solver interface \code{qps\_master}, or MILP and MIQP problems via \code{miqps\_master}, with the algorithm option set to \codeq{GUROBI}, or by calling \code{qps\_gurobi} or \code{miqps\_gurobi} directly.
 
@@ -5235,8 +5462,8 @@ property of the field type objects \\
 \midrule
 \multicolumn{3}{l}{\emph{Additional Options for Specific Problem Types}} \\
 % \emph{problem type} & & \emph{for details see ...} \\
-~~LP/QP & & see Table~\ref{tab:qps_master_options} \\
-~~MILP/MIQP & & see Table~\ref{tab:miqps_master_options} \\
+~~LP/QP & & see Tables~\ref{tab:qps_master_options} and \ref{tab:lazy_options} \\
+~~MILP/MIQP & & see Tables~\ref{tab:miqps_master_options} and \ref{tab:lazy_options} \\
 ~~NLP & & see Table~\ref{tab:nlps_master_options} \\
 ~~LEQ & & see Section~\ref{MIPSMAN-sec:mplinsolve} of the \mipsman{} \\
 ~~~~\code{leq\_opt.solver} & \codeq{} & see \code{help mplinsolve}, input argument \code{solver} \\
@@ -6752,12 +6979,15 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-5.1.pdf}{\mpom{} 5.1 Use
 
 \subsubsection*{New Features}
 \begin{itemize}
-\item New \code{fix\_integer} option for \code{miqps\_master()} and \code{mp.opt\_model.solve()}. Set to true to fix any integer variables to their initial values, as specified in \code{x0} or \code{opt.x0}.
-\item Add \code{relax\_integer} option to \code{miqps\_master()} and move the implementation from \code{mp.opt\_model.solve()}.
+\item Support mixed-integer quadratically-constrained quadratic programming (MIQCQP) problems, including functions \code{miqcqps\_master()} and \code{miqcqps\_gurobi()}.
+\emph{Thanks to Wilson Gonz{\'a}lez Vanegas.}
+\item New \code{fix\_integer} option for \code{miqps\_master()}, \code{miqcqps\_master()} and \code{mp.opt\_model.solve()}. Set to true to fix any integer variables to their initial values, as specified in \code{x0} or \code{opt.x0}.
+\item Add \code{relax\_integer} option to \code{miqps\_master()} and \code{miqcqps\_master()} and move the implementation from \code{mp.opt\_model.solve()}.
 \item Add \code{mip\_gap} and \code{mip\_gap\_abs} options to the \code{miqps\_<solver>()} functions, including \code{miqps\_master()} to provide a unified interface for setting the MIP gap tolerance parameters for the various solvers.
 \item Add \code{mip\_gap} field to \code{output} return value for \code{miqps\_gurobi()} and \code{miqps\_ot()} (\code{miqps\_highs()} already includes it) to provide a common method to access the relative MIP gap for the solution of \code{miqps\_master()} for solvers that provide it.
 \item Add \code{lazy} option for \code{miqps\_master()} and \code{qps\_master()} to enable basic handling of lazy constraints, where the problem is solved iteratively beginning without lazy constraints, adding at each iteration only those that are violated or within a threshold, until all constraints are satisfied.
 \item Add \code{lazy\_thresh} option for \code{miqps\_master()} and \code{qps\_master()} to control the threshold for including lazy constraints and \code{lazy\_violation\_cost} option for controlling the penalty for violating a lazy constraint when evaluating violations and thresholds.
+\item Add \code{lazy\_it\_lim}, \code{lazy\_mode}, and \code{lazy\_thresh\_multiplier} options for \code{miqps\_master()} and \code{qps\_master()} to control mechanisms for limiting the number of lazy constraint iterations.
 \item Add \code{lazy\_mip\_gap} option for \code{miqps\_master()} to allow use of different relative MIP gap tolerances for the early iterations of lazy constraint handling.
 \item Support for \code{mp.opt\_model.solve()} to solve LP, QP, MILP, and MIQP problems with only a subset of constraints included, specified as a constraint index vector (logical or numeric) in a new \code{active\_constraints} field of the options struct.
 \item Add \code{active\_constraints} field, a logical vector matching the constraint dimension, to \code{output} return value for LP, QP, MILP, and MIQP problems when \code{lazy} and/or \code{active\_constraints} input options are provided. For the lazy constraint case, an element is true if the corresponding constraint was included in the final solve.
@@ -6773,14 +7003,14 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-5.1.pdf}{\mpom{} 5.1 Use
 \item New functions:
     \begin{itemize}
     \item \code{have\_feature\_highs\_hipo()} feature detection function for HiPO solver in \highs{} optimizer.
+    \item \code{miqcqps\_gurobi()} provides standardized interface for using \gurobi{} to solve MIQCQP problems.
+    \item \code{miqcqps\_master()} provides a single wrapper function for calling any of \mpom{}'s MIQCQP solvers.
     \end{itemize}
 \end{itemize}
 
 \subsubsection*{Bugs Fixed}
 \begin{itemize}
 \item Calling the \code{params()} method of \code{mp.sm\_variable} with less than 4 output arguments would prevent the variable type from being assembled and cached, resulting in an incorrect empty string being returned on subsequent calls with the fourth output argument present.
-\item
-    \emph{Thanks to Fulano.}
 \end{itemize}
 
 \subsubsection*{Other Changes}

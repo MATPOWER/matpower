@@ -311,8 +311,8 @@ if verbose
             'concurrent',           %% 10 : MSK_OPTIMIZER_CONCURRENT
             '<nonconvex>'           %% 11 : MSK_OPTIMIZER_NONCONVEX
         };
-    else
-        alg_names = {           %% version 8.x, 9.x
+    elseif s.vnum < 11
+        alg_names = {           %% version 8.x, 9.x, 10.x
             '<conic>',              %%  0 : MSK_OPTIMIZER_CONIC
             'dual simplex',         %%  1 : MSK_OPTIMIZER_DUAL_SIMPLEX
             'default',              %%  2 : MSK_OPTIMIZER_FREE
@@ -320,6 +320,31 @@ if verbose
             'interior point',       %%  4 : MSK_OPTIMIZER_INTPNT
             '<mixed int>',          %%  5 : MSK_OPTIMIZER_MIXED_INT
             'primal simplex'        %%  6 : MSK_OPTIMIZER_PRIMAL_SIMPLEX
+        };
+    elseif s.vnum < 12
+        alg_names = {           %% version 11.x
+            '<conic>',              %%  0 : MSK_OPTIMIZER_CONIC
+            'dual simplex',         %%  1 : MSK_OPTIMIZER_DUAL_SIMPLEX
+            'default',              %%  2 : MSK_OPTIMIZER_FREE
+            'automatic simplex',    %%  3 : MSK_OPTIMIZER_FREE_SIMPLEX
+            'interior point',       %%  4 : MSK_OPTIMIZER_INTPNT
+            '<mixed int>',          %%  5 : MSK_OPTIMIZER_MIXED_INT
+            'new dual simplex',     %%  6 : MSK_OPTIMIZER_NEW_DUAL_SIMPLEX
+            'new primal_simplex',   %%  7 : MSK_OPTIMIZER_NEW_PRIMAL_SIMPLEX
+            'primal simplex'        %%  8 : MSK_OPTIMIZER_PRIMAL_SIMPLEX
+        };
+    else
+        alg_names = {           %% version 12.x
+            'concurrent',           %%  0 : MSK_OPTIMIZER_CONCURRENT
+            '<conic>',              %%  1 : MSK_OPTIMIZER_CONIC
+            'interior point',       %%  2 : MSK_OPTIMIZER_DEPRECATED_INTPNT
+            'dual simplex',         %%  3 : MSK_OPTIMIZER_DUAL_SIMPLEX
+            'default',              %%  4 : MSK_OPTIMIZER_FREE
+            'automatic simplex',    %%  5 : MSK_OPTIMIZER_FREE_SIMPLEX
+            'interior point',       %%  6 : MSK_OPTIMIZER_INTPNT
+            '<mixed int>',          %%  7 : MSK_OPTIMIZER_MIXED_INT
+            'primal/dual simplex',  %%  8 : MSK_OPTIMIZER_PRIMAL_DUAL_SIMPLEX
+            'primal simplex'        %%  9 : MSK_OPTIMIZER_PRIMAL_SIMPLEX
         };
     end
     if qp

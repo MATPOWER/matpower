@@ -42,6 +42,7 @@ The |MPOM| master functions provide unified interfaces to multiple solvers for l
 
 .. toctree::
 
+   functions/miqcqps_master
    functions/miqps_master
    functions/nleqs_master
    functions/nlps_master
@@ -107,6 +108,14 @@ Solver Interfaces & Implementations
 -----------------------------------
 
 These functions provide the implementations and interfaces for the solvers accessible through the :ref:`mpom_master_functions` above.
+
+MIQCQP Solver
+^^^^^^^^^^^^^
+
+.. toctree::
+
+   functions/miqcqps_gurobi
+
 
 MIQP Solver
 ^^^^^^^^^^^
@@ -236,6 +245,7 @@ These functions test that |MPOM| is installed and functioning as expected.
    functions/t_pnes_master
    functions/t_qps_master
    functions/t_qcqps_master
+   functions/t_miqcqps_master
    functions/t_miqps_master
    functions/t_nlps_master
    functions/t_mp_opt_model
@@ -244,6 +254,7 @@ These functions test that |MPOM| is installed and functioning as expected.
    functions/t_mm_solve_pne
    functions/t_mm_solve_qps
    functions/t_mm_solve_qcqps
+   functions/t_mm_solve_miqcqps
    functions/t_mm_solve_miqps
    functions/t_mm_solve_nlps
 
@@ -261,6 +272,7 @@ Tests of deprecated functionality.
    functions/t_om_solve_pne
    functions/t_om_solve_qps
    functions/t_om_solve_qcqps
+   functions/t_om_solve_miqcqps
    functions/t_om_solve_miqps
    functions/t_om_solve_nlps
 

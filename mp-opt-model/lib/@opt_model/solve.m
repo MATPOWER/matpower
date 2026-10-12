@@ -224,10 +224,9 @@ switch pt
             if isempty(Q)          %% MILP, MIQP - mixed integer linear/quadratic program
                 [x, f, eflag, output, lambda] = ...
                     miqps_master(HH, CC, A, l, u, xmin, xmax, x0, vtype, opt);
-            else                   %% MIQCQP - mixed integer quadratically constrained quadratic program
-                % To be implemented ...
-                % [x, f, eflag, output, lambda] = ...
-                %    miqcqps_master(HH, CC, Q, B, k, ll, uu, A, l, u, xmin, xmax, x0, vtype, opt);
+            else                   %% MIQCQP - mixed integer quadratically constrained quadratic program                
+                [x, f, eflag, output, lambda] = ...
+                   miqcqps_master(HH, CC, Q, B, ll, uu, A, l, u, xmin, xmax, x0, vtype, opt);
             end
         else                %% LP, QP - linear/quadratic program
             %% run solver

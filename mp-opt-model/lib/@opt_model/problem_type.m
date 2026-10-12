@@ -18,15 +18,18 @@ function prob = problem_type(om, recheck)
 %
 %   Outputs:
 %       PROB_TYPE : problem type, one of the following strings:
-%           'LEQ'   - linear equations
-%           'NLEQ'  - nonlinear equations
-%           'PNE'   - parameterized nonlinear equations
-%           'LP'    - linear program
-%           'QP'    - quadratic program
-%           'NLP'   - nonlinear program
-%           'MILP'  - mixed-integer linear program
-%           'MIQP'  - mixed-integer quadratic program
-%           'MINLP' - mixed-integer nonlinear program
+%           'LEQ'     - linear equations
+%           'NLEQ'    - nonlinear equations
+%           'PNE'     - parameterized nonlinear equations
+%           'LP'      - linear program
+%           'QP'      - quadratic program
+%           'QCQP'    - quadratically-constrained quadratic program
+%           'NLP'     - nonlinear program
+%           'MILP'    - mixed-integer linear program
+%           'MIQP'    - mixed-integer quadratic program
+%           'MIQCQP'  - mixed-integer quadratically-constrained
+%                       quadratic program
+%           'MINLP'   - mixed-integer nonlinear program
 %
 %   The output value is cached for future calls, but calling with a true
 %   value for the optional RECHECK argument will force it to recheck in

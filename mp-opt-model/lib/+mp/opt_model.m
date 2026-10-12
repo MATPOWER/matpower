@@ -451,15 +451,18 @@ classdef opt_model < handle
             %     prob_type (char array) : problem type, one of the following
             %       strings:
             %
-            %       - ``'LEQ'``   - linear equations
-            %       - ``'NLEQ'``  - nonlinear equations
-            %       - ``'PNE'``   - parameterized nonlinear equations
-            %       - ``'LP'``    - linear program
-            %       - ``'QP'``    - quadratic program
-            %       - ``'NLP'``   - nonlinear program
-            %       - ``'MILP'``  - mixed-integer linear program
-            %       - ``'MIQP'``  - mixed-integer quadratic program
-            %       - ``'MINLP'`` - mixed-integer nonlinear program
+            %       - ``'LEQ'``    - linear equations
+            %       - ``'NLEQ'``   - nonlinear equations
+            %       - ``'PNE'``    - parameterized nonlinear equations
+            %       - ``'LP'``     - linear program
+            %       - ``'QP'``     - quadratic program
+            %       - ``'QCQP'``   - quadratically-constrained quadratic program
+            %       - ``'NLP'``    - nonlinear program
+            %       - ``'MILP'``   - mixed-integer linear program
+            %       - ``'MIQP'``   - mixed-integer quadratic program
+            %       - ``'MIQCQP'`` - mixed-integer quadratically-constrained
+            %                        quadratic program
+            %       - ``'MINLP'``  - mixed-integer nonlinear program
 
             if isempty(mm.prob_type) || nargin > 1 && recheck
                 nleN = mm.nle.get_N();      %% nonlinear equalities
@@ -823,9 +826,8 @@ classdef opt_model < handle
                                 output.active_constraints = active_constraints;
                             end
                         else                   %% MIQCQP - mixed integer quadratically constrained quadratic program
-                            % To be implemented ...
-                            % [x, f, eflag, output, lambda] = ...
-                            %    miqcqps_master(HH, CC, Q, B, k, ll, uu, A, l, u, xmin, xmax, x0, vtype, opt);
+                            [x, f, eflag, output, lambda] = ...
+                                miqcqps_master(HH, CC, Q, B, ll, uu, A, l, u, xmin, xmax, x0, vtype, opt);
                         end
                     else                %% LP, QP - linear/quadratic program
                         %% run solver

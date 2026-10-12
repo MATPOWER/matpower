@@ -123,7 +123,7 @@ function [x, f, eflag, output, lambda] = qcqps_master(H, c, Q, B, lq, uq, A, l, 
 %   by Wilson Gonzalez Vanegas, Universidad Nacional de Colombia Sede Manizales
 %   and Ray Zimmerman, PSERC Cornell
 %
-%   This file is part of MP-Opt-Model..
+%   This file is part of MP-Opt-Model.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See https://github.com/MATPOWER/mp-opt-model for more info.
 
