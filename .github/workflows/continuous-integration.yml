@@ -25,6 +25,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Include IPOPT?
+      if: matrix.platform == 'matlab' || (matrix.os != 'ubuntu-26.04' && matrix.os != 'ubuntu-latest')
       run: echo "INCLUDE_IPOPT=1" >> $GITHUB_ENV
 
     - name: Include OSQP?
