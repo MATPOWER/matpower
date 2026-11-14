@@ -114,8 +114,13 @@ for k = 1:length(algs)
             t_is(f, -249, 11, [t 'f']);
             t_ok(isempty(lam.mu_l), [t 'lam.mu_l']);
             t_ok(isempty(lam.mu_u), [t 'lam.mu_u']);
-            t_is(lam.lower, zeros(size(x)), 13, [t 'lam.lower']);
-            t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
+            if strcmp(out.alg, 'GUROBI') && have_feature('gurobi', 'vnum') >= 14
+                expected = NaN(size(x));
+            else
+                expected = zeros(size(x));
+            end
+            t_is(lam.lower, expected, 13, [t 'lam.lower']);
+            t_is(lam.upper, expected, 13, [t 'lam.upper']);
         
             t = sprintf('%s - constrained 2-d QP : ', names{k});
             %% example from 'doc quadprog'
