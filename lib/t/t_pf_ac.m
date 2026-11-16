@@ -42,7 +42,7 @@ end
 % };
 
 ntests = 48;
-t_begin(length(cfg)*ntests + 6, quiet);
+t_begin(length(cfg)*ntests + 12, quiet);
 
 casefile = 't_case9_pf';
 if quiet
@@ -272,6 +272,23 @@ r = runpf('case14', mpopt);
 t_ok(r.success, [t 'success']);
 t_is(r.iterations, 5, 12, [t 'iterations']);
 t_is(r.bus(1, VA), 0, 12, [t 'ref bus Va = 0']);
+
+%% case 39 with load and dispatch scaled by 1.25, Newton fails to
+%% converge in 3rd round of Q limit enforcement, so power flow must fail
+mpc = loadcase('case39');
+mpc.bus(:, [PD QD]) = 1.25 * mpc.bus(:, [PD QD]);
+mpc.gen(:, PG) = 1.25 * mpc.gen(:, PG);
+bt = mpc.bus(:, BUS_TYPE);
+bt([30 31 32 33 34 35 36]) = [REF PQ PQ PQ PQ PQ PQ];
+mpopt = mpoption(mpopt0, 'pf.tol', 1e-8, 'pf.enforce_q_lims', 1);
+for legacy = 0:1
+    t = sprintf('NR - pf.enforce_q_lims == 1, failed round (legacy = %d) : ', legacy);
+    mpopt = mpoption(mpopt, 'exp.use_legacy_core', legacy);
+    r = runpf(mpc, mpopt);
+    t_is(r.success, 0, 12, [t 'success = 0']);
+    t_is(r.iterations, 18, 12, [t 'iterations']);
+    t_is(r.bus(:, BUS_TYPE), bt, 12, [t 'bus type']);
+end
 
 t_end;
 

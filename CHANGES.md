@@ -13,6 +13,14 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 since version 8.1
 -----------------
 
+#### 11/16/26
+  - Fix bug in MP-Core AC power flow with `pf.enforce_q_lims` where a
+    power flow that failed to converge in an intermediate round did not
+    stop the generator reactive limit loop. Q limit violations were then
+    checked against the non-converged solution and the final result
+    could report success. It now stops and reports failure, like the
+    legacy core.
+
 #### 8/4/26
   - Add support for redirecting console output via `mp.logger` by replacing
     `disp()`, `fprintf()` and `warning()` everywhere with `mp_disp()`,
