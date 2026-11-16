@@ -67,10 +67,14 @@ classdef task_pf < mp.task
                 obj.iterations = obj.iterations + mm.soln.output.iterations;
                 mm.soln.output.iterations = obj.iterations;
 
-                %% enforce Q limits
-                [success, dm] = obj.enforce_q_lims(nm, dm, mpopt);
-                if ~success                 %% entire task fails if Q lim
-                    obj.success = success;  %% enforcement indicates failure
+                %% enforce Q limits, only if previous solve succeeded
+                if obj.success
+                    [success, dm] = obj.enforce_q_lims(nm, dm, mpopt);
+                    if ~success                 %% entire task fails if Q lim
+                        obj.success = success;  %% enforcement indicates failure
+                    end
+                else    %% entire task fails if any solve fails
+                    dm = [];
                 end
             else        %% don't enforce generator Q limits, once is enough
                 dm = [];
