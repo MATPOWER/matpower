@@ -13,6 +13,12 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 since version 8.1
 -----------------
 
+#### 11/26/26
+  - Fix bug in MP-Core AC power flow where the allocation of reactive
+    power among multiple generators at a PV node did not satisfy the
+    node's reactive power balance if all of the generators at the node
+    had Qmin = Qmax.
+
 #### 11/16/26
   - Fix bug in MP-Core AC power flow with `pf.enforce_q_lims` where a
     power flow that failed to converge in an intermediate round did not

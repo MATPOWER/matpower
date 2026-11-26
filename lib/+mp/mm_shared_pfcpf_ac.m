@@ -165,6 +165,10 @@ classdef (Abstract) mm_shared_pfcpf_ac < mp.mm_shared_pfcpf
                     rmax(i0) = 1;           %% set these ranges to one
                     j0 = find(any(CCrpv(i0, :), 1));    %% corresponding states
                     r(j0) = abs(CCrpv(i0, j0))' * rmax(i0); %% apply to all states at same node
+                    %% recompute index of state with largest range at each
+                    %% node, since j from the max() above is meaningless
+                    %% (it is just column 1) for nodes where all ranges were 0
+                    [~, j] = max(abs(CCrpv) * spdiags(r, 0, nm.nz, nm.nz), [], 2);
                 end
 
                 %% augment update equation ...

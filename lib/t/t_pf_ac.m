@@ -41,7 +41,7 @@ end
 %     {'NR',      'Newton (default, power-polar)',[]          []  },
 % };
 
-ntests = 48;
+ntests = 51;
 t_begin(length(cfg)*ntests + 12, quiet);
 
 casefile = 't_case9_pf';
@@ -184,6 +184,16 @@ for k = 1:length(cfg)
     r = runpf(mpc, mpopt);
     t_ok(r.success, [t 'success']);
     t_is(r.gen(1:2, QG), [12.03; 12.03], 2, [t '2 gens, both infinite range']);
+
+    %% all gens at a PV bus have Qmin = Qmax, bus is not the ref bus
+    mpc = loadcase(casefile);
+    mpc.gen = [mpc.gen(1:2, :); mpc.gen(2, :); mpc.gen(3, :)];
+    mpc.gen(2:3, [QMIN QMAX]) = 0;      %% 2 gens at bus 30, both zero range
+    mpc.gen(3, PG) = 0;
+    r = runpf(mpc, mpopt);
+    t_ok(r.success, [t 'success']);
+    t_is(r.gen(1:4, QG), [24.07; -1.82; -1.82; 14.46], 2, [t '2 gens at PV bus, Qmin = Qmax = 0 for both']);
+    t_is(r.gen(2, QG), r.gen(3, QG), 8, [t '2 gens at PV bus, Qmin = Qmax = 0 for both, equal Qg']);
 
     t = sprintf('%s - reactive generation allocation : ', cfg{k}{1});
     mpc = loadcase(casefile);
